@@ -26,8 +26,8 @@ type Mesh struct {
 // Cube provides independent UVs for each face. TextureSize may be (1,1) for solids.
 func Cube(size float64, textureSize geometry.Vec2, tint color.NRGBA) Mesh {
 	s := size / 2
-	m := Mesh{Points: []geometry.Vec3{{-s, -s, -s}, {s, -s, -s}, {s, s, -s}, {-s, s, -s}, {-s, -s, s}, {s, -s, s}, {s, s, s}, {-s, s, s}}}
-	uv := [4]geometry.Vec2{{0, 0}, {textureSize.X, 0}, {textureSize.X, textureSize.Y}, {0, textureSize.Y}}
+	m := Mesh{Points: []geometry.Vec3{{X: -s, Y: -s, Z: -s}, {X: s, Y: -s, Z: -s}, {X: s, Y: s, Z: -s}, {X: -s, Y: s, Z: -s}, {X: -s, Y: -s, Z: s}, {X: s, Y: -s, Z: s}, {X: s, Y: s, Z: s}, {X: -s, Y: s, Z: s}}}
+	uv := [4]geometry.Vec2{{}, {X: textureSize.X}, {X: textureSize.X, Y: textureSize.Y}, {Y: textureSize.Y}}
 	for _, face := range [][4]int{{0, 3, 2, 1}, {4, 5, 6, 7}, {0, 4, 7, 3}, {1, 2, 6, 5}, {0, 1, 5, 4}, {3, 7, 6, 2}} {
 		m.Triangles = append(m.Triangles, Triangle{Indices: [3]int{face[0], face[1], face[2]}, UV: [3]geometry.Vec2{uv[0], uv[1], uv[2]}, Color: tint}, Triangle{Indices: [3]int{face[0], face[2], face[3]}, UV: [3]geometry.Vec2{uv[0], uv[2], uv[3]}, Color: tint})
 	}

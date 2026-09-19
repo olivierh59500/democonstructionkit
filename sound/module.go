@@ -51,6 +51,7 @@ func NewModule(data []byte, options ModuleOptions) (*Stream, error) {
 	// Split seconds and fractional seconds to avoid overflowing duration*rate.
 	limit := int64(options.Duration/time.Second)*int64(options.SampleRate) + int64(options.Duration%time.Second)*int64(options.SampleRate)/int64(time.Second)
 	if options.Duration > 0 && limit == 0 {
+		_ = player.Stop()
 		return nil, fmt.Errorf("sound: duration shorter than one PCM frame")
 	}
 	return newStream(&moduleSynth{player: player, limit: limit, loop: options.Loop}, options.SampleRate), nil

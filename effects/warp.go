@@ -2,7 +2,9 @@ package effects
 
 import (
 	"fmt"
+	"image"
 	"image/color"
+	"math"
 	"sort"
 
 	"github.com/hajimehoshi/ebiten/v2"
@@ -31,7 +33,7 @@ func NewWarp(source kit.Effect, width, height, columns, rows int) (*Warp, error)
 	if source == nil || width <= 0 || height <= 0 || columns <= 0 || rows <= 0 || columns > 65536/rows {
 		return nil, fmt.Errorf("effects: invalid warp grid")
 	}
-	w := &Warp{Source: source, canvas: ebiten.NewImage(width, height), columns: columns, rows: rows, batch: render.NewBatch(2048)}
+	w := &Warp{Source: source, canvas: render.NewSurface(width, height), columns: columns, rows: rows, batch: render.NewBatch(2048)}
 	for y := 0; y < rows; y++ {
 		for x := 0; x < columns; x++ {
 			w.cells = append(w.cells, warpCell{x: float64(x*width) / float64(columns), y: float64(y*height) / float64(rows), w: float64(width) / float64(columns), h: float64(height) / float64(rows)})
@@ -56,7 +58,7 @@ func (w *Warp) Draw(dst *ebiten.Image) {
 	w.batch.Begin(dst, w.canvas)
 	for _, c := range w.cells {
 		var quad [4]ebiten.Vertex
-		for i, p := range [4]geometry.Vec2{{c.x, c.y}, {c.x + c.w, c.y}, {c.x + c.w, c.y + c.h}, {c.x, c.y + c.h}} {
+		for i, p := range [4]geometry.Vec2{{X: c.x, Y: c.y}, {X: c.x + c.w, Y: c.y}, {X: c.x + c.w, Y: c.y + c.h}, {X: c.x, Y: c.y + c.h}} {
 			q := p
 			if w.Map != nil {
 				q = w.Map(p.X, p.Y, w.Frame.Time)
@@ -83,7 +85,7 @@ func NewMask(content, alpha kit.Effect, width, height int) (*Mask, error) {
 	if content == nil || alpha == nil || width <= 0 || height <= 0 {
 		return nil, fmt.Errorf("effects: invalid mask")
 	}
-	return &Mask{Content: content, Alpha: alpha, canvas: ebiten.NewImage(width, height), mask: ebiten.NewImage(width, height)}, nil
+	return &Mask{Content: content, Alpha: alpha, canvas: render.NewSurface(width, height), mask: render.NewSurface(width, height)}, nil
 }
 func (m *Mask) Update(f kit.Frame) error {
 	if err := m.Content.Update(f); err != nil {
@@ -118,7 +120,7 @@ func NewReflection(source kit.Effect, width, height int, horizon float64) (*Refl
 	if source == nil || width <= 0 || height <= 0 {
 		return nil, fmt.Errorf("effects: invalid reflection")
 	}
-	return &Reflection{Source: source, Horizon: horizon, Scale: 1, Alpha: .35, canvas: ebiten.NewImage(width, height)}, nil
+	return &Reflection{Source: source, Horizon: horizon, Scale: 1, Alpha: .35, canvas: render.NewSurface(width, height)}, nil
 }
 func (r *Reflection) Update(f kit.Frame) error { r.Frame = f; return r.Source.Update(f) }
 func (r *Reflection) Draw(dst *ebiten.Image) {
@@ -129,6 +131,11 @@ func (r *Reflection) Draw(dst *ebiten.Image) {
 	op.GeoM.Scale(1, -r.Scale)
 	op.GeoM.Translate(0, r.Horizon*(1+r.Scale))
 	op.ColorScale.ScaleAlpha(r.Alpha)
-	dst.DrawImage(r.canvas, &op)
+	// Only content above the horizon contributes to the reflected image.
+	height := max(0, min(r.canvas.Bounds().Dy(), int(math.Floor(r.Horizon))))
+	if height > 0 {
+		source := r.canvas.SubImage(image.Rect(0, 0, r.canvas.Bounds().Dx(), height)).(*ebiten.Image)
+		dst.DrawImage(source, &op)
+	}
 }
 func (r *Reflection) Close() error { r.canvas.Deallocate(); return kit.Close(r.Source) }

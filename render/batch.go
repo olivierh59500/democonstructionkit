@@ -8,6 +8,12 @@ import (
 	"github.com/hajimehoshi/ebiten/v2"
 )
 
+// NewSurface creates a persistent offscreen render target outside the automatic
+// texture atlas. Repeated source/destination passes keep stable coordinates.
+func NewSurface(width, height int) *ebiten.Image {
+	return ebiten.NewImageWithOptions(image.Rect(0, 0, width, height), &ebiten.NewImageOptions{Unmanaged: true})
+}
+
 // Batch streams triangles, flushing before its fixed capacity or uint16 limit.
 // A batch is confined to the Ebitengine drawing goroutine.
 type Batch struct {

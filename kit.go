@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/hajimehoshi/ebiten/v2"
+	"github.com/olivierh59500/democonstructionkit/render"
 	"github.com/olivierh59500/democonstructionkit/timeline"
 )
 
@@ -90,7 +91,7 @@ func NewViewport(effect Effect, width, height int, rect image.Rectangle) (*Viewp
 	if effect == nil || width <= 0 || height <= 0 || rect.Empty() {
 		return nil, fmt.Errorf("kit: invalid viewport")
 	}
-	return &Viewport{Effect: effect, Rect: rect, Opacity: 1, canvas: ebiten.NewImage(width, height)}, nil
+	return &Viewport{Effect: effect, Rect: rect, Opacity: 1, canvas: render.NewSurface(width, height)}, nil
 }
 func (v *Viewport) Update(f Frame) error { return v.Effect.Update(f) }
 func (v *Viewport) Draw(dst *ebiten.Image) {

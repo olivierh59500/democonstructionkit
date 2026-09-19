@@ -9,6 +9,7 @@ import (
 	"github.com/hajimehoshi/ebiten/v2"
 	kit "github.com/olivierh59500/democonstructionkit"
 	"github.com/olivierh59500/democonstructionkit/motion"
+	"github.com/olivierh59500/democonstructionkit/render"
 )
 
 // Pixels lets original software effects write into a persistent RGBA buffer.
@@ -22,12 +23,12 @@ type Pixels struct {
 	texture *ebiten.Image
 }
 
-func NewPixels(width, height int, render func(*image.RGBA, float64)) (*Pixels, error) {
-	if width <= 0 || height <= 0 || render == nil {
+func NewPixels(width, height int, drawPixels func(*image.RGBA, float64)) (*Pixels, error) {
+	if width <= 0 || height <= 0 || drawPixels == nil {
 		return nil, fmt.Errorf("effects: invalid pixel surface")
 	}
 	r := image.Rect(0, 0, width, height)
-	return &Pixels{Render: render, Rect: r, pixels: image.NewRGBA(r), texture: ebiten.NewImage(width, height)}, nil
+	return &Pixels{Render: drawPixels, Rect: r, pixels: image.NewRGBA(r), texture: render.NewSurface(width, height)}, nil
 }
 func (p *Pixels) Update(f kit.Frame) error { p.Frame = f; p.Render(p.pixels, f.Time); return nil }
 func (p *Pixels) Draw(dst *ebiten.Image) {

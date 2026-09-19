@@ -74,15 +74,17 @@ func drawGlyph(b *render.Batch, rect image.Rectangle, p Pose, tint color.Color) 
 // Text geometry is cached. It never creates a texture the size of the message.
 type Scroller struct {
 	State
-	Atlas                   *ebiten.Image
-	Layout                  font.Layout
-	Speed, Gap, X, Y, Scale float64
-	Vertical                bool
-	Wave                    motion.Waves
-	Color                   color.Color
-	width, height           int
-	batch                   *render.Batch
-	ends                    []float64
+	Atlas                       *ebiten.Image
+	Layout                      font.Layout
+	Speed, Gap, X, Y, Scale     float64
+	Vertical                    bool
+	Wave                        motion.Waves
+	Color                       color.Color
+	width, height               int
+	batch                       *render.Batch
+	ends                        []float64
+	starts                      []float64
+	clipDestination, clipTarget *ebiten.Image
 }
 type ScrollConfig struct {
 	Width, Height                    int
@@ -93,7 +95,7 @@ type ScrollConfig struct {
 }
 
 func NewScroller(atlas *ebiten.Image, metrics *font.Font, c ScrollConfig) (*Scroller, error) {
-	if c.Width <= 0 || c.Height <= 0 || c.Gap < 0 || !finite(c.Speed) || !finite(c.Gap) {
+	if c.Width <= 0 || c.Height <= 0 || c.Gap < 0 || !finite(c.Speed) || !finite(c.Gap) || !finite(c.X) || !finite(c.Y) {
 		return nil, fmt.Errorf("effects: invalid scroller config")
 	}
 	if !c.Vertical && strings.Contains(c.Message, "\n") {
@@ -120,6 +122,17 @@ func NewScroller(atlas *ebiten.Image, metrics *font.Font, c ScrollConfig) (*Scro
 		}
 		s.ends = append(s.ends, end)
 	}
+	s.starts = make([]float64, len(s.Layout.Glyphs))
+	start := math.Inf(1)
+	for i := len(s.Layout.Glyphs) - 1; i >= 0; i-- {
+		g := s.Layout.Glyphs[i]
+		v := g.X
+		if c.Vertical {
+			v = g.Y
+		}
+		start = math.Min(start, v)
+		s.starts[i] = start
+	}
 	return s, nil
 }
 func (s *Scroller) Draw(dst *ebiten.Image) {
@@ -135,10 +148,32 @@ func (s *Scroller) Draw(dst *ebiten.Image) {
 		return
 	}
 	phase := motion.Wrap(s.Frame.Time*s.Speed-offset, period)
-	s.batch.Begin(dst, s.Atlas)
-	for base := -phase; base < extent; base += period {
+	if s.clipDestination != dst {
+		s.clipDestination = dst
+		r := image.Rect(0, 0, s.width, s.height).Intersect(dst.Bounds())
+		if r.Empty() {
+			s.clipTarget = nil
+		} else if r == dst.Bounds() {
+			s.clipTarget = dst
+		} else {
+			s.clipTarget = dst.SubImage(r).(*ebiten.Image)
+		}
+	}
+	if s.clipTarget == nil {
+		return
+	}
+	s.batch.Begin(s.clipTarget, s.Atlas)
+	// Include glyph overhang from the preceding copy and negative bearings from
+	// the following copy. Prefix/suffix bounds handle nonmonotonic bearings.
+	overhang := math.Max(0, s.ends[len(s.ends)-1]*s.Scale-period)
+	firstBase := -phase - math.Ceil(overhang/period)*period
+	lastBase := extent - math.Min(0, s.starts[0]*s.Scale)
+	for base := firstBase; base < lastBase; base += period {
 		first := sort.Search(len(s.ends), func(i int) bool { return base+s.ends[i]*s.Scale >= 0 })
 		for i := first; i < len(s.Layout.Glyphs); i++ {
+			if base+s.starts[i]*s.Scale >= extent {
+				break
+			}
 			g := s.Layout.Glyphs[i]
 			r := g.Glyph.Rect
 			if r.Empty() {
@@ -148,13 +183,13 @@ func (s *Scroller) Draw(dst *ebiten.Image) {
 			if s.Vertical {
 				y = base + g.Y*s.Scale
 				if y > extent {
-					break
+					continue
 				}
 				x += s.Wave.At(y, s.Frame.Time)
 			} else {
 				x = base + g.X*s.Scale
 				if x > extent {
-					break
+					continue
 				}
 				y += s.Wave.At(x, s.Frame.Time)
 			}

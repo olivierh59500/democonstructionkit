@@ -5,6 +5,7 @@ import (
 
 	"github.com/hajimehoshi/ebiten/v2"
 	kit "github.com/olivierh59500/democonstructionkit"
+	"github.com/olivierh59500/democonstructionkit/render"
 )
 
 // CRTConfig controls the optional Go-like Kage shader. Zero values disable each
@@ -26,7 +27,7 @@ func NewCRT(source kit.Effect, width, height int, c CRTConfig) (*CRT, error) {
 	if err != nil {
 		return nil, fmt.Errorf("effects: compile CRT: %w", err)
 	}
-	return &CRT{Source: source, Config: c, canvas: ebiten.NewImage(width, height), shader: shader, uniforms: map[string]any{}}, nil
+	return &CRT{Source: source, Config: c, canvas: render.NewSurface(width, height), shader: shader, uniforms: map[string]any{}}, nil
 }
 func (c *CRT) Update(f kit.Frame) error { return c.Source.Update(f) }
 func (c *CRT) Draw(dst *ebiten.Image) {

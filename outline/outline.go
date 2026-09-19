@@ -84,6 +84,9 @@ func (f *Font) Glyph(r rune) (Glyph, error) {
 
 // Text returns independent line endpoints and edge indices for a wireframe effect.
 func (f *Font) Text(message string, spacing float64) ([]geometry.Vec3, [][2]int, error) {
+	if math.IsNaN(spacing) || math.IsInf(spacing, 0) {
+		return nil, nil, fmt.Errorf("outline: spacing must be finite")
+	}
 	var points []geometry.Vec3
 	var edges [][2]int
 	x, y := 0.0, 0.0

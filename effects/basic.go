@@ -121,13 +121,14 @@ type TileTransform struct {
 	Scale, Angle, PhaseX, PhaseY float64
 }
 
-// Tiles renders a tiled or rotozoom background. The inverse viewport extent bounds
-// tile iteration, so rotations do not leave uncovered corners.
+// Tiles renders a tiled or rotozoom background with one repeating textured quad.
+// Draw cost is independent of zoom and the number of visible tile repetitions.
 type Tiles struct {
 	State
 	Texture   *ebiten.Image
 	Transform TileTransform
 	Animate   func(float64) TileTransform
+	batch     *render.Batch
 }
 
 func (t *Tiles) Draw(dst *ebiten.Image) {
@@ -138,33 +139,25 @@ func (t *Tiles) Draw(dst *ebiten.Image) {
 	if t.Animate != nil {
 		p = t.Animate(t.Frame.Time)
 	}
-	if math.Abs(p.Scale) < .01 {
+	if math.Abs(p.Scale) < .0001 || !finite(p.Scale) {
 		return
 	}
 	b := t.Texture.Bounds()
-	w, h := float64(b.Dx()), float64(b.Dy())
-	a := p.Angle
-	s, c := math.Sincos(a)
-	minX, minY, maxX, maxY := math.Inf(1), math.Inf(1), math.Inf(-1), math.Inf(-1)
-	for _, v := range []geometry.Vec2{{0, 0}, {float64(dst.Bounds().Dx()), 0}, {0, float64(dst.Bounds().Dy())}, {float64(dst.Bounds().Dx()), float64(dst.Bounds().Dy())}} {
+	s, c := math.Sincos(p.Angle)
+	if t.batch == nil {
+		t.batch = render.NewBatch(2)
+		t.batch.Options.Address = ebiten.AddressRepeat
+	}
+	t.batch.Begin(dst, t.Texture)
+	w, h := float64(dst.Bounds().Dx()), float64(dst.Bounds().Dy())
+	var quad [4]ebiten.Vertex
+	for i, v := range [4]geometry.Vec2{{}, {X: w}, {X: w, Y: h}, {Y: h}} {
 		x, y := (v.X-p.Center.X)/p.Scale, (v.Y-p.Center.Y)/p.Scale
-		u, vv := x*c+y*s, -x*s+y*c
-		minX = math.Min(minX, u)
-		maxX = math.Max(maxX, u)
-		minY = math.Min(minY, vv)
-		maxY = math.Max(maxY, vv)
+		u, vv := x*c+y*s-p.PhaseX+float64(b.Min.X), -x*s+y*c-p.PhaseY+float64(b.Min.Y)
+		quad[i] = render.Vertex(v.X, v.Y, u, vv, color.White)
 	}
-	px, py := motion.Wrap(p.PhaseX, w), motion.Wrap(p.PhaseY, h)
-	for y := math.Floor((minY-py)/h)*h + py; y < maxY; y += h {
-		for x := math.Floor((minX-px)/w)*w + px; x < maxX; x += w {
-			op := ebiten.DrawImageOptions{}
-			op.GeoM.Translate(x, y)
-			op.GeoM.Scale(p.Scale, p.Scale)
-			op.GeoM.Rotate(a)
-			op.GeoM.Translate(p.Center.X, p.Center.Y)
-			dst.DrawImage(t.Texture, &op)
-		}
-	}
+	t.batch.Quad(quad)
+	t.batch.Flush()
 }
 
 // Tilemap is a camera-scrolled atlas map. Negative cells are transparent.
