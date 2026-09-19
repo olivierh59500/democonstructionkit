@@ -2,9 +2,15 @@ module github.com/olivierh59500/democonstructionkit
 
 go 1.26.0
 
-require github.com/hajimehoshi/ebiten/v2 v2.9.11
+require (
+	github.com/hajimehoshi/ebiten/v2 v2.9.11
+	golang.org/x/image v0.43.0
+)
 
-require github.com/ebitengine/oto/v3 v3.4.1 // indirect
+require (
+	github.com/ebitengine/oto/v3 v3.4.1 // indirect
+	golang.org/x/text v0.38.0 // indirect
+)
 
 require (
 	github.com/ebitengine/gomobile v0.0.0-20250923094054-ea854a63cce1 // indirect
