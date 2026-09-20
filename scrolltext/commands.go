@@ -35,9 +35,6 @@ type Decoder func(input string) (token Token, consumed int, err error)
 // Parse preserves literal text when decoder is nil, including punctuation that
 // resembles commands. UTF-8 errors and malformed recognized controls are rejected.
 func Parse(input string, decoder Decoder) ([]Token, error) {
-	if !utf8.ValidString(input) {
-		return nil, fmt.Errorf("scrolltext: invalid UTF-8")
-	}
 	var tokens []Token
 	var literal strings.Builder
 	flush := func() {
@@ -63,6 +60,9 @@ func Parse(input string, decoder Decoder) ([]Token, error) {
 			}
 		}
 		r, n := utf8.DecodeRuneInString(input)
+		if r == utf8.RuneError && n == 1 {
+			return nil, fmt.Errorf("scrolltext: invalid UTF-8 outside a control")
+		}
 		literal.WriteRune(r)
 		input = input[n:]
 	}

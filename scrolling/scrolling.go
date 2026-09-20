@@ -4,7 +4,6 @@ package scrolling
 
 import (
 	"fmt"
-	"image"
 	"math"
 
 	"github.com/hajimehoshi/ebiten/v2"
@@ -59,11 +58,14 @@ type Config struct {
 // reset conditions and visible index range while sharing text rendering.
 // ScaleX/ScaleY are explicit: use IdentityState to start with unit scale.
 type DrawState struct {
+	bounded                              bool
 	X, Y, ScaleX, ScaleY, Time, Position float64
 	First, End                           int
 	Reverse                              bool
+	Cycle                                bool // Treat First/End as virtual indices through repeated text.
 	Shape                                string
 	Map                                  Mapper
+	Paint                                func(*ebiten.Image, Sample, ebiten.DrawImageOptions)
 	Options                              ebiten.DrawImageOptions
 }
 
@@ -86,7 +88,7 @@ type Scrolling struct {
 }
 
 func New(c Config) (*Scrolling, error) {
-	if !finite(c.Speed) || c.Speed < 0 || !finite(c.Gap) || c.Gap < 0 {
+	if !finite(c.Speed) || c.Speed < 0 || !finite(c.Gap) || c.Gap < 0 || !finite(c.X) || !finite(c.Y) || !finite(c.Advance) || c.Advance < 0 {
 		return nil, fmt.Errorf("scrolling: invalid speed/gap")
 	}
 	s := &Scrolling{config: c}
@@ -97,7 +99,7 @@ func New(c Config) (*Scrolling, error) {
 		s.glyphs = append([]Glyph(nil), c.Glyphs...)
 		for i := range s.glyphs {
 			g := &s.glyphs[i]
-			if !finite(g.Advance) || g.Advance <= 0 {
+			if !finite(g.Advance) || g.Advance < 0 {
 				return nil, fmt.Errorf("scrolling: invalid glyph advance")
 			}
 			g.Offset = s.length
@@ -108,6 +110,9 @@ func New(c Config) (*Scrolling, error) {
 			if g.ScaleY == 0 {
 				g.ScaleY = 1
 			}
+		}
+		if len(s.glyphs) > 0 && s.length <= 0 {
+			return nil, fmt.Errorf("scrolling: a glyph sequence must advance")
 		}
 		s.addSegment(0, s.length+c.Gap, c.Speed, c.Shape)
 		return s, nil
@@ -238,6 +243,36 @@ func (s *Scrolling) addSegment(from, to, speed float64, shape string) {
 func (s *Scrolling) Length() float64 { return s.length }
 func (s *Scrolling) GlyphCount() int { return len(s.glyphs) }
 
+// Window starts at an arbitrary character in a circular proportional message and
+// includes exactly the glyphs whose pen origins fit extent. This preserves the
+// original MegaTwist/Coco letter-boundary texture refill strategy.
+func (s *Scrolling) Window(first int, extent float64) DrawState {
+	state := IdentityState()
+	state.First = first
+	state.End = first
+	state.Cycle = true
+	state.bounded = true
+	if len(s.glyphs) == 0 || extent <= 0 || !finite(extent) {
+		return state
+	}
+	offset := s.offsetAt(first)
+	state.X = -offset
+	if s.config.Vertical {
+		state.X = 0
+		state.Y = -offset
+	}
+	for s.offsetAt(state.End)-offset < extent {
+		state.End++
+	}
+	return state
+}
+func (s *Scrolling) offsetAt(index int) float64 {
+	n := len(s.glyphs)
+	i := ((index % n) + n) % n
+	cycle := (index - i) / n
+	return s.glyphs[i].Offset + float64(cycle)*(s.length+s.config.Gap)
+}
+
 // StateAt integrates speed/pause controls exactly, including updates that skip
 // multiple commands. A loop restarts its initial control state deterministically.
 func (s *Scrolling) StateAt(seconds float64) DrawState {
@@ -272,15 +307,28 @@ func (s *Scrolling) Draw(dst *ebiten.Image)   { state := s.StateAt(s.frame.Time)
 // DrawAt does not advance time or position. Original render order and rounding
 // belong to DrawState/Mapper, so no generic sine or gap is silently substituted.
 func (s *Scrolling) DrawAt(dst *ebiten.Image, state DrawState) {
-	first, end := max(0, state.First), state.End
-	if end < 0 || end > len(s.glyphs) {
+	if len(s.glyphs) == 0 {
+		return
+	}
+	first, end := state.First, state.End
+	if !state.Cycle {
+		first = max(0, first)
+	}
+	if (!state.bounded && end < 0) || (!state.Cycle && end > len(s.glyphs)) {
 		end = len(s.glyphs)
 	}
 	if first >= end {
 		return
 	}
 	draw := func(i int) {
-		g := s.glyphs[i]
+		index := i
+		cycle := 0
+		if state.Cycle {
+			index = ((i % len(s.glyphs)) + len(s.glyphs)) % len(s.glyphs)
+			cycle = (i - index) / len(s.glyphs)
+		}
+		g := s.glyphs[index]
+		g.Offset += float64(cycle) * (s.length + s.config.Gap)
 		x, y := state.X+g.X*state.ScaleX, state.Y+g.Y*state.ScaleY
 		if s.config.Vertical {
 			y += g.Offset * state.ScaleY
@@ -295,6 +343,10 @@ func (s *Scrolling) DrawAt(dst *ebiten.Image, state DrawState) {
 			if mapper != nil && !mapper(sample, &op) {
 				return
 			}
+		}
+		if state.Paint != nil {
+			state.Paint(dst, sample, op)
+			return
 		}
 		if g.Image != nil {
 			dst.DrawImage(g.Image, &op)
@@ -320,6 +372,3 @@ func FromImages(images []*ebiten.Image, advance float64) (*Scrolling, error) {
 	}
 	return New(Config{Glyphs: glyphs})
 }
-
-// Rect supplies a simple crop helper for configuring a face from explicit glyphs.
-func Rect(x, y, w, h int) image.Rectangle { return image.Rect(x, y, x+w, y+h) }

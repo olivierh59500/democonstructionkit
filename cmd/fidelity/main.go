@@ -26,15 +26,30 @@ type probe struct {
 }
 
 var probes = map[string]probe{
-	"bilizir-demo":            {800, 600, `g:=NewGame();if err:=g.loadAssets();err!=nil{return nil,err};g.initScrollText();g.initialized=true;return g,nil`, ""},
-	"viva_tcb":                {768, 540, `g:=NewGame();if err:=g.Init();err!=nil{return nil,err};g.audioReady=true;return g,nil`, ""},
-	"grodan-kvack-kvack-demo": {640, 400, `g:=NewGame();g.audioInitialized=true;return g,nil`, ""},
-	"dma-3d":                  {768, 540, `g,err:=NewGame();if err!=nil{return nil,err};g.audioInitAttempted=true;return g,nil`, ""},
-	"tcb-replicants-demo":     {768, 540, `g:=NewGame();g.rng=rand.New(rand.NewSource(42));if err:=g.Init();err!=nil{return nil,err};g.audioReady=true;return g,nil`, `"math/rand"`},
+	"go-multiscreen":              {800, 600, `g:=&MegaDemoGame{demo1:NewPhenomenaDemo(),demo2:NewTCBDemo(),demo3:NewCocoDemo(),demo4:NewVivaDemo(),cameraState:StateDemo1,needsRedraw:true};for i:=range g.demoCanvases{g.demoCanvases[i]=ebiten.NewImage(demoWidth,demoHeight)};var err error;g.compositeShader,err=ebiten.NewShader([]byte(compositeShaderSource));if err!=nil{return nil,err};g.compositeUniforms=map[string]any{"CameraCenter":g.compositeCenter[:],"CameraZoom":float32(1)};return g,nil`, ""},
+	"go-secondreality":            {640, 400, `g:=&dckIndexedFixture{renderer:NewRenderer(),vram:make([]byte,640*400)};g.prepare();return g,nil`, ""},
+	"bilizir-demo":                {800, 600, `g:=NewGame();if err:=g.loadAssets();err!=nil{return nil,err};g.initScrollText();g.initialized=true;return g,nil`, ""},
+	"viva_tcb":                    {768, 540, `g:=NewGame();if err:=g.Init();err!=nil{return nil,err};g.audioReady=true;return g,nil`, ""},
+	"grodan-kvack-kvack-demo":     {640, 400, `g:=NewGame();g.audioInitialized=true;return g,nil`, ""},
+	"dma-3d":                      {640, 480, `g,err:=NewGame();if err!=nil{return nil,err};g.audioInitAttempted=true;return g,nil`, ""},
+	"tcb-replicants-demo":         {640, 400, `g:=NewGame();g.rng=rand.New(rand.NewSource(42));if err:=g.Init();err!=nil{return nil,err};g.audioReady=true;return g,nil`, `"math/rand"`},
+	"go-dom-intro":                {768, 540, `g:=NewGame();g.audioReady=true;return g,nil`, ""},
+	"nonameno-demo":               {640, 480, `g:=NewGame();g.audioReady=true;return g,nil`, ""},
+	"3d_doc":                      {768, 540, `g:=NewGame();if err:=g.Init();err!=nil{return nil,err};g.audioReady=true;return g,nil`, ""},
+	"teamg1-demo":                 {768, 540, `g:=NewGame();g.audioReady=true;return g,nil`, ""},
+	"go-cocoisthebest":            {800, 600, `g:=NewGame();g.audioReady=true;return g,nil`, ""},
+	"dma-is-back":                 {768, 540, `g:=NewGame();g.audioReady=true;return g,nil`, ""},
+	"go-cuddlymenu":               {768, 536, `g:=NewGame();g.audioReady=true;return g,nil`, ""},
+	"go-fr010":                    {640, 480, `g,err:=NewGame();if err!=nil{return nil,err};g.audioReady=true;return g,nil`, ""},
+	"go-vectorballs":              {640, 480, `g:=&Game{shapeManager:NewShapeManager(),zoomFactor:.35,fov:1450,centerX:320,centerY:193,position:Vector3{Z:850},transformed:make([]Point3D,0,64),dirty:true};g.loadImages();g.playgroundCanvas=ebiten.NewImage(640,386);g.reflectionSource=g.playgroundCanvas.SubImage(image.Rect(0,288,640,368)).(*ebiten.Image);g.whiteImage=ebiten.NewImage(1,1);g.whiteImage.Fill(color.White);g.initActions();g.currentAction=-1;g.nextAction();return g,nil`, `"image";"image/color"`},
+	"megatwist":                   {832, 552, `g:=NewGame();g.audioReady=true;ebiten.SetVsyncEnabled(false);return g,nil`, ""},
+	"phenomena-dna-scroll-intro":  {640, 480, `g:=NewGame();if err:=g.Init();err!=nil{return nil,err};g.audioReady=true;return g,nil`, ""},
+	"tcb-multi-plane-3d-scroller": {768, 536, `g:=NewGame();g.audioReady=true;return g,nil`, ""},
 }
 
 type report struct {
 	Demo, Reference, Candidate string
+	Scope                      string
 	Frames                     []frameResult
 }
 type frameResult struct {
@@ -103,7 +118,10 @@ func run() error {
 	if err = captureRevision(source, head, root, filepath.Join(output, "candidate"), p, frames); err != nil {
 		return err
 	}
-	r := report{Demo: *demo, Reference: revision, Candidate: head}
+	r := report{Demo: *demo, Reference: revision, Candidate: head, Scope: "complete production frames; device audio disabled; deterministic clock"}
+	if *demo == "go-secondreality" {
+		r.Scope = "indexed renderer fixture only; original scene choreography and ST3 synchronization are not exercised"
+	}
 	failed := false
 	for _, frame := range frames {
 		name := fmt.Sprintf("%06d.png", frame)
@@ -211,19 +229,39 @@ func captureRevision(source, revision, root, output string, p probe, frames []in
 			return err
 		}
 	}
-	entries, err := os.ReadDir(tmp)
+	packageDir := tmp
+	target := "."
+	if filepath.Base(source) == "go-cuddlymenu" {
+		packageDir = filepath.Join(tmp, "menu")
+		target = "./menu"
+	}
+	if filepath.Base(source) == "go-secondreality" {
+		packageDir = filepath.Join(tmp, "internal/graphics")
+		target = "./internal/graphics"
+	}
+	entries, err := os.ReadDir(packageDir)
 	if err != nil {
 		return err
 	}
 	pkg := ""
 	for _, e := range entries {
 		if strings.HasSuffix(e.Name(), ".go") && !strings.HasSuffix(e.Name(), "_test.go") {
-			f, err := parser.ParseFile(token.NewFileSet(), filepath.Join(tmp, e.Name()), nil, parser.PackageClauseOnly)
+			path := filepath.Join(packageDir, e.Name())
+			data, err := os.ReadFile(path)
+			if err != nil {
+				return err
+			}
+			// Freeze wall-clock animation and random seeding in both snapshots.
+			text := strings.ReplaceAll(string(data), "time.Now()", "time.Unix(0, dckFidelityTick*int64(time.Second)/60)")
+			text = strings.ReplaceAll(text, "time.Since(", "dckFidelitySince(")
+			if err = os.WriteFile(path, []byte(text), 0644); err != nil {
+				return err
+			}
+			f, err := parser.ParseFile(token.NewFileSet(), filepath.Join(packageDir, e.Name()), nil, parser.PackageClauseOnly)
 			if err != nil {
 				return err
 			}
 			pkg = f.Name.Name
-			break
 		}
 	}
 	if pkg == "" {
@@ -234,17 +272,30 @@ func captureRevision(source, revision, root, output string, p probe, frames []in
 		frameValues[i] = fmt.Sprint(f)
 	}
 	code := fmt.Sprintf(`package %s
-import("os";"testing";"fmt";"github.com/hajimehoshi/ebiten/v2";capture "github.com/olivierh59500/democonstructionkit/fidelity/ebiten";%s)
-func TestMain(m *testing.M){err:=capture.Run(capture.Config{Directory:%q,Width:%d,Height:%d,Frames:[]int{%s}},func()(ebiten.Game,error){%s});if err!=nil{fmt.Fprintln(os.Stderr,err);os.Exit(1)}}
+import("os";"testing";"fmt";"time";"github.com/hajimehoshi/ebiten/v2";capture "github.com/olivierh59500/democonstructionkit/fidelity/ebiten";%s)
+var dckFidelityTick int64
+func dckFidelitySince(start time.Time)time.Duration{return time.Unix(0,dckFidelityTick*int64(time.Second)/60).Sub(start)}
+type dckClockGame struct{ebiten.Game}
+func(g dckClockGame)Update()error{dckFidelityTick++;return g.Game.Update()}
+func TestMain(m *testing.M){err:=capture.Run(capture.Config{Directory:%q,Width:%d,Height:%d,Frames:[]int{%s}},func()(ebiten.Game,error){makeGame:=func()(ebiten.Game,error){%s};g,err:=makeGame();return dckClockGame{g},err});if err!=nil{fmt.Fprintln(os.Stderr,err);os.Exit(1)}}
 `, pkg, p.Imports, output, p.Width, p.Height, strings.Join(frameValues, ","), p.Factory)
-	if err = os.WriteFile(filepath.Join(tmp, "dck_capture_test.go"), []byte(code), 0644); err != nil {
+	if filepath.Base(source) == "go-secondreality" {
+		code += `
+type dckIndexedFixture struct{renderer *Renderer;vram []byte;palette [256][4]byte;frame int}
+func(g *dckIndexedFixture)prepare(){m:=Mode{Width:320,Height:200};if g.frame>=60{m.Height=400};if g.frame>=240{m.Width=640;m.Height=350};if g.frame>=600{m.Height=400};for i:=range g.palette{g.palette[i]=[4]byte{byte(i+g.frame),byte(i^g.frame),byte(255-i),255}};for i:=range g.vram{g.vram[i]=byte(i*7+g.frame*3)};g.renderer.Capture(m,g.vram,&g.palette,0)}
+func(g *dckIndexedFixture)Update()error{g.frame++;g.prepare();return nil}
+func(g *dckIndexedFixture)Draw(dst *ebiten.Image){g.renderer.Draw(dst)}
+func(g *dckIndexedFixture)Layout(int,int)(int,int){return 640,400}
+`
+	}
+	if err = os.WriteFile(filepath.Join(packageDir, "dck_capture_test.go"), []byte(code), 0644); err != nil {
 		return err
 	}
 	if _, err = command(tmp, "go", "mod", "edit", "-go=1.26.0", "-require=github.com/olivierh59500/democonstructionkit@v0.0.0", "-replace=github.com/olivierh59500/democonstructionkit="+root); err != nil {
 		return err
 	}
 	// Only resolve packages in this capture, preserving the original dependency pins.
-	if _, err = command(tmp, "go", "test", "-mod=mod", "-count=1", "-timeout=180s", "-run=^$", "."); err != nil {
+	if _, err = command(tmp, "go", "test", "-mod=mod", "-count=1", "-timeout=180s", "-run=^$", target); err != nil {
 		return err
 	}
 	fmt.Printf("captured %s at %s\n", filepath.Base(source), revision[:12])

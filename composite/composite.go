@@ -88,7 +88,7 @@ func (s Strips) Draw(dst, source *ebiten.Image, frame kit.Frame) {
 	}
 	count := s.Count
 	if count == 0 {
-		count = (extent + s.Thickness - 1) / s.Thickness
+		count = max(0, (extent+s.Thickness-1)/s.Thickness-s.First)
 	}
 	for i := s.First; i < s.First+count; i++ {
 		r := bounds

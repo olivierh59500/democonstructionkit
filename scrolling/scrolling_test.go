@@ -49,3 +49,41 @@ func TestFontScaleAndLiteralControlOptOut(t *testing.T) {
 		t.Fatal("unknown face accepted")
 	}
 }
+
+func TestProportionalWindowPreservesVirtualIndicesAndZeroWidthSlots(t *testing.T) {
+	s, err := New(Config{Glyphs: []Glyph{{Advance: 2}, {Advance: 3}, {Advance: 0}}})
+	if err != nil {
+		t.Fatal(err)
+	}
+	state := s.Window(2, 7)
+	var xs []float64
+	var indices []int
+	state.Paint = func(_ *ebiten.Image, s Sample, _ ebiten.DrawImageOptions) {
+		xs = append(xs, s.X)
+		indices = append(indices, s.Index)
+	}
+	s.DrawAt(nil, state)
+	want := []float64{0, 0, 2, 5, 5}
+	if len(xs) != len(want) {
+		t.Fatal(xs)
+	}
+	for i, x := range xs {
+		if x != want[i] || indices[i] != i+2 {
+			t.Fatal(xs, indices)
+		}
+	}
+	state = s.Window(-1, 4)
+	if state.First != -1 || state.End != 2 {
+		t.Fatal(state)
+	}
+	state = s.Window(-8, 4)
+	count := 0
+	state.Paint = func(_ *ebiten.Image, _ Sample, _ ebiten.DrawImageOptions) { count++ }
+	s.DrawAt(nil, state)
+	if count != state.End-state.First {
+		t.Fatal("negative virtual window lost its bound", count, state)
+	}
+	if _, err = New(Config{Glyphs: []Glyph{{Advance: 0}}}); err == nil {
+		t.Fatal("nonprogressing window accepted")
+	}
+}

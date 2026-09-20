@@ -94,6 +94,8 @@ type ScrollConfig struct {
 	Wave                             motion.Waves
 }
 
+// NewScroller constructs the original effect-study scroller.
+// Deprecated: use scrolling.New for controlled, mixed-font production scrolling.
 func NewScroller(atlas *ebiten.Image, metrics *font.Font, c ScrollConfig) (*Scroller, error) {
 	if c.Width <= 0 || c.Height <= 0 || c.Gap < 0 || !finite(c.Speed) || !finite(c.Gap) || !finite(c.X) || !finite(c.Y) {
 		return nil, fmt.Errorf("effects: invalid scroller config")
