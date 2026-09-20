@@ -12,6 +12,11 @@ to run the original implementation.
 See effect options and runnable examples for independent
 logo phases, named scroll modes, DNA, vectorball objects and continuous cube handoffs.
 
+The NATIVE porting additions support the Cuddly source
+collection: fractional atlas crops, legacy scroll timing, scanline waves, star
+streaks and PCM adapters. Eight Cuddly screens are now connected to the existing
+menu in `demos/go-cuddlymenu/dck`; the complete source audit records remaining ports.
+
 ## Try the corrected work
 
 From `lib/democonstructionkit`:

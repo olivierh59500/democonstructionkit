@@ -22,3 +22,5 @@ require (
 	golang.org/x/sync v0.21.0 // indirect
 	golang.org/x/sys v0.44.0 // indirect
 )
+
+replace github.com/olivierh59500/ym-player => ../ym-player

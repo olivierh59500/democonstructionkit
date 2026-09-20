@@ -314,6 +314,17 @@ func(g *dckIndexedFixture)Layout(int,int)(int,int){return 640,400}
 	if _, err = command(tmp, "go", "mod", "edit", "-go=1.26.0", "-require=github.com/olivierh59500/democonstructionkit@v0.0.0", "-replace=github.com/olivierh59500/democonstructionkit="+root); err != nil {
 		return err
 	}
+	// A production may use the sibling YM checkout for newly supported formats.
+	// Rewrite only that existing local replacement inside the temporary archive.
+	moduleData, readErr := os.ReadFile(filepath.Join(tmp, "go.mod"))
+	if readErr != nil {
+		return readErr
+	}
+	if strings.Contains(string(moduleData), "replace github.com/olivierh59500/ym-player =>") {
+		if _, err = command(tmp, "go", "mod", "edit", "-replace=github.com/olivierh59500/ym-player="+filepath.Join(filepath.Dir(root), "ym-player")); err != nil {
+			return err
+		}
+	}
 	// Only resolve packages in this capture, preserving the original dependency pins.
 	if _, err = command(tmp, "go", "test", "-mod=mod", "-count=1", "-timeout=180s", "-run=^$", target); err != nil {
 		return err
