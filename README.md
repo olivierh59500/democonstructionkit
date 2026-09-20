@@ -5,8 +5,12 @@ The shared code must preserve their original artwork, text, lookup tables, timin
 pixel rounding, source crops, drawing order and blend operations.
 
 **The first gallery was not a faithful reconstruction.** It has been moved to
-`cmd/studies`. The current gallery launches the original applications after their
-shared rendering components have been migrated to this module.
+`cmd/studies`. The current gallery launches the DCK versions located alongside
+the preserved originals in each repository's `dck/` directory. Add `-original`
+to run the original implementation.
+
+See effect options and runnable examples for independent
+logo phases, named scroll modes, DNA, vectorball objects and continuous cube handoffs.
 
 ## Try the corrected work
 
@@ -22,6 +26,7 @@ go run ./cmd/gallery -demo go-multiscreen
 # One configurable scroller: mixed fonts, speed/pause/shape/color controls,
 # raster bands and independently positioned logos.
 go run ./examples/composer
+go run ./examples/scrollmodes
 
 # Compare an actual migrated production with its pinned original Git revision.
 go run ./cmd/fidelity -demo bilizir-demo
@@ -35,6 +40,8 @@ script with a kit-generated approximation. Each source repository has a local
 Bilizir's requested logo variation is enabled by default in `bilizir-demo`: the
 logo and scrolling text share the same two-pass deformation. Press **L** to switch
 to the original logo. Fidelity comparisons explicitly use original-logo mode.
+DMA Is Back similarly enables continuous cube transitions in its DCK version;
+baseline comparisons can select the historical transition behavior.
 
 ## One scrolling pipeline
 
@@ -77,6 +84,11 @@ and layout pipeline. See the scrolling guide.
 - `composite.Repeat`: repeating/rotozoom textures with explicit origin and color.
 - `sprites.Projector`: shared vectorball projection, model matrix, image selection,
   camera conventions, depth ordering and optional perspective sprite scaling.
+- `sprites.Cube`, `Pyramid`, `Plane`, `Flag`: parametric point-cloud objects and
+  anchored wave deformation, independent of the ball images.
+- `scrolling.Mode`: normal, bounce, sine, zoom, perspective, TCB forms and DNA;
+  select through text controls or a repeating `ModeSequence`, with arbitrary fonts.
+- `geometry.Handoff`: match all transformed vertices at effect boundaries.
 - `kit.Group` / `Sequence`: arbitrary layer order and local scene timing.
 
 The full [composer example](examples/composer/main.go) demonstrates these choices.
@@ -92,9 +104,10 @@ its complete scene/audio extraction is not finished.
 
 ## Evidence and limits
 
-**18 productions:** eight complete-frame comparisons each against the original
-source revision, with **zero differing pixels** at the tested states (frames
-0, 1, 60, 240, 600, 1200, 2400 and 4800). Rendering methods in these applications
+**18 productions:** **167 complete-frame comparisons with zero differing pixels**
+against their original revisions. Seventeen have eight checkpoints at frames
+0, 1, 60, 240, 600, 1200, 2400 and 4800. TCB has 31 checkpoints through tick 14000,
+including each transition into its eight forms. Rendering methods in these applications
 actually call the shared kit. This is a component migration, not a claim that all
 application code has moved into the library.
 
@@ -118,6 +131,7 @@ go test -race ./...
 go vet ./...
 go run ./cmd/checkassets -demos ../../demos
 go run ./cmd/checkaudio -demos ../../demos
+go run ./cmd/checkeffects -demos ../../demos
 go run ./cmd/fidelity -demo grodan-kvack-kvack-demo
 ```
 

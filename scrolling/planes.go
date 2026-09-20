@@ -60,12 +60,27 @@ func NewPlanes(c PlanesConfig) (*Planes, error) {
 	if len(c.Slots) == 0 || len(c.Forms) == 0 || c.Visible < 1 || c.Visible > 16383 || !finite(c.Projection.Focal) || c.Projection.Focal <= 0 || !finite(c.PhaseStep) {
 		return nil, fmt.Errorf("scrolling: invalid multi-plane configuration")
 	}
+	for _, v := range []float64{c.Projection.Depth, c.Projection.OriginX, c.Projection.CenterX, c.Projection.CenterY, c.Projection.XBias, c.Projection.YBias, c.Projection.VerticalOffset} {
+		if !finite(v) {
+			return nil, fmt.Errorf("scrolling: nonfinite plane projection")
+		}
+	}
+	for _, f := range c.Forms {
+		for _, v := range []float64{f.DepthAmplitude, f.DepthStep, f.DepthSpeed, f.DepthPhase, f.Height, f.VerticalStep, f.VerticalSpeed, f.VerticalPhase} {
+			if !finite(v) {
+				return nil, fmt.Errorf("scrolling: nonfinite plane form")
+			}
+		}
+	}
 	p := &Planes{config: c, points: make([]PlanePoint, c.Visible)}
 	for _, s := range c.Slots {
 		if !finite(s.Advance) || s.Advance <= 0 || s.Form < -1 || s.Form >= len(c.Forms) {
 			return nil, fmt.Errorf("scrolling: invalid multi-plane slot")
 		}
 		p.length += s.Advance
+	}
+	if !finite(p.length) {
+		return nil, fmt.Errorf("scrolling: multi-plane text is too long")
 	}
 	p.config.Slots = append([]PlaneSlot(nil), c.Slots...)
 	p.config.Forms = append([]PlaneForm(nil), c.Forms...)

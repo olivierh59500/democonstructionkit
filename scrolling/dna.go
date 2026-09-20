@@ -37,7 +37,7 @@ func NewDNAFrames(glyphs []*ebiten.Image, c DNAFrameConfig) (*DNAFrames, error) 
 	if c.Frames == 0 {
 		c.Frames = 30
 	}
-	if c.Frames < 2 || c.Frames > 512 || c.Frames%2 != 0 || c.Height < 0 || !finite(c.Step) || c.Step < 0 || len(glyphs) == 0 {
+	if c.Frames < 2 || c.Frames > 512 || c.Frames%2 != 0 || c.Height < 0 || !finite(c.Step) || c.Step < 0 || !finite(c.CoreY) || len(glyphs) == 0 {
 		return nil, fmt.Errorf("scrolling: invalid DNA filmstrip configuration")
 	}
 	d := &DNAFrames{Count: c.Frames, Entries: make([]DNAEntry, len(glyphs)), batch: composite.NewQuadBatch(256)}

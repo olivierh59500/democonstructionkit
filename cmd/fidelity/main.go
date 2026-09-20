@@ -15,6 +15,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"strconv"
 	"strings"
 
 	"github.com/olivierh59500/democonstructionkit/fidelity"
@@ -69,6 +70,7 @@ func run() error {
 	kitRoot := flag.String("kit", ".", "construction kit checkout")
 	out := flag.String("out", "captures/fidelity", "comparison directory")
 	referenceOnly := flag.Bool("reference-only", false, "capture the pinned original only")
+	frameList := flag.String("frames", "0,1,60,240,600,1200,2400,4800", "comma-separated capture ticks")
 	flag.Parse()
 	p, ok := probes[*demo]
 	if !ok {
@@ -103,7 +105,14 @@ func run() error {
 	if revision == "" {
 		return fmt.Errorf("missing original revision")
 	}
-	frames := []int{0, 1, 60, 240, 600, 1200, 2400, 4800}
+	var frames []int
+	for _, part := range strings.Split(*frameList, ",") {
+		frame, err := strconv.Atoi(strings.TrimSpace(part))
+		if err != nil || frame < 0 || (len(frames) > 0 && frame <= frames[len(frames)-1]) {
+			return fmt.Errorf("frames must be nonnegative and strictly increasing")
+		}
+		frames = append(frames, frame)
+	}
 	if err = captureRevision(source, revision, root, filepath.Join(output, "reference"), p, frames); err != nil {
 		return err
 	}
