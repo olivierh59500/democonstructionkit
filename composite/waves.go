@@ -13,10 +13,13 @@ type StripWave struct{ Phase, Amplitude, Spatial, Speed float64 }
 // offsets and phase are independent; the same instance may deform a text surface,
 // sprite or logo. Advance is explicit, so repeated DrawAt calls are deterministic.
 type WaveStrips struct {
-	Axis      Axis
-	Thickness int
-	Waves     []StripWave
-	Filter    ebiten.Filter
+	Axis         Axis
+	Thickness    int
+	Waves        []StripWave
+	Filter       ebiten.Filter
+	CenterStrips bool // Anchor each individual crop at its own center.
+	AntiAlias    bool // Preserve coverage at fractional strip edges.
+	PixelSnap    bool // Round strip origins to pixel boundaries after centering.
 }
 
 func (w *WaveStrips) Advance() {
@@ -48,8 +51,15 @@ func (w *WaveStrips) DrawAt(dst, src *ebiten.Image, x, y float64) {
 			r = Region{X: float64(b.Min.X + i), Y: float64(b.Min.Y), Width: float64(min(band, extent-i)), Height: float64(b.Dy())}
 			dx, dy = x+float64(i), y+offset
 		}
-		op := ebiten.DrawImageOptions{Filter: w.Filter}
+		if w.CenterStrips {
+			dx -= r.Width / 2
+			dy -= r.Height / 2
+		}
+		if w.PixelSnap {
+			dx, dy = math.Floor(dx+.5), math.Floor(dy+.5)
+		}
+		op := RegionOptions{DrawImageOptions: ebiten.DrawImageOptions{Filter: w.Filter}, AntiAlias: w.AntiAlias}
 		op.GeoM.Translate(dx, dy)
-		DrawRegion(dst, src, r, &op)
+		DrawRegionWithOptions(dst, src, r, &op)
 	}
 }

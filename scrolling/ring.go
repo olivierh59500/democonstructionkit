@@ -132,6 +132,23 @@ func (r *Ring) Letters() []RingLetter { return append([]RingLetter(nil), r.lette
 // also drive scene choreography, independently of the built-in ^ commands.
 func (r *Ring) NextRune() rune { return r.character(r.next) }
 
+// Cursor is the next text index, exposed for original intro/loop transitions.
+func (r *Ring) Cursor() int { return r.next }
+
+// Print draws a static bitmap string with the same fractional atlas mapping.
+func (g BitmapGrid) Print(dst *ebiten.Image, text string, x, y, scaleX, scaleY float64) {
+	for i, ch := range []rune(text) {
+		r, ok := g.Region(ch)
+		if !ok {
+			continue
+		}
+		op := ebiten.DrawImageOptions{Filter: g.Filter}
+		op.GeoM.Scale(scaleX, scaleY)
+		op.GeoM.Translate(x+float64(i)*g.Width*scaleX, y)
+		composite.DrawRegion(dst, g.Image, r, &op)
+	}
+}
+
 // Step advances exactly one source tick. Draw never changes speed or phase.
 func (r *Ring) Step() {
 	if r.speed == 0 {

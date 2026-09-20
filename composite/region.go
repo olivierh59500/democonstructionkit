@@ -23,10 +23,26 @@ func (r Region) Valid() bool {
 // DrawRegion applies the usual image transform, filtering, tint and blending
 // without rounding a source crop to image.Rectangle. It allocates no textures.
 func DrawRegion(dst, src *ebiten.Image, r Region, options *ebiten.DrawImageOptions) {
+	op := RegionOptions{}
+	if options != nil {
+		op.DrawImageOptions = *options
+	}
+	DrawRegionWithOptions(dst, src, r, &op)
+}
+
+// RegionOptions adds geometric edge coverage to the usual image options.
+// Enable AntiAlias for fractional strips thinner than one destination pixel.
+type RegionOptions struct {
+	ebiten.DrawImageOptions
+	AntiAlias bool
+}
+
+// DrawRegionWithOptions preserves subpixel strips using optional edge coverage.
+func DrawRegionWithOptions(dst, src *ebiten.Image, r Region, options *RegionOptions) {
 	if dst == nil || src == nil || !r.Valid() {
 		return
 	}
-	var op ebiten.DrawImageOptions
+	var op RegionOptions
 	if options != nil {
 		op = *options
 	}
@@ -37,5 +53,5 @@ func DrawRegion(dst, src *ebiten.Image, r Region, options *ebiten.DrawImageOptio
 		x, y := op.GeoM.Apply(p[0], p[1])
 		vertices[i] = ebiten.Vertex{DstX: float32(x), DstY: float32(y), SrcX: float32(uv[i][0]), SrcY: float32(uv[i][1]), ColorR: op.ColorScale.R(), ColorG: op.ColorScale.G(), ColorB: op.ColorScale.B(), ColorA: op.ColorScale.A()}
 	}
-	dst.DrawTriangles(vertices[:], []uint16{0, 1, 2, 0, 2, 3}, src, &ebiten.DrawTrianglesOptions{Filter: op.Filter, Blend: op.Blend, ColorM: op.ColorM, CompositeMode: op.CompositeMode, ColorScaleMode: ebiten.ColorScaleModePremultipliedAlpha, Address: ebiten.AddressClampToZero})
+	dst.DrawTriangles(vertices[:], []uint16{0, 1, 2, 0, 2, 3}, src, &ebiten.DrawTrianglesOptions{AntiAlias: op.AntiAlias, Filter: op.Filter, Blend: op.Blend, ColorM: op.ColorM, CompositeMode: op.CompositeMode, ColorScaleMode: ebiten.ColorScaleModePremultipliedAlpha, Address: ebiten.AddressClampToZero})
 }
