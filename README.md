@@ -1,141 +1,120 @@
 # democonstructionkit
 
-A Go construction kit for Ebitengine demoscene productions, developed from the
-19 demos in the sibling `demos/` directory. Effects accept explicit assets, font
-metrics and motion parameters; production scripts remain ordinary Go.
+A Go/Ebitengine construction kit extracted from the actual productions in `demos/`.
+The shared code must preserve their original artwork, text, lookup tables, timing,
+pixel rounding, source crops, drawing order and blend operations.
 
-The library includes 23 source-atlas descriptions, reusable effect families,
-YM/module audio adapters and 19 runnable composition recipes. Recipes are effect
-studies, **not faithful ports** of the full productions. Original timelines, scene
-data, artwork and musical synchronization remain part of each production.
+**The first gallery was not a faithful reconstruction.** It has been moved to
+`cmd/studies`. The current gallery launches the original applications after their
+shared rendering components have been migrated to this module.
 
-## Run
+## Try the corrected work
 
-Requires Go 1.26+ and Ebitengine's platform dependencies. Versions match the local
-source demos: Ebitengine 2.9.11, ym-player `3f73bdca82e5`, go-zikmu `b245427b8556`.
-
-From this repository:
+From `lib/democonstructionkit`:
 
 ```sh
-# Self-contained example; all graphics are created in Go.
-go run ./examples/minimal
+# Original productions using the shared kit; original sound/controls are retained.
+go run ./cmd/gallery -demo bilizir-demo
+go run ./cmd/gallery -demo viva_tcb
+go run ./cmd/gallery -demo megatwist
+go run ./cmd/gallery -demo go-multiscreen
 
-# Reuse the original local assets, without copying them into this repository.
-go run ./cmd/gallery -demos ../../demos -demo bilizir-demo -audio
-go run ./cmd/gallery -demos ../../demos -demo go-multiscreen
-go run ./cmd/gallery -demos ../../demos -demo go-secondreality -audio
-go run ./cmd/gallery -list
+# One configurable scroller: mixed fonts, speed/pause/shape/color controls,
+# raster bands and independently positioned logos.
+go run ./examples/composer
 
-# Optional external module/YM music.
-go run ./cmd/gallery -demo teamg1-demo -music /path/to/music.xm
-
-# Render a contact sheet at a fixed animation time.
-go run ./cmd/gallery -demo all -time 3 -capture captures/gallery.png
+# Compare an actual migrated production with its pinned original Git revision.
+go run ./cmd/fidelity -demo bilizir-demo
 ```
 
-Space pauses the gallery, Escape exits. Music is optional; `-audio` uses the
-selected recipe's original track. `-music` accepts a standalone YM/MOD/XM/S3M/IT.
-The Second Reality example extracts and normalizes its original Purple Motion
-S3M from `Reality.FC` before passing it to go-zikmu.
+`-demos /path/to/demos` selects another checkout. `gallery -list` lists productions.
+The launcher runs the migrated source application; it does not replace its scene
+script with a kit-generated approximation. Each source repository has a local
+`go.mod` replacement pointing back to this module.
 
-## Compose a demo
+## One scrolling pipeline
 
 ```go
-metrics, err := font.NewGrid(font.Grid{
-    Bounds: atlas.Bounds(), Cell: image.Pt(32, 33), Columns: 10,
-    Order: " ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!?", Uppercase: true,
+scroll, err := scrolling.New(scrolling.Config{
+    Fonts: map[string]scrolling.Face{
+        "small": {Atlas: smallAtlas, Metrics: smallMetrics},
+        "large": {Atlas: largeAtlas, Metrics: largeMetrics},
+    },
+    Font: "small", Controls: scrolltext.Braces,
+    Speed: 120, X: 800, Y: 300, Repeat: true, Gap: 80,
+    Text: "HELLO {font:large}WORLD {speed:240}FAST {pause:1}{speed:120}AGAIN ",
 })
-if err != nil { return err }
-
-scroll, err := effects.NewScroller(atlas, metrics, effects.ScrollConfig{
-    Width: 640, Height: 400, Message: "HELLO DEMOSCENE! ",
-    Speed: 120, Gap: 64, Y: 300, Scale: 1,
-    Wave: motion.Waves{{Amplitude: 24, Spatial: .02, Speed: 2}},
-})
-if err != nil { return err }
-
-game, err := democonstructionkit.NewGame(
-    democonstructionkit.Group{background, logo, scroll},
-    democonstructionkit.Config{Width: 640, Height: 400, TPS: 60},
-)
-if err != nil { return err }
-defer game.Close()
-ebiten.SetTPS(60)
-return ebiten.RunGame(game)
 ```
 
-For irregular/proportional atlases, use `font.New` with a `map[rune]font.Glyph`.
-`Rect`, `Advance`, `OffsetX`, `OffsetY` and `LineHeight` are independent. Grid
-descriptions accept NUL holes, gutters, margins, aliases and a fallback character.
-See [font presets](presets/fonts.go) and the [complete minimal example](examples/minimal/main.go).
+Use `Controls: nil` for literal text. Register any number of independent fonts,
+with their own ordering, cell sizes, advances, bearings, aliases and blank glyphs.
+The built-in parser supports font, speed, pause, scale, tracking, shape and effect
+controls. A custom decoder can retain original syntax or binary control payloads;
+`scrolltext.DomSizes` implements the original `^CsN;` syntax.
 
-## Building blocks
+`Scrolling.DrawAt` also accepts original positions, visible ranges, circular text
+windows, reverse drawing order and a glyph mapper. This lets an existing demo keep
+its exact tick counters and reset conditions while sharing the renderer. Shader
+and animated-strip backends use `DrawState.Paint`, retaining the same iteration
+and layout pipeline. See the scrolling guide.
 
-| Package | Responsibility |
-| --- | --- |
-| `font` | Immutable bitmap metrics and Unicode text layout; no Ebitengine dependency |
-| `motion`, `geometry`, `timeline` | Waves/tables, easing/keyframes, 3D math/clipping/morphing, clocks and scene timing |
-| `outline` | TrueType/OpenType curves flattened into reusable vector text |
-| root package | `Effect`, `Group`, `Sequence`, `Viewport`, `Game` and custom callbacks |
-| `effects` | Text, scrolling, strip/grid warp, masks, rasters, sprites, tiles/rotozoom, tilemaps, stars, meshes, wireframes, vectorballs, reflection, plasma, tunnel, ripple, lens, palette pixels and CRT |
-| `render`, `assets` | Bounded triangle batches, persistent surfaces and `fs.FS` asset caching |
-| `sound` | Device-independent stereo PCM for ym-player and go-zikmu |
-| `sound/ebiten` | Playback using the application's single Ebitengine audio context |
-| `presets`, `recipes` | Source font/music metadata and compositions for all 19 repositories |
+## Compose effects without a prescribed layout
 
-All animation uses seconds, radians and pixels. Convert original frame-based
-increments explicitly (e.g. 2 pixels/tick at 50 Hz becomes 100 pixels/second).
-`Update` receives an absolute local time; `Draw` renders the current state. Do not
-share one mutable effect instance between two independently timed scenes.
+- `composite.Sprites`: configurable sprite/logo counts, frames, crops, transforms,
+  drawing order and per-instance color/blend/filter options.
+- `composite.Strips`: exact row/column sampling for scrollers, distorted logos and
+  image-based rasters; source selection is independent of destination geometry.
+- `composite.NewPass` / `Layer`: reusable surfaces, ordered deformation passes,
+  clipping, transforms and blending around any effect.
+- `composite.QuadBatch`: bounded triangle batches, explicit diagonal selection and
+  optional Kage shaders/custom vertex attributes.
+- `composite.Repeat`: repeating/rotozoom textures with explicit origin and color.
+- `sprites.Projector`: shared vectorball projection, model matrix, image selection,
+  camera conventions, depth ordering and optional perspective sprite scaling.
+- `kit.Group` / `Sequence`: arbitrary layer order and local scene timing.
 
-`Warp` is the common mechanism for scanline scrollers, column sine waves, DNA
-twists and text planes. `MeshEffect.Deform`, `PointCloud.Shape`, sprite paths,
-keyframe tracks and pixel callbacks keep artistic choices outside shared code.
+The full [composer example](examples/composer/main.go) demonstrates these choices.
+The original demo applications contain the production-specific schedules and data.
+Shared code handles rendering; artistic parameters are not replaced with defaults.
 
-## Audio contract
+Additional packages provide bitmap metrics (`font`), curves/keyframes (`motion`),
+geometry, palettes (`indexed`), vector font outlines (`outline`), asset loading,
+and device-independent YM/go-zikmu PCM (`sound`). Use `sound/ebiten` with one
+application-owned audio context. Existing production audio was preserved during
+these visual migrations. Second Reality still uses its original ST3 synchronization;
+its complete scene/audio extraction is not finished.
 
-Create one `audio.Context`, then pass it to `sound/ebiten.NewPlayer`. Sample rates
-must match. Construct device playback during the first Update for mobile startup.
-Streams emit stereo float32 little-endian PCM and accept arbitrary read lengths.
-Fixed decoder blocks preserve YM output across different callback sizes.
+## Evidence and limits
 
-PCM seeking uses byte offsets and replays from the beginning when moving backward;
-it is accurate but expensive. Prefer `Player.Seek(time.Duration)` when a device is
-attached, because it also resets buffered playback. Device `Position()` measures
-audible progress; stream `Position()` measures bytes consumed by the device.
+**18 productions:** eight complete-frame comparisons each against the original
+source revision, with **zero differing pixels** at the tested states (frames
+0, 1, 60, 240, 600, 1200, 2400 and 4800). Rendering methods in these applications
+actually call the shared kit. This is a component migration, not a claim that all
+application code has moved into the library.
 
-YM loops use the decoder's loop mode. YM EOF has decoder-block granularity.
-go-zikmu currently exposes neither end-of-song nor order/row markers publicly:
-module `Duration` is optional, but **required with `Loop: true`**. Without it, the
-stream follows the upstream replay engine until closed. The kit does not guess
-song endings from silence or claim exact Second Reality musical synchronization.
+**Second Reality:** only indexed palette expansion has been shared and compared
+across renderer modes using a VRAM fixture. This does **not** establish complete
+scene extraction or musical synchronization through go-zikmu.
 
-## Verify
+JSON reports identify the original and migrated commits in docs/fidelity.
+The fidelity contract and coverage distinguish complete-frame
+comparisons from the renderer-only case. Audio is disabled during captures and
+wall-clock/random-seed inputs are fixed in temporary snapshots. PNG references,
+candidates and differences are written to `captures/fidelity/` and are not bundled.
+
+## Build and checks
+
+Go 1.26+ is required. Ebitengine and audio versions remain pinned in `go.mod`.
+Graphics tests require a native/virtual display.
 
 ```sh
 go test -race ./...
 go vet ./...
 go run ./cmd/checkassets -demos ../../demos
 go run ./cmd/checkaudio -demos ../../demos
-go run ./cmd/gallery -demos ../../demos -check
-GOOS=js GOARCH=wasm go build -o /tmp/dck-minimal.wasm ./examples/minimal
+go run ./cmd/fidelity -demo grodan-kvack-kvack-demo
 ```
 
-Ebitengine tests and `gallery -check` require a working graphics session (or an
-appropriate virtual display on Linux). Pure packages and source asset/audio checks
-can run without a display:
-
-```sh
-go test -race ./font ./motion ./geometry ./timeline ./outline ./presets ./sound
-```
-
-The gallery check samples every recipe at seven times, verifies nonuniform and
-animated output, and compares repeated Draw calls. It is not an image comparison
-against the original demos. Source audio checks decode both Second Reality tracks
-and the 18 YM assets; they do not assert replay fidelity for an entire song.
-
-See the source inventory, migration guide,
-validation notes and commit progress.
-
-Original assets stay in their repositories and retain their authorship and
-licenses. This repository does not bundle the source artwork or music.
+All 19 original repository test suites also pass after their migrations. See
+validation details, source inventory,
+migration notes and progress.
