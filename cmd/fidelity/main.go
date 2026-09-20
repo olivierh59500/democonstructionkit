@@ -38,7 +38,7 @@ var probes = map[string]probe{
 	"3d_doc":                      {768, 540, `g:=NewGame();if err:=g.Init();err!=nil{return nil,err};g.audioReady=true;return g,nil`, ""},
 	"teamg1-demo":                 {768, 540, `g:=NewGame();g.audioReady=true;return g,nil`, ""},
 	"go-cocoisthebest":            {800, 600, `g:=NewGame();g.audioReady=true;return g,nil`, ""},
-	"dma-is-back":                 {768, 540, `g:=NewGame();g.audioReady=true;return g,nil`, ""},
+	"dma-is-back":                 {768, 540, `g:=NewGame();if mode,ok:=any(g).(interface{SetSmoothTransitions(bool)});ok{mode.SetSmoothTransitions(false)};g.audioReady=true;return g,nil`, ""},
 	"go-cuddlymenu":               {768, 536, `g:=NewGame();g.audioReady=true;return g,nil`, ""},
 	"go-fr010":                    {640, 480, `g,err:=NewGame();if err!=nil{return nil,err};g.audioReady=true;return g,nil`, ""},
 	"go-vectorballs":              {640, 480, `g:=&Game{shapeManager:NewShapeManager(),zoomFactor:.35,fov:1450,centerX:320,centerY:193,position:Vector3{Z:850},transformed:make([]Point3D,0,64),dirty:true};g.loadImages();g.playgroundCanvas=ebiten.NewImage(640,386);g.reflectionSource=g.playgroundCanvas.SubImage(image.Rect(0,288,640,368)).(*ebiten.Image);g.whiteImage=ebiten.NewImage(1,1);g.whiteImage.Fill(color.White);g.initActions();g.currentAction=-1;g.nextAction();return g,nil`, `"image";"image/color"`},
@@ -121,6 +121,9 @@ func run() error {
 	r := report{Demo: *demo, Reference: revision, Candidate: head, Scope: "complete production frames; device audio disabled; deterministic clock"}
 	if *demo == "bilizir-demo" {
 		r.Scope += "; original logo mode (intentional logo deformation disabled)"
+	}
+	if *demo == "dma-is-back" {
+		r.Scope += "; historical cube transitions (intentional continuity fix disabled)"
 	}
 	if *demo == "go-secondreality" {
 		r.Scope = "indexed renderer fixture only; original scene choreography and ST3 synchronization are not exercised"
@@ -234,13 +237,18 @@ func captureRevision(source, revision, root, output string, p probe, frames []in
 	}
 	packageDir := tmp
 	target := "."
+	// New revisions keep the DCK implementation alongside the original packages.
+	if info, err := os.Stat(filepath.Join(tmp, "dck")); err == nil && info.IsDir() {
+		packageDir = filepath.Join(tmp, "dck")
+		target = "./dck"
+	}
 	if filepath.Base(source) == "go-cuddlymenu" {
-		packageDir = filepath.Join(tmp, "menu")
-		target = "./menu"
+		packageDir = filepath.Join(packageDir, "menu")
+		target += "/menu"
 	}
 	if filepath.Base(source) == "go-secondreality" {
-		packageDir = filepath.Join(tmp, "internal/graphics")
-		target = "./internal/graphics"
+		packageDir = filepath.Join(packageDir, "internal/graphics")
+		target += "/internal/graphics"
 	}
 	entries, err := os.ReadDir(packageDir)
 	if err != nil {

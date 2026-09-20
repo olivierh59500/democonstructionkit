@@ -32,6 +32,7 @@ func run() error {
 	name := flag.String("demo", "bilizir-demo", "original production name")
 	demos := flag.String("demos", "../../demos", "path to the migrated original repositories")
 	list := flag.Bool("list", false, "list productions")
+	original := flag.Bool("original", false, "run the preserved original instead of its DCK version")
 	audio := flag.Bool("audio", true, "original productions keep their original audio and controls")
 	flag.Parse()
 	if !*audio {
@@ -58,7 +59,11 @@ func run() error {
 	if !strings.Contains(string(mod), "github.com/olivierh59500/democonstructionkit") {
 		return fmt.Errorf("%s does not contain the construction-kit migration", dir)
 	}
-	c := exec.Command("go", append([]string{"run", "./cmd/" + command}, flag.Args()...)...)
+	entry := "./dck/cmd/" + command
+	if *original {
+		entry = "./cmd/" + command
+	}
+	c := exec.Command("go", append([]string{"run", entry}, flag.Args()...)...)
 	c.Dir = dir
 	c.Stdin = os.Stdin
 	c.Stdout = os.Stdout
