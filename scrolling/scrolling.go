@@ -5,6 +5,7 @@ package scrolling
 import (
 	"fmt"
 	"math"
+	"sort"
 
 	"github.com/hajimehoshi/ebiten/v2"
 	kit "github.com/olivierh59500/democonstructionkit"
@@ -52,6 +53,8 @@ type Config struct {
 	Effects          map[string]Mapper
 	Shapes           map[string]Mapper
 	Shape            string
+	Modes            map[string]Mode
+	Sequence         *ModeSequence // When supplied, overrides text shape controls.
 }
 
 // DrawState allows an original production to retain its exact tick counters,
@@ -85,6 +88,13 @@ type Scrolling struct {
 	length, duration float64
 	segments         []segment
 	frame            kit.Frame
+	draws            []glyphDraw
+}
+
+type glyphDraw struct {
+	sample  Sample
+	options ebiten.DrawImageOptions
+	depth   float64
 }
 
 func New(c Config) (*Scrolling, error) {
@@ -92,6 +102,16 @@ func New(c Config) (*Scrolling, error) {
 		return nil, fmt.Errorf("scrolling: invalid speed/gap")
 	}
 	s := &Scrolling{config: c}
+	if !s.hasShape(c.Shape) {
+		return nil, fmt.Errorf("scrolling: unknown initial mode %q", c.Shape)
+	}
+	if c.Sequence != nil {
+		for _, cue := range c.Sequence.cues {
+			if !s.hasShape(cue.Mode) {
+				return nil, fmt.Errorf("scrolling: unknown sequence mode %q", cue.Mode)
+			}
+		}
+	}
 	if c.Glyphs != nil {
 		if c.Text != "" || len(c.Tokens) > 0 {
 			return nil, fmt.Errorf("scrolling: choose text or supplied glyphs")
@@ -115,7 +135,7 @@ func New(c Config) (*Scrolling, error) {
 			return nil, fmt.Errorf("scrolling: a glyph sequence must advance")
 		}
 		s.addSegment(0, s.length+c.Gap, c.Speed, c.Shape)
-		return s, nil
+		return s, s.prepareModes()
 	}
 	tokens := c.Tokens
 	var err error
@@ -208,7 +228,7 @@ func New(c Config) (*Scrolling, error) {
 			speed = t.Value
 		case scrolltext.Shape:
 			if t.Text != "none" {
-				if _, ok := c.Shapes[t.Text]; !ok {
+				if !s.hasShape(t.Text) {
 					return nil, fmt.Errorf("scrolling: unknown shape %q", t.Text)
 				}
 			}
@@ -226,7 +246,18 @@ func New(c Config) (*Scrolling, error) {
 		}
 	}
 	s.addSegment(lastMarker, s.length+c.Gap, speed, shape)
-	return s, nil
+	return s, s.prepareModes()
+}
+
+func (s *Scrolling) prepareModes() error {
+	for name, mode := range s.config.Modes {
+		if mode.Prepare != nil {
+			if err := mode.Prepare(s.glyphs); err != nil {
+				return fmt.Errorf("scrolling: mode %q: %w", name, err)
+			}
+		}
+	}
+	return nil
 }
 func finite(v float64) bool { return !math.IsNaN(v) && !math.IsInf(v, 0) }
 func (s *Scrolling) addSegment(from, to, speed float64, shape string) {
@@ -242,6 +273,15 @@ func (s *Scrolling) addSegment(from, to, speed float64, shape string) {
 }
 func (s *Scrolling) Length() float64 { return s.length }
 func (s *Scrolling) GlyphCount() int { return len(s.glyphs) }
+
+func (s *Scrolling) hasShape(name string) bool {
+	if name == "none" || name == "" {
+		return true
+	}
+	_, legacy := s.config.Shapes[name]
+	_, mode := s.config.Modes[name]
+	return legacy || mode
+}
 
 // Window starts at an arbitrary character in a circular proportional message and
 // includes exactly the glyphs whose pen origins fit extent. This preserves the
@@ -299,6 +339,9 @@ func (s *Scrolling) StateAt(seconds float64) DrawState {
 	} else {
 		state.X -= state.Position
 	}
+	if s.config.Sequence != nil {
+		state.Shape = s.config.Sequence.At(seconds)
+	}
 	return state
 }
 func (s *Scrolling) Update(f kit.Frame) error { s.frame = f; return nil }
@@ -320,6 +363,19 @@ func (s *Scrolling) DrawAt(dst *ebiten.Image, state DrawState) {
 	if first >= end {
 		return
 	}
+	mode := s.config.Modes[state.Shape]
+	s.draws = s.draws[:0]
+	paint := state.Paint
+	if paint == nil {
+		paint = mode.Paint
+	}
+	flush := func(sample Sample, op ebiten.DrawImageOptions) {
+		if paint != nil {
+			paint(dst, sample, op)
+		} else if sample.Glyph.Image != nil {
+			dst.DrawImage(sample.Glyph.Image, &op)
+		}
+	}
 	draw := func(i int) {
 		index := i
 		cycle := 0
@@ -339,17 +395,15 @@ func (s *Scrolling) DrawAt(dst *ebiten.Image, state DrawState) {
 		op.GeoM.Scale(g.ScaleX*state.ScaleX, g.ScaleY*state.ScaleY)
 		op.GeoM.Translate(x, y)
 		sample := Sample{Index: i, Glyph: g, X: x, Y: y, Time: state.Time, Position: state.Position, Shape: state.Shape}
-		for _, mapper := range []Mapper{s.config.Map, s.config.Shapes[state.Shape], s.config.Effects[g.Effect], state.Map} {
+		for _, mapper := range []Mapper{s.config.Map, s.config.Shapes[state.Shape], mode.Map, s.config.Effects[g.Effect], state.Map} {
 			if mapper != nil && !mapper(sample, &op) {
 				return
 			}
 		}
-		if state.Paint != nil {
-			state.Paint(dst, sample, op)
-			return
-		}
-		if g.Image != nil {
-			dst.DrawImage(g.Image, &op)
+		if mode.Depth != nil {
+			s.draws = append(s.draws, glyphDraw{sample, op, mode.Depth(sample)})
+		} else {
+			flush(sample, op)
 		}
 	}
 	if state.Reverse {
@@ -359,6 +413,12 @@ func (s *Scrolling) DrawAt(dst *ebiten.Image, state DrawState) {
 	} else {
 		for i := first; i < end; i++ {
 			draw(i)
+		}
+	}
+	if mode.Depth != nil {
+		sort.SliceStable(s.draws, func(i, j int) bool { return s.draws[i].depth > s.draws[j].depth })
+		for _, d := range s.draws {
+			flush(d.sample, d.options)
 		}
 	}
 }

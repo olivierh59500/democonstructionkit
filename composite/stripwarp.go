@@ -29,10 +29,11 @@ type StripWarpConfig struct {
 // a wider source image with horizontal padding when SampleX requires overscan.
 // DrawAt must run on the graphics goroutine. Source and destination stay borrowed.
 type StripWarp struct {
-	config  StripWarpConfig
-	size    image.Point
-	surface *ebiten.Image
-	columns []*ebiten.Image
+	config    StripWarpConfig
+	size      image.Point
+	surface   *ebiten.Image
+	columns   []*ebiten.Image
+	variation WarpVariation
 }
 
 func NewStripWarp(size image.Point, config StripWarpConfig) (*StripWarp, error) {
@@ -40,7 +41,7 @@ func NewStripWarp(size image.Point, config StripWarpConfig) (*StripWarp, error) 
 		math.IsNaN(config.VerticalBias) || math.IsInf(config.VerticalBias, 0) {
 		return nil, fmt.Errorf("composite: invalid strip warp dimensions or bias")
 	}
-	w := &StripWarp{config: config, size: size, surface: render.NewSurface(size.X, size.Y)}
+	w := &StripWarp{config: config, size: size, surface: render.NewSurface(size.X, size.Y), variation: IdentityWarpVariation()}
 	for x := 0; x < size.X; x += config.ColumnWidth {
 		r := image.Rect(x, 0, min(x+config.ColumnWidth, size.X), size.Y)
 		w.columns = append(w.columns, w.surface.SubImage(r).(*ebiten.Image))
@@ -59,12 +60,15 @@ func (w *StripWarp) DrawAt(dst, source *ebiten.Image, frame kit.Frame, x, y floa
 		return
 	}
 	w.surface.Clear()
+	v := w.variation
+	frame.Time += v.TimeOffset
 	bounds := source.Bounds()
 	for row, top := 0, 0; top < w.size.Y; row, top = row+1, top+w.config.RowHeight {
 		offset := 0
 		if w.config.SampleX != nil {
-			offset = w.config.SampleX(row, frame)
+			offset = w.config.SampleX(row+v.RowPhase, frame)
 		}
+		offset = int(v.SampleOffset + v.SampleOrigin + (float64(offset)-v.SampleOrigin)*v.HorizontalGain)
 		r := image.Rect(offset, top, offset+w.size.X, min(top+w.config.RowHeight, w.size.Y)).Add(bounds.Min)
 		op := ebiten.DrawImageOptions{}
 		op.GeoM.Translate(0, float64(top))
@@ -73,12 +77,39 @@ func (w *StripWarp) DrawAt(dst, source *ebiten.Image, frame kit.Frame, x, y floa
 	for column, img := range w.columns {
 		offset := 0.0
 		if w.config.OffsetY != nil {
-			offset = w.config.OffsetY(column, frame)
+			offset = w.config.OffsetY(column+v.ColumnPhase, frame)
 		}
+		offset *= v.VerticalGain
 		op := ebiten.DrawImageOptions{}
 		op.GeoM.Translate(x+float64(column*w.config.ColumnWidth), y+w.config.VerticalBias+offset)
 		dst.DrawImage(img, &op)
 	}
+}
+
+// WarpVariation changes a shared warp without changing its source animation.
+// RowPhase and ColumnPhase are signed strip offsets; callbacks must handle them.
+// Gains can be zero or negative. SampleOrigin is the horizontal padding origin
+// around which HorizontalGain acts, so changing amplitude does not move the image.
+// TimeOffset affects Frame.Time; it does not alter caller-owned tick counters.
+type WarpVariation struct {
+	RowPhase, ColumnPhase                  int
+	HorizontalGain, VerticalGain           float64
+	SampleOrigin, SampleOffset, TimeOffset float64
+}
+
+func IdentityWarpVariation() WarpVariation {
+	return WarpVariation{HorizontalGain: 1, VerticalGain: 1}
+}
+
+// SetVariation updates parameters without allocating or resetting animation.
+func (w *StripWarp) SetVariation(v WarpVariation) error {
+	for _, value := range []float64{v.HorizontalGain, v.VerticalGain, v.SampleOrigin, v.SampleOffset, v.TimeOffset} {
+		if math.IsNaN(value) || math.IsInf(value, 0) {
+			return fmt.Errorf("composite: nonfinite warp variation")
+		}
+	}
+	w.variation = v
+	return nil
 }
 
 // Close releases only the internal surface and is safe to call repeatedly.
