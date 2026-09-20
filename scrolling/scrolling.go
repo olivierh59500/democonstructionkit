@@ -1,0 +1,325 @@
+// Package scrolling provides one text pipeline for plain, controlled, mixed-font,
+// per-glyph animated and post-deformed scrollers, preserving native pixel geometry.
+package scrolling
+
+import (
+	"fmt"
+	"image"
+	"math"
+
+	"github.com/hajimehoshi/ebiten/v2"
+	kit "github.com/olivierh59500/democonstructionkit"
+	"github.com/olivierh59500/democonstructionkit/font"
+	"github.com/olivierh59500/democonstructionkit/scrolltext"
+)
+
+// Face associates independent atlas metrics with optional native scaling.
+type Face struct {
+	Atlas          *ebiten.Image
+	Metrics        *font.Font
+	ScaleX, ScaleY float64
+}
+
+// Glyph can also be supplied directly when migrating a pre-sliced legacy font.
+// Advance and Offset use unscaled pen coordinates; Scale applies to the bitmap.
+type Glyph struct {
+	Image                                 *ebiten.Image
+	Rune                                  rune
+	Advance, Offset, X, Y, ScaleX, ScaleY float64
+	Font, Effect                          string
+}
+type Sample struct {
+	Index                int
+	Glyph                Glyph
+	X, Y, Time, Position float64
+	Shape                string
+}
+
+// Mapper edits the complete draw options and can hide a glyph by returning false.
+// It runs in drawing order, so an original sine recurrence can be preserved exactly.
+type Mapper func(Sample, *ebiten.DrawImageOptions) bool
+
+type Config struct {
+	Text             string
+	Fonts            map[string]Face
+	Font             string
+	Controls         scrolltext.Decoder
+	Tokens           []scrolltext.Token
+	Glyphs           []Glyph
+	Speed, Gap, X, Y float64
+	Advance          float64 // Optional pen step independent of each glyph's bitmap width.
+	Vertical, Repeat bool
+	Map              Mapper
+	Effects          map[string]Mapper
+	Shapes           map[string]Mapper
+	Shape            string
+}
+
+// DrawState allows an original production to retain its exact tick counters,
+// reset conditions and visible index range while sharing text rendering.
+// ScaleX/ScaleY are explicit: use IdentityState to start with unit scale.
+type DrawState struct {
+	X, Y, ScaleX, ScaleY, Time, Position float64
+	First, End                           int
+	Reverse                              bool
+	Shape                                string
+	Map                                  Mapper
+	Options                              ebiten.DrawImageOptions
+}
+
+func IdentityState() DrawState { return DrawState{ScaleX: 1, ScaleY: 1, End: -1} }
+
+type segment struct {
+	start, end, position, speed float64
+	shape                       string
+}
+
+// Scrolling owns cached layout, glyph slices and a deterministic control timeline.
+// Assets stay caller-owned. Compose it with composite.Pass for ordered raster,
+// scanline, column, masking or perspective operations on the complete text image.
+type Scrolling struct {
+	config           Config
+	glyphs           []Glyph
+	length, duration float64
+	segments         []segment
+	frame            kit.Frame
+}
+
+func New(c Config) (*Scrolling, error) {
+	if !finite(c.Speed) || c.Speed < 0 || !finite(c.Gap) || c.Gap < 0 {
+		return nil, fmt.Errorf("scrolling: invalid speed/gap")
+	}
+	s := &Scrolling{config: c}
+	if c.Glyphs != nil {
+		if c.Text != "" || len(c.Tokens) > 0 {
+			return nil, fmt.Errorf("scrolling: choose text or supplied glyphs")
+		}
+		s.glyphs = append([]Glyph(nil), c.Glyphs...)
+		for i := range s.glyphs {
+			g := &s.glyphs[i]
+			if !finite(g.Advance) || g.Advance <= 0 {
+				return nil, fmt.Errorf("scrolling: invalid glyph advance")
+			}
+			g.Offset = s.length
+			s.length += g.Advance
+			if g.ScaleX == 0 {
+				g.ScaleX = 1
+			}
+			if g.ScaleY == 0 {
+				g.ScaleY = 1
+			}
+		}
+		s.addSegment(0, s.length+c.Gap, c.Speed, c.Shape)
+		return s, nil
+	}
+	tokens := c.Tokens
+	var err error
+	if tokens == nil {
+		tokens, err = scrolltext.Parse(c.Text, c.Controls)
+		if err != nil {
+			return nil, err
+		}
+	}
+	faceName := c.Font
+	if faceName == "" {
+		faceName = "default"
+	}
+	sx, sy, spacing := 1.0, 1.0, 0.0
+	effect, shape := "", c.Shape
+	speed, lastMarker := c.Speed, 0.0
+	if _, ok := c.Fonts[faceName]; !ok {
+		return nil, fmt.Errorf("scrolling: missing initial font %q", faceName)
+	}
+	flush := func() { s.addSegment(lastMarker, s.length, speed, shape); lastMarker = s.length }
+	cache := map[string]map[rune]*ebiten.Image{}
+	for _, t := range tokens {
+		switch t.Kind {
+		case scrolltext.Text:
+			face := c.Fonts[faceName]
+			if face.Atlas == nil || face.Metrics == nil || !face.Metrics.Bounds().In(face.Atlas.Bounds()) {
+				return nil, fmt.Errorf("scrolling: invalid face %q", faceName)
+			}
+			fx, fy := face.ScaleX, face.ScaleY
+			if fx == 0 {
+				fx = 1
+			}
+			if fy == 0 {
+				fy = 1
+			}
+			for _, r := range t.Text {
+				metric, _ := face.Metrics.Glyph(r)
+				penAdvance := metric.Advance
+				if c.Advance > 0 {
+					penAdvance = c.Advance
+				}
+				advance := (penAdvance + spacing) * sx * fx
+				if c.Vertical {
+					advance = face.Metrics.LineHeight() * sy * fy
+				}
+				if advance <= 0 || !finite(advance) {
+					return nil, fmt.Errorf("scrolling: nonpositive advance")
+				}
+				var img *ebiten.Image
+				if !metric.Rect.Empty() {
+					if cache[faceName] == nil {
+						cache[faceName] = map[rune]*ebiten.Image{}
+					}
+					img = cache[faceName][r]
+					if img == nil {
+						img = face.Atlas.SubImage(metric.Rect).(*ebiten.Image)
+						cache[faceName][r] = img
+					}
+				}
+				s.glyphs = append(s.glyphs, Glyph{Image: img, Rune: r, Advance: advance, Offset: s.length, X: metric.OffsetX * sx * fx, Y: metric.OffsetY * sy * fy, ScaleX: sx * fx, ScaleY: sy * fy, Font: faceName, Effect: effect})
+				s.length += advance
+			}
+		case scrolltext.Font:
+			if _, ok := c.Fonts[t.Text]; !ok {
+				return nil, fmt.Errorf("scrolling: unknown font %q", t.Text)
+			}
+			faceName = t.Text
+		case scrolltext.Effect:
+			if t.Text != "none" {
+				if _, ok := c.Effects[t.Text]; !ok {
+					return nil, fmt.Errorf("scrolling: unknown glyph effect %q", t.Text)
+				}
+			}
+			effect = t.Text
+		case scrolltext.Scale:
+			if t.Value <= 0 || t.Second <= 0 || !finite(t.Value) || !finite(t.Second) {
+				return nil, fmt.Errorf("scrolling: invalid scale")
+			}
+			sx, sy = t.Value, t.Second
+		case scrolltext.Tracking:
+			if !finite(t.Value) {
+				return nil, fmt.Errorf("scrolling: invalid tracking")
+			}
+			spacing = t.Value
+		case scrolltext.Speed:
+			if t.Value < 0 || !finite(t.Value) {
+				return nil, fmt.Errorf("scrolling: invalid speed")
+			}
+			flush()
+			speed = t.Value
+		case scrolltext.Shape:
+			if t.Text != "none" {
+				if _, ok := c.Shapes[t.Text]; !ok {
+					return nil, fmt.Errorf("scrolling: unknown shape %q", t.Text)
+				}
+			}
+			flush()
+			shape = t.Text
+		case scrolltext.Pause:
+			if t.Value < 0 || !finite(t.Value) {
+				return nil, fmt.Errorf("scrolling: invalid pause")
+			}
+			flush()
+			s.segments = append(s.segments, segment{start: s.duration, end: s.duration + t.Value, position: s.length, shape: shape})
+			s.duration += t.Value
+		default:
+			return nil, fmt.Errorf("scrolling: unknown token kind")
+		}
+	}
+	s.addSegment(lastMarker, s.length+c.Gap, speed, shape)
+	return s, nil
+}
+func finite(v float64) bool { return !math.IsNaN(v) && !math.IsInf(v, 0) }
+func (s *Scrolling) addSegment(from, to, speed float64, shape string) {
+	if to <= from {
+		return
+	}
+	duration := math.Inf(1)
+	if speed > 0 {
+		duration = (to - from) / speed
+	}
+	s.segments = append(s.segments, segment{start: s.duration, end: s.duration + duration, position: from, speed: speed, shape: shape})
+	s.duration += duration
+}
+func (s *Scrolling) Length() float64 { return s.length }
+func (s *Scrolling) GlyphCount() int { return len(s.glyphs) }
+
+// StateAt integrates speed/pause controls exactly, including updates that skip
+// multiple commands. A loop restarts its initial control state deterministically.
+func (s *Scrolling) StateAt(seconds float64) DrawState {
+	state := IdentityState()
+	state.X = s.config.X
+	state.Y = s.config.Y
+	state.Time = seconds
+	state.Shape = s.config.Shape
+	t := math.Max(0, seconds)
+	if s.config.Repeat && s.duration > 0 && !math.IsInf(s.duration, 0) {
+		t = math.Mod(t, s.duration)
+	}
+	state.Position = s.length + s.config.Gap
+	for _, part := range s.segments {
+		if t < part.end {
+			state.Position = part.position + (t-part.start)*part.speed
+			state.Shape = part.shape
+			break
+		}
+		state.Shape = part.shape
+	}
+	if s.config.Vertical {
+		state.Y -= state.Position
+	} else {
+		state.X -= state.Position
+	}
+	return state
+}
+func (s *Scrolling) Update(f kit.Frame) error { s.frame = f; return nil }
+func (s *Scrolling) Draw(dst *ebiten.Image)   { state := s.StateAt(s.frame.Time); s.DrawAt(dst, state) }
+
+// DrawAt does not advance time or position. Original render order and rounding
+// belong to DrawState/Mapper, so no generic sine or gap is silently substituted.
+func (s *Scrolling) DrawAt(dst *ebiten.Image, state DrawState) {
+	first, end := max(0, state.First), state.End
+	if end < 0 || end > len(s.glyphs) {
+		end = len(s.glyphs)
+	}
+	if first >= end {
+		return
+	}
+	draw := func(i int) {
+		g := s.glyphs[i]
+		x, y := state.X+g.X*state.ScaleX, state.Y+g.Y*state.ScaleY
+		if s.config.Vertical {
+			y += g.Offset * state.ScaleY
+		} else {
+			x += g.Offset * state.ScaleX
+		}
+		op := state.Options
+		op.GeoM.Scale(g.ScaleX*state.ScaleX, g.ScaleY*state.ScaleY)
+		op.GeoM.Translate(x, y)
+		sample := Sample{Index: i, Glyph: g, X: x, Y: y, Time: state.Time, Position: state.Position, Shape: state.Shape}
+		for _, mapper := range []Mapper{s.config.Map, s.config.Shapes[state.Shape], s.config.Effects[g.Effect], state.Map} {
+			if mapper != nil && !mapper(sample, &op) {
+				return
+			}
+		}
+		if g.Image != nil {
+			dst.DrawImage(g.Image, &op)
+		}
+	}
+	if state.Reverse {
+		for i := end - 1; i >= first; i-- {
+			draw(i)
+		}
+	} else {
+		for i := first; i < end; i++ {
+			draw(i)
+		}
+	}
+}
+
+// FromImages is a migration adapter for already sliced alphabets. Missing images
+// still advance the pen. New programs should prefer Text plus configured Faces.
+func FromImages(images []*ebiten.Image, advance float64) (*Scrolling, error) {
+	glyphs := make([]Glyph, len(images))
+	for i, img := range images {
+		glyphs[i] = Glyph{Image: img, Advance: advance}
+	}
+	return New(Config{Glyphs: glyphs})
+}
+
+// Rect supplies a simple crop helper for configuring a face from explicit glyphs.
+func Rect(x, y, w, h int) image.Rectangle { return image.Rect(x, y, x+w, y+h) }
