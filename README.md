@@ -32,6 +32,10 @@ The launcher runs the migrated source application; it does not replace its scene
 script with a kit-generated approximation. Each source repository has a local
 `go.mod` replacement pointing back to this module.
 
+Bilizir's requested logo variation is enabled by default in `bilizir-demo`: the
+logo and scrolling text share the same two-pass deformation. Press **L** to switch
+to the original logo. Fidelity comparisons explicitly use original-logo mode.
+
 ## One scrolling pipeline
 
 ```go
@@ -64,6 +68,8 @@ and layout pipeline. See the scrolling guide.
   drawing order and per-instance color/blend/filter options.
 - `composite.Strips`: exact row/column sampling for scrollers, distorted logos and
   image-based rasters; source selection is independent of destination geometry.
+- `composite.StripWarp`: a reusable row-then-column deformation, with shared
+  parameters and independent surfaces sized for each text/logo/sprite source.
 - `composite.NewPass` / `Layer`: reusable surfaces, ordered deformation passes,
   clipping, transforms and blending around any effect.
 - `composite.QuadBatch`: bounded triangle batches, explicit diagonal selection and
