@@ -9,14 +9,41 @@ import (
 
 	"github.com/hajimehoshi/ebiten/v2/audio"
 	"github.com/olivierh59500/democonstructionkit/sound"
+	"github.com/olivierh59500/democonstructionkit/sound/output"
 )
 
 // Player owns its stream on success. Control methods run on the game goroutine;
 // Stream serializes the concurrent audio callback. Close is idempotent.
 type Player struct {
 	source *sound.Stream
-	device *audio.Player
+	device playback
 	closed bool
+}
+
+type playback interface {
+	Play()
+	Pause()
+	IsPlaying() bool
+	Position() time.Duration
+	SetVolume(float64)
+	SetPosition(time.Duration) error
+	Close() error
+}
+
+// NewOutputPlayer supports device playback and frame-synchronized video export.
+// NewPlayer remains available for callers that own a raw Ebitengine context.
+func NewOutputPlayer(context *output.Context, stream *sound.Stream) (*Player, error) {
+	if context == nil || stream == nil {
+		return nil, fmt.Errorf("sound: nil context or stream")
+	}
+	if context.SampleRate() != stream.SampleRate() {
+		return nil, fmt.Errorf("sound: context and stream sample rates differ")
+	}
+	p, err := context.NewPlayerF32(stream)
+	if err != nil {
+		return nil, err
+	}
+	return &Player{source: stream, device: p}, nil
 }
 
 func NewPlayer(context *audio.Context, stream *sound.Stream) (*Player, error) {

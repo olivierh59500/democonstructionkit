@@ -121,6 +121,32 @@ Native comparisons can be generated locally. Audio is disabled during captures;
 clock and random-seed inputs are fixed. Captures and development reports remain
 local working files.
 
+## Export portfolio videos
+
+FFmpeg and ffprobe must be available on PATH. From this directory:
+
+```sh
+go run ./cmd/record-demos -root ../.. -output ../../videos/portfolio -jobs 2
+```
+
+Each demo also has `go run ./dck/cmd/video -output /path/to/demo.mp4`.
+Looping productions default to three minutes. Cuddly records the introduction,
+one minute per screen, original loading transitions, menu navigation and Reset.
+FR-010 and Second Reality stop at the end of the complete production, including
+Second Reality's final scroll. `-duration 10s` selects a short preview.
+
+Exports contain only the game canvas and its PCM audio, with no desktop capture
+or audio device required. Graphics still need a native display. Video is 60 FPS;
+Second Reality retains its 70 Hz simulation and music synchronization. Offline
+rendering does not change the playback speed. H.264/AAC MP4 files include fast
+start metadata, PNG posters and JSON timing reports; the batch command creates
+an HTML gallery and manifest. Existing videos are verified and kept on reruns.
+
+The reusable `video.Run` drives games using `sound/output` contexts. Those
+contexts delegate to Ebitengine during normal playback and mix on the simulation
+clock during recording. `sound/ebiten.NewOutputPlayer` adapts shared PCM streams;
+the existing `NewPlayer` API still accepts raw Ebitengine contexts.
+
 ## Build and checks
 
 Go 1.26+ is required. Ebitengine and audio versions remain pinned in `go.mod`.
