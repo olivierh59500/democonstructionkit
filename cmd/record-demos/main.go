@@ -35,7 +35,6 @@ type entry struct {
 	Duration float64 `json:"duration_seconds"`
 	Poster   string  `json:"poster"`
 	Repo     string  `json:"repository"`
-	Revision string  `json:"revision"`
 	Size     int64   `json:"bytes"`
 }
 
@@ -103,7 +102,7 @@ func main() {
 		}()
 	}
 	wg.Wait()
-	if err := gallery(workspace, output); err != nil {
+	if err := gallery(output); err != nil {
 		fail(err)
 	}
 	if len(failures) > 0 {
@@ -177,7 +176,7 @@ func probe(name string) error {
 	return nil
 }
 
-func gallery(root, output string) error {
+func gallery(output string) error {
 	var entries []entry
 	for _, p := range productions {
 		data, err := os.ReadFile(filepath.Join(output, p.File+".json"))
@@ -196,11 +195,6 @@ func gallery(root, output string) error {
 			return err
 		}
 		e.File, e.Poster, e.Repo, e.Size = p.File+".mp4", p.File+".png", p.Repo, st.Size()
-		rev, err := exec.Command("git", "-C", filepath.Join(root, "demos", p.Repo), "rev-parse", "HEAD").Output()
-		if err != nil {
-			return err
-		}
-		e.Revision = strings.TrimSpace(string(rev))
 		entries = append(entries, e)
 	}
 	data, err := json.MarshalIndent(entries, "", "  ")
