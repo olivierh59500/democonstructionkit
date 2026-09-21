@@ -71,7 +71,7 @@ func (g BitmapGrid) Region(ch rune) (composite.Region, bool) {
 }
 
 // RingWave is a wave sampled in visible-letter order. Phase advances on recycled
-// glyphs as well as ticks, retaining NATIVE's original scroller behavior.
+// glyphs as well as ticks, retaining the original recycled-slot timing.
 type RingWave struct {
 	Phase, Amplitude, LetterStep, TickStep float64
 	Floor                                  bool

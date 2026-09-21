@@ -9,13 +9,10 @@ pixel rounding, source crops, drawing order and blend operations.
 the preserved originals in each repository's `dck/` directory. Add `-original`
 to run the original implementation.
 
-See effect options and runnable examples for independent
-logo phases, named scroll modes, DNA, vectorball objects and continuous cube handoffs.
-
-The NATIVE porting additions support the Cuddly source
-collection: fractional atlas crops, legacy scroll timing, scanline waves, star
-streaks and PCM adapters. Eight Cuddly screens are now connected to the existing
-menu in `demos/go-cuddlymenu/dck`; the complete source audit records remaining ports.
+The shared effects support configurable fonts, scroll modes, image deformation,
+feedback ribbons, vectorball geometry, particle batches and continuous scene
+handoffs. The Cuddly application combines fifteen native screens and its menu in
+`demos/go-cuddlymenu/dck`.
 
 ## Try the corrected work
 
@@ -72,7 +69,7 @@ controls. A custom decoder can retain original syntax or binary control payloads
 windows, reverse drawing order and a glyph mapper. This lets an existing demo keep
 its exact tick counters and reset conditions while sharing the renderer. Shader
 and animated-strip backends use `DrawState.Paint`, retaining the same iteration
-and layout pipeline. See the scrolling guide.
+and layout pipeline.
 
 ## Compose effects without a prescribed layout
 
@@ -120,11 +117,9 @@ application code has moved into the library.
 across renderer modes using a VRAM fixture. This does **not** establish complete
 scene extraction or musical synchronization through go-zikmu.
 
-JSON reports identify the original and migrated commits in docs/fidelity.
-The fidelity contract and coverage distinguish complete-frame
-comparisons from the renderer-only case. Audio is disabled during captures and
-wall-clock/random-seed inputs are fixed in temporary snapshots. PNG references,
-candidates and differences are written to `captures/fidelity/` and are not bundled.
+Native comparisons can be generated locally. Audio is disabled during captures;
+clock and random-seed inputs are fixed. Captures and development reports remain
+local working files.
 
 ## Build and checks
 
@@ -140,6 +135,4 @@ go run ./cmd/checkeffects -demos ../../demos
 go run ./cmd/fidelity -demo grodan-kvack-kvack-demo
 ```
 
-All 19 original repository test suites also pass after their migrations. See
-validation details, source inventory,
-migration notes and progress.
+All 19 original repository test suites pass after their migrations.

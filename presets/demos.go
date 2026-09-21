@@ -5,7 +5,7 @@ type Demo struct {
 	Module                   bool
 }
 
-// Demos includes every repository inspected in docs/INVENTORY.md.
+// Demos lists the native productions available to the workspace launcher.
 func Demos() []Demo {
 	return []Demo{
 		{"3d_doc", "Checkerboard, balls and scanline text", "3d_doc/assets/music.ym", false},
