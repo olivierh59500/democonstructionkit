@@ -105,6 +105,10 @@ func run() error {
 	if revision == "" {
 		return fmt.Errorf("missing original revision")
 	}
+	revision, err = resolveLocalRevision(source, revision)
+	if err != nil {
+		return err
+	}
 	var frames []int
 	for _, part := range strings.Split(*frameList, ",") {
 		frame, err := strconv.Atoi(strings.TrimSpace(part))
@@ -181,6 +185,39 @@ func run() error {
 		return fmt.Errorf("fidelity mismatch; inspect %s", output)
 	}
 	return nil
+}
+
+// resolveLocalRevision keeps local comparison records usable after an explicit
+// history rewrite, without changing the preserved records themselves.
+func resolveLocalRevision(source, revision string) (string, error) {
+	if _, err := command(source, "git", "cat-file", "-e", revision+"^{commit}"); err == nil {
+		return revision, nil
+	}
+	path, err := command(source, "git", "rev-parse", "--git-path", "info/native-revision-map.txt")
+	if err != nil {
+		return "", err
+	}
+	name := strings.TrimSpace(string(path))
+	if !filepath.IsAbs(name) {
+		name = filepath.Join(source, name)
+	}
+	data, err := os.ReadFile(name)
+	if os.IsNotExist(err) {
+		return revision, nil
+	}
+	if err != nil {
+		return "", err
+	}
+	for _, line := range strings.Split(string(data), "\n") {
+		fields := strings.Fields(line)
+		if len(fields) == 2 && fields[0] == revision {
+			if _, err := command(source, "git", "cat-file", "-e", fields[1]+"^{commit}"); err != nil {
+				return "", err
+			}
+			return fields[1], nil
+		}
+	}
+	return revision, nil
 }
 func readImage(path string) (image.Image, error) {
 	f, err := os.Open(path)
