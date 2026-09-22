@@ -3,6 +3,7 @@
 package scrolling
 
 import (
+	"errors"
 	"fmt"
 	"image"
 	"math"
@@ -53,17 +54,19 @@ type Config struct {
 	Page             *PageConfig      // Optional multiline vertical layout; Vertical alone is a glyph column.
 	Recycled         *RecycledConfig  // Authored recycled-slot transport, advanced once per Update.
 	Projected        *ProjectedConfig // Authored visible-slot plane transport, advanced once per Update.
+	Sliced           *SlicedConfig    // Streaming DNA with independent transport and rotation clocks.
 	Output           *OutputConfig    // Ordered image operations over the common text renderer.
 	// RepeatBounds selects the visible pen coordinates before any mappers run.
 	// Empty uses the destination bounds. Enlarge it for paths or projections that
 	// bring distant pen positions into view. Only automatic repeat drawing uses it.
-	RepeatBounds image.Rectangle
-	Map          Mapper
-	Effects      map[string]Mapper
-	Shapes       map[string]Mapper
-	Shape        string
-	Modes        map[string]Mode
-	Sequence     *ModeSequence // When supplied, overrides text shape controls.
+	RepeatBounds     image.Rectangle
+	MaxGlyphsPerDraw int // Automatic drawing budget; zero defaults to 65536. Manual DrawAt stays explicit.
+	Map              Mapper
+	Effects          map[string]Mapper
+	Shapes           map[string]Mapper
+	Shape            string
+	Modes            map[string]Mode
+	Sequence         *ModeSequence // When supplied, overrides text shape controls.
 }
 
 // DrawState allows an original production to retain its exact tick counters,
@@ -102,7 +105,13 @@ type Scrolling struct {
 	repeatMin, repeatMax float64
 	backend              kit.Effect
 	output               kit.Effect
+	drawErr              error
 }
+
+var ErrDrawBudget = errors.New("scrolling: automatic drawing exceeds its glyph budget")
+
+// Err reports a resource-budget error from the last automatic Draw.
+func (s *Scrolling) Err() error { return s.drawErr }
 
 type glyphDraw struct {
 	sample  Sample
@@ -111,7 +120,13 @@ type glyphDraw struct {
 }
 
 func New(c Config) (*Scrolling, error) {
-	if c.Recycled != nil || c.Projected != nil {
+	if c.MaxGlyphsPerDraw == 0 {
+		c.MaxGlyphsPerDraw = 65536
+	}
+	if c.MaxGlyphsPerDraw < 1 || c.MaxGlyphsPerDraw > 1<<24 {
+		return nil, fmt.Errorf("scrolling: invalid automatic draw budget")
+	}
+	if c.Recycled != nil || c.Projected != nil || c.Sliced != nil {
 		return newTransport(c)
 	}
 	if c.Page != nil {
@@ -427,6 +442,9 @@ func (s *Scrolling) StateAt(seconds float64) DrawState {
 	return state
 }
 func (s *Scrolling) Update(f kit.Frame) error {
+	if s.drawErr != nil {
+		return s.drawErr
+	}
 	s.frame = f
 	if s.backend != nil {
 		if err := s.backend.Update(f); err != nil {
@@ -451,6 +469,7 @@ func (s *Scrolling) Draw(dst *ebiten.Image) {
 }
 
 func (s *Scrolling) drawCore(dst *ebiten.Image) {
+	s.drawErr = nil
 	if s.backend != nil {
 		s.backend.Draw(dst)
 		return
@@ -458,6 +477,9 @@ func (s *Scrolling) drawCore(dst *ebiten.Image) {
 	state := s.StateAt(s.frame.Time)
 	if s.config.Repeat && len(s.glyphs) > 0 {
 		state = s.repeatState(state, dst.Bounds())
+	} else if len(s.glyphs) > s.config.MaxGlyphsPerDraw {
+		s.drawErr = ErrDrawBudget
+		return
 	}
 	s.DrawAt(dst, state)
 }
@@ -493,6 +515,11 @@ func (s *Scrolling) repeatState(state DrawState, bounds image.Rectangle) DrawSta
 	first = math.Max(first, -cycle)
 	state.Cycle, state.bounded = true, true
 	state.First, state.End = 0, 0
+	work := (last - first + 1) * float64(len(s.glyphs))
+	if work > float64(s.config.MaxGlyphsPerDraw) || math.IsInf(work, 1) {
+		s.drawErr = ErrDrawBudget
+		return state
+	}
 	// Guard virtual-index conversion for invalid or unrepresentable clocks.
 	limit := math.Min(float64(int(^uint(0)>>1)/len(s.glyphs))-2, 1<<52)
 	if !finite(cycle) || !finite(first) || !finite(last) || last < first || cycle >= limit || math.Abs(first) >= limit || math.Abs(last) >= limit || cycle+last >= limit {
@@ -501,8 +528,41 @@ func (s *Scrolling) repeatState(state DrawState, bounds image.Rectangle) DrawSta
 	state.cycleOrigin = int(cycle)
 	state.First = (state.cycleOrigin + int(first)) * len(s.glyphs)
 	state.End = (state.cycleOrigin + int(last) + 1) * len(s.glyphs)
+	if state.End-state.First > s.config.MaxGlyphsPerDraw {
+		state.First, state.End = 0, 0
+		s.drawErr = ErrDrawBudget
+		return state
+	}
 	state.Position += cycle * period
 	return state
+}
+
+// ValidateRenderBounds checks a conservative maximum automatic-draw workload
+// before playback. Editors can reject impractically dense text layouts instead
+// of waiting for a draw-time error. Explicit manual windows are unaffected.
+func (s *Scrolling) ValidateRenderBounds(bounds image.Rectangle) error {
+	if s.backend != nil || len(s.glyphs) == 0 {
+		return nil
+	}
+	count := float64(len(s.glyphs))
+	if s.config.Repeat {
+		if !s.config.RepeatBounds.Empty() {
+			bounds = s.config.RepeatBounds
+		}
+		extent := float64(bounds.Dx())
+		if s.config.Vertical {
+			extent = float64(bounds.Dy())
+		}
+		copies := math.Ceil((extent+s.repeatMax-s.repeatMin)/(s.length+s.config.Gap)) + 1
+		if s.config.Map != nil || len(s.config.Effects) > 0 || len(s.config.Shapes) > 0 || len(s.config.Modes) > 0 {
+			copies += 2
+		}
+		count *= copies
+	}
+	if !finite(count) || count > float64(s.config.MaxGlyphsPerDraw) {
+		return ErrDrawBudget
+	}
+	return nil
 }
 
 // DrawAt does not advance time or position. Original render order and rounding

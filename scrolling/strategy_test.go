@@ -117,3 +117,53 @@ func TestNewRejectsAmbiguousTransportAndBadPage(t *testing.T) {
 		}
 	}
 }
+
+func TestCommonSlicedTransportKeepsRotationIndependentFromText(t *testing.T) {
+	img := ebiten.NewImage(7, 8)
+	defer img.Deallocate()
+	film, err := NewDNAFrames([]*ebiten.Image{img}, DNAFrameConfig{Frames: 30})
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer film.Close()
+	cfg := SliceStreamConfig{Tokens: []SliceToken{{Glyph: 0, Width: 7}, {Control: "pause"}, {Glyph: 0, Width: 4}}, Capacity: 12, SliceWidth: 1, Repeat: true, LoopStart: 0, Initial: DNASlice{Glyph: -1}}
+	direct, err := NewSliceStream(cfg)
+	if err != nil {
+		t.Fatal(err)
+	}
+	controls := 0
+	s, err := New(Config{Sliced: &SlicedConfig{Stream: cfg, Film: film, Draw: DNADrawConfig{SliceWidth: 1, ScaleX: 1, ScaleY: 1}, RotationSpeed: 5,
+		AdvanceAt: func(f kit.Frame) int {
+			if f.Tick%5 == 0 {
+				return 0
+			}
+			return 2
+		}, OnControl: func(SliceControl) bool { controls++; return true }}})
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer s.Close()
+	for tick := uint64(0); tick < 100; tick++ {
+		count := 2
+		if tick%5 == 0 {
+			count = 0
+		}
+		direct.Step(count, func(SliceControl) bool { return true })
+		time := float64(tick) / 60
+		direct.SetFrames(time*5, nil, film.Count)
+		s.Update(kit.Frame{Tick: tick, Time: time})
+		got := s.backend.(*slicedTransport).stream
+		if got.Head() != direct.Head() || !reflect.DeepEqual(got.Slices(), direct.Slices()) {
+			t.Fatal("sliced transport diverged", tick)
+		}
+	}
+	if controls == 0 {
+		t.Fatal("control event was lost")
+	}
+	if err := s.Close(); err != nil {
+		t.Fatal(err)
+	}
+	if film.Image == nil {
+		t.Fatal("scrolling closed caller-owned filmstrip")
+	}
+}

@@ -1,6 +1,7 @@
 package scrolling
 
 import (
+	"errors"
 	"image"
 	"math"
 	"testing"
@@ -9,6 +10,23 @@ import (
 	kit "github.com/olivierh59500/democonstructionkit"
 	"github.com/olivierh59500/democonstructionkit/scrolltext"
 )
+
+func TestAutomaticScrollBoundsWorkForTinyAdvances(t *testing.T) {
+	for _, advance := range []float64{1e-9, 1e-100} {
+		s, err := New(Config{Glyphs: []Glyph{{Advance: advance}}, Repeat: true, Speed: 1})
+		if err != nil {
+			t.Fatal(err)
+		}
+		bounds := image.Rect(0, 0, 640, 360)
+		if !errors.Is(s.ValidateRenderBounds(bounds), ErrDrawBudget) {
+			t.Fatal("dense layout passed preflight")
+		}
+		state := s.repeatState(s.StateAt(0), bounds)
+		if state.First != state.End || !errors.Is(s.Err(), ErrDrawBudget) {
+			t.Fatal("unbounded automatic ribbon", state, s.Err())
+		}
+	}
+}
 
 type repeatObservation struct {
 	sample  Sample

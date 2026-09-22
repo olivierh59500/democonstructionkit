@@ -45,6 +45,21 @@ type ProjectedConfig struct {
 	PixelsPerUpdate float64
 }
 
+// SlicedConfig exposes the strip-history DNA transport through the same New
+// constructor. Film is borrowed. Pixels are inserted in Stream.SliceWidth-wide
+// slots; rotation uses film frames per second and continues when transport stops.
+type SlicedConfig struct {
+	Stream                       SliceStreamConfig
+	Film                         *DNAFrames
+	Draw                         DNADrawConfig
+	SlicesPerUpdate              int
+	RotationSpeed, RotationPhase float64
+	Offsets                      []float64
+	OnControl                    func(SliceControl) bool
+	AdvanceAt                    func(kit.Frame) int
+	RotationAt                   func(kit.Frame) float64
+}
+
 // FeedbackLayer feeds the text image into a persistent DNA face once per Update.
 // PhaseSpeed uses rows per second; PhaseAt may retain an authored integer clock.
 type FeedbackLayer struct {
@@ -110,7 +125,17 @@ func newTransport(c Config) (*Scrolling, error) {
 	if !finite(c.X) || !finite(c.Y) || c.Speed != 0 || c.Gap != 0 || c.Advance != 0 || c.Repeat || c.Font != "" || c.Shape != "" {
 		return nil, fmt.Errorf("scrolling: configure speed, repetition and font in the selected transport")
 	}
-	if (c.Recycled != nil && c.Projected != nil) || c.Page != nil || c.Text != "" || c.Tokens != nil || c.Glyphs != nil || c.Controls != nil || len(c.Fonts) > 0 || len(c.Modes) > 0 || c.Map != nil || len(c.Shapes) > 0 || len(c.Effects) > 0 || c.Sequence != nil {
+	count := 0
+	if c.Recycled != nil {
+		count++
+	}
+	if c.Projected != nil {
+		count++
+	}
+	if c.Sliced != nil {
+		count++
+	}
+	if count != 1 || c.Page != nil || c.Text != "" || c.Tokens != nil || c.Glyphs != nil || c.Controls != nil || len(c.Fonts) > 0 || len(c.Modes) > 0 || c.Map != nil || len(c.Shapes) > 0 || len(c.Effects) > 0 || c.Sequence != nil {
 		return nil, fmt.Errorf("scrolling: choose one transport; configure glyph modes on the regular transport and image passes on any transport")
 	}
 	s := &Scrolling{config: c}
@@ -122,7 +147,7 @@ func newTransport(c Config) (*Scrolling, error) {
 		config := *c.Recycled
 		config.Vertical = config.Vertical || c.Vertical
 		s.backend = &recycledTransport{ring: r, config: config, x: c.X, y: c.Y}
-	} else {
+	} else if c.Projected != nil {
 		if c.X != 0 || c.Y != 0 || c.Vertical {
 			return nil, fmt.Errorf("scrolling: projected placement belongs in Projected.Draw")
 		}
@@ -139,6 +164,21 @@ func newTransport(c Config) (*Scrolling, error) {
 			return nil, err
 		}
 		s.backend = &projectedTransport{planes: p, renderer: r, config: cfg}
+	} else {
+		cfg := *c.Sliced
+		if c.X != 0 || c.Y != 0 || c.Vertical || cfg.Film == nil || cfg.Film.Image == nil || cfg.SlicesPerUpdate < 0 || !finite(cfg.RotationSpeed) || !finite(cfg.RotationPhase) || cfg.Draw.SliceWidth != cfg.Stream.SliceWidth {
+			return nil, fmt.Errorf("scrolling: invalid sliced transport or placement")
+		}
+		stream, err := NewSliceStream(cfg.Stream)
+		if err != nil {
+			return nil, err
+		}
+		cfg.Offsets = append([]float64(nil), cfg.Offsets...)
+		if err := stream.SetFrames(cfg.RotationPhase, cfg.Offsets, cfg.Film.Count); err != nil {
+			return nil, err
+		}
+		stream.Reset()
+		s.backend = &slicedTransport{stream: stream, config: cfg}
 	}
 	result, err := s.finish()
 	if err != nil {
@@ -183,6 +223,30 @@ func (p *projectedTransport) Draw(dst *ebiten.Image) {
 	p.renderer.Draw(dst, p.planes.Points(), p.config.Draw)
 }
 func (p *projectedTransport) Close() error { return p.renderer.Close() }
+
+type slicedTransport struct {
+	stream *SliceStream
+	config SlicedConfig
+}
+
+func (s *slicedTransport) Update(f kit.Frame) error {
+	count := s.config.SlicesPerUpdate
+	if s.config.AdvanceAt != nil {
+		count = s.config.AdvanceAt(f)
+	}
+	if count < 0 {
+		return fmt.Errorf("scrolling: negative strip advance")
+	}
+	s.stream.Step(count, s.config.OnControl)
+	rotation := s.config.RotationPhase + f.Time*s.config.RotationSpeed
+	if s.config.RotationAt != nil {
+		rotation = s.config.RotationAt(f)
+	}
+	return s.stream.SetFrames(rotation, s.config.Offsets, s.config.Film.Count)
+}
+func (s *slicedTransport) Draw(dst *ebiten.Image) {
+	s.config.Film.DrawSlices(dst, s.stream.Slices(), s.stream.Head(), s.config.Draw)
+}
 
 type scrollFeedback struct {
 	source kit.Effect
