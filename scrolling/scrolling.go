@@ -4,6 +4,7 @@ package scrolling
 
 import (
 	"fmt"
+	"image"
 	"math"
 	"sort"
 
@@ -49,12 +50,16 @@ type Config struct {
 	Speed, Gap, X, Y float64
 	Advance          float64 // Optional pen step independent of each glyph's bitmap width.
 	Vertical, Repeat bool
-	Map              Mapper
-	Effects          map[string]Mapper
-	Shapes           map[string]Mapper
-	Shape            string
-	Modes            map[string]Mode
-	Sequence         *ModeSequence // When supplied, overrides text shape controls.
+	// RepeatBounds selects the visible pen coordinates before any mappers run.
+	// Empty uses the destination bounds. Enlarge it for paths or projections that
+	// bring distant pen positions into view. Only automatic repeat drawing uses it.
+	RepeatBounds image.Rectangle
+	Map          Mapper
+	Effects      map[string]Mapper
+	Shapes       map[string]Mapper
+	Shape        string
+	Modes        map[string]Mode
+	Sequence     *ModeSequence // When supplied, overrides text shape controls.
 }
 
 // DrawState allows an original production to retain its exact tick counters,
@@ -62,6 +67,7 @@ type Config struct {
 // ScaleX/ScaleY are explicit: use IdentityState to start with unit scale.
 type DrawState struct {
 	bounded                              bool
+	cycleOrigin                          int // Internal geometry rebasing for automatic repetition.
 	X, Y, ScaleX, ScaleY, Time, Position float64
 	First, End                           int
 	Reverse                              bool
@@ -83,12 +89,13 @@ type segment struct {
 // Assets stay caller-owned. Compose it with composite.Pass for ordered raster,
 // scanline, column, masking or perspective operations on the complete text image.
 type Scrolling struct {
-	config           Config
-	glyphs           []Glyph
-	length, duration float64
-	segments         []segment
-	frame            kit.Frame
-	draws            []glyphDraw
+	config               Config
+	glyphs               []Glyph
+	length, duration     float64
+	segments             []segment
+	frame                kit.Frame
+	draws                []glyphDraw
+	repeatMin, repeatMax float64
 }
 
 type glyphDraw struct {
@@ -250,6 +257,21 @@ func New(c Config) (*Scrolling, error) {
 }
 
 func (s *Scrolling) prepareModes() error {
+	s.repeatMax = s.length
+	for _, g := range s.glyphs {
+		position, size := g.X, 0.0
+		if s.config.Vertical {
+			position = g.Y
+		}
+		if g.Image != nil {
+			size = float64(g.Image.Bounds().Dx()) * g.ScaleX
+			if s.config.Vertical {
+				size = float64(g.Image.Bounds().Dy()) * g.ScaleY
+			}
+		}
+		s.repeatMin = math.Min(s.repeatMin, g.Offset+math.Min(position, position+size))
+		s.repeatMax = math.Max(s.repeatMax, g.Offset+math.Max(position, position+size))
+	}
 	for name, mode := range s.config.Modes {
 		if mode.Prepare != nil {
 			if err := mode.Prepare(s.glyphs); err != nil {
@@ -345,7 +367,60 @@ func (s *Scrolling) StateAt(seconds float64) DrawState {
 	return state
 }
 func (s *Scrolling) Update(f kit.Frame) error { s.frame = f; return nil }
-func (s *Scrolling) Draw(dst *ebiten.Image)   { state := s.StateAt(s.frame.Time); s.DrawAt(dst, state) }
+
+// Draw repeats a continuous ribbon when Repeat is set, keeping both the tail
+// and the next copy alive across control timeline boundaries. Manual DrawAt and
+// StateAt retain their original single-pass semantics.
+func (s *Scrolling) Draw(dst *ebiten.Image) {
+	state := s.StateAt(s.frame.Time)
+	if s.config.Repeat && len(s.glyphs) > 0 {
+		state = s.repeatState(state, dst.Bounds())
+	}
+	s.DrawAt(dst, state)
+}
+
+func (s *Scrolling) repeatState(state DrawState, bounds image.Rectangle) DrawState {
+	period := s.length + s.config.Gap
+	if !s.config.RepeatBounds.Empty() {
+		bounds = s.config.RepeatBounds
+	}
+	low, high, origin := float64(bounds.Min.X), float64(bounds.Max.X), state.X
+	if s.config.Vertical {
+		low, high, origin = float64(bounds.Min.Y), float64(bounds.Max.Y), state.Y
+	}
+	// Keep geometry near the viewport even after many hours, but retain absolute
+	// glyph indices/offsets for stable sine, DNA and perspective phases.
+	cycle := 0.0
+	if s.duration > 0 && finite(s.duration) {
+		t := math.Max(0, state.Time)
+		// Use the same remainder as StateAt: division can round up at a cycle
+		// boundary while Mod still returns a phase just below the duration.
+		cycle = math.Round((t - math.Mod(t, s.duration)) / s.duration)
+	}
+	first := math.Ceil((low - origin - s.repeatMax) / period)
+	last := math.Floor((high - origin - s.repeatMin) / period)
+	mode := s.config.Modes[state.Shape]
+	if s.config.Map != nil || len(s.config.Effects) > 0 || s.config.Shapes[state.Shape] != nil || mode.Map != nil || mode.Paint != nil {
+		// Whole neighboring copies give ordinary deformations room to move. For
+		// larger/custom projections, callers specify an explicit RepeatBounds.
+		first--
+		last++
+	}
+	// Do not introduce the end of a previous copy during the initial entry.
+	first = math.Max(first, -cycle)
+	state.Cycle, state.bounded = true, true
+	state.First, state.End = 0, 0
+	// Guard virtual-index conversion for invalid or unrepresentable clocks.
+	limit := math.Min(float64(int(^uint(0)>>1)/len(s.glyphs))-2, 1<<52)
+	if !finite(cycle) || !finite(first) || !finite(last) || last < first || cycle >= limit || math.Abs(first) >= limit || math.Abs(last) >= limit || cycle+last >= limit {
+		return state
+	}
+	state.cycleOrigin = int(cycle)
+	state.First = (state.cycleOrigin + int(first)) * len(s.glyphs)
+	state.End = (state.cycleOrigin + int(last) + 1) * len(s.glyphs)
+	state.Position += cycle * period
+	return state
+}
 
 // DrawAt does not advance time or position. Original render order and rounding
 // belong to DrawState/Mapper, so no generic sine or gap is silently substituted.
@@ -384,12 +459,13 @@ func (s *Scrolling) DrawAt(dst *ebiten.Image, state DrawState) {
 			cycle = (i - index) / len(s.glyphs)
 		}
 		g := s.glyphs[index]
+		penOffset := g.Offset + float64(cycle-state.cycleOrigin)*(s.length+s.config.Gap)
 		g.Offset += float64(cycle) * (s.length + s.config.Gap)
 		x, y := state.X+g.X*state.ScaleX, state.Y+g.Y*state.ScaleY
 		if s.config.Vertical {
-			y += g.Offset * state.ScaleY
+			y += penOffset * state.ScaleY
 		} else {
-			x += g.Offset * state.ScaleX
+			x += penOffset * state.ScaleX
 		}
 		op := state.Options
 		op.GeoM.Scale(g.ScaleX*state.ScaleX, g.ScaleY*state.ScaleY)

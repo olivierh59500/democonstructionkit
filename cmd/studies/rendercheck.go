@@ -14,6 +14,9 @@ import (
 // These pixel assertions need RunGame's active graphics context. They cover
 // short/reverse scrolls, overhanging glyphs, viewport clipping and batch flushing.
 func checkRenderingPrimitives() error {
+	if err := checkRepeatRendering(); err != nil {
+		return err
+	}
 	if err := checkMagnifierRendering(); err != nil {
 		return err
 	}

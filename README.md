@@ -65,11 +65,29 @@ The built-in parser supports font, speed, pause, scale, tracking, shape and effe
 controls. A custom decoder can retain original syntax or binary control payloads;
 `scrolltext.DomSizes` implements the original `^CsN;` syntax.
 
+With `Repeat: true`, `Update` plus `Draw` renders a continuous ribbon: the next
+copy follows the previous tail by `Gap` pixels. Short messages repeat enough
+times to cover the destination; the first entry still starts at `X`/`Y`, without
+an older tail appearing at startup. Speed and pause controls repeat each cycle.
+Absolute glyph indices and text offsets keep sine, DNA and 3D phases continuous;
+automatic draw samples expose total travelled distance in `Sample.Position`.
+
+Automatic repetition selects whole copies around the destination's pen range,
+including glyph overhangs and neighboring copies for deformations. For a path or
+projection whose input distances extend beyond that range, set `RepeatBounds`
+in **pen coordinates before mapping**, for example
+`image.Rect(0, 0, int(math.Ceil(path.Length())), 1)` for a horizontal path.
+For closed curves, explicitly clip the mapper to one path length if overlapping
+turns are unwanted, or use `Window` to select an exact number of glyphs.
+Geometry is rebased near the viewport, so work does not grow with elapsed time.
+
 `Scrolling.DrawAt` also accepts original positions, visible ranges, circular text
 windows, reverse drawing order and a glyph mapper. This lets an existing demo keep
 its exact tick counters and reset conditions while sharing the renderer. Shader
 and animated-strip backends use `DrawState.Paint`, retaining the same iteration
 and layout pipeline.
+`StateAt` keeps its original single-pass, cycle-local position and control state;
+manual `DrawAt`, `Window` and `Ring` retain their existing repetition rules.
 
 ## Compose effects without a prescribed layout
 
