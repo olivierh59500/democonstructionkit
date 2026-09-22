@@ -324,6 +324,18 @@ func captureRevision(source, revision, root, output string, p probe, frames []in
 	if pkg == "" {
 		return fmt.Errorf("cannot find root package")
 	}
+	if filepath.Base(source) == "go-vectorballs" {
+		data, err := os.ReadFile(filepath.Join(packageDir, "main.go"))
+		if err != nil {
+			return err
+		}
+		if bytes.Contains(data, []byte("func (g *Game) initReflection()")) {
+			// New snapshots construct the shared pass; older snapshots retain
+			// their original subimage field and must keep the original probe.
+			p.Factory = strings.ReplaceAll(p.Factory, "g.reflectionSource=g.playgroundCanvas.SubImage(image.Rect(0,288,640,368)).(*ebiten.Image);", "g.initReflection();")
+			p.Imports = `"image/color"`
+		}
+	}
 	frameValues := make([]string, len(frames))
 	for i, f := range frames {
 		frameValues[i] = fmt.Sprint(f)
