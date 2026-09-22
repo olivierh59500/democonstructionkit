@@ -68,8 +68,8 @@ func (s *Stream) readLocked(dst []byte) (int, error) {
 			if s.pendingErr != nil {
 				return n, s.pendingErr
 			}
-			// Keep decoder call boundaries independent of the consumer's read sizes.
-			// Some YM register updates depend on Compute's block boundaries.
+			// Decode fixed-size blocks to reuse staging storage and amortize
+			// synthesizer calls across arbitrarily small consumer reads.
 			frames := blockFrames
 			count, err := s.synth.render(s.samples[:frames*2])
 			if count < 0 || count > frames*2 || count%2 != 0 {

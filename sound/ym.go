@@ -34,6 +34,28 @@ func NewYM(data []byte, options YMOptions) (*Stream, error) {
 	}
 	return newStream(y, options.SampleRate), nil
 }
+
+// YMRegisters returns a synchronized snapshot of the YM decoder's registers
+// 0 through 13. The snapshot follows decoded audio, which may be ahead of audible
+// playback because the stream and output device buffer samples. It does not
+// advance playback. The result is false for non-YM or closed streams.
+func (s *Stream) YMRegisters() ([14]uint8, bool) {
+	var registers [14]uint8
+	if s == nil {
+		return registers, false
+	}
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	y, ok := s.synth.(*ymSynth)
+	if !ok || y == nil || y.player == nil {
+		return registers, false
+	}
+	for i := range registers {
+		registers[i] = uint8(y.player.GetRegister(i))
+	}
+	return registers, true
+}
+
 func (y *ymSynth) reset() error {
 	if y.player != nil {
 		y.player.Destroy()
