@@ -33,6 +33,17 @@ public final class MainActivity extends Activity {
 
         boolean eco = getIntent().getBooleanExtra("eco", false);
         long frames = getIntent().getLongExtra("frames", 0L);
+        // A bounded visual measurement can remain visible while the device is
+        // locked. The keyguard stays active and no protected data is accessed.
+        if (frames > 0) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
+                setShowWhenLocked(true);
+                setTurnScreenOn(true);
+            } else {
+                getWindow().addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
+                        | WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
+            }
+        }
         String profileName = getIntent().getStringExtra("profile");
         String profile = "";
         if (frames > 0) {
@@ -43,6 +54,7 @@ public final class MainActivity extends Activity {
             profile = new File(getFilesDir(), new File(profileName).getName()).getAbsolutePath();
         }
         Mobile.configure(eco, frames, profile);
+        Mobile.setAuthoring(getIntent().getBooleanExtra("authoring", false));
         ebitenView = new EbitenView(this);
         ebitenView.setFocusableInTouchMode(true);
         ebitenView.requestFocus();

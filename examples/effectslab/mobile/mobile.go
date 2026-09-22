@@ -19,7 +19,14 @@ var game *scene.Game
 func Configure(eco bool, frames int64, profile string) {
 	settings.Lock()
 	defer settings.Unlock()
-	settings.config = scene.Config{Eco: eco, Frames: int(frames), Profile: profile}
+	settings.config = scene.Config{Eco: eco, Frames: int(frames), Profile: profile, ContinueAfterProfile: true}
+}
+
+// SetAuthoring selects the saved-project demonstration before creating EbitenView.
+func SetAuthoring(enabled bool) {
+	settings.Lock()
+	defer settings.Unlock()
+	settings.config.Authoring = enabled
 }
 
 type adapter struct{}

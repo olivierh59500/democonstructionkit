@@ -41,6 +41,29 @@ func TestBoundedProfilingConfiguration(t *testing.T) {
 	}
 }
 
+func TestMobileProfileReturnsToContinuousPlayback(t *testing.T) {
+	g, err := NewGame(Config{Authoring: true, Frames: 8, ContinueAfterProfile: true})
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer g.Close()
+	for i := 0; i < 12; i++ {
+		if err := g.Update(); err != nil {
+			t.Fatal(err)
+		}
+	}
+	if g.Report() == nil || g.finished || g.config.Frames != 0 || g.tick <= 8 {
+		t.Fatal("profiling froze interactive playback")
+	}
+	report := *g.Report()
+	for i := 0; i < 5; i++ {
+		g.Update()
+	}
+	if g.Report().Update != report.Update || g.measuring {
+		t.Fatal("continuous playback extended the finished report")
+	}
+}
+
 func TestQualityProfilesKeepTimingAndReduceSurfaceStorage(t *testing.T) {
 	high, err := New(false)
 	if err != nil {

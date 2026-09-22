@@ -13,17 +13,20 @@ import (
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/inpututil"
 	kit "github.com/olivierh59500/democonstructionkit"
+	authored "github.com/olivierh59500/democonstructionkit/examples/authoring/scene"
 )
 
 // Config bounds profiling by update ticks. Zero Frames runs interactively.
 // Capture reads the final logical image once; it is never part of normal drawing.
 type Config struct {
-	Eco          bool
-	Frames       int
-	Profile      string
-	Capture      string
-	CaptureFrame int
-	StopWhenDone bool
+	Eco                  bool
+	Authoring            bool
+	Frames               int
+	Profile              string
+	Capture              string
+	CaptureFrame         int
+	StopWhenDone         bool
+	ContinueAfterProfile bool // Mobile can retain the report and resume ordinary playback.
 }
 
 type Memory struct {
@@ -39,6 +42,7 @@ type CPUTime struct {
 	MaxUS  float64 `json:"max_us"`
 }
 type Report struct {
+	Scene          string           `json:"scene"`
 	Description    string           `json:"measurement"`
 	Resolution     [2]int           `json:"logical_resolution"`
 	Eco            bool             `json:"eco"`
@@ -80,11 +84,13 @@ func (t timing) report() CPUTime {
 	return r
 }
 
-// Game retains one finished frame after a mobile profiling run so no effects
-// continue rendering while the report is inspected. Desktop may exit instead.
+// Game retains the rendered frame between updates. A bounded profiling run can
+// exit, hold its last image, or resume ordinary playback after saving the report.
 type Game struct {
 	config                        Config
 	scene                         *Scene
+	authored                      *authored.Scene
+	root                          kit.Effect
 	output                        *ebiten.Image
 	tick                          uint64
 	lastDrawTick                  uint64
@@ -124,11 +130,25 @@ func NewGame(c Config) (*Game, error) {
 	return g, nil
 }
 func (g *Game) initialize() error {
+	if g.config.Authoring {
+		width, height := 640, 360
+		if g.config.Eco {
+			width, height = 320, 180
+		}
+		s, err := authored.NewSize(width, height)
+		if err != nil {
+			return err
+		}
+		g.authored, g.root = s, s
+		g.output = ebiten.NewImage(width, height)
+		return nil
+	}
 	s, err := New(g.config.Eco)
 	if err != nil {
 		return err
 	}
 	g.scene = s
+	g.root = s
 	g.output = ebiten.NewImage(s.Width, s.Height)
 	return nil
 }
@@ -139,7 +159,7 @@ func (g *Game) Update() error {
 	if g.err != nil {
 		return g.err
 	}
-	if g.scene == nil {
+	if g.root == nil {
 		if err := g.initialize(); err != nil {
 			return err
 		}
@@ -160,9 +180,13 @@ func (g *Game) Update() error {
 		if g.config.StopWhenDone {
 			return ebiten.Termination
 		}
+		if g.config.ContinueAfterProfile {
+			g.finished, g.measuring = false, false
+			g.config.Frames = 0
+		}
 		return nil
 	}
-	if !g.measuring && int(g.tick) >= g.warmup {
+	if !g.measuring && g.report == nil && int(g.tick) >= g.warmup {
 		runtime.ReadMemStats(&g.before)
 		g.started = time.Now()
 		g.measuring = true
@@ -173,7 +197,7 @@ func (g *Game) Update() error {
 	}
 	g.tick++
 	g.frame = kit.Frame{Tick: g.tick, Time: float64(g.tick) / 60, Delta: 1.0 / 60}
-	if err := g.scene.Update(g.frame); err != nil {
+	if err := g.root.Update(g.frame); err != nil {
 		return err
 	}
 	if g.measuring {
@@ -182,13 +206,13 @@ func (g *Game) Update() error {
 	return nil
 }
 func (g *Game) Draw(dst *ebiten.Image) {
-	if g.scene == nil {
+	if g.root == nil {
 		return
 	}
 	start := time.Now()
 	if !g.finished && g.lastDrawTick != g.tick {
 		g.output.Clear()
-		g.scene.Draw(g.output)
+		g.root.Draw(g.output)
 		g.lastDrawTick = g.tick
 		if g.measuring {
 			g.renderedScenes++
@@ -204,6 +228,9 @@ func (g *Game) Draw(dst *ebiten.Image) {
 	}
 }
 func (g *Game) Layout(int, int) (int, int) {
+	if g.authored != nil {
+		return g.authored.Width, g.authored.Height
+	}
 	if g.scene != nil {
 		return g.scene.Width, g.scene.Height
 	}
@@ -214,6 +241,12 @@ func (g *Game) Layout(int, int) (int, int) {
 }
 
 func (g *Game) handleInput() error {
+	if g.authored != nil {
+		if g.config.StopWhenDone && inpututil.IsKeyJustPressed(ebiten.KeyEscape) {
+			return ebiten.Termination
+		}
+		return nil
+	}
 	action := -1
 	for i, key := range []ebiten.Key{ebiten.KeyP, ebiten.KeyW, ebiten.KeyL, ebiten.KeyQ} {
 		if inpututil.IsKeyJustPressed(key) {
@@ -256,6 +289,7 @@ func (g *Game) handleInput() error {
 		next.Path, next.Water, next.Lens = previous.Path, previous.Water, previous.Lens
 		next.AutoPath = previous.AutoPath
 		g.scene = next
+		g.root = next
 		_ = previous.Close()
 		g.output.Deallocate()
 		g.output = ebiten.NewImage(next.Width, next.Height)
@@ -270,15 +304,24 @@ func (g *Game) finish() error {
 	if !g.measuring {
 		elapsed = 0
 	}
-	r := Report{Description: "CPU wall time around Update and Draw submission; not GPU execution time, power consumption, or total process memory. Logical RGBA image sizes exclude backend atlases and driver buffers.",
-		Resolution: [2]int{g.scene.Width, g.scene.Height}, Eco: g.scene.Eco, WaterRowHeight: 1, WarmupFrames: g.warmup, ElapsedSeconds: elapsed,
-		ActualFPS: ebiten.ActualFPS(), ActualTPS: ebiten.ActualTPS(), Update: g.updateTime.report(), Draw: g.drawTime.report(), Before: memoryOf(g.before), After: memoryOf(after),
-		AllocatedBytes: after.TotalAlloc - g.before.TotalAlloc, Allocations: after.Mallocs - g.before.Mallocs, Surfaces: g.scene.SurfaceInventory(), Capture: g.config.Capture}
-	r.RenderedScenes = g.renderedScenes
-	if g.scene.Eco {
-		r.WaterRowHeight = 4
+	width, height := g.Layout(0, 0)
+	eco, waterRows, sceneName := g.config.Eco, 0, "authoring"
+	var surfaces map[string]int64
+	if g.authored != nil {
+		surfaces = map[string]int64{"authoring_scene_rgba": g.authored.SurfaceBytes()}
+	} else {
+		eco, waterRows, sceneName = g.scene.Eco, 1, "live-effects"
+		if eco {
+			waterRows = 4
+		}
+		surfaces = g.scene.SurfaceInventory()
 	}
-	r.Surfaces["final_retained_frame_rgba"] = int64(g.scene.Width * g.scene.Height * 4)
+	r := Report{Scene: sceneName, Description: "CPU wall time around Update and Draw submission; not GPU execution time, power consumption, or total process memory. Logical RGBA image sizes exclude backend atlases and driver buffers.",
+		Resolution: [2]int{width, height}, Eco: eco, WaterRowHeight: waterRows, WarmupFrames: g.warmup, ElapsedSeconds: elapsed,
+		ActualFPS: ebiten.ActualFPS(), ActualTPS: ebiten.ActualTPS(), Update: g.updateTime.report(), Draw: g.drawTime.report(), Before: memoryOf(g.before), After: memoryOf(after),
+		AllocatedBytes: after.TotalAlloc - g.before.TotalAlloc, Allocations: after.Mallocs - g.before.Mallocs, Surfaces: surfaces, Capture: g.config.Capture}
+	r.RenderedScenes = g.renderedScenes
+	r.Surfaces["final_retained_frame_rgba"] = int64(width * height * 4)
 	if elapsed > 0 {
 		r.MeasuredFPS = float64(g.drawTime.count) / elapsed
 		r.MeasuredTPS = float64(g.updateTime.count) / elapsed
@@ -312,8 +355,10 @@ func (g *Game) Close() error {
 		g.output.Deallocate()
 		g.output = nil
 	}
-	err := g.scene.Close()
+	err := kit.Close(g.root)
 	g.scene = nil
+	g.root = nil
+	g.authored = nil
 	return err
 }
 func writeCapture(path string, source *ebiten.Image) error {
