@@ -18,9 +18,7 @@ require (
 	github.com/ebitengine/purego v0.9.0 // indirect
 	github.com/jezek/xgb v1.1.1 // indirect
 	github.com/olivierh59500/go-zikmu v0.0.0-20260916172410-b245427b8556
-	github.com/olivierh59500/ym-player v0.0.0-20260913215440-3f73bdca82e5
+	github.com/olivierh59500/ym-player v1.0.0
 	golang.org/x/sync v0.21.0 // indirect
 	golang.org/x/sys v0.44.0 // indirect
 )
-
-replace github.com/olivierh59500/ym-player => ../ym-player

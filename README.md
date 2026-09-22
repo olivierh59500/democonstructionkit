@@ -36,8 +36,8 @@ go run ./cmd/fidelity -demo bilizir-demo
 
 `-demos /path/to/demos` selects another checkout. `gallery -list` lists productions.
 The launcher runs the migrated source application; it does not replace its scene
-script with a kit-generated approximation. Each source repository has a local
-`go.mod` replacement pointing back to this module.
+script with a kit-generated approximation. Each source repository uses the
+published DCK version pinned in its `go.mod`; Go downloads the module automatically.
 
 Bilizir's requested logo variation is enabled by default in `bilizir-demo`: the
 logo and scrolling text share the same two-pass deformation. Press **L** to switch
@@ -150,6 +150,8 @@ the existing `NewPlayer` API still accepts raw Ebitengine contexts.
 ## Build and checks
 
 Go 1.26+ is required. Ebitengine and audio versions remain pinned in `go.mod`.
+YM playback uses the published `github.com/olivierh59500/ym-player v1.0.0` module.
+Go downloads the library dependencies automatically.
 Graphics tests require a native/virtual display.
 
 ```sh
