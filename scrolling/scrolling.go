@@ -50,6 +50,10 @@ type Config struct {
 	Speed, Gap, X, Y float64
 	Advance          float64 // Optional pen step independent of each glyph's bitmap width.
 	Vertical, Repeat bool
+	Page             *PageConfig      // Optional multiline vertical layout; Vertical alone is a glyph column.
+	Recycled         *RecycledConfig  // Authored recycled-slot transport, advanced once per Update.
+	Projected        *ProjectedConfig // Authored visible-slot plane transport, advanced once per Update.
+	Output           *OutputConfig    // Ordered image operations over the common text renderer.
 	// RepeatBounds selects the visible pen coordinates before any mappers run.
 	// Empty uses the destination bounds. Enlarge it for paths or projections that
 	// bring distant pen positions into view. Only automatic repeat drawing uses it.
@@ -96,6 +100,8 @@ type Scrolling struct {
 	frame                kit.Frame
 	draws                []glyphDraw
 	repeatMin, repeatMax float64
+	backend              kit.Effect
+	output               kit.Effect
 }
 
 type glyphDraw struct {
@@ -105,6 +111,15 @@ type glyphDraw struct {
 }
 
 func New(c Config) (*Scrolling, error) {
+	if c.Recycled != nil || c.Projected != nil {
+		return newTransport(c)
+	}
+	if c.Page != nil {
+		if c.Glyphs != nil || !finite(c.Page.Width) || !finite(c.Page.LineHeight) || c.Page.Width < 0 || c.Page.LineHeight < 0 || c.Page.Align > AlignRight {
+			return nil, fmt.Errorf("scrolling: invalid page layout")
+		}
+		c.Vertical = true
+	}
 	if !finite(c.Speed) || c.Speed < 0 || !finite(c.Gap) || c.Gap < 0 || !finite(c.X) || !finite(c.Y) || !finite(c.Advance) || c.Advance < 0 {
 		return nil, fmt.Errorf("scrolling: invalid speed/gap")
 	}
@@ -142,7 +157,7 @@ func New(c Config) (*Scrolling, error) {
 			return nil, fmt.Errorf("scrolling: a glyph sequence must advance")
 		}
 		s.addSegment(0, s.length+c.Gap, c.Speed, c.Shape)
-		return s, s.prepareModes()
+		return s.finish()
 	}
 	tokens := c.Tokens
 	var err error
@@ -164,6 +179,35 @@ func New(c Config) (*Scrolling, error) {
 	}
 	flush := func() { s.addSegment(lastMarker, s.length, speed, shape); lastMarker = s.length }
 	cache := map[string]map[rune]*ebiten.Image{}
+	lineX, lineHeight, lineStart := 0.0, 0.0, 0
+	finishLine := func() {
+		if c.Page == nil {
+			return
+		}
+		shift := 0.0
+		if c.Page.Width > 0 {
+			if c.Page.Align == AlignCenter {
+				shift = (c.Page.Width - lineX) / 2
+			}
+			if c.Page.Align == AlignRight {
+				shift = c.Page.Width - lineX
+			}
+		}
+		for i := lineStart; i < len(s.glyphs); i++ {
+			s.glyphs[i].X += shift
+		}
+		if lineHeight == 0 {
+			if metrics := c.Fonts[faceName].Metrics; metrics != nil {
+				scale := c.Fonts[faceName].ScaleY
+				if scale == 0 {
+					scale = 1
+				}
+				lineHeight = metrics.LineHeight() * sy * scale
+			}
+		}
+		s.length += math.Max(lineHeight, c.Page.LineHeight)
+		lineX, lineHeight, lineStart = 0, 0, len(s.glyphs)
+	}
 	for _, t := range tokens {
 		switch t.Kind {
 		case scrolltext.Text:
@@ -179,13 +223,20 @@ func New(c Config) (*Scrolling, error) {
 				fy = 1
 			}
 			for _, r := range t.Text {
+				if c.Page != nil && r == '\r' {
+					continue
+				}
+				if c.Page != nil && r == '\n' {
+					finishLine()
+					continue
+				}
 				metric, _ := face.Metrics.Glyph(r)
 				penAdvance := metric.Advance
 				if c.Advance > 0 {
 					penAdvance = c.Advance
 				}
 				advance := (penAdvance + spacing) * sx * fx
-				if c.Vertical {
+				if c.Vertical && c.Page == nil {
 					advance = face.Metrics.LineHeight() * sy * fy
 				}
 				if advance <= 0 || !finite(advance) {
@@ -203,7 +254,13 @@ func New(c Config) (*Scrolling, error) {
 					}
 				}
 				s.glyphs = append(s.glyphs, Glyph{Image: img, Rune: r, Advance: advance, Offset: s.length, X: metric.OffsetX * sx * fx, Y: metric.OffsetY * sy * fy, ScaleX: sx * fx, ScaleY: sy * fy, Font: faceName, Effect: effect})
-				s.length += advance
+				if c.Page != nil {
+					s.glyphs[len(s.glyphs)-1].X += lineX
+					lineX += advance
+					lineHeight = math.Max(lineHeight, face.Metrics.LineHeight()*sy*fy)
+				} else {
+					s.length += advance
+				}
 			}
 		case scrolltext.Font:
 			if _, ok := c.Fonts[t.Text]; !ok {
@@ -252,8 +309,11 @@ func New(c Config) (*Scrolling, error) {
 			return nil, fmt.Errorf("scrolling: unknown token kind")
 		}
 	}
+	if c.Page != nil && len(s.glyphs) > lineStart {
+		finishLine()
+	}
 	s.addSegment(lastMarker, s.length+c.Gap, speed, shape)
-	return s, s.prepareModes()
+	return s.finish()
 }
 
 func (s *Scrolling) prepareModes() error {
@@ -366,12 +426,35 @@ func (s *Scrolling) StateAt(seconds float64) DrawState {
 	}
 	return state
 }
-func (s *Scrolling) Update(f kit.Frame) error { s.frame = f; return nil }
+func (s *Scrolling) Update(f kit.Frame) error {
+	s.frame = f
+	if s.backend != nil {
+		if err := s.backend.Update(f); err != nil {
+			return err
+		}
+	}
+	if s.output != nil {
+		return s.output.Update(f)
+	}
+	return nil
+}
 
 // Draw repeats a continuous ribbon when Repeat is set, keeping both the tail
 // and the next copy alive across control timeline boundaries. Manual DrawAt and
 // StateAt retain their original single-pass semantics.
 func (s *Scrolling) Draw(dst *ebiten.Image) {
+	if s.output != nil {
+		s.output.Draw(dst)
+		return
+	}
+	s.drawCore(dst)
+}
+
+func (s *Scrolling) drawCore(dst *ebiten.Image) {
+	if s.backend != nil {
+		s.backend.Draw(dst)
+		return
+	}
 	state := s.StateAt(s.frame.Time)
 	if s.config.Repeat && len(s.glyphs) > 0 {
 		state = s.repeatState(state, dst.Bounds())
