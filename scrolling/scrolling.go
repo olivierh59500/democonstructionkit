@@ -74,7 +74,8 @@ type Config struct {
 // ScaleX/ScaleY are explicit: use IdentityState to start with unit scale.
 type DrawState struct {
 	bounded                              bool
-	cycleOrigin                          int // Internal geometry rebasing for automatic repetition.
+	cycleOrigin                          int  // Internal geometry rebasing for automatic repetition.
+	clipGlyphs                           bool // Automatic Draw only; manual transport keeps its exact visit policy.
 	X, Y, ScaleX, ScaleY, Time, Position float64
 	First, End                           int
 	Reverse                              bool
@@ -475,6 +476,7 @@ func (s *Scrolling) drawCore(dst *ebiten.Image) {
 		return
 	}
 	state := s.StateAt(s.frame.Time)
+	state.clipGlyphs = true
 	if s.config.Repeat && len(s.glyphs) > 0 {
 		state = s.repeatState(state, dst.Bounds())
 	} else if len(s.glyphs) > s.config.MaxGlyphsPerDraw {
@@ -619,6 +621,12 @@ func (s *Scrolling) DrawAt(dst *ebiten.Image, state DrawState) {
 				return
 			}
 		}
+		// Cull after every mapper, so paths and projections can bring distant
+		// pen positions into view. Custom painters may extend beyond the glyph
+		// image and retain full control over their own clipping.
+		if state.clipGlyphs && paint == nil && g.Image != nil && !glyphIntersects(dst.Bounds(), g.Image.Bounds(), op.GeoM) {
+			return
+		}
 		if mode.Depth != nil {
 			s.draws = append(s.draws, glyphDraw{sample, op, mode.Depth(sample)})
 		} else {
@@ -640,6 +648,20 @@ func (s *Scrolling) DrawAt(dst *ebiten.Image, state DrawState) {
 			flush(d.sample, d.options)
 		}
 	}
+}
+
+func glyphIntersects(view, source image.Rectangle, transform ebiten.GeoM) bool {
+	width, height := float64(source.Dx()), float64(source.Dy())
+	minX, minY, maxX, maxY := math.Inf(1), math.Inf(1), math.Inf(-1), math.Inf(-1)
+	for _, p := range [4][2]float64{{0, 0}, {width, 0}, {0, height}, {width, height}} {
+		x, y := transform.Apply(p[0], p[1])
+		if !finite(x) || !finite(y) {
+			return false
+		}
+		minX, minY, maxX, maxY = math.Min(minX, x), math.Min(minY, y), math.Max(maxX, x), math.Max(maxY, y)
+	}
+	// Retain a one-pixel margin around fractional and filtered edges.
+	return maxX > float64(view.Min.X)-1 && maxY > float64(view.Min.Y)-1 && minX < float64(view.Max.X)+1 && minY < float64(view.Max.Y)+1
 }
 
 // FromImages is a migration adapter for already sliced alphabets. Missing images

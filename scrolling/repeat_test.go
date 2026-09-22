@@ -28,6 +28,37 @@ func TestAutomaticScrollBoundsWorkForTinyAdvances(t *testing.T) {
 	}
 }
 
+func TestAutomaticCullingUsesTransformedBounds(t *testing.T) {
+	img := ebiten.NewImage(8, 8)
+	defer img.Deallocate()
+	dst := ebiten.NewImage(32, 32)
+	defer dst.Deallocate()
+	depthVisits := 0
+	s, err := New(Config{Glyphs: []Glyph{{Image: img, Advance: 10, X: 1000}, {Image: img, Advance: 10, X: 1000}}, Shape: "mapped", Modes: map[string]Mode{"mapped": {
+		Map: func(sample Sample, op *ebiten.DrawImageOptions) bool {
+			if sample.Index == 0 {
+				op.GeoM.Translate(-1000, 0)
+			}
+			return true
+		},
+		Depth: func(Sample) float64 { depthVisits++; return 0 },
+	}}})
+	if err != nil {
+		t.Fatal(err)
+	}
+	s.Draw(dst)
+	if depthVisits != 1 {
+		t.Fatalf("post-transform culling visited %d glyphs, want1", depthVisits)
+	}
+	depthVisits = 0
+	state := IdentityState()
+	state.Shape = "mapped"
+	s.DrawAt(dst, state)
+	if depthVisits != 2 {
+		t.Fatal("automatic optimization changed manual visit policy")
+	}
+}
+
 type repeatObservation struct {
 	sample  Sample
 	options ebiten.DrawImageOptions
