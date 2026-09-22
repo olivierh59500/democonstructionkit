@@ -4,6 +4,7 @@ import (
 	"encoding/binary"
 	"fmt"
 	"io"
+	"math"
 )
 
 // PCM16Options describes a decoded, interleaved, little-endian stereo stream.
@@ -11,11 +12,17 @@ import (
 type PCM16Options struct {
 	SampleRate int
 	Loop       bool
+	// LoopStartFrame skips a one-time introduction on subsequent loops. The
+	// position counts decoded stereo frames at SampleRate, not source bytes.
+	// It requires Loop; zero repeats the entire stream. Seeking to the beginning
+	// always replays the introduction. An empty loop region ends playback.
+	LoopStartFrame int64
 }
 type pcm16 struct {
-	source io.ReadSeeker
-	loop   bool
-	buffer [blockFrames * 4]byte
+	source    io.ReadSeeker
+	loop      bool
+	loopStart int64
+	buffer    [blockFrames * 4]byte
 }
 
 // NewPCM16 owns a seekable decoder on success; no device backend is imported.
@@ -30,7 +37,13 @@ func NewPCM16(source io.ReadSeeker, c PCM16Options) (*Stream, error) {
 	if err := validRate(c.SampleRate); err != nil {
 		return nil, err
 	}
-	return newStream(&pcm16{source: source, loop: c.Loop}, c.SampleRate), nil
+	if c.LoopStartFrame < 0 || c.LoopStartFrame > math.MaxInt64/4 {
+		return nil, fmt.Errorf("sound: PCM loop start frame out of range")
+	}
+	if c.LoopStartFrame != 0 && !c.Loop {
+		return nil, fmt.Errorf("sound: PCM loop start requires looping")
+	}
+	return newStream(&pcm16{source: source, loop: c.Loop, loopStart: c.LoopStartFrame * 4}, c.SampleRate), nil
 }
 func (p *pcm16) render(dst []float32) (int, error) {
 	written := 0
@@ -60,7 +73,7 @@ func (p *pcm16) render(dst []float32) (int, error) {
 				return written, io.EOF
 			}
 			empty = n == 0
-			if err = p.reset(); err != nil {
+			if _, err = p.source.Seek(p.loopStart, io.SeekStart); err != nil {
 				return written, err
 			}
 		}
