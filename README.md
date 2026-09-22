@@ -1110,3 +1110,32 @@ application still allocated about 7.2 MB over 14 seconds (including engine work)
 so the zero-allocation primitive benchmarks must not be read as a claim of a
 zero-allocation application. The lower-resolution mode reduces surface memory
 and CPU draw submission, with intentionally coarser output.
+
+
+### Saved-project scene measured on Pixel 10a
+
+The new authored scene was also measured on the Pixel 10a on 2026-09-23:
+1,800 updates, first 60 excluded, approximately 29 seconds of measurement.
+It combines a repeated background, 24 image sprites with beat-grid modulation,
+mixed-font scrolling, six timed geometry modes and a title. No live audio analysis
+or procedural plasma is included in this particular measurement.
+
+| Logical resolution | Observed draws/s | Observed updates/s | Mean Update CPU | Mean Draw submission CPU | Logical RGBA storage |
+| --- | --- | --- | --- | --- | --- |
+| 640×360 | 59.94 | 60.01 | 46.8 µs | 1.69 ms | 1.86 MiB |
+| 320×180 | 59.94 | 59.98 | 45.7 µs | 1.70 ms | 0.54 MiB |
+
+Both runs held approximately 60 updates/s. Lower resolution reduced logical image
+storage; CPU submission time was similar in this composition. The complete app
+allocated about 60 MB over each 29-second run, including engine/runtime activity;
+this is not a zero-allocation application or a GPU/power/thermal measurement.
+Automatic glyph culling runs after geometry mapping and preserves the checked
+rendered pixels; custom painters and manual compatibility transports keep their
+own clipping policy.
+
+Android accepts `--ez authoring true`, `--ez eco true` and `--el frames 1800`
+when starting the effects-lab activity. Bounded runs save their report and resume
+continuous playback automatically. During a bounded run the activity may display
+over the keyguard without dismissing it. `--el frames 0` starts ordinary continuous
+playback. Desktop uses `go run ./examples/effectslab -authoring`; add `-eco`,
+`-frames` and `-profile` to choose a bounded measurement.
