@@ -127,6 +127,8 @@ func (g *Group) Update(f kit.Frame) error {
 	if c.Context != nil {
 		context = c.Context(f)
 	}
+	common := GroupPose{ScaleX: 1, ScaleY: 1, Opacity: 1}
+	applyGroupSignals(&common, c.Signals, context)
 	for i := range g.poses {
 		t := f.Time - float64(i)*c.Delay
 		phase := c.Phase + t*c.Speed + float64(i)*c.PhaseSpacing
@@ -154,7 +156,12 @@ func (g *Group) Update(f kit.Frame) error {
 		if c.Orient && (tangent.X != 0 || tangent.Y != 0) {
 			p.Angle += math.Atan2(tangent.Y, tangent.X)
 		}
-		applyGroupSignals(&p, c.Signals, context)
+		p.X += common.X
+		p.Y += common.Y
+		p.Angle += common.Angle
+		p.ScaleX *= common.ScaleX
+		p.ScaleY *= common.ScaleY
+		p.Opacity *= common.Opacity
 		if i < len(c.PerInstance) {
 			applyGroupSignals(&p, c.PerInstance[i], context)
 		}

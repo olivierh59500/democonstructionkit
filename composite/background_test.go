@@ -62,3 +62,14 @@ func BenchmarkBackgroundCopies(b *testing.B) {
 		backgroundCopies(-float64(i)*4, 640, 640, 0, 640)
 	}
 }
+
+func TestBackgroundRejectsUnboundedCopyRanges(t *testing.T) {
+	for _, period := range []float64{1e-6, 1e-100, math.SmallestNonzeroFloat64} {
+		if _, _, _, ok := backgroundCopyRange(0, 32, period, 0, 640, 16384); ok {
+			t.Fatalf("unbounded density accepted: %g", period)
+		}
+	}
+	if _, _, _, ok := backgroundCopyRange(0, 32, 16, 0, 640, 16384); !ok {
+		t.Fatal("ordinary overlaps rejected")
+	}
+}

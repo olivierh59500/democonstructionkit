@@ -1,6 +1,7 @@
 package composite
 
 import (
+	"errors"
 	"fmt"
 	"image"
 	"math"
@@ -23,6 +24,7 @@ type BackgroundConfig struct {
 	Filter               ebiten.Filter
 	Blend                ebiten.Blend
 	ColorScale           ebiten.ColorScale
+	MaxCopies            int // Fallback draw budget; zero defaults to 16384. Repeated quads cost one.
 }
 
 // DefaultBackgroundConfig follows the camera at full speed with unit scaling.
@@ -45,9 +47,22 @@ type Background struct {
 	config       BackgroundConfig
 	source, crop *ebiten.Image
 	vertices     [4]ebiten.Vertex
+	err          error
 }
 
+var ErrBackgroundBudget = errors.New("composite: repeated background exceeds its copy budget")
+
+// Err reports the last Draw's resource-budget error. Invalid excessive-density
+// frames are skipped in full rather than freezing or rendering a partial layer.
+func (b *Background) Err() error { return b.err }
+
 func NewBackground(c BackgroundConfig) (*Background, error) {
+	if c.MaxCopies == 0 {
+		c.MaxCopies = 16384
+	}
+	if c.MaxCopies < 1 || c.MaxCopies > 1<<20 {
+		return nil, fmt.Errorf("composite: invalid background copy budget")
+	}
 	if c.ScaleX == 0 {
 		c.ScaleX = 1
 	}
@@ -71,6 +86,7 @@ func (b *Background) Draw(dst, source *ebiten.Image, pose BackgroundPose) {
 	if dst == nil || source == nil || b == nil {
 		return
 	}
+	b.err = nil
 	if b.source != source {
 		b.source, b.crop = source, source
 		if !b.config.Source.Empty() {
@@ -97,9 +113,17 @@ func (b *Background) Draw(dst, source *ebiten.Image, pose BackgroundPose) {
 	if b.repeatedQuad(dst, x, y, w, h) {
 		return
 	}
-	x, firstX, lastX := backgroundCopies(x, w, px, float64(view.Min.X), float64(view.Max.X))
-	y, firstY, lastY := backgroundCopies(y, h, py, float64(view.Min.Y), float64(view.Max.Y))
+	x, firstX, lastX, okX := backgroundCopyRange(x, w, px, float64(view.Min.X), float64(view.Max.X), c.MaxCopies)
+	y, firstY, lastY, okY := backgroundCopyRange(y, h, py, float64(view.Min.Y), float64(view.Max.Y), c.MaxCopies)
+	if !okX || !okY {
+		b.err = ErrBackgroundBudget
+		return
+	}
 	if firstX > lastX || firstY > lastY {
+		return
+	}
+	if (lastX - firstX + 1) > c.MaxCopies/(lastY-firstY+1) {
+		b.err = ErrBackgroundBudget
 		return
 	}
 	op := ebiten.DrawImageOptions{Filter: c.Filter, Blend: c.Blend, ColorScale: c.ColorScale}
@@ -162,11 +186,16 @@ func (b *Background) DrawAt(dst, source *ebiten.Image, x, y float64) {
 // A nonrepeated axis draws at most one copy. Half-open edges avoid double drawing
 // adjacent opaque tiles while preserving all overlapping translucent copies.
 func backgroundCopies(origin, extent, period, minimum, maximum float64) (float64, int, int) {
+	origin, first, last, _ := backgroundCopyRange(origin, extent, period, minimum, maximum, 16384)
+	return origin, first, last
+}
+
+func backgroundCopyRange(origin, extent, period, minimum, maximum float64, budget int) (float64, int, int, bool) {
 	if period <= 0 {
 		if origin+extent <= minimum || origin >= maximum {
-			return origin, 1, 0
+			return origin, 1, 0, true
 		}
-		return origin, 0, 0
+		return origin, 0, 0, true
 	}
 	// Keep ordinary placement arithmetic identical to direct DrawImage calls.
 	// Premature normalization can move nearest-filtered fractional edges across
@@ -174,9 +203,13 @@ func backgroundCopies(origin, extent, period, minimum, maximum float64) (float64
 	if math.Abs(origin-minimum) > period*1e6 {
 		origin = minimum + math.Mod(origin-minimum, period)
 	}
-	first := int(math.Floor((minimum-origin-extent)/period)) + 1
-	last := int(math.Ceil((maximum-origin)/period)) - 1
-	return origin, first, last
+	first := math.Floor((minimum-origin-extent)/period) + 1
+	last := math.Ceil((maximum-origin)/period) - 1
+	// Bound work and float-to-int conversion before entering either draw loop.
+	if math.IsNaN(first) || math.IsNaN(last) || math.IsInf(first, 0) || math.IsInf(last, 0) || math.Abs(first) >= 1<<30 || math.Abs(last) >= 1<<30 || last-first+1 > float64(budget) {
+		return origin, 1, 0, false
+	}
+	return origin, int(first), int(last), true
 }
 
 // BackgroundLayer adapts a background to kit.Layers or kit.Group. Layers borrow
@@ -189,7 +222,13 @@ type BackgroundLayer struct {
 	frame    kit.Frame
 }
 
-func (b *BackgroundLayer) Update(frame kit.Frame) error { b.frame = frame; return nil }
+func (b *BackgroundLayer) Update(frame kit.Frame) error {
+	b.frame = frame
+	if b.Renderer == nil {
+		return fmt.Errorf("composite: nil background renderer")
+	}
+	return b.Renderer.Err()
+}
 func (b *BackgroundLayer) Draw(dst *ebiten.Image) {
 	pose := b.Pose
 	if b.Sample != nil {

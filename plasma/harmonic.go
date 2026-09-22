@@ -86,15 +86,24 @@ func NewHarmonic(config HarmonicConfig) (*Harmonic, error) {
 	if !finite(config.Divisor) || config.Divisor == 0 || !finite(config.ColorFrequency) {
 		return nil, fmt.Errorf("plasma: invalid harmonic normalization")
 	}
+	amplitudeBound := 0.0
 	for _, wave := range config.Waves {
 		if wave.Shape > Radial || !finite(wave.Frequency) || !finite(wave.Speed) || !finite(wave.Phase) ||
 			!finite(wave.Amplitude) || !finite(wave.CenterX) || !finite(wave.CenterY) {
 			return nil, fmt.Errorf("plasma: invalid harmonic wave")
 		}
+		amplitudeBound += math.Abs(wave.Amplitude)
+	}
+	if !finite(amplitudeBound) || !finite(amplitudeBound/math.Abs(config.Divisor)*math.Abs(config.ColorFrequency)) {
+		return nil, fmt.Errorf("plasma: harmonic amplitudes overflow the color phase")
 	}
 	for _, channel := range config.Channels {
 		if !finite(channel.SinWeight) || !finite(channel.CosWeight) || !finite(channel.Offset) || !finite(channel.Scale) {
 			return nil, fmt.Errorf("plasma: invalid harmonic channel")
+		}
+		bound := math.Abs(channel.SinWeight) + math.Abs(channel.CosWeight) + math.Abs(channel.Offset)
+		if !finite(bound) || !finite(bound*math.Abs(channel.Scale)) {
+			return nil, fmt.Errorf("plasma: harmonic channel overflows")
 		}
 	}
 	config.Waves = append([]HarmonicWave(nil), config.Waves...)

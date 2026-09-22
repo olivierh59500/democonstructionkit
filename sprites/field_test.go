@@ -1,6 +1,8 @@
 package sprites
 
 import (
+	"github.com/hajimehoshi/ebiten/v2"
+	"image"
 	"math"
 	"testing"
 
@@ -36,6 +38,25 @@ func TestFieldMatchesWrappedRotatingProjection(t *testing.T) {
 		if len(got) != n {
 			t.Fatal("unexpected projected points")
 		}
+	}
+}
+
+func TestFieldRendererReplacesAtlasCacheInsteadOfRetainingOldStyles(t *testing.T) {
+	source := ebiten.NewImage(256, 4)
+	defer source.Deallocate()
+	dst := ebiten.NewImage(20, 20)
+	defer dst.Deallocate()
+	r := NewFieldRenderer(4)
+	defer r.Close()
+	for x := 0; x < 250; x++ {
+		r.Draw(dst, []FieldSample{{Image: 0}}, FieldStyle{Image: source, DrawImages: true, Frames: []image.Rectangle{image.Rect(x, 0, x+4, 4)}})
+		if len(r.frameImages) != 1 || len(r.frameRects) != 1 {
+			t.Fatal("obsolete atlas frames retained")
+		}
+	}
+	r.Draw(dst, nil, FieldStyle{})
+	if r.frameSource != nil || len(r.frameImages) != 0 {
+		t.Fatal("skin replacement retained borrowed atlas")
 	}
 }
 

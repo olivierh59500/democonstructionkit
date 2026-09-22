@@ -87,6 +87,7 @@ func NewField(c FieldConfig) (*Field, error) {
 			return nil, fmt.Errorf("sprites: nonfinite field point %d", i)
 		}
 	}
+	f.config.Points = nil
 	return f, nil
 }
 

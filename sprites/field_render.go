@@ -4,6 +4,7 @@ import (
 	"image"
 	"image/color"
 	"math"
+	"slices"
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/olivierh59500/democonstructionkit/render"
@@ -40,14 +41,11 @@ type FieldStyle struct {
 // FieldRenderer batches pixels, image sprites and trails using persistent
 // bounded geometry. Assets are borrowed; only the fallback white pixel is owned.
 type FieldRenderer struct {
-	white  *ebiten.Image
-	batch  *render.Batch
-	frames map[fieldFrame]*ebiten.Image
-}
-
-type fieldFrame struct {
-	image *ebiten.Image
-	rect  image.Rectangle
+	white       *ebiten.Image
+	batch       *render.Batch
+	frameSource *ebiten.Image
+	frameRects  []image.Rectangle
+	frameImages []*ebiten.Image
 }
 
 func NewFieldRenderer(capacity int) *FieldRenderer {
@@ -63,6 +61,28 @@ func (r *FieldRenderer) Draw(dst *ebiten.Image, samples []FieldSample, c FieldSt
 	source := c.Image
 	if source == nil {
 		source = r.white
+	}
+	if c.DrawImages && len(c.Frames) > 0 {
+		if r.frameSource != source || !slices.Equal(r.frameRects, c.Frames) {
+			r.frameSource = source
+			r.frameRects = append(r.frameRects[:0], c.Frames...)
+			clear(r.frameImages)
+			if cap(r.frameImages) < len(c.Frames) {
+				r.frameImages = make([]*ebiten.Image, len(c.Frames))
+			} else {
+				r.frameImages = r.frameImages[:len(c.Frames)]
+			}
+			for i, rect := range c.Frames {
+				if !rect.Empty() && rect.In(source.Bounds()) {
+					r.frameImages[i] = source.SubImage(rect).(*ebiten.Image)
+				}
+			}
+		}
+	} else {
+		r.frameSource = nil
+		r.frameRects = r.frameRects[:0]
+		clear(r.frameImages)
+		r.frameImages = r.frameImages[:0]
 	}
 	r.batch.Options.Filter, r.batch.Options.Blend, r.batch.Options.AntiAlias = c.Filter, c.Blend, c.Antialias
 	r.batch.Begin(dst, source)
@@ -103,16 +123,8 @@ func (r *FieldRenderer) Draw(dst *ebiten.Image, samples []FieldSample, c FieldSt
 		if c.DrawImages && !c.Streak {
 			r.batch.Flush()
 			img := source
-			if rect != source.Bounds() {
-				key := fieldFrame{source, rect}
-				img = r.frames[key]
-				if img == nil {
-					if r.frames == nil {
-						r.frames = make(map[fieldFrame]*ebiten.Image)
-					}
-					img = source.SubImage(rect).(*ebiten.Image)
-					r.frames[key] = img
-				}
+			if len(c.Frames) > 0 {
+				img = r.frameImages[p.Image]
 			}
 			op := ebiten.DrawImageOptions{Filter: c.Filter, Blend: c.Blend, ColorScale: a.Tint}
 			op.GeoM.Translate(-a.AnchorX*float64(rect.Dx()), -a.AnchorY*float64(rect.Dy()))
@@ -161,6 +173,9 @@ func (r *FieldRenderer) Close() error {
 		r.white.Deallocate()
 		r.white = nil
 	}
-	clear(r.frames)
+	r.frameSource = nil
+	r.frameRects = nil
+	r.frameImages = nil
+	r.batch = nil
 	return nil
 }
