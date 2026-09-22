@@ -14,6 +14,9 @@ import (
 // These pixel assertions need RunGame's active graphics context. They cover
 // short/reverse scrolls, overhanging glyphs, viewport clipping and batch flushing.
 func checkRenderingPrimitives() error {
+	if err := checkMagnifierRendering(); err != nil {
+		return err
+	}
 	atlas := ebiten.NewImage(4, 4)
 	defer atlas.Deallocate()
 	atlas.Fill(color.White)
