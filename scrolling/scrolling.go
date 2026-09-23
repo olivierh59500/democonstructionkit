@@ -51,11 +51,14 @@ type Config struct {
 	Speed, Gap, X, Y float64
 	Advance          float64 // Optional pen step independent of each glyph's bitmap width.
 	Vertical, Repeat bool
-	Page             *PageConfig      // Optional multiline vertical layout; Vertical alone is a glyph column.
-	Recycled         *RecycledConfig  // Authored recycled-slot transport, advanced once per Update.
-	Projected        *ProjectedConfig // Authored visible-slot plane transport, advanced once per Update.
-	Sliced           *SlicedConfig    // Streaming DNA with independent transport and rotation clocks.
-	Output           *OutputConfig    // Ordered image operations over the common text renderer.
+	Page             *PageConfig        // Optional multiline vertical layout; Vertical alone is a glyph column.
+	Recycled         *RecycledConfig    // Authored recycled-slot transport, advanced once per Update.
+	Projected        *ProjectedConfig   // Authored visible-slot plane transport, advanced once per Update.
+	Bands            *BitmapBandsConfig // Bounded repeated text lanes.
+	Slots            *BitmapSlotsConfig // Recycled glyphs with pose mapping and tangent orientation.
+	Crawl            *CrawlConfig       // Bounded paragraph transport and configurable perspective rows.
+	Sliced           *SlicedConfig      // Streaming DNA with independent transport and rotation clocks.
+	Output           *OutputConfig      // Ordered image operations over the common text renderer.
 	// RepeatBounds selects the visible pen coordinates before any mappers run.
 	// Empty uses the destination bounds. Enlarge it for paths or projections that
 	// bring distant pen positions into view. Only automatic repeat drawing uses it.
@@ -127,7 +130,7 @@ func New(c Config) (*Scrolling, error) {
 	if c.MaxGlyphsPerDraw < 1 || c.MaxGlyphsPerDraw > 1<<24 {
 		return nil, fmt.Errorf("scrolling: invalid automatic draw budget")
 	}
-	if c.Recycled != nil || c.Projected != nil || c.Sliced != nil {
+	if c.Recycled != nil || c.Projected != nil || c.Sliced != nil || c.Crawl != nil || c.Bands != nil || c.Slots != nil {
 		return newTransport(c)
 	}
 	if c.Page != nil {

@@ -135,6 +135,15 @@ func newTransport(c Config) (*Scrolling, error) {
 	if c.Sliced != nil {
 		count++
 	}
+	if c.Crawl != nil {
+		count++
+	}
+	if c.Bands != nil {
+		count++
+	}
+	if c.Slots != nil {
+		count++
+	}
 	if count != 1 || c.Page != nil || c.Text != "" || c.Tokens != nil || c.Glyphs != nil || c.Controls != nil || len(c.Fonts) > 0 || len(c.Modes) > 0 || c.Map != nil || len(c.Shapes) > 0 || len(c.Effects) > 0 || c.Sequence != nil {
 		return nil, fmt.Errorf("scrolling: choose one transport; configure glyph modes on the regular transport and image passes on any transport")
 	}
@@ -164,6 +173,33 @@ func newTransport(c Config) (*Scrolling, error) {
 			return nil, err
 		}
 		s.backend = &projectedTransport{planes: p, renderer: r, config: cfg}
+	} else if c.Bands != nil {
+		if c.X != 0 || c.Y != 0 || c.Vertical {
+			return nil, fmt.Errorf("scrolling: text-band placement belongs in BandsConfig")
+		}
+		bands, err := NewBitmapBands(*c.Bands)
+		if err != nil {
+			return nil, err
+		}
+		s.backend = bands
+	} else if c.Slots != nil {
+		if c.X != 0 || c.Y != 0 || c.Vertical {
+			return nil, fmt.Errorf("scrolling: slot placement belongs in SlotsConfig")
+		}
+		slots, err := NewBitmapSlots(*c.Slots)
+		if err != nil {
+			return nil, err
+		}
+		s.backend = slots
+	} else if c.Crawl != nil {
+		if c.X != 0 || c.Y != 0 || c.Vertical {
+			return nil, fmt.Errorf("scrolling: crawl placement belongs in CrawlConfig")
+		}
+		crawl, err := NewCrawl(*c.Crawl)
+		if err != nil {
+			return nil, err
+		}
+		s.backend = crawl
 	} else {
 		cfg := *c.Sliced
 		if c.X != 0 || c.Y != 0 || c.Vertical || cfg.Film == nil || cfg.Film.Image == nil || cfg.SlicesPerUpdate < 0 || !finite(cfg.RotationSpeed) || !finite(cfg.RotationPhase) || cfg.Draw.SliceWidth != cfg.Stream.SliceWidth {
