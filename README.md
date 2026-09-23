@@ -1243,6 +1243,13 @@ remain available for effects with different behavior.
 | `scrolling.Reveal` | Cached text layout and ordered per-character entrance | Union loader |
 | `composite.Bands` | Independently moving/repeated background strips and batched drawing | Union Multiplane |
 
+`FeedConfig.ProgressiveEntry` keeps the active glyph at the viewport edge until
+its full advance has entered, revealing its bitmap over successive updates.
+The default retains the earlier one-frame glyph insertion used by other intros.
+TeamG1 selects progressive entry at the 768-pixel right edge and a flat CRT
+projection, keeping the shader's scanlines, chromatic fringe, glow and flicker
+without clipping the top or bottom strokes of its 72-pixel-high font.
+
 For concrete integration, see the constructors in `demos/dma-is-back/dck/game.go`,
 `demos/teamg1-demo/dck/game.go`, `demos/go-cocoisthebest/dck/main.go`,
 `demos/go-multiscreen/dck/main.go`, `demos/go-cuddlymenu/dck/screens/starwars.go`,

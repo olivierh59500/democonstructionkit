@@ -34,7 +34,7 @@ The entries are acceptance work, not claims that all screens are already small.
 | Phenomena DNA intro | Atlas, DNAFrames, sliced transport | Whole screen's two-pixel insertion, loop-start and control events as a reusable configuration; separate intro/outro reveal and bounce cues. |
 | TCB multiplane | Projected scrolling, font-independent forms, background bands | Logo row warp and central flip; share screen recipe with Multiscreen and Union while preserving phase-per-visible-slot timing. |
 | Replicants | Atlas, `Config.RowColumn` with variable-speed controls | Stepped block reveal, quantized logo zoom bank and layered stars. |
-| TeamG1, intro | `Config.Feed`, atlas, TimedCRTOverlay | Message and intro-to-main cue times remain production data. |
+| TeamG1, intro | `Config.Feed` with progressive right-edge entry, atlas, flat TimedCRTOverlay | Message and intro-to-main cue times remain production data. |
 | TeamG1, main | TexturedCube, HarmonicImage, ProfileImage, `Config.Profiled`, sprites.Group circular formation | Timed scene/audio cues and whole-scene presentation remain composition data. |
 | Viva TCB | Atlas, scrolling, image repetition | Four pseudo-3D glyph banks with per-glyph scale/order/snap; ten-logo harmonic formation; raster title material. |
 
