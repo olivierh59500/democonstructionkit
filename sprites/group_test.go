@@ -10,6 +10,41 @@ import (
 	"github.com/olivierh59500/democonstructionkit/motion"
 )
 
+func TestCircleGroupAccumulatesIndependentPoses(t *testing.T) {
+	img := ebiten.NewImage(4, 4)
+	defer img.Deallocate()
+	circle := motion.CircleFormation{
+		RadiusX: 150, RadiusY: 150, IndexCount: 3,
+		XAmplitude: 20, XRate: 2, XIndexPhase: 1,
+		YAmplitude: 20, YRate: 2, YIndexPhase: 1,
+		ScaleBase: .5, ScaleAmplitude: .5, ScaleRate: 1, ScaleIndexPhase: .5,
+	}
+	g, err := NewGroup(GroupConfig{
+		Frames: []*ebiten.Image{img}, Count: 3, Circle: &circle,
+		Origin: motion.Point{X: 320, Y: 200}, PhaseStep: .02,
+		AnchorX: .5, AnchorY: .5,
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	phase := 0.0
+	for tick := 0; tick < 1200; tick++ {
+		phase += .02
+		if err := g.Update(kit.Frame{}); err != nil {
+			t.Fatal(err)
+		}
+		for i, got := range g.Poses() {
+			angle := phase + float64(i)*math.Pi*2/3
+			wantX := math.Cos(angle)*150 + math.Sin(phase*2+float64(i))*20 + 320
+			wantY := math.Sin(angle)*150 + math.Cos(phase*2+float64(i))*20 + 200
+			wantScale := .5 + .5*math.Sin(phase+float64(i)*.5)
+			if math.Abs(got.X-wantX) > 1e-10 || math.Abs(got.Y-wantY) > 1e-10 || math.Abs(got.ScaleX-wantScale) > 1e-10 || got.ScaleX != got.ScaleY {
+				t.Fatalf("tick %d sprite %d = %+v, want (%v, %v, %v)", tick, i, got, wantX, wantY, wantScale)
+			}
+		}
+	}
+}
+
 func TestGroupDistinguishesPathSpacingTimeDelayAndScreenSpacing(t *testing.T) {
 	image := ebiten.NewImage(4, 4)
 	defer image.Deallocate()

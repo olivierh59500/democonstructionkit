@@ -17,7 +17,7 @@ type GroupSignals struct {
 }
 
 // GroupConfig describes a sprite/logo formation, independent of image metrics.
-// Choose at most one Path, Points, Orbit or Weave. With none, positions follow
+// Choose at most one Path, Points, Orbit, Weave or Circle. With none, positions follow
 // Velocity. Speed and PhaseSpacing use path pixels or the orbit's phase units;
 // Delay is seconds per instance. Spacing is an additional screen-space offset.
 // Points offers serializable path data; SplineSamples>0 selects a smooth spline.
@@ -32,8 +32,10 @@ type GroupConfig struct {
 	SplineSamples                           int
 	Orbit                                   *motion.NestedOrbit
 	Weave                                   *motion.Weave
+	Circle                                  *motion.CircleFormation
 	Origin, Velocity, Spacing               motion.Point
 	Speed, Phase, PhaseSpacing, Delay       float64
+	PhaseStep                               float64 // Optional cumulative phase per Update.
 	Orient                                  bool
 	ScaleX, ScaleY, Angle, AnchorX, AnchorY float64
 	Filter                                  ebiten.Filter
@@ -55,6 +57,7 @@ type GroupPose struct {
 type Group struct {
 	config GroupConfig
 	poses  []GroupPose
+	phase  float64
 }
 
 func NewGroup(c GroupConfig) (*Group, error) {
@@ -74,10 +77,13 @@ func NewGroup(c GroupConfig) (*Group, error) {
 	if c.Weave != nil {
 		kinds++
 	}
+	if c.Circle != nil {
+		kinds++
+	}
 	if kinds > 1 {
 		return nil, fmt.Errorf("sprites: choose one formation trajectory")
 	}
-	for _, v := range []float64{c.FPS, c.Origin.X, c.Origin.Y, c.Velocity.X, c.Velocity.Y, c.Spacing.X, c.Spacing.Y, c.Speed, c.Phase, c.PhaseSpacing, c.Delay, c.ScaleX, c.ScaleY, c.Angle, c.AnchorX, c.AnchorY} {
+	for _, v := range []float64{c.FPS, c.Origin.X, c.Origin.Y, c.Velocity.X, c.Velocity.Y, c.Spacing.X, c.Spacing.Y, c.Speed, c.Phase, c.PhaseSpacing, c.PhaseStep, c.Delay, c.ScaleX, c.ScaleY, c.Angle, c.AnchorX, c.AnchorY} {
 		if !finiteField(v) {
 			return nil, fmt.Errorf("sprites: nonfinite group parameter")
 		}
@@ -113,8 +119,23 @@ func NewGroup(c GroupConfig) (*Group, error) {
 		copy := *c.Weave
 		c.Weave = &copy
 	}
-	g := &Group{config: c, poses: make([]GroupPose, c.Count)}
-	g.Update(kit.Frame{})
+	if c.Circle != nil {
+		copy := *c.Circle
+		if copy.IndexCount < 0 || copy.IndexCount > 1_000_000 {
+			return nil, fmt.Errorf("sprites: invalid circle index count")
+		}
+		for _, value := range []float64{copy.RadiusX, copy.RadiusY, copy.IndexAngle, copy.XAmplitude, copy.XRate, copy.XIndexPhase, copy.XPhase, copy.YAmplitude, copy.YRate, copy.YIndexPhase, copy.YPhase, copy.ScaleBase, copy.ScaleAmplitude, copy.ScaleRate, copy.ScaleIndexPhase, copy.ScalePhase} {
+			if !finiteField(value) {
+				return nil, fmt.Errorf("sprites: nonfinite circle parameter")
+			}
+		}
+		if copy.ScaleBase == 0 && copy.ScaleAmplitude == 0 {
+			copy.ScaleBase = 1
+		}
+		c.Circle = &copy
+	}
+	g := &Group{config: c, poses: make([]GroupPose, c.Count), phase: c.Phase}
+	g.sample(kit.Frame{})
 	return g, nil
 }
 
@@ -122,6 +143,15 @@ func (g *Group) Update(f kit.Frame) error {
 	if !finiteField(f.Time) {
 		return fmt.Errorf("sprites: nonfinite group time")
 	}
+	next := g.phase + g.config.PhaseStep
+	if !finiteField(next) {
+		return fmt.Errorf("sprites: group phase overflows")
+	}
+	g.phase = next
+	return g.sample(f)
+}
+
+func (g *Group) sample(f kit.Frame) error {
 	c := g.config
 	context := modulation.Context{Seconds: f.Time}
 	if c.Context != nil {
@@ -131,8 +161,9 @@ func (g *Group) Update(f kit.Frame) error {
 	applyGroupSignals(&common, c.Signals, context)
 	for i := range g.poses {
 		t := f.Time - float64(i)*c.Delay
-		phase := c.Phase + t*c.Speed + float64(i)*c.PhaseSpacing
+		phase := g.phase + t*c.Speed + float64(i)*c.PhaseSpacing
 		position, tangent := motion.Point{}, motion.Point{X: 1}
+		circleScale := 1.0
 		switch {
 		case c.Path != nil:
 			position, tangent = c.Path.At(phase)
@@ -148,11 +179,15 @@ func (g *Group) Update(f kit.Frame) error {
 				a, b := c.Weave.At(phase-1e-4, i), c.Weave.At(phase+1e-4, i)
 				tangent = motion.Point{X: b.X - a.X, Y: b.Y - a.Y}
 			}
+		case c.Circle != nil:
+			position, circleScale = c.Circle.At(g.phase+t*c.Speed, i)
 		default:
 			position = motion.Point{X: c.Velocity.X * t, Y: c.Velocity.Y * t}
 			tangent = c.Velocity
 		}
 		p := GroupPose{X: c.Origin.X + float64(i)*c.Spacing.X + position.X, Y: c.Origin.Y + float64(i)*c.Spacing.Y + position.Y, ScaleX: c.ScaleX, ScaleY: c.ScaleY, Angle: c.Angle, Opacity: 1}
+		p.ScaleX *= circleScale
+		p.ScaleY *= circleScale
 		if c.Orient && (tangent.X != 0 || tangent.Y != 0) {
 			p.Angle += math.Atan2(tangent.Y, tangent.X)
 		}
@@ -243,5 +278,6 @@ func (g *Group) SetPhase(phase float64) error {
 		return fmt.Errorf("sprites: nonfinite group phase")
 	}
 	g.config.Phase = phase
+	g.phase = phase
 	return nil
 }

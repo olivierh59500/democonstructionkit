@@ -60,6 +60,7 @@ type Config struct {
 	Sliced           *SlicedConfig      // Streaming DNA with independent transport and rotation clocks.
 	Feed             *FeedConfig        // Finite glyph insertion into a persistent scrolling trail.
 	Scanline         *ScanlineConfig    // Proportional text with cumulative row sampling and bounce.
+	Profiled         *ProfiledConfig    // Bitmap text sampled through a floating-point row profile.
 	Output           *OutputConfig      // Ordered image operations over the common text renderer.
 	// RepeatBounds selects the visible pen coordinates before any mappers run.
 	// Empty uses the destination bounds. Enlarge it for paths or projections that
@@ -150,7 +151,7 @@ func New(c Config) (*Scrolling, error) {
 	if c.MaxGlyphsPerDraw < 1 || c.MaxGlyphsPerDraw > 1<<24 {
 		return nil, fmt.Errorf("scrolling: invalid automatic draw budget")
 	}
-	if c.Recycled != nil || c.Projected != nil || c.Sliced != nil || c.Crawl != nil || c.Bands != nil || c.Slots != nil || c.Feed != nil || c.Scanline != nil {
+	if c.Recycled != nil || c.Projected != nil || c.Sliced != nil || c.Crawl != nil || c.Bands != nil || c.Slots != nil || c.Feed != nil || c.Scanline != nil || c.Profiled != nil {
 		return newTransport(c)
 	}
 	if c.Page != nil {
