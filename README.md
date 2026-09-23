@@ -1231,6 +1231,8 @@ remain available for effects with different behavior.
 | `scrolling.Config.Feed` | Finite glyph insertion into a cached scrolling trail | DMA Is Back, Coco, TeamG1, MegaTwist intros |
 | `scrolling.Config.Scanline` | Proportional text transport, cumulative wave, cyclic bounce and bounded strip rendering | DMA Is Back, Coco, MegaTwist main screens |
 | `scrolling.Config.Profiled` | Independent proportional-text and floating-profile clocks with clipped strip sampling | TeamG1 main scrolling |
+| `scrolling.Config.RowColumn` | Fixed-cell bitmap text, sampled source rows and independent destination columns | DMA 3D and Replicants |
+| `scrolling.Config.RowBands` | Circular bitmap text, ordered row displacement passes and a final crop | 3D DOC intro and main screen |
 | `composite.ProfileImage` | Cached source rows, editable displacement table, motion phase and finite wrap copies | TeamG1 logo |
 | `plasma.HarmonicImage` | Harmonic kernel, reusable CPU pixels, live GPU surface and dirty-frame upload | TeamG1 plasma |
 | `sprites.Group` with `CircleFormation` | Indexed circular poses, secondary harmonic motion and independent sprite scales | TeamG1 twelve-logo formation |
@@ -1339,6 +1341,38 @@ The 320×200 CPU color kernel measured 453 µs/frame exact versus 116 µs/frame
 with the lookup on Apple M4 Max; this CPU-only comparison does not identify
 which mobile change produced the end-to-end improvement. The phone samples
 cover visible main screens and do not measure long-run thermal or battery use.
+
+The row/column family shares another complete scrolling transport:
+
+```go
+atlas, err := presets.FontAtlas("dma-3d", fontImage)
+if err != nil { return err }
+config := presets.DMA3DRowColumn(atlas, message)
+config.ColumnAmplitude = 48
+scroll, err := scrolling.New(scrolling.Config{RowColumn: &config})
+if err != nil { return err }
+err = scroll.Update(frame)
+scroll.Draw(screen)
+```
+
+Change the font, message, advance, row table, row height, column width, source
+bias, text speed, independent column speed, amplitude and output placement.
+`RowColumnQuads` batches both passes; `RowColumnImages` keeps separate source
+crops for the other authored sampling topology. `SetTransportMultiplier` lets
+input or a music signal change speed without resetting the text or waves.
+The two work images remain bounded by the configured viewport rather than
+message length. DMA 3D and Replicants use different crop and clock presets,
+but the same controller, glyph compilation and two-pass renderer.
+
+3D DOC uses the same `scrolling.New` entry with `Config.RowBands`. Its intro
+has no image passes and exposes `CursorRune()` for the scene cue. Its main
+message applies two ordered row-displacement passes and a final crop. Each
+pass has an independent lookup phase, strip thickness, output size and
+vertical motion. RGB complete-frame checks cover 13 frames of 3D DOC,
+including its intro-to-main handoff. Replicants matches 21 captures,
+including two user-speed changes. DMA 3D matches 13 of 15 frames exactly;
+the other two differ by one channel level in a single pixel at their respective
+sample times, including the old text reset boundary.
 
 ### Load a font without initializing characters in the demo
 

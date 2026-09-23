@@ -15,9 +15,9 @@ The entries are acceptance work, not claims that all screens are already small.
 
 | Production / screen | Shared today | Extract next, with editable parameters |
 | --- | --- | --- |
-| 3D DOC | Atlas, ordinary scrolling, strip and quad helpers | Two-pass row-warped scroll; perspective XOR checkerboard; phased projected balls/shadows with movement sequences, depth order and palette. |
+| 3D DOC | Atlas, `Config.RowBands` for intro and ordered two-pass scrolling | Perspective XOR checkerboard; phased projected balls/shadows with movement sequences, depth order and palette. |
 | Bilizir | Atlas, scrolling, independent StripWarp for text/logo, SolidCube, WaterReflection | Copper/raster bank: bars, palette, speed, spacing, order and masks. Historical scroll timing stays a recipe. |
-| DMA 3D | Atlas, scrolling and mesh primitives | Multi-material morphing mesh with per-face blend, sort and winding; masked three-speed starfield; row-then-column scroll sampling. |
+| DMA 3D | Atlas, `Config.RowColumn` and mesh primitives | Multi-material morphing mesh with per-face blend, sort and winding; masked three-speed starfield. |
 | DMA Is Back, intro | `Config.Feed`, configurable CRTOverlay | Music/fade cues can become a typed timeline; message and cue times stay production data. |
 | DMA Is Back, main | `Config.Scanline`, ImageGrid, NestedOrbit, JellyCube | Soundtrack start and whole-scene fade can use the same cue/envelope system as other intros. |
 | Coco, intro | `Config.Feed`, configurable CRTOverlay | Intro-to-main music cue. |
@@ -33,7 +33,7 @@ The entries are acceptance work, not claims that all screens are already small.
 | Nonameno, text pages | Atlas | Staggered per-glyph enter/exit with scale/depth, easing, delays and completion barrier; baseline sine scroll. |
 | Phenomena DNA intro | Atlas, DNAFrames, sliced transport | Whole screen's two-pixel insertion, loop-start and control events as a reusable configuration; separate intro/outro reveal and bounce cues. |
 | TCB multiplane | Projected scrolling, font-independent forms, background bands | Logo row warp and central flip; share screen recipe with Multiscreen and Union while preserving phase-per-visible-slot timing. |
-| Replicants | Atlas, scrolling | Stepped block reveal, quantized logo zoom bank, layered stars and two-pass row/column scroller. |
+| Replicants | Atlas, `Config.RowColumn` with variable-speed controls | Stepped block reveal, quantized logo zoom bank and layered stars. |
 | TeamG1, intro | `Config.Feed`, atlas, TimedCRTOverlay | Message and intro-to-main cue times remain production data. |
 | TeamG1, main | TexturedCube, HarmonicImage, ProfileImage, `Config.Profiled`, sprites.Group circular formation | Timed scene/audio cues and whole-scene presentation remain composition data. |
 | Viva TCB | Atlas, scrolling, image repetition | Four pseudo-3D glyph banks with per-glyph scale/order/snap; ten-logo harmonic formation; raster title material. |
@@ -81,10 +81,10 @@ The entries are acceptance work, not claims that all screens are already small.
 
 ## Extraction order and acceptance
 
-1. Finish the repeated scanline family: DMA, Coco and MegaTwist now share the
-   complete proportional transport. 3D DOC, DMA 3D and Replicants need
-   additional source-row and column-pass policies. A new policy must
-   be named for its sampling rule and validated against the original pixels.
+1. Keep the scrolling facade cohesive: DMA, Coco and MegaTwist share the
+   proportional scanline transport; 3D DOC uses ordered row bands; DMA 3D
+   and Replicants share fixed-cell row-source/column-destination sampling.
+   Each sampling rule is named and compared against original pixels.
 2. Extract projected fields and sprite ensembles with explicit spawn, depth,
    trajectory, timing and painter configuration. Pixel/sprite/streak choice must
    preserve the same simulation, not force one visual behavior on every screen.
