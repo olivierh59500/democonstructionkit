@@ -1230,6 +1230,11 @@ remain available for effects with different behavior.
 | `scrolling.Config.Crawl` | Paragraph window, vertical transport and perspective projection | Cuddly Starwars |
 | `scrolling.Config.Feed` | Finite glyph insertion into a cached scrolling trail | DMA Is Back, Coco, TeamG1, MegaTwist intros |
 | `scrolling.Config.Scanline` | Proportional text transport, cumulative wave, cyclic bounce and bounded strip rendering | DMA Is Back, Coco, MegaTwist main screens |
+| `scrolling.Config.Profiled` | Independent proportional-text and floating-profile clocks with clipped strip sampling | TeamG1 main scrolling |
+| `composite.ProfileImage` | Cached source rows, editable displacement table, motion phase and finite wrap copies | TeamG1 logo |
+| `plasma.HarmonicImage` | Harmonic kernel, reusable CPU pixels, live GPU surface and dirty-frame upload | TeamG1 plasma |
+| `sprites.Group` with `CircleFormation` | Indexed circular poses, secondary harmonic motion and independent sprite scales | TeamG1 twelve-logo formation |
+| `effects.TimedCRTOverlay` | Adjustable time-varying scanlines, glow, color fringe and flicker | TeamG1 intro |
 | `scrolling.Config.Bands` | Cached repeated text, independent lanes and bounded viewport rendering | Cuddly Spreadpoint |
 | `scrolling.Config.Slots` | Glyph recycling, wave motion, tangent orientation and custom poses | Cuddly Reset |
 | `scrolling.Reveal` | Cached text layout and ordered per-character entrance | Union loader |
@@ -1294,6 +1299,20 @@ vignette parameters. `composite.ImageGrid` draws finite, independently spaced
 copies of any borrowed image, including overlapping logo tiles. DMA positions
 that grid with `motion.NestedOrbit`; changing the atlas or orbit does not
 change the scroll or cube component.
+
+TeamG1 uses four more complete components: `Config.Profiled` for its text and
+floating row table, `composite.ProfileImage` for its wrapped logo lines,
+`plasma.HarmonicImage` for a live plasma surface, and `sprites.Group` with a
+`motion.CircleFormation` for twelve independent logos. Their recipes expose
+font metrics, source window, profile samples, row and text speeds, logo phase,
+sprite count, scale harmonics and placement. The plasma image renders CPU pixels
+and uploads them only after its clock changes. Reusing one image in several
+layers therefore does not repeat its pixel work. The TeamG1 adapter now supplies
+the actual images, messages, composition order and soundtrack timing.
+The intro's `effects.TimedCRTOverlay` also owns its shader and simulation
+clock. The animated material accepts independent scanline, glow, color-fringe,
+curvature and flicker settings, so another intro can use the same pass with a
+different bitmap image or selected source surface.
 
 ### Load a font without initializing characters in the demo
 
