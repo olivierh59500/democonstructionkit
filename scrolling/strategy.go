@@ -153,6 +153,12 @@ func newTransport(c Config) (*Scrolling, error) {
 	if c.Profiled != nil {
 		count++
 	}
+	if c.RowColumn != nil {
+		count++
+	}
+	if c.RowBands != nil {
+		count++
+	}
 	if count != 1 || c.Page != nil || c.Text != "" || c.Tokens != nil || c.Glyphs != nil || c.Controls != nil || len(c.Fonts) > 0 || len(c.Modes) > 0 || c.Map != nil || len(c.Shapes) > 0 || len(c.Effects) > 0 || c.Sequence != nil {
 		return nil, fmt.Errorf("scrolling: choose one transport; configure glyph modes on the regular transport and image passes on any transport")
 	}
@@ -209,6 +215,24 @@ func newTransport(c Config) (*Scrolling, error) {
 			return nil, err
 		}
 		s.backend = profiled
+	} else if c.RowColumn != nil {
+		if c.X != 0 || c.Y != 0 || c.Vertical {
+			return nil, fmt.Errorf("scrolling: row-column placement belongs in RowColumnConfig")
+		}
+		rowColumn, err := NewRowColumn(*c.RowColumn)
+		if err != nil {
+			return nil, err
+		}
+		s.backend = rowColumn
+	} else if c.RowBands != nil {
+		if c.X != 0 || c.Y != 0 || c.Vertical {
+			return nil, fmt.Errorf("scrolling: row-band placement belongs in RowBandsConfig")
+		}
+		rowBands, err := NewRowBands(*c.RowBands)
+		if err != nil {
+			return nil, err
+		}
+		s.backend = rowBands
 	} else if c.Bands != nil {
 		if c.X != 0 || c.Y != 0 || c.Vertical {
 			return nil, fmt.Errorf("scrolling: text-band placement belongs in BandsConfig")
