@@ -45,7 +45,7 @@ The entries are acceptance work, not claims that all screens are already small.
 | Menu | TileAlphabet, atlas, background sampler, scrolling | Sprite ensemble's seven motion programs, camera parallax and atlas frame player. Door/input behavior stays in the menu. |
 | Loader | Bitmap font recipes and scrolling | Typed countdown, gain/fade and hold cues; preserve the initial pre-render and decrement boundary. |
 | Introduction | Wave/Profile/Cell strips, sparkles | Serializable logo warp program and pause/audio cues; preserve row-then-column order. |
-| Big Sprite | Streaks, scrolling, Weave formation | Shared front/back flip material, synchronized dual-font transport and raster mask fill. |
+| Big Sprite | `sprites.ProjectedField` with strict-wrap vector lines, scrolling, Weave formation | Shared front/back flip material, synchronized dual-font transport and raster mask fill. |
 | Colorshock II | Background sampler, scrolling | Position-table placement and two-frequency background orbit as an editable motion recipe. |
 | Ehhh | Scrolling, row profile | Lookahead/landing control events, raster train and roller bounce states. |
 | Mega Scroller | Tiled background, WaveStrips, scrolling | Ping-pong text transport and mask material with authored source-atop blending. |

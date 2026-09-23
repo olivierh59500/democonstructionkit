@@ -428,17 +428,21 @@ index or modulation. `Frames` are atlas rectangles selected by each point's
 `Image`. `Streak:true` draws between successive sampled positions; recycling
 breaks the connection automatically. `VectorRects:true` draws each filled
 rectangle followed by its optional `TrailWidth` line in source order, with
-independent `FillColor` and `TrailColor`. `DrawImages:true` retains exact image
-transform/crop arithmetic; the ordinary path batches geometry. Close the
-`ProjectedField`, not its borrowed skin.
+independent `FillColor` and `TrailColor`. `VectorLines:true` draws only the
+variable-width vector line. `sprites.StreakField(config)` compiles Big Sprite's
+streak behavior into the same `ProjectedField`: strict one-step X/Y/depth wraps,
+a cold first frame, its original projection arithmetic and antialiased strokes.
+The existing `sprites.NewStreaks` API remains available. `DrawImages:true`
+retains exact image transform/crop arithmetic; the ordinary path batches
+geometry. Close the `ProjectedField`, not its borrowed skin.
 
 For a complete radial star recipe, start with `presets.DefaultNonamenoStarsConfig()`.
 Its count, speed, camera, spawn strides, pixel size, brightness, colors and
 trail threshold are plain editable values. Compile it with
 `presets.NonamenoProjectedStars(config)`, then pass the result to
-`sprites.NewProjectedField`. Nonameno, Union Starballs and Cuddly Starwars now
-use the same transport and renderer; their 11, 16 and 9 sampled RGB frames
-respectively match the previous productions exactly.
+`sprites.NewProjectedField`. Nonameno, Union Starballs, Cuddly Starwars and
+Cuddly Big Sprite now use the same transport and renderer. Their 11, 16, 9
+and 12 sampled RGB frames respectively match the previous productions exactly.
 
 ### Control count, spacing, delay and music-driven properties
 
@@ -1223,7 +1227,7 @@ remain available for effects with different behavior.
 | `effects.TexturedCube` | Live texture mapping, camera, rotation, face ordering and culling | TeamG1 |
 | `effects.PerspectiveCheckerboard` | Perspective stripe geometry, two-axis motion, XOR composition and bounded surfaces | 3D DOC and Cuddly 3D DOC |
 | `effects.ProjectedBallTrain` | Blended movement programs, projected sprites/shadows, phase and depth/palette ordering | 3D DOC and Cuddly 3D DOC |
-| `sprites.ProjectedField` | Bounded spawn/respawn, projection, history and pixel/sprite/vector materials | Nonameno stars, Union Starballs, Cuddly Starwars |
+| `sprites.ProjectedField` | Bounded spawn/respawn, strict/wide wrap, projection, history and pixel/sprite/vector materials | Nonameno stars, Union Starballs, Cuddly Starwars and Big Sprite |
 | `scrolling.Config.Crawl` | Paragraph window, vertical transport and perspective projection | Cuddly Starwars |
 | `scrolling.Config.Feed` | Finite glyph insertion into a cached scrolling trail | DMA Is Back, Coco, TeamG1, MegaTwist intros |
 | `scrolling.Config.Scanline` | Proportional text transport, cumulative wave, cyclic bounce and bounded strip rendering | DMA Is Back, Coco, MegaTwist main screens |
