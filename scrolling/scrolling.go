@@ -58,6 +58,8 @@ type Config struct {
 	Slots            *BitmapSlotsConfig // Recycled glyphs with pose mapping and tangent orientation.
 	Crawl            *CrawlConfig       // Bounded paragraph transport and configurable perspective rows.
 	Sliced           *SlicedConfig      // Streaming DNA with independent transport and rotation clocks.
+	Feed             *FeedConfig        // Finite glyph insertion into a persistent scrolling trail.
+	Scanline         *ScanlineConfig    // Proportional text with cumulative row sampling and bounce.
 	Output           *OutputConfig      // Ordered image operations over the common text renderer.
 	// RepeatBounds selects the visible pen coordinates before any mappers run.
 	// Empty uses the destination bounds. Enlarge it for paths or projections that
@@ -117,6 +119,24 @@ var ErrDrawBudget = errors.New("scrolling: automatic drawing exceeds its glyph b
 // Err reports a resource-budget error from the last automatic Draw.
 func (s *Scrolling) Err() error { return s.drawErr }
 
+// Finished reports completion for finite transports such as Feed. Continuous
+// transports return false, so a scene may use the same scrolling constructor.
+func (s *Scrolling) Finished() bool {
+	if b, ok := s.backend.(interface{ Finished() bool }); ok {
+		return b.Finished()
+	}
+	return false
+}
+
+// Image exposes a transport's current visible surface when another effect must
+// sample it. The surface is borrowed and can change after the next Update.
+func (s *Scrolling) Image() *ebiten.Image {
+	if b, ok := s.backend.(interface{ Image() *ebiten.Image }); ok {
+		return b.Image()
+	}
+	return nil
+}
+
 type glyphDraw struct {
 	sample  Sample
 	options ebiten.DrawImageOptions
@@ -130,7 +150,7 @@ func New(c Config) (*Scrolling, error) {
 	if c.MaxGlyphsPerDraw < 1 || c.MaxGlyphsPerDraw > 1<<24 {
 		return nil, fmt.Errorf("scrolling: invalid automatic draw budget")
 	}
-	if c.Recycled != nil || c.Projected != nil || c.Sliced != nil || c.Crawl != nil || c.Bands != nil || c.Slots != nil {
+	if c.Recycled != nil || c.Projected != nil || c.Sliced != nil || c.Crawl != nil || c.Bands != nil || c.Slots != nil || c.Feed != nil || c.Scanline != nil {
 		return newTransport(c)
 	}
 	if c.Page != nil {
