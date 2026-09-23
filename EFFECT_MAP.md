@@ -29,7 +29,7 @@ The entries are acceptance work, not claims that all screens are already small.
 | Grodan | Atlas and scrolling | Bounded layered image repetition; phased sprite chain with count, image selection, spacing and wave envelope; repeated vertical text columns. |
 | MegaTwist, intro | `Config.Feed`, atlas | Keep the screenshot-matched splash/transition timing as an editable cue program. |
 | MegaTwist, main | `Config.Scanline` with a one-time/looping DisplacementProgram and strict X rejection | Background scanline layer with independent clock and source wrap; glowing sprite formation and transition overlay. |
-| Nonameno, stars | Projected-field primitives | Seeded radial spawn/respawn, depth-based pixel size/color and streak history with reset policy. |
+| Nonameno, stars | `sprites.ProjectedField`, editable radial pattern and vector pixel/trail material | The star field is complete; staggered text-page choreography is tracked below. |
 | Nonameno, text pages | Atlas | Staggered per-glyph enter/exit with scale/depth, easing, delays and completion barrier; baseline sine scroll. |
 | Phenomena DNA intro | Atlas, DNAFrames, sliced transport | Whole screen's two-pixel insertion, loop-start and control events as a reusable configuration; separate intro/outro reveal and bounce cues. |
 | TCB multiplane | Projected scrolling, font-independent forms, background bands | Logo row warp and central flip; share screen recipe with Multiscreen and Union while preserving phase-per-visible-slot timing. |
@@ -54,7 +54,7 @@ The entries are acceptance work, not claims that all screens are already small.
 | LED Scroller | Bounded tiled background, cached bubble matrix, scrolling | Raster/color ramp material and amplitude-modulated letter ensemble. |
 | 3D DOC | Scrolling, `PerspectiveCheckerboard`, `ProjectedBallTrain` | Move the paired inner/outer text row program into one parameterized scrolling recipe; audio cue remains scene data. |
 | Fullscreen | Background sampler, Weave formation, scrolling | Recycled multi-scroll lanes and raster-filled logo bar. |
-| Starwars | `Config.Crawl`, RowProjection, scrolling, projected starfield | Sampled sprite train and dual-color wave strip material. |
+| Starwars | `Config.Crawl`, RowProjection, scrolling, `sprites.ProjectedField` | Sampled sprite train and dual-color wave strip material. |
 | Knucklebuster | Scrolling and sprite images | Seeded hit trigger with hold/release envelope; optional music signal must be a distinct mode. |
 | DNA | FeedbackDNA, wave strips, projected discs | Two-sided twisting ribbon with exact front/back occlusion and sampled row-source warp. |
 | Megaball | Scrolling, CoupledOrbit | Two interleaved ball trains with index-dependent phase stepping and editable controls. |
@@ -72,7 +72,7 @@ The entries are acceptance work, not claims that all screens are already small.
 | TNT Crew 3 | Mesh, geometry, bitmap recipes | Model-group draw material and camera recession handoff; authored shapes stay data. |
 | Wow Scroller | Scrolling | Cropped oversized-image repetition with explicit wrap periods and raster fill. |
 | Hidden | PointHistory, sprite instances | Delayed pointer trail, palette cycle and source clip. |
-| Starballs | Camera, scrolling | Seeded depth field with interchangeable sprite material, quantized size/opacity and mask passes. |
+| Starballs | Camera, scrolling, `sprites.ProjectedField` with two materials, live count and depth opacity | Compose the two field materials and logo mask as an editable screen layer recipe. |
 | Replicants | Atlas, scrolling | Configurable bouncing raster train and historically reset scroll clock. |
 | TNT Crew 2 | Background sampler, BitmapText.DrawWindow | Layered parallax phase/velocity program with user direction and exact reset policy. |
 | Level 16 | Vertical scrolling, background sampler, NestedOrbit | Raster/water material and authored layer occlusion. |

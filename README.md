@@ -383,68 +383,62 @@ Update. Saved-project compilation checks this budget before animation starts.
 
 ### Use one particle field for stars, incoming sprites and trails
 
-`sprites.Field` owns movement and projection; `FieldRenderer` chooses appearance.
-A nil skin image draws pixels. Supplying an image or atlas frames produces sprites
-using exactly the same positions, depth behavior and history.
+`sprites.ProjectedField` owns movement, projection and the bounded renderer.
+Its `FieldConfig` selects depth behavior and spawning; `FieldStyle` selects
+pixels, image sprites, atlas frames or vector rectangles with trails. A nil
+skin image draws pixels. All materials use the same cached positions and history.
 
 ```go
-type Flight struct {
-    field *sprites.Field
-    renderer *sprites.FieldRenderer
-    view sprites.FieldView
-    style sprites.FieldStyle
-}
-
-func NewFlight(skin *ebiten.Image) (*Flight, error) {
-    field, err := sprites.NewField(sprites.FieldConfig{
-        Count: 96, Depth: sprites.DepthWrap, Near: 20, Far: 600,
-        Spawn: func(i int, reset bool) sprites.Point {
-            angle := float64(i) * 2.399963229728653
-            return sprites.Point{
-                X: 180 * math.Cos(angle), Y: 100 * math.Sin(angle),
-                Z: 20 + float64((i*37)%580),
-            }
-        },
-    })
-    if err != nil { return nil, err }
+func NewFlight(skin *ebiten.Image) (*sprites.ProjectedField, error) {
     size := 3.0
     if skin != nil { size = 24 }
-    return &Flight{
-        field: field, renderer: sprites.NewFieldRenderer(96),
-        view: sprites.FieldView{Camera: geometry.Camera{
+    return sprites.NewProjectedField(sprites.ProjectedFieldConfig{
+        Field: sprites.FieldConfig{
+            Count: 96, Depth: sprites.DepthWrap, Near: 20, Far: 600,
+            Spawn: func(i int, reset bool) sprites.Point {
+                angle := float64(i) * 2.399963229728653
+                return sprites.Point{X: 180 * math.Cos(angle),
+                    Y: 100 * math.Sin(angle), Z: 20 + float64((i*37)%580)}
+            },
+        },
+        View: sprites.FieldView{Camera: geometry.Camera{
             Center: geometry.Vec2{X: 320, Y: 180}, Focal: 220, Near: 20,
         }},
-        style: sprites.FieldStyle{
+        Velocity: geometry.Vec3{Z: -1.5}, Delta: 1,
+        Style: sprites.FieldStyle{
             Image: skin, ScaleByDepth: true,
             Appearance: sprites.FieldAppearance{
                 Width: size, Height: size, AnchorX: .5, AnchorY: .5,
             },
         },
-    }, nil
+    })
 }
-func (f *Flight) Update(frame kit.Frame) error {
-    f.field.Step(frame.Delta, geometry.Vec3{Z: -90})
-    f.field.Sample(f.view)
-    return nil
-}
-func (f *Flight) Draw(dst *ebiten.Image) {
-    f.renderer.Draw(dst, f.field.Samples(), f.style)
-}
-func (f *Flight) Close() error { return f.renderer.Close() }
 ```
 
 Use `DepthFree`, `DepthWrap` or `DepthRespawn`; a respawn callback receives
 `reset=true`. `FieldView.Offset` also permits absolute-time travel, and `Angle`
 rotates the view axis. `SortDepth` selects stable far-to-near ordering.
-`ResetCount` changes population while reusing available storage.
+`ResetCount` changes population while reusing available storage. One `Update`
+advances the configured velocity and projects all points. `DrawStyle` redraws
+the same samples with another material or blend, so Union Starballs can place
+one sprite image behind its logo and another through its mask.
 
 `FieldStyle.Sample` can change size, tint, rotation or visibility from depth,
 index or modulation. `Frames` are atlas rectangles selected by each point's
 `Image`. `Streak:true` draws between successive sampled positions; recycling
-breaks the connection automatically. Draw the same cached samples twice for
-both heads and trails, without calling `Sample` twice. `DrawImages:true` retains
-the existing image-transform/crop arithmetic when fidelity requires it; the
-ordinary path batches geometry. Close the renderer, not the borrowed skin.
+breaks the connection automatically. `VectorRects:true` draws each filled
+rectangle followed by its optional `TrailWidth` line in source order, with
+independent `FillColor` and `TrailColor`. `DrawImages:true` retains exact image
+transform/crop arithmetic; the ordinary path batches geometry. Close the
+`ProjectedField`, not its borrowed skin.
+
+For a complete radial star recipe, start with `presets.DefaultNonamenoStarsConfig()`.
+Its count, speed, camera, spawn strides, pixel size, brightness, colors and
+trail threshold are plain editable values. Compile it with
+`presets.NonamenoProjectedStars(config)`, then pass the result to
+`sprites.NewProjectedField`. Nonameno, Union Starballs and Cuddly Starwars now
+use the same transport and renderer; their 11, 16 and 9 sampled RGB frames
+respectively match the previous productions exactly.
 
 ### Control count, spacing, delay and music-driven properties
 
@@ -1229,6 +1223,7 @@ remain available for effects with different behavior.
 | `effects.TexturedCube` | Live texture mapping, camera, rotation, face ordering and culling | TeamG1 |
 | `effects.PerspectiveCheckerboard` | Perspective stripe geometry, two-axis motion, XOR composition and bounded surfaces | 3D DOC and Cuddly 3D DOC |
 | `effects.ProjectedBallTrain` | Blended movement programs, projected sprites/shadows, phase and depth/palette ordering | 3D DOC and Cuddly 3D DOC |
+| `sprites.ProjectedField` | Bounded spawn/respawn, projection, history and pixel/sprite/vector materials | Nonameno stars, Union Starballs, Cuddly Starwars |
 | `scrolling.Config.Crawl` | Paragraph window, vertical transport and perspective projection | Cuddly Starwars |
 | `scrolling.Config.Feed` | Finite glyph insertion into a cached scrolling trail | DMA Is Back, Coco, TeamG1, MegaTwist intros |
 | `scrolling.Config.Scanline` | Proportional text transport, cumulative wave, cyclic bounce and bounded strip rendering | DMA Is Back, Coco, MegaTwist main screens |
