@@ -7,16 +7,19 @@ import (
 	"slices"
 
 	"github.com/hajimehoshi/ebiten/v2"
+	"github.com/hajimehoshi/ebiten/v2/vector"
 	"github.com/olivierh59500/democonstructionkit/render"
 )
 
 // FieldAppearance describes a particle in destination pixels. Tint is a
 // premultiplied multiplier; its zero value is white. Anchor uses 0..1 fractions.
 type FieldAppearance struct {
-	Width, Height, Angle float64
-	ScaleX, ScaleY       float64 // Zero defaults to one before Sample; Sample may set zero to hide.
-	AnchorX, AnchorY     float64
-	Tint                 ebiten.ColorScale
+	Width, Height, Angle  float64
+	ScaleX, ScaleY        float64 // Zero defaults to one before Sample; Sample may set zero to hide.
+	AnchorX, AnchorY      float64
+	Tint                  ebiten.ColorScale
+	FillColor, TrailColor color.RGBA
+	TrailWidth            float64
 }
 
 // FieldStyle is a skin for the common projected field. A nil Image selects a
@@ -32,6 +35,9 @@ type FieldStyle struct {
 	Filter       ebiten.Filter
 	Blend        ebiten.Blend
 	Antialias    bool
+	// VectorRects draws each point as a filled rectangle and an optional trail
+	// in source order, retaining vector pixel coverage and overlap behavior.
+	VectorRects bool
 	// DrawImages preserves DrawImage's transform arithmetic and source clipping.
 	// Use it when reproducing an existing nearest-filtered sprite renderer.
 	DrawImages bool
@@ -118,6 +124,13 @@ func (r *FieldRenderer) Draw(dst *ebiten.Image, samples []FieldSample, c FieldSt
 			continue
 		}
 		if a.Width <= 0 || a.Height <= 0 || !finiteField(a.Width) || !finiteField(a.Height) || !finiteField(a.Angle) || !finiteField(a.ScaleX) || !finiteField(a.ScaleY) || !finiteField(a.AnchorX) || !finiteField(a.AnchorY) {
+			continue
+		}
+		if c.VectorRects {
+			vector.FillRect(dst, float32(p.X-a.Width/2), float32(p.Y-a.Height/2), float32(a.Width), float32(a.Height), a.FillColor, c.Antialias)
+			if a.TrailWidth > 0 && p.Connected && p.PreviousX != 0 && p.PreviousY != 0 {
+				vector.StrokeLine(dst, float32(p.PreviousX), float32(p.PreviousY), float32(p.X), float32(p.Y), float32(a.TrailWidth), a.TrailColor, c.Antialias)
+			}
 			continue
 		}
 		if c.DrawImages && !c.Streak {
