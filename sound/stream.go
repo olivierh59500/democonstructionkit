@@ -1,5 +1,5 @@
-// Package sound adapts YM and tracker modules to stereo float32 PCM without
-// importing a windowing or audio-device backend.
+// Package sound selects decoders and adapts music to stereo PCM. Opening a
+// stream does not open an audio device or a graphics window.
 package sound
 
 import (
@@ -20,33 +20,73 @@ type synthesizer interface {
 	close() error
 }
 
-// Stream is a synchronized, seekable stereo float32 little-endian PCM stream.
+// Stream is a synchronized, seekable stereo little-endian PCM stream.
 // Position counts bytes delivered to the consumer, not decoded-ahead samples.
 // Seek replays from the beginning for sample accuracy, so long seeks are costly.
 // Device playback position is available through sound/ebiten.Player instead.
 type Stream struct {
-	mu         sync.Mutex
-	synth      synthesizer
-	rate       int
-	samples    [blockFrames * 2]float32
-	encoded    [blockFrames * frameBytes]byte
-	begin, end int
-	position   int64
-	pendingErr error
+	mu          sync.Mutex
+	synth       synthesizer
+	rate        int
+	samples     [blockFrames * 2]float32
+	encoded     [blockFrames * frameBytes]byte
+	begin, end  int
+	position    int64
+	pendingErr  error
+	format      PCMFormat
+	gain        float64
+	quantize16  bool
+	blockLimit  int
+	metadata    Metadata
+	totalFrames int64 // -1 when only approximate duration metadata is available.
 }
 
-func newStream(s synthesizer, rate int) *Stream { return &Stream{synth: s, rate: rate} }
+func newStream(s synthesizer, rate int) *Stream {
+	return &Stream{synth: s, rate: rate, gain: 1, blockLimit: blockFrames, totalFrames: -1}
+}
 func validRate(rate int) error {
 	if rate < 8000 || rate > 192000 {
 		return fmt.Errorf("sound: sample rate must be between 8000 and 192000 Hz")
 	}
 	return nil
 }
-func (s *Stream) SampleRate() int { return s.rate }
+func (s *Stream) SampleRate() int   { return s.rate }
+func (s *Stream) Format() PCMFormat { return s.format }
+func (s *Stream) bytesPerFrame() int64 {
+	if s.format == PCM16 {
+		return 4
+	}
+	return frameBytes
+}
+func (s *Stream) Metadata() Metadata { s.mu.Lock(); defer s.mu.Unlock(); return s.metadata }
+func (s *Stream) lengthLocked() int64 {
+	if s.totalFrames >= 0 {
+		return s.totalFrames * s.bytesPerFrame()
+	}
+	d := s.metadata.Duration
+	frames := int64(d/time.Second)*int64(s.rate) + int64(d%time.Second)*int64(s.rate)/int64(time.Second)
+	return frames * s.bytesPerFrame()
+}
+func (s *Stream) Length() int64 { s.mu.Lock(); defer s.mu.Unlock(); return s.lengthLocked() }
+
+// Volume is the stream gain before output-device gain. SetVolume clamps to
+// [0,1] and re-encodes only unread complete frames, retaining partial-frame bytes.
+func (s *Stream) Volume() float64 { s.mu.Lock(); defer s.mu.Unlock(); return s.gain }
+func (s *Stream) SetVolume(value float64) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	if math.IsNaN(value) {
+		value = 0
+	}
+	s.gain = max(0, min(1, value))
+	frameSize := int(s.bytesPerFrame())
+	firstFrame := (s.begin + frameSize - 1) / frameSize
+	s.encodeSamples(firstFrame*2, s.end/(frameSize/2))
+}
 func (s *Stream) Position() time.Duration {
 	s.mu.Lock()
 	defer s.mu.Unlock()
-	return time.Duration(float64(s.position) / float64(frameBytes*s.rate) * float64(time.Second))
+	return time.Duration(float64(s.position) / float64(s.bytesPerFrame()*int64(s.rate)) * float64(time.Second))
 }
 
 // Read accepts arbitrary buffer lengths, including partial PCM samples.
@@ -70,7 +110,7 @@ func (s *Stream) readLocked(dst []byte) (int, error) {
 			}
 			// Decode fixed-size blocks to reuse staging storage and amortize
 			// synthesizer calls across arbitrarily small consumer reads.
-			frames := blockFrames
+			frames := s.blockLimit
 			count, err := s.synth.render(s.samples[:frames*2])
 			if count < 0 || count > frames*2 || count%2 != 0 {
 				return n, fmt.Errorf("sound: invalid synthesizer sample count %d", count)
@@ -78,10 +118,8 @@ func (s *Stream) readLocked(dst []byte) (int, error) {
 			if count == 0 && err == nil {
 				err = io.ErrNoProgress
 			}
-			s.begin, s.end, s.pendingErr = 0, count*4, err
-			for i, v := range s.samples[:count] {
-				binary.LittleEndian.PutUint32(s.encoded[i*4:], math.Float32bits(v))
-			}
+			s.begin, s.end, s.pendingErr = 0, count*int(s.bytesPerFrame()/2), err
+			s.encodeSamples(0, count)
 			if count == 0 {
 				return n, err
 			}
@@ -94,8 +132,23 @@ func (s *Stream) readLocked(dst []byte) (int, error) {
 	return n, nil
 }
 
-// Seek uses PCM byte offsets. SeekEnd is unsupported because duration may depend
-// on tracker control flow. Invalid offsets leave the stream unchanged.
+func (s *Stream) encodeSamples(first, end int) {
+	for i := first; i < end; i++ {
+		v := float64(s.samples[i]) * s.gain
+		if s.format == PCM16 || s.quantize16 {
+			integer := int16(max(-32768, min(32767, v*32768)))
+			if s.format == PCM16 {
+				binary.LittleEndian.PutUint16(s.encoded[i*2:], uint16(integer))
+				continue
+			}
+			v = float64(integer) / 32768
+		}
+		binary.LittleEndian.PutUint32(s.encoded[i*4:], math.Float32bits(float32(v)))
+	}
+}
+
+// Seek uses bytes in the selected output PCM format. SeekEnd requires known
+// duration. Invalid offsets leave the stream unchanged.
 func (s *Stream) Seek(offset int64, whence int) (int64, error) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
@@ -110,6 +163,15 @@ func (s *Stream) Seek(offset int64, whence int) (int64, error) {
 			return s.position, fmt.Errorf("sound: seek offset out of range")
 		}
 		target = s.position + offset
+	case io.SeekEnd:
+		if s.metadata.Duration <= 0 {
+			return s.position, fmt.Errorf("sound: duration unavailable for seek end")
+		}
+		length := s.lengthLocked()
+		if offset > 0 && offset > math.MaxInt64-length || offset < 0 && offset < -length {
+			return s.position, fmt.Errorf("sound: seek offset out of range")
+		}
+		target = length + offset
 	default:
 		return s.position, fmt.Errorf("sound: unsupported seek origin")
 	}

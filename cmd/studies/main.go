@@ -12,7 +12,6 @@ import (
 	"io/fs"
 	"os"
 	"path/filepath"
-	"strings"
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/audio"
@@ -20,7 +19,6 @@ import (
 	"github.com/hajimehoshi/ebiten/v2/inpututil"
 	kit "github.com/olivierh59500/democonstructionkit"
 	"github.com/olivierh59500/democonstructionkit/assets"
-	"github.com/olivierh59500/democonstructionkit/presets"
 	"github.com/olivierh59500/democonstructionkit/recipes"
 	"github.com/olivierh59500/democonstructionkit/sound"
 	playback "github.com/olivierh59500/democonstructionkit/sound/ebiten"
@@ -172,30 +170,24 @@ func (g *gallery) Layout(int, int) (int, int) { return g.width, g.height }
 func (g *gallery) startAudio() error {
 	var data []byte
 	var err error
-	module := false
+	name, track := g.music, 0
 	if g.music != "" {
 		data, err = os.ReadFile(g.music)
-		module = !strings.EqualFold(filepath.Ext(g.music), ".ym")
 	} else {
 		r, ok := recipes.Find(g.name)
 		if !ok {
 			return fmt.Errorf("select one recipe or pass -music for audio")
 		}
 		data, err = fs.ReadFile(g.store.Files, r.Music)
-		module = r.Module
-		if err == nil && module {
-			data, err = presets.RealityModule(data, 1)
+		name = r.Music
+		if r.Module {
+			track = 1
 		}
 	}
 	if err != nil {
 		return err
 	}
-	var stream *sound.Stream
-	if module {
-		stream, err = sound.NewModule(data, sound.ModuleOptions{SampleRate: 48000, Interpolation: true})
-	} else {
-		stream, err = sound.NewYM(data, sound.YMOptions{SampleRate: 48000, Loop: true})
-	}
+	stream, err := sound.Open(name, data, sound.Options{SampleRate: 48000, Loop: true, Interpolation: true, Track: track})
 	if err != nil {
 		return err
 	}

@@ -1,4 +1,4 @@
-// Package ebiten connects sound.Stream to an existing Ebitengine audio context.
+// Package ebiten connects automatically decoded music to an Ebitengine audio context.
 package ebiten
 
 import (
@@ -30,6 +30,31 @@ type playback interface {
 	Close() error
 }
 
+// Open owns both decoding and device/output playback. The caller only supplies
+// the filename, bytes and playback options; format selection stays inside DCK.
+// A nil context reuses the current output context or creates one at SampleRate.
+func Open(context *output.Context, name string, data []byte, options sound.Options) (*Player, error) {
+	if context == nil {
+		context = output.CurrentContext()
+	}
+	if context != nil && options.SampleRate == 0 {
+		options.SampleRate = context.SampleRate()
+	}
+	stream, err := sound.Open(name, data, options)
+	if err != nil {
+		return nil, err
+	}
+	if context == nil {
+		context = output.NewContext(stream.SampleRate())
+	}
+	player, err := NewOutputPlayer(context, stream)
+	if err != nil {
+		stream.Close()
+		return nil, err
+	}
+	return player, nil
+}
+
 // NewOutputPlayer supports device playback and frame-synchronized video export.
 // NewPlayer remains available for callers that own a raw Ebitengine context.
 func NewOutputPlayer(context *output.Context, stream *sound.Stream) (*Player, error) {
@@ -39,7 +64,13 @@ func NewOutputPlayer(context *output.Context, stream *sound.Stream) (*Player, er
 	if context.SampleRate() != stream.SampleRate() {
 		return nil, fmt.Errorf("sound: context and stream sample rates differ")
 	}
-	p, err := context.NewPlayerF32(stream)
+	var p *output.Player
+	var err error
+	if stream.Format() == sound.PCM16 {
+		p, err = context.NewPlayer(stream)
+	} else {
+		p, err = context.NewPlayerF32(stream)
+	}
 	if err != nil {
 		return nil, err
 	}
@@ -53,7 +84,13 @@ func NewPlayer(context *audio.Context, stream *sound.Stream) (*Player, error) {
 	if context.SampleRate() != stream.SampleRate() {
 		return nil, fmt.Errorf("sound: context and stream sample rates differ")
 	}
-	p, err := context.NewPlayerF32(stream)
+	var p *audio.Player
+	var err error
+	if stream.Format() == sound.PCM16 {
+		p, err = context.NewPlayer(stream)
+	} else {
+		p, err = context.NewPlayerF32(stream)
+	}
 	if err != nil {
 		return nil, err
 	}

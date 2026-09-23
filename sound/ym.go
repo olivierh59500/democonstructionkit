@@ -3,6 +3,7 @@ package sound
 import (
 	"fmt"
 	"io"
+	"time"
 
 	"github.com/olivierh59500/ym-player/pkg/stsound"
 )
@@ -10,6 +11,7 @@ import (
 type YMOptions struct {
 	SampleRate int
 	Loop       bool
+	Lowpass    *bool
 }
 type ymSynth struct {
 	player  *stsound.StSound
@@ -22,6 +24,10 @@ type ymSynth struct {
 // The decoder reports EOF at compute-block granularity; its final block can
 // contain silence. Mono samples are duplicated into the two stereo channels.
 func NewYM(data []byte, options YMOptions) (*Stream, error) {
+	if options.Lowpass != nil {
+		value := *options.Lowpass
+		options.Lowpass = &value
+	}
 	if options.SampleRate == 0 {
 		options.SampleRate = 48000
 	}
@@ -32,7 +38,10 @@ func NewYM(data []byte, options YMOptions) (*Stream, error) {
 	if err := y.reset(); err != nil {
 		return nil, err
 	}
-	return newStream(y, options.SampleRate), nil
+	s := newStream(y, options.SampleRate)
+	info := y.player.GetInfo()
+	s.metadata = Metadata{Format: FormatYM, Title: info.SongName, Author: info.SongAuthor, Comment: info.SongComment, Duration: time.Duration(info.MusicTimeInMs) * time.Millisecond}
+	return s, nil
 }
 
 // YMRegisters returns a synchronized snapshot of the YM decoder's registers
@@ -67,6 +76,9 @@ func (y *ymSynth) reset() error {
 		return fmt.Errorf("sound: load YM: %w", err)
 	}
 	y.player.SetLoopMode(y.options.Loop)
+	if y.options.Lowpass != nil {
+		y.player.SetLowpassFilter(*y.options.Lowpass)
+	}
 	y.player.Play()
 	return nil
 }

@@ -11,7 +11,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/olivierh59500/democonstructionkit/presets"
+	"github.com/olivierh59500/democonstructionkit/catalog"
 	"github.com/olivierh59500/democonstructionkit/sound"
 )
 
@@ -24,39 +24,26 @@ func main() {
 func run() error {
 	root := flag.String("demos", "../../demos", "local demos directory")
 	flag.Parse()
-	for _, demo := range presets.Demos() {
+	for _, demo := range catalog.Demos() {
 		data, err := os.ReadFile(filepath.Join(*root, filepath.FromSlash(demo.Music)))
 		if err != nil {
 			return err
 		}
-		tracks := [][]byte{data}
+		tracks := 1
 		if demo.Module {
-			tracks = nil
-			for i := 0; i < 2; i++ {
-				track, err := presets.RealityModule(data, i)
-				if err != nil {
-					return err
-				}
-				tracks = append(tracks, track)
-			}
+			tracks = 2
 		}
-		for i, data := range tracks {
-			if err := check(data, demo.Module); err != nil {
+		for i := range tracks {
+			if err := check(demo.Music, data, i); err != nil {
 				return fmt.Errorf("%s track %d: %w", demo.Name, i, err)
 			}
 		}
-		fmt.Printf("OK %-31s %d track(s), 1 second decoded\n", demo.Name, len(tracks))
+		fmt.Printf("OK %-31s %d track(s), 1 second decoded\n", demo.Name, tracks)
 	}
 	return nil
 }
-func check(data []byte, module bool) error {
-	var stream *sound.Stream
-	var err error
-	if module {
-		stream, err = sound.NewModule(data, sound.ModuleOptions{Interpolation: true})
-	} else {
-		stream, err = sound.NewYM(data, sound.YMOptions{Loop: true})
-	}
+func check(name string, data []byte, track int) error {
+	stream, err := sound.Open(name, data, sound.Options{Loop: true, Interpolation: true, Track: track})
 	if err != nil {
 		return err
 	}
