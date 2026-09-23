@@ -13,6 +13,7 @@ func main() {
 	c := scene.Config{StopWhenDone: true}
 	flag.BoolVar(&c.Eco, "eco", false, "render at 320x180 with four-pixel reflection strips")
 	flag.BoolVar(&c.Authoring, "authoring", false, "run the saved-project scene with backgrounds, sprite formations and controlled scrolling")
+	flag.BoolVar(&c.Cubes, "cubes", false, "run three independent complete deformable cube effects")
 	flag.IntVar(&c.Frames, "frames", 0, "stop after this many 60 Hz update ticks; zero runs interactively")
 	flag.StringVar(&c.Profile, "profile", "", "write bounded CPU and memory measurements as JSON; defaults to 600 frames")
 	flag.StringVar(&c.Capture, "capture", "", "write one logical-frame PNG snapshot")

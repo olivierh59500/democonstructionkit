@@ -29,6 +29,13 @@ func SetAuthoring(enabled bool) {
 	settings.config.Authoring = enabled
 }
 
+// SetCubes selects the multi-instance cube scene before creating EbitenView.
+func SetCubes(enabled bool) {
+	settings.Lock()
+	defer settings.Unlock()
+	settings.config.Cubes = enabled
+}
+
 type adapter struct{}
 
 func (adapter) Update() error {

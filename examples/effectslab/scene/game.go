@@ -14,6 +14,7 @@ import (
 	"github.com/hajimehoshi/ebiten/v2/inpututil"
 	kit "github.com/olivierh59500/democonstructionkit"
 	authored "github.com/olivierh59500/democonstructionkit/examples/authoring/scene"
+	jelly "github.com/olivierh59500/democonstructionkit/examples/jellycubes/scene"
 )
 
 // Config bounds profiling by update ticks. Zero Frames runs interactively.
@@ -21,6 +22,7 @@ import (
 type Config struct {
 	Eco                  bool
 	Authoring            bool
+	Cubes                bool
 	Frames               int
 	Profile              string
 	Capture              string
@@ -90,6 +92,7 @@ type Game struct {
 	config                        Config
 	scene                         *Scene
 	authored                      *authored.Scene
+	jelly                         *jelly.Scene
 	root                          kit.Effect
 	output                        *ebiten.Image
 	tick                          uint64
@@ -108,6 +111,9 @@ type Game struct {
 }
 
 func NewGame(c Config) (*Game, error) {
+	if c.Authoring && c.Cubes {
+		return nil, fmt.Errorf("effectslab: choose one profiling scene")
+	}
 	if c.Frames < 0 || c.CaptureFrame < 0 {
 		return nil, fmt.Errorf("effectslab: negative frame limit")
 	}
@@ -130,6 +136,19 @@ func NewGame(c Config) (*Game, error) {
 	return g, nil
 }
 func (g *Game) initialize() error {
+	if g.config.Cubes {
+		w, h := 640, 360
+		if g.config.Eco {
+			w, h = 320, 180
+		}
+		s, err := jelly.NewSize(w, h)
+		if err != nil {
+			return err
+		}
+		g.jelly, g.root = s, s
+		g.output = ebiten.NewImage(w, h)
+		return nil
+	}
 	if g.config.Authoring {
 		width, height := 640, 360
 		if g.config.Eco {
@@ -228,6 +247,9 @@ func (g *Game) Draw(dst *ebiten.Image) {
 	}
 }
 func (g *Game) Layout(int, int) (int, int) {
+	if g.jelly != nil {
+		return g.jelly.Width, g.jelly.Height
+	}
 	if g.authored != nil {
 		return g.authored.Width, g.authored.Height
 	}
@@ -241,7 +263,7 @@ func (g *Game) Layout(int, int) (int, int) {
 }
 
 func (g *Game) handleInput() error {
-	if g.authored != nil {
+	if g.authored != nil || g.jelly != nil {
 		if g.config.StopWhenDone && inpututil.IsKeyJustPressed(ebiten.KeyEscape) {
 			return ebiten.Termination
 		}
@@ -307,7 +329,10 @@ func (g *Game) finish() error {
 	width, height := g.Layout(0, 0)
 	eco, waterRows, sceneName := g.config.Eco, 0, "authoring"
 	var surfaces map[string]int64
-	if g.authored != nil {
+	if g.jelly != nil {
+		sceneName = "jelly-cubes"
+		surfaces = map[string]int64{"cube_scene_rgba": g.jelly.SurfaceBytes()}
+	} else if g.authored != nil {
 		surfaces = map[string]int64{"authoring_scene_rgba": g.authored.SurfaceBytes()}
 	} else {
 		eco, waterRows, sceneName = g.scene.Eco, 1, "live-effects"
@@ -359,6 +384,7 @@ func (g *Game) Close() error {
 	g.scene = nil
 	g.root = nil
 	g.authored = nil
+	g.jelly = nil
 	return err
 }
 func writeCapture(path string, source *ebiten.Image) error {

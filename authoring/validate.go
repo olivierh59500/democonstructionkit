@@ -242,10 +242,19 @@ func (p Project) validateLayer(l Layer) error {
 	if l.Background != nil {
 		n++
 	}
+	if l.JellyCube != nil {
+		n++
+	}
 	if n != 1 {
 		return fmt.Errorf("choose exactly one effect configuration")
 	}
 	switch l.Kind {
+	case "jelly_cube":
+		if l.JellyCube == nil {
+			return fmt.Errorf("jellyCube config required")
+		}
+		_, err := jellyConfig(*l.JellyCube)
+		return err
 	case "scroll":
 		if l.Scroll == nil {
 			return fmt.Errorf("scroll config required")

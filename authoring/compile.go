@@ -9,6 +9,7 @@ import (
 	"github.com/hajimehoshi/ebiten/v2"
 	kit "github.com/olivierh59500/democonstructionkit"
 	"github.com/olivierh59500/democonstructionkit/composite"
+	"github.com/olivierh59500/democonstructionkit/effects"
 	"github.com/olivierh59500/democonstructionkit/modulation"
 	"github.com/olivierh59500/democonstructionkit/motion"
 	"github.com/olivierh59500/democonstructionkit/scrolling"
@@ -161,6 +162,12 @@ func (b *compiler) face(id string) (scrolling.Face, error) {
 }
 func (b *compiler) layer(l Layer) (kit.Effect, error) {
 	switch l.Kind {
+	case "jelly_cube":
+		c, err := jellyConfig(*l.JellyCube)
+		if err != nil {
+			return nil, err
+		}
+		return effects.NewJellyCube(c)
 	case "scroll":
 		return b.scroll(*l.Scroll)
 	case "sprites":

@@ -60,6 +60,7 @@ type Layer struct {
 	Scroll     *Scroll      `json:"scroll,omitempty"`
 	Sprites    *SpriteGroup `json:"sprites,omitempty"`
 	Background *Background  `json:"background,omitempty"`
+	JellyCube  *JellyCube   `json:"jellyCube,omitempty"`
 }
 
 type Point struct {
