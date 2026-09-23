@@ -793,6 +793,65 @@ contexts delegate to Ebitengine during normal playback and mix on the simulation
 clock during recording. `sound/ebiten.NewOutputPlayer` adapts shared PCM streams;
 the existing `NewPlayer` API still accepts raw Ebitengine contexts.
 
+## One music entry point
+
+Native DCK demos open music through DCK. They do not import a decoder or keep
+a local YM-to-PCM player implementation. The filename and file signature select
+the backend internally; replacing a YM with a MOD/XM/S3M/IT does not require a
+different player class. Recorded WAV, MP3 and Ogg/Vorbis tracks use the same API.
+
+```go
+func StartMusic(name string, data []byte) (*playback.Player, error) {
+    player, err := playback.Open(nil, name, data, sound.Options{
+        Loop: true, Interpolation: true,
+    })
+    if err != nil { return nil, err }
+    player.Play()
+    return player, nil
+}
+```
+
+Here `playback` is `github.com/olivierh59500/democonstructionkit/sound/ebiten`;
+`sound` is the sibling `sound` package. Close the returned player when the scene
+ends. A nil context reuses the current DCK output context or creates one. This
+also works with the offline recording mixer. Playback controls and the audible
+position remain on the returned player.
+
+For hosts that already own playback, `sound.Open(name, data, options)` returns a
+seekable `*sound.Stream`; `sound.OpenFS(files, name, options)` reads an embedded or
+filesystem asset. Opening either stream alone opens no audio device. The default
+output is 48 kHz stereo float32. `PCMFormat: sound.PCM16` selects stereo int16;
+`NewOutputPlayer` and `NewPlayer` choose their PCM device path automatically.
+
+- Recognized content takes precedence over a misleading extension. Packed YM
+  files and gzip-wrapped recordings are handled inside DCK.
+- `Gain` selects initial attenuation (zero selects unit gain); `SetVolume(0)`
+  mutes. Stream gain clamps to 0..1. PCM16 truncation and optional `Quantize16`
+  preserve the authored integer gain when old scenes use float32 output.
+- `Loop` supports native module endings through go-zikmu. `LoopStartFrame`
+  preserves a recorded introduction before repeating the selected PCM region.
+- `BlockFrames` controls decode-ahead, independently of caller Read sizes. A
+  capture host can choose 800 frames at 48 kHz/60 Hz for exact register cues.
+- `Metadata()` returns source format, title, author/comment when available and
+  known duration. `Length()` and `Seek` use bytes in the selected PCM format;
+  the stream's position counts delivered bytes, not the audible device cursor.
+- Packed two-song FC containers use `Track: 0` or `Track: 1`. DCK selects the
+  timing-compatible S3M profile in go-zikmu internally, including packed pattern
+  handling. `StartOrder` and `TrackerPositionAt(player.Position())` preserve
+  music-driven scene cues. The compatibility core retains its original GPL
+  license, documented with its source in go-zikmu.
+
+The old explicit `NewYM`, `NewModule` and `NewPCM16` constructors remain available
+for compatibility and low-level integrations. Demo clients use `Open`. Backend
+requirements can still appear in a demo repository's go.mod because the preserved
+original implementation shares that module; its DCK variant has no direct
+decoder imports. `cmd/checkboundaries` verifies that rule across all 20 adapters.
+
+Regression coverage includes 16 independent one-second PCM fingerprints from the
+previous adapters, the longer FR-010 filtered/attenuated stream, both Second
+Reality soundtracks and their tracker markers, recorded loop seams, partial
+reads, gain changes, seeks, decoder selection and callback allocation checks.
+
 ## Build and checks
 
 Go 1.26+ is required. Ebitengine and audio versions remain pinned in `go.mod`.
@@ -805,6 +864,7 @@ go test -race ./...
 go vet ./...
 go run ./cmd/checkassets -demos ../../demos
 go run ./cmd/checkaudio -demos ../../demos
+go run ./cmd/checkboundaries -demos ../../demos
 go run ./cmd/checkeffects -demos ../../demos
 go run ./cmd/fidelity -demo grodan-kvack-kvack-demo
 ```
@@ -1139,3 +1199,81 @@ continuous playback automatically. During a bounded run the activity may display
 over the keyguard without dismissing it. `--el frames 0` starts ordinary continuous
 playback. Desktop uses `go run ./examples/effectslab -authoring`; add `-eco`,
 `-frames` and `-profile` to choose a bounded measurement.
+
+## Reusable construction presets
+
+`presets` contains editable effect recipes and shared asset metrics. Messages,
+asset bytes, screen layout and scene order stay in the demo. A preset returns
+independent data; modifying it never changes another effect instance.
+
+The Bilizir and TCB deformation tables now use `motion.CompileWaveTable`:
+
+```go
+sections := presets.BilizirWaveSections()
+sections[0].Terms[0].Amplitude *= 1.5
+sections[1].Samples = 240
+samples, err := motion.CompileWaveTable(sections...)
+if err != nil {
+    return err
+}
+wave := composite.ProfileStrips{
+    Offsets: samples, Axis: composite.Rows, Thickness: 2, Speed: 1,
+}
+```
+
+Call `wave.Advance()` once per simulation update and `wave.DrawAt(dst, image, x,
+y)` during drawing. The image may be a text surface, logo or complete background.
+Each section contains a sample count, offset and any number of sine/cosine terms.
+Frequency and phase are radians per sample and radians respectively. Empty terms
+produce a hold; section order determines the program. `TCBLogoWaveSections`
+supplies the other authored recipe. Tables are compiled once, outside drawing.
+`BilizirCopperOffsets` also supplies the exact quantized copper table shared by
+Bilizir, Coco and Multiscreen, with independent storage for each caller.
+
+The multi-plane scrolling recipe uses the common constructor:
+
+```go
+config := presets.TCBProjectedScroll(message, 32, face, raster)
+config.Projected.PixelsPerUpdate = 4
+config.Projected.Draw = scrolling.PlaneDraw{ScaleX: 2, ScaleY: 2}
+scroll, err := scrolling.New(config)
+```
+
+Its returned projection, visible-slot count, eight forms, font, raster, placement
+and output passes can all be changed. This preset retains the authored `^0` to
+`^7` command timing and two control slots. For ordinary text with no historical
+slots, use `Controls` and `Modes` on the regular scrolling configuration.
+
+`effects.SolidCube` provides a reusable flat-colored, outlined cube. It caches its
+geometry buffers, depth-sorts whole faces, and renders their outlines in the same
+order. Palette, edge colors, edge width, size, camera distance and depth order are
+configured independently:
+
+```go
+config := presets.BilizirCube(20)
+config.EdgeWidth = 2
+cube, err := effects.NewSolidCube(config)
+```
+
+Keep `cube.Rotation` in XYZ radians or call `cube.Rotate(dx, dy, dz)` each update;
+render with `cube.DrawAt(dst, centerX, centerY)`, then release its owned texture
+with `cube.Close()`. `effects.DefaultSolidCubeConfig` supplies a neutral material.
+Use `effects.NewMesh` for arbitrary textured/deformable objects. The fixed cube
+geometry path uses zero Go allocations after construction; this is not a claim
+about allocations inside the graphics engine or the whole demo.
+
+`scrolltext.FontProgram` compiles font selection once when several synchronized
+surfaces show different scales or materials of a single message:
+
+```go
+program, err := scrolltext.NewFontProgram(message, scrolltext.DomSizes, "0")
+smallText := program.MaskedText("0", ' ')
+largeText := program.MaskedText("3", ' ')
+activeFont := program.FontAt(visibleGlyphIndex)
+```
+
+Masked texts preserve all visible glyph positions, substitute blanks in inactive
+banks and remove control bytes. `FontAt` uses a zero-allocation binary search;
+its index counts Unicode glyphs, not bytes. Pass another decoder, such as `Braces`,
+for a different syntax. Timing/effect controls are rejected by this specialized
+program; the regular scrolling constructor handles mixed controls and mixed fonts.
