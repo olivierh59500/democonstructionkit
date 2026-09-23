@@ -20,6 +20,7 @@ type FeedConfig struct {
 	Scale                 float64
 	Speed                 int
 	UppercaseASCII        bool // Resolve ASCII lowercase through uppercase atlas entries.
+	ProgressiveEntry      bool // Reveal the active glyph over successive updates at the viewport edge.
 }
 
 // Feed owns its two working surfaces. Image returns the active visible viewport
@@ -77,7 +78,21 @@ func (f *Feed) Update(kit.Frame) error {
 	if f.done || f.images[0] == nil {
 		return nil
 	}
-	if f.x < 0 {
+	if f.config.ProgressiveEntry {
+		if f.tile < 0 {
+			f.x, f.letter, f.tile = 0, 0, 0
+		} else {
+			for f.x <= -f.advances[f.tile] {
+				f.x += f.advances[f.tile]
+				f.letter++
+				if f.letter >= len(f.glyphs) {
+					f.done = true
+					return nil
+				}
+				f.tile = f.letter
+			}
+		}
+	} else if f.x < 0 {
 		if f.tile > -1 {
 			f.x += f.advances[f.tile]
 		}
