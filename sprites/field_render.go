@@ -38,6 +38,12 @@ type FieldStyle struct {
 	// VectorRects draws each point as a filled rectangle and an optional trail
 	// in source order, retaining vector pixel coverage and overlap behavior.
 	VectorRects bool
+	// VectorLines draws only connected projected endpoints as variable-width
+	// anti-aliased lines; it does not draw a point rectangle.
+	VectorLines bool
+	// VectorTrailPaint overrides the per-sample TrailColor, retaining any
+	// color.Color supplied by an existing vector-line effect.
+	VectorTrailPaint color.Color
 	// DrawImages preserves DrawImage's transform arithmetic and source clipping.
 	// Use it when reproducing an existing nearest-filtered sprite renderer.
 	DrawImages bool
@@ -126,10 +132,16 @@ func (r *FieldRenderer) Draw(dst *ebiten.Image, samples []FieldSample, c FieldSt
 		if a.Width <= 0 || a.Height <= 0 || !finiteField(a.Width) || !finiteField(a.Height) || !finiteField(a.Angle) || !finiteField(a.ScaleX) || !finiteField(a.ScaleY) || !finiteField(a.AnchorX) || !finiteField(a.AnchorY) {
 			continue
 		}
-		if c.VectorRects {
-			vector.FillRect(dst, float32(p.X-a.Width/2), float32(p.Y-a.Height/2), float32(a.Width), float32(a.Height), a.FillColor, c.Antialias)
+		if c.VectorRects || c.VectorLines {
+			if c.VectorRects {
+				vector.FillRect(dst, float32(p.X-a.Width/2), float32(p.Y-a.Height/2), float32(a.Width), float32(a.Height), a.FillColor, c.Antialias)
+			}
 			if a.TrailWidth > 0 && p.Connected && p.PreviousX != 0 && p.PreviousY != 0 {
-				vector.StrokeLine(dst, float32(p.PreviousX), float32(p.PreviousY), float32(p.X), float32(p.Y), float32(a.TrailWidth), a.TrailColor, c.Antialias)
+				paint := color.Color(a.TrailColor)
+				if c.VectorTrailPaint != nil {
+					paint = c.VectorTrailPaint
+				}
+				vector.StrokeLine(dst, float32(p.PreviousX), float32(p.PreviousY), float32(p.X), float32(p.Y), float32(a.TrailWidth), paint, c.Antialias)
 			}
 			continue
 		}

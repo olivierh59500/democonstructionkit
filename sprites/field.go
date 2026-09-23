@@ -15,6 +15,9 @@ const (
 	DepthFree DepthPolicy = iota
 	DepthWrap
 	DepthRespawn
+	// DepthSingleWrap retains one strict add/subtract at the near/far edges.
+	// Large steps may remain outside the interval.
+	DepthSingleWrap
 )
 
 // FieldConfig separates particle movement from its pixel, sprite or trail skin.
@@ -26,6 +29,9 @@ type FieldConfig struct {
 	Spawn     func(index int, reset bool) Point
 	Depth     DepthPolicy
 	Near, Far float64
+	// WrapX and WrapY apply one strict wrap at +/-extent after each movement
+	// step. Zero disables wrapping on that axis and invalidates no history.
+	WrapX, WrapY float64
 }
 
 // FieldView projects any field through the same camera. DepthOffset is applied
@@ -36,6 +42,9 @@ type FieldView struct {
 	Offset    geometry.Vec3
 	Angle     float64
 	SortDepth bool
+	// DivideFirst projects X/Z*Focal and Y/Z*Focal. The default multiplies
+	// by Focal/Z; they may round to different vector-line pixels.
+	DivideFirst bool
 }
 
 // FieldSample is independent of its visual representation. Image chooses an
@@ -65,8 +74,9 @@ type Field struct {
 }
 
 func NewField(c FieldConfig) (*Field, error) {
-	if c.Count < 0 || c.Count > 1_000_000 || c.Depth > DepthRespawn ||
+	if c.Count < 0 || c.Count > 1_000_000 || c.Depth > DepthSingleWrap ||
 		(c.Depth != DepthFree && (!finiteField(c.Near) || !finiteField(c.Far) || c.Far <= c.Near)) ||
+		!finiteField(c.WrapX) || !finiteField(c.WrapY) || c.WrapX < 0 || c.WrapY < 0 ||
 		(c.Points == nil && c.Count > 0 && c.Spawn == nil) || (c.Depth == DepthRespawn && c.Spawn == nil) {
 		return nil, fmt.Errorf("sprites: invalid field configuration")
 	}
@@ -129,6 +139,26 @@ func (f *Field) Step(delta float64, velocity geometry.Vec3) {
 		p.X += velocity.X * delta
 		p.Y += velocity.Y * delta
 		p.Z += velocity.Z * delta
+		if f.config.WrapX > 0 {
+			if p.X > f.config.WrapX {
+				p.X -= 2 * f.config.WrapX
+				f.history[i].valid = false
+			}
+			if p.X < -f.config.WrapX {
+				p.X += 2 * f.config.WrapX
+				f.history[i].valid = false
+			}
+		}
+		if f.config.WrapY > 0 {
+			if p.Y > f.config.WrapY {
+				p.Y -= 2 * f.config.WrapY
+				f.history[i].valid = false
+			}
+			if p.Y < -f.config.WrapY {
+				p.Y += 2 * f.config.WrapY
+				f.history[i].valid = false
+			}
+		}
 		switch f.config.Depth {
 		case DepthWrap:
 			z, cycle := f.wrap(p.Z)
@@ -139,6 +169,16 @@ func (f *Field) Step(delta float64, velocity geometry.Vec3) {
 		case DepthRespawn:
 			if p.Z <= f.config.Near || p.Z > f.config.Far {
 				*p = f.config.Spawn(i, true)
+				f.history[i].valid = false
+			}
+		case DepthSingleWrap:
+			period := f.config.Far - f.config.Near
+			if p.Z > f.config.Far {
+				p.Z -= period
+				f.history[i].valid = false
+			}
+			if p.Z < f.config.Near {
+				p.Z += period
 				f.history[i].valid = false
 			}
 		}
@@ -159,6 +199,10 @@ func (f *Field) Sample(v FieldView) []FieldSample {
 		x, y := p.X+v.Offset.X, p.Y+v.Offset.Y
 		position := geometry.Vec3{X: x*cos - y*sin, Y: x*sin + y*cos, Z: z}
 		xy, scale, visible := v.Camera.Project(position)
+		if visible && v.DivideFirst {
+			xy.X = v.Camera.Center.X + position.X/position.Z*v.Camera.Focal
+			xy.Y = v.Camera.Center.Y + position.Y/position.Z*v.Camera.Focal
+		}
 		h := &f.history[i]
 		if !visible || !finiteField(xy.X) || !finiteField(xy.Y) || !finiteField(scale) {
 			h.valid = false

@@ -19,6 +19,9 @@ type ProjectedFieldConfig struct {
 	Delta            float64
 	Style            FieldStyle
 	RendererCapacity int
+	// ColdStart suppresses history on the first Update, for trails whose
+	// first step has no previous projected endpoint.
+	ColdStart bool
 }
 
 // ProjectedField owns the particle transport and bounded draw storage. It
@@ -51,6 +54,9 @@ func NewProjectedField(c ProjectedFieldConfig) (*ProjectedField, error) {
 	c.Field.Points = nil
 	p := &ProjectedField{field: f, renderer: NewFieldRenderer(capacity), config: c}
 	p.field.Sample(c.View)
+	if c.ColdStart {
+		clear(p.field.history)
+	}
 	return p, nil
 }
 
