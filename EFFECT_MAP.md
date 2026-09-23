@@ -15,7 +15,7 @@ The entries are acceptance work, not claims that all screens are already small.
 
 | Production / screen | Shared today | Extract next, with editable parameters |
 | --- | --- | --- |
-| 3D DOC | Atlas, `Config.RowBands` for intro and ordered two-pass scrolling | Perspective XOR checkerboard; phased projected balls/shadows with movement sequences, depth order and palette. |
+| 3D DOC | Atlas, `Config.RowBands`, `PerspectiveCheckerboard`, `ProjectedBallTrain` | Intro/main cue and whole-scene transform can become a typed timeline; assets and transition time remain scene data. |
 | Bilizir | Atlas, scrolling, independent StripWarp for text/logo, SolidCube, WaterReflection | Copper/raster bank: bars, palette, speed, spacing, order and masks. Historical scroll timing stays a recipe. |
 | DMA 3D | Atlas, `Config.RowColumn` and mesh primitives | Multi-material morphing mesh with per-face blend, sort and winding; masked three-speed starfield. |
 | DMA Is Back, intro | `Config.Feed`, configurable CRTOverlay | Music/fade cues can become a typed timeline; message and cue times stay production data. |
@@ -52,7 +52,7 @@ The entries are acceptance work, not claims that all screens are already small.
 | Spreadpoint | `Config.Bands`, feedback DNA, atlas | Card/audio cue sequence, 20-ball formation and raster-filled logo material. |
 | Digi | Scrolling, lookup row warp, Weave formation | Shared bouncing logo and nested-sine letter formation preset with independent phases. |
 | LED Scroller | Bounded tiled background, cached bubble matrix, scrolling | Raster/color ramp material and amplitude-modulated letter ensemble. |
-| 3D DOC | Scrolling, batch primitives | Perspective XOR ground, shadowed projected-ball train, seven continuous motion handoffs. |
+| 3D DOC | Scrolling, `PerspectiveCheckerboard`, `ProjectedBallTrain` | Move the paired inner/outer text row program into one parameterized scrolling recipe; audio cue remains scene data. |
 | Fullscreen | Background sampler, Weave formation, scrolling | Recycled multi-scroll lanes and raster-filled logo bar. |
 | Starwars | `Config.Crawl`, RowProjection, scrolling, projected starfield | Sampled sprite train and dual-color wave strip material. |
 | Knucklebuster | Scrolling and sprite images | Seeded hit trigger with hold/release envelope; optional music signal must be a distinct mode. |

@@ -1227,6 +1227,8 @@ remain available for effects with different behavior.
 | `effects.JellyCube` | Five-mode controller, entrance, deformation, continuous handoffs, projection and rendering | DMA Is Back; `examples/jellycubes` |
 | `effects.SolidCube` / `SolidCubeBatch` | Material, culling, face ordering, outlines and bounded batch submission | Bilizir, Coco, Multiscreen Coco |
 | `effects.TexturedCube` | Live texture mapping, camera, rotation, face ordering and culling | TeamG1 |
+| `effects.PerspectiveCheckerboard` | Perspective stripe geometry, two-axis motion, XOR composition and bounded surfaces | 3D DOC and Cuddly 3D DOC |
+| `effects.ProjectedBallTrain` | Blended movement programs, projected sprites/shadows, phase and depth/palette ordering | 3D DOC and Cuddly 3D DOC |
 | `scrolling.Config.Crawl` | Paragraph window, vertical transport and perspective projection | Cuddly Starwars |
 | `scrolling.Config.Feed` | Finite glyph insertion into a cached scrolling trail | DMA Is Back, Coco, TeamG1, MegaTwist intros |
 | `scrolling.Config.Scanline` | Proportional text transport, cumulative wave, cyclic bounce and bounded strip rendering | DMA Is Back, Coco, MegaTwist main screens |
@@ -1373,6 +1375,41 @@ including its intro-to-main handoff. Replicants matches 21 captures,
 including two user-speed changes. DMA 3D matches 13 of 15 frames exactly;
 the other two differ by one channel level in a single pixel at their respective
 sample times, including the old text reset boundary.
+
+### Put a perspective floor under another scene
+
+`PerspectiveCheckerboard` owns the floor surfaces, projected stripe geometry and
+two-axis movement. The default 320 by 80 recipe is editable: change counts,
+stripe coordinates, horizon, focal length, motion periods, palette, opacity and
+destination position. `Position` can replace the built-in oscillator with any
+deterministic Go trajectory. Separate mask XOR and direct per-band XOR are
+selectable because they produce different antialiased edges. Clock order and
+wrap policy are explicit when a scene needs exact historical phase boundaries.
+
+```go
+floorConfig := presets.DOCCheckerboard()
+floorConfig.X, floorConfig.Y = 80, 220
+floorConfig.Color = color.RGBA{R: 40, G: 120, B: 210, A: 255}
+floorConfig.Opacity = .75
+floorConfig.Position = func(tick uint64) (x, y float64) {
+    return 8 * math.Sin(float64(tick)/30), float64(tick) * .4
+}
+floor, err := effects.NewPerspectiveCheckerboard(floorConfig)
+if err != nil { return err }
+defer floor.Close()
+// Call floor.Update(frame) once per logical tick, then floor.Draw(layer).
+```
+
+`ProjectedBallTrain` borrows one ball image and a shadow palette. Its count,
+camera, center, scale, anchors, shadow plane, palette quantization, painter
+order and spin rate are editable. `Programs` contains movement functions and
+`Sequence` selects two program indices plus a blend factor for each slot.
+Call `AdvanceAt(sceneSeconds)` when the scene owns a clock, or `Update(frame)`
+for the configured fixed step. `PoseAt` samples a transition frame without
+advancing rotation. Both effects have independent state and can be layered or
+instantiated repeatedly. The DOC and Cuddly presets keep their distinct
+movement loops and shadow order. Full RGB captures match 13/13 standalone
+frames and 12/12 Cuddly frames through late playback.
 
 ### Load a font without initializing characters in the demo
 
