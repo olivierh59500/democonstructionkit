@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"image"
 	"math"
+	"sort"
 	"unicode"
 )
 
@@ -68,6 +69,7 @@ type Grid struct {
 	Cell, Stride, Origin              image.Point
 	Columns                           int
 	Order                             string
+	Blanks                            string // Explicitly supported characters with no source pixels.
 	Advance, LineHeight, SpaceAdvance float64
 	Uppercase                         bool
 	Fallback                          rune
@@ -105,6 +107,9 @@ func NewGrid(g Grid) (*Font, error) {
 		p := g.Bounds.Min.Add(g.Origin).Add(image.Pt(i%g.Columns*g.Stride.X, i/g.Columns*g.Stride.Y))
 		c.Glyphs[r] = Glyph{Rect: image.Rectangle{Min: p, Max: p.Add(g.Cell)}, Advance: g.Advance}
 	}
+	for _, r := range g.Blanks {
+		c.Glyphs[r] = Glyph{Advance: g.SpaceAdvance}
+	}
 	return New(c)
 }
 
@@ -126,8 +131,23 @@ func (f *Font) Glyph(r rune) (Glyph, bool) {
 	return Glyph{Advance: f.config.SpaceAdvance}, false
 }
 
+// ExactGlyph looks up a literal atlas entry without aliases, case conversion or
+// fallback. It is useful when preserving a case-sensitive authored tile stream.
+func (f *Font) ExactGlyph(r rune) (Glyph, bool) { g, ok := f.config.Glyphs[r]; return g, ok }
+
 // Bounds returns the atlas bounds used to validate the font.
 func (f *Font) Bounds() image.Rectangle { return f.config.Bounds }
+
+// Characters returns the explicitly mapped characters in stable Unicode order.
+// Aliases and automatic case conversion are resolved by Glyph, not duplicated here.
+func (f *Font) Characters() []rune {
+	chars := make([]rune, 0, len(f.config.Glyphs))
+	for r := range f.config.Glyphs {
+		chars = append(chars, r)
+	}
+	sort.Slice(chars, func(i, j int) bool { return chars[i] < chars[j] })
+	return chars
+}
 
 // LineHeight is the distance between consecutive text lines.
 func (f *Font) LineHeight() float64 { return f.config.LineHeight }

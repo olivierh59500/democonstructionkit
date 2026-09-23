@@ -44,7 +44,7 @@ func TestMissingVerticalDigitsAreBlank(t *testing.T) {
 		t.Fatal(err)
 	}
 	g, ok := f.Glyph('5')
-	if ok || !g.Rect.Empty() || g.Advance != 33 {
+	if !ok || !g.Rect.Empty() || g.Advance != 33 {
 		t.Fatal(g, ok)
 	}
 }

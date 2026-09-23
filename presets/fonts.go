@@ -16,12 +16,16 @@ type Font struct {
 	Columns        int
 }
 
+// PhenomenaAlphabet is the authored order used by both DNA scroll atlases.
+const PhenomenaAlphabet = " ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!'?/,.-@"
+
 // Fonts returns fresh descriptors for every bitmap font family found in the audit,
 // including duplicated assets in go-multiscreen. Vector/packed fonts are not atlases.
 func Fonts() []Font {
 	return []Font{
 		{"3d_doc", "3d_doc/assets/font_out.png", "doc", image.Pt(62, 50), 10},
 		{"3d_doc-in", "3d_doc/assets/font_in.png", "doc", image.Pt(62, 50), 10},
+		{"3d_doc-intro", "3d_doc/assets/kh6.png", "doc", image.Pt(62, 50), 10},
 		{"bilizir-demo", "bilizir-demo/assets/soap-font.png", "soap", image.Pt(32, 32), 10},
 		{"dma-3d", "dma-3d/assets/tcb_rep_font.png", "replicants", image.Pt(64, 50), 10},
 		{"dma-is-back", "dma-is-back/assets/font.png", "proportional", image.Pt(48, 36), 10},
@@ -67,15 +71,16 @@ func (s Font) Build(bounds image.Rectangle) (*font.Font, error) {
 		order[i] = rune(32 + i)
 	}
 	aliases := map[rune]rune{}
+	blanks := ""
 	switch s.Kind {
 	case "ascii":
 	case "doc":
-		order[32] = 0
+		order = sparse(" !'(),-.0123456789:;?ABCDEFGHIJKLMNOPQRSTUVWXYZ")
 		aliases['@'] = ' '
 	case "soap":
 		order = []rune("ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789(),.!")
 	case "phenomena":
-		order = []rune(" ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!'?/,.-@")
+		order = []rune(PhenomenaAlphabet)
 	case "replicants":
 		order = sparse("!\"'(),-.0123456789:;?ABCDEFGHIJKLMNOPQRSTUVWXYZ")
 		order[26] = 0
@@ -88,6 +93,7 @@ func (s Font) Build(bounds image.Rectangle) (*font.Font, error) {
 	case "planes":
 		order = sparse("!(),.:;ABCDEFGHIJKLMNOPQRSTUVWXYZ")
 	case "grodan-big":
+		blanks = " -"
 		order = sparse("!.0123456789:?ABCDEFGHIJKLMNOPQRSTUVWXYZ")
 		order[5] = '\''
 		order[6] = '"'
@@ -95,14 +101,16 @@ func (s Font) Build(bounds image.Rectangle) (*font.Font, error) {
 		order[8] = ')'
 		order[15] = ','
 	case "grodan-up":
+		blanks = "0123456789 -,'"
 		order = sparse("!().:?ABCDEFGHIJKLMNOPQRSTUVWXYZ")
 		order[25] = '#'
 	case "grodan-small":
+		blanks = " -,\""
 		order = sparse("!'()./0123456789:?ABCDEFGHIJKLMNOPQRSTUVWXYZ")
 	default:
 		return nil, fmt.Errorf("presets: unknown font kind %q", s.Kind)
 	}
-	return font.NewGrid(font.Grid{Bounds: bounds, Cell: s.Cell, Columns: s.Columns, Order: string(order), Uppercase: true, Aliases: aliases})
+	return font.NewGrid(font.Grid{Bounds: bounds, Cell: s.Cell, Columns: s.Columns, Order: string(order), Blanks: blanks, Uppercase: true, Aliases: aliases})
 }
 func sparse(characters string) []rune {
 	order := make([]rune, 59)
@@ -133,11 +141,27 @@ func proportional(bounds image.Rectangle, logo bool) (*font.Font, error) {
 	return font.New(c)
 }
 func chrome(bounds image.Rectangle) (*font.Font, error) {
-	widths := []int{3, 1, 2, 3, 3, 3, 3, 1, 1, 1, 3, 2, 1, 2, 1, 2, 3, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 1, 3, 2, 3, 2, 3, 3, 2, 2, 2, 2, 2, 2, 2, 1, 2, 2, 2, 3, 2, 3, 2, 3, 2, 2, 2, 2, 3, 3, 3, 2, 2}
+	widths := chromeTileWidths[:59]
 	c := font.Config{Bounds: bounds, Glyphs: map[rune]font.Glyph{}, LineHeight: 80, SpaceAdvance: 96, Uppercase: true}
 	for i, width := range widths {
 		w := width * 32
 		c.Glyphs[rune(i+32)] = font.Glyph{Rect: image.Rect(i*96, 0, i*96+w, 80).Add(bounds.Min), Advance: float64(w)}
 	}
 	return font.New(c)
+}
+
+var chromeTileWidths = [...]int{3, 1, 2, 3, 3, 3, 3, 1, 1, 1, 3, 2, 1, 2, 1, 2, 3, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 1, 3, 2, 3, 2, 3, 3, 2, 2, 2, 2, 2, 2, 2, 1, 2, 2, 2, 3, 2, 3, 2, 3, 2, 2, 2, 2, 3, 3, 3, 2, 2, 3, 3, 3, 3, 3, 3}
+
+// CuddlyChromeTiles compiles the menu's variable-width, three-tile glyphs.
+func CuddlyChromeTiles(text string) []int {
+	result, err := CuddlyChromeAlphabet().Compile(text)
+	if err != nil {
+		panic(err)
+	}
+	return result
+}
+
+// CuddlyChromeAlphabet returns a fresh editable copy of the menu's tile recipe.
+func CuddlyChromeAlphabet() font.TileAlphabet {
+	return font.TileAlphabet{First: 32, Widths: append([]int(nil), chromeTileWidths[:]...), Stride: 3, Ignore: "\r\n"}
 }
