@@ -18,6 +18,7 @@ type ProfileImageConfig struct {
 	Gain, BaseX, BaseY                float64
 	MotionRate, MotionSpan, WrapWidth float64
 	Filter                            ebiten.Filter
+	Batch                             bool // Submit all sampled rows in a bounded triangle batch.
 }
 
 // ProfileImage owns no GPU image. It caches borrowed source rows once, keeps an
@@ -25,6 +26,8 @@ type ProfileImageConfig struct {
 type ProfileImage struct {
 	config ProfileImageConfig
 	rows   []*ebiten.Image
+	source *ebiten.Image
+	batch  *QuadBatch
 	width  float64
 	phase  int
 }
@@ -48,7 +51,11 @@ func NewProfileImage(source *ebiten.Image, c ProfileImageConfig) (*ProfileImage,
 	}
 	c.Offsets = append([]float64(nil), c.Offsets...)
 	b := source.Bounds()
-	p := &ProfileImage{config: c, rows: make([]*ebiten.Image, b.Dy()), width: float64(b.Dx()), phase: c.Phase}
+	p := &ProfileImage{config: c, rows: make([]*ebiten.Image, b.Dy()), source: source, width: float64(b.Dx()), phase: c.Phase}
+	if c.Batch {
+		p.batch = NewQuadBatch(min(16383, b.Dy()*2))
+		p.batch.Options.Filter = c.Filter
+	}
 	for row := range p.rows {
 		r := b
 		r.Min.Y = b.Min.Y + row
@@ -78,6 +85,9 @@ func (p *ProfileImage) DrawAt(dst *ebiten.Image, baseX, baseY float64) {
 	}
 	c := p.config
 	movement := math.Sin(float64(p.phase)*c.MotionRate) * c.MotionSpan / 2
+	if p.batch != nil {
+		p.batch.Begin(dst, p.source)
+	}
 	for row, img := range p.rows {
 		index := (p.phase + row*c.RowStep) % len(c.Offsets)
 		if index < 0 {
@@ -86,27 +96,36 @@ func (p *ProfileImage) DrawAt(dst *ebiten.Image, baseX, baseY float64) {
 		x := baseX + movement + c.Offsets[index]*c.Gain - p.width/2
 		y := baseY + float64(row)
 		if x > -p.width && (c.WrapWidth == 0 || x < c.WrapWidth) {
-			op := ebiten.DrawImageOptions{Filter: c.Filter}
-			op.GeoM.Translate(x, y)
-			dst.DrawImage(img, &op)
+			p.drawRow(dst, img, x, y)
 		}
 		if c.WrapWidth > 0 {
 			if x < 0 {
-				op := ebiten.DrawImageOptions{Filter: c.Filter}
-				op.GeoM.Translate(c.WrapWidth+x, y)
-				dst.DrawImage(img, &op)
+				p.drawRow(dst, img, c.WrapWidth+x, y)
 			} else if x+p.width > c.WrapWidth {
-				op := ebiten.DrawImageOptions{Filter: c.Filter}
-				op.GeoM.Translate(x-c.WrapWidth, y)
-				dst.DrawImage(img, &op)
+				p.drawRow(dst, img, x-c.WrapWidth, y)
 			}
 		}
 	}
+	if p.batch != nil {
+		p.batch.Flush()
+	}
+}
+
+func (p *ProfileImage) drawRow(dst, row *ebiten.Image, x, y float64) {
+	if p.batch != nil {
+		p.batch.Rect(row.Bounds(), float32(x), float32(y), float32(p.width), 1)
+		return
+	}
+	op := ebiten.DrawImageOptions{Filter: p.config.Filter}
+	op.GeoM.Translate(x, y)
+	dst.DrawImage(row, &op)
 }
 
 func (p *ProfileImage) Close() error {
 	if p != nil {
 		p.rows = nil
+		p.source = nil
+		p.batch = nil
 	}
 	return nil
 }

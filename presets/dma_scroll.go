@@ -67,7 +67,7 @@ func CocoIntroFeed(font *scrolling.Atlas, text string) scrolling.FeedConfig {
 
 // TeamG1IntroFeed retains its tighter history surface and uppercase lookup.
 func TeamG1IntroFeed(font *scrolling.Atlas, text string) scrolling.FeedConfig {
-	return scrolling.FeedConfig{Font: font, Text: text, Width: 768, Height: 72, Scale: 2, Speed: 6, UppercaseASCII: true}
+	return scrolling.FeedConfig{Font: font, Text: text, Width: 768, Height: 72, InsertX: 640, Scale: 2, Speed: 6, UppercaseASCII: true}
 }
 
 // MegaTwistIntroFeed keeps its unscaled 36-pixel ribbon and 48-pixel tail.

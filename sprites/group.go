@@ -16,6 +16,13 @@ type GroupSignals struct {
 	X, Y, ScaleX, ScaleY, Angle, Opacity *modulation.Signal
 }
 
+// GridFormation adds a centered row/column offset before shared motion.
+// Rows defaults to the number required by Count when zero.
+type GridFormation struct {
+	Columns, Rows int
+	StepX, StepY  float64
+}
+
 // GroupConfig describes a sprite/logo formation, independent of image metrics.
 // Choose at most one Path, Points, Orbit, Weave or Circle. With none, positions follow
 // Velocity. Speed and PhaseSpacing use path pixels or the orbit's phase units;
@@ -33,11 +40,15 @@ type GroupConfig struct {
 	Orbit                                   *motion.NestedOrbit
 	Weave                                   *motion.Weave
 	Circle                                  *motion.CircleFormation
+	Grid                                    *GridFormation
+	Translation                             *motion.HarmonicTranslation
 	Origin, Velocity, Spacing               motion.Point
 	Speed, Phase, PhaseSpacing, Delay       float64
 	PhaseStep                               float64 // Optional cumulative phase per Update.
 	Orient                                  bool
 	ScaleX, ScaleY, Angle, AnchorX, AnchorY float64
+	Opacity                                 float64 // Zero defaults to one; use a signal for a hidden starting value.
+	AlphaOnly                               bool    // Multiply only the alpha channel, retaining bright RGB materials.
 	Filter                                  ebiten.Filter
 	Blend                                   ebiten.Blend
 	Reverse                                 bool
@@ -83,7 +94,7 @@ func NewGroup(c GroupConfig) (*Group, error) {
 	if kinds > 1 {
 		return nil, fmt.Errorf("sprites: choose one formation trajectory")
 	}
-	for _, v := range []float64{c.FPS, c.Origin.X, c.Origin.Y, c.Velocity.X, c.Velocity.Y, c.Spacing.X, c.Spacing.Y, c.Speed, c.Phase, c.PhaseSpacing, c.PhaseStep, c.Delay, c.ScaleX, c.ScaleY, c.Angle, c.AnchorX, c.AnchorY} {
+	for _, v := range []float64{c.FPS, c.Origin.X, c.Origin.Y, c.Velocity.X, c.Velocity.Y, c.Spacing.X, c.Spacing.Y, c.Speed, c.Phase, c.PhaseSpacing, c.PhaseStep, c.Delay, c.ScaleX, c.ScaleY, c.Angle, c.AnchorX, c.AnchorY, c.Opacity} {
 		if !finiteField(v) {
 			return nil, fmt.Errorf("sprites: nonfinite group parameter")
 		}
@@ -107,6 +118,33 @@ func NewGroup(c GroupConfig) (*Group, error) {
 	}
 	if c.ScaleY == 0 {
 		c.ScaleY = 1
+	}
+	if c.Opacity == 0 {
+		c.Opacity = 1
+	}
+	if c.Grid != nil {
+		grid := *c.Grid
+		if grid.Columns < 1 || grid.Columns > 1_000_000 || grid.Rows < 0 || grid.Rows > 1_000_000 || !finiteField(grid.StepX) || !finiteField(grid.StepY) {
+			return nil, fmt.Errorf("sprites: invalid grid formation")
+		}
+		if grid.Rows == 0 {
+			grid.Rows = (c.Count + grid.Columns - 1) / grid.Columns
+		}
+		c.Grid = &grid
+	}
+	if c.Translation != nil {
+		translation := *c.Translation
+		if len(translation.X) > 64 || len(translation.Y) > 64 {
+			return nil, fmt.Errorf("sprites: too many translation harmonics")
+		}
+		for _, term := range append(append([]motion.HarmonicTerm(nil), translation.X...), translation.Y...) {
+			if !finiteField(term.Amplitude) || !finiteField(term.Rate) || !finiteField(term.Phase) {
+				return nil, fmt.Errorf("sprites: nonfinite translation harmonic")
+			}
+		}
+		translation.X = append([]motion.HarmonicTerm(nil), translation.X...)
+		translation.Y = append([]motion.HarmonicTerm(nil), translation.Y...)
+		c.Translation = &translation
 	}
 	c.Frames = append([]*ebiten.Image(nil), c.Frames...)
 	c.Points = append([]motion.Point(nil), c.Points...)
@@ -153,6 +191,10 @@ func (g *Group) Update(f kit.Frame) error {
 
 func (g *Group) sample(f kit.Frame) error {
 	c := g.config
+	translation := motion.Point{}
+	if c.Translation != nil {
+		translation = c.Translation.At(g.phase + f.Time*c.Speed)
+	}
 	context := modulation.Context{Seconds: f.Time}
 	if c.Context != nil {
 		context = c.Context(f)
@@ -185,7 +227,15 @@ func (g *Group) sample(f kit.Frame) error {
 			position = motion.Point{X: c.Velocity.X * t, Y: c.Velocity.Y * t}
 			tangent = c.Velocity
 		}
-		p := GroupPose{X: c.Origin.X + float64(i)*c.Spacing.X + position.X, Y: c.Origin.Y + float64(i)*c.Spacing.Y + position.Y, ScaleX: c.ScaleX, ScaleY: c.ScaleY, Angle: c.Angle, Opacity: 1}
+		p := GroupPose{X: c.Origin.X + float64(i)*c.Spacing.X + position.X, Y: c.Origin.Y + float64(i)*c.Spacing.Y + position.Y, ScaleX: c.ScaleX, ScaleY: c.ScaleY, Angle: c.Angle, Opacity: c.Opacity}
+		if c.Grid != nil {
+			column := i % c.Grid.Columns
+			row := i / c.Grid.Columns
+			p.X += (float64(column) - float64(c.Grid.Columns-1)/2) * c.Grid.StepX
+			p.Y += (float64(row) - float64(c.Grid.Rows-1)/2) * c.Grid.StepY
+		}
+		p.X += translation.X
+		p.Y += translation.Y
 		p.ScaleX *= circleScale
 		p.ScaleY *= circleScale
 		if c.Orient && (tangent.X != 0 || tangent.Y != 0) {
@@ -254,7 +304,11 @@ func (g *Group) Draw(dst *ebiten.Image) {
 		op.GeoM.Scale(p.ScaleX, p.ScaleY)
 		op.GeoM.Rotate(p.Angle)
 		op.GeoM.Translate(p.X, p.Y)
-		op.ColorScale.ScaleAlpha(float32(math.Min(1, p.Opacity)))
+		if c.AlphaOnly {
+			op.ColorScale.Scale(1, 1, 1, float32(math.Min(1, p.Opacity)))
+		} else {
+			op.ColorScale.ScaleAlpha(float32(math.Min(1, p.Opacity)))
+		}
 		dst.DrawImage(img, &op)
 	}
 }
@@ -280,4 +334,18 @@ func (g *Group) SetPhase(phase float64) error {
 	g.config.Phase = phase
 	g.phase = phase
 	return nil
+}
+
+// Phase returns the group's cumulative authored phase.
+func (g *Group) Phase() float64 { return g.phase }
+
+// Advance adds a caller-chosen phase increment and samples new poses once.
+// It is useful for variable-speed user controls without exposing a local
+// per-sprite controller. Do not also call Update for the same simulation tick.
+func (g *Group) Advance(delta float64) error {
+	if !finiteField(delta) || !finiteField(g.phase+delta) {
+		return fmt.Errorf("sprites: invalid group phase increment")
+	}
+	g.phase += delta
+	return g.sample(kit.Frame{})
 }

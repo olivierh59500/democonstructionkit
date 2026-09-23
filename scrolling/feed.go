@@ -16,6 +16,7 @@ type FeedConfig struct {
 	Font                  *Atlas
 	Text                  string
 	Width, Height, Margin int
+	InsertX               int // Initial glyph entry coordinate; zero defaults to Width.
 	Scale                 float64
 	Speed                 int
 	UppercaseASCII        bool // Resolve ASCII lowercase through uppercase atlas entries.
@@ -36,7 +37,10 @@ type Feed struct {
 }
 
 func NewFeed(c FeedConfig) (*Feed, error) {
-	if c.Font == nil || c.Font.face.Atlas == nil || c.Text == "" || c.Width < 1 || c.Height < 1 || c.Margin < 0 || c.Speed < 1 || c.Speed > c.Width || !finite(c.Scale) || c.Scale <= 0 || c.Width > 8192 || c.Margin > 8192-c.Width || c.Height > 8192 {
+	if c.InsertX == 0 {
+		c.InsertX = c.Width
+	}
+	if c.Font == nil || c.Font.face.Atlas == nil || c.Text == "" || c.Width < 1 || c.Height < 1 || c.Margin < 0 || c.InsertX < 0 || c.InsertX > 8192 || c.Speed < 1 || c.Speed > c.Width || !finite(c.Scale) || c.Scale <= 0 || c.Width > 8192 || c.Margin > 8192-c.Width || c.Height > 8192 {
 		return nil, fmt.Errorf("scrolling: invalid feed configuration")
 	}
 	f := &Feed{config: c, x: -1, letter: -1, tile: -1}
@@ -92,7 +96,7 @@ func (f *Feed) Update(kit.Frame) error {
 	if glyph := f.glyphs[f.tile]; glyph != nil {
 		f.op.GeoM.Reset()
 		f.op.GeoM.Scale(f.config.Scale, f.config.Scale)
-		f.op.GeoM.Translate(float64(f.config.Width+f.x), 0)
+		f.op.GeoM.Translate(float64(f.config.InsertX+f.x), 0)
 		f.images[1].DrawImage(glyph, &f.op)
 	}
 	f.images[0], f.images[1] = f.images[1], f.images[0]

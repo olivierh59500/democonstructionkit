@@ -6,6 +6,66 @@ import (
 	"testing"
 )
 
+func TestFourWaveColorLookupStaysWithinOneChannelLevel(t *testing.T) {
+	config := DefaultHarmonicConfig(64, 48)
+	exact, err := NewHarmonic(config)
+	if err != nil {
+		t.Fatal(err)
+	}
+	config.ColorLookupSize = 16384
+	fast, err := NewHarmonic(config)
+	if err != nil {
+		t.Fatal(err)
+	}
+	want, got := make([]byte, 64*48*4), make([]byte, 64*48*4)
+	for _, seconds := range []float64{0, .02, .42, 7.5, 99.9} {
+		if err := exact.RenderRGBA(want, 64*4, seconds); err != nil {
+			t.Fatal(err)
+		}
+		if err := fast.RenderRGBA(got, 64*4, seconds); err != nil {
+			t.Fatal(err)
+		}
+		for i, value := range got {
+			difference := int(value) - int(want[i])
+			if difference < -1 || difference > 1 {
+				t.Fatalf("time %g channel %d differs by %d", seconds, i, difference)
+			}
+		}
+	}
+	if allocations := testing.AllocsPerRun(20, func() {
+		if err := fast.RenderRGBA(got, 64*4, .42); err != nil {
+			panic(err)
+		}
+	}); allocations != 0 {
+		t.Fatalf("fast plasma allocates %v times per frame", allocations)
+	}
+}
+
+func BenchmarkHarmonicColorBackend(b *testing.B) {
+	for _, variant := range []struct {
+		name string
+		size int
+	}{{"exact", 0}, {"lookup", 16384}} {
+		b.Run(variant.name, func(b *testing.B) {
+			config := DefaultHarmonicConfig(320, 200)
+			config.ColorLookupSize = variant.size
+			kernel, err := NewHarmonic(config)
+			if err != nil {
+				b.Fatal(err)
+			}
+			pixels := make([]byte, 320*200*4)
+			seconds := 0.0
+			b.ReportAllocs()
+			for b.Loop() {
+				seconds += .02
+				if err := kernel.RenderRGBA(pixels, 320*4, seconds); err != nil {
+					b.Fatal(err)
+				}
+			}
+		})
+	}
+}
+
 func TestHarmonicCustomWavesAndChannels(t *testing.T) {
 	config := DefaultHarmonicConfig(19, 11)
 	config.Waves = []HarmonicWave{

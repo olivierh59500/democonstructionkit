@@ -40,6 +40,10 @@ type HarmonicConfig struct {
 	ColorFrequency float64
 	Channels       [3]HarmonicChannel
 	MaximumColor   byte
+	// ColorLookupSize selects a bounded approximate RGB table for the standard
+	// four-wave kernel. Zero preserves exact per-pixel trigonometry. Use a power
+	// of two from 256 to 65536 for mobile CPU savings.
+	ColorLookupSize int
 }
 
 // DefaultHarmonicConfig is a four-wave RGB plasma using axial, radial and
@@ -74,9 +78,11 @@ type harmonicWave struct {
 // color sine/cosine pair per pixel. Use separate instances for concurrent draws.
 // The renderer owns no GPU resources; the caller uploads RGBA only when changed.
 type Harmonic struct {
-	config      HarmonicConfig
-	waves       []harmonicWave
-	fourWaveRGB bool
+	config               HarmonicConfig
+	waves                []harmonicWave
+	fourWaveRGB          bool
+	colors               []uint32
+	colorMin, colorScale float64
 }
 
 func NewHarmonic(config HarmonicConfig) (*Harmonic, error) {
@@ -85,6 +91,9 @@ func NewHarmonic(config HarmonicConfig) (*Harmonic, error) {
 	}
 	if !finite(config.Divisor) || config.Divisor == 0 || !finite(config.ColorFrequency) {
 		return nil, fmt.Errorf("plasma: invalid harmonic normalization")
+	}
+	if config.ColorLookupSize != 0 && (config.ColorLookupSize < 256 || config.ColorLookupSize > 65536 || config.ColorLookupSize&(config.ColorLookupSize-1) != 0) {
+		return nil, fmt.Errorf("plasma: color lookup size must be a power of two from 256 to 65536")
 	}
 	amplitudeBound := 0.0
 	for _, wave := range config.Waves {
@@ -117,6 +126,30 @@ func NewHarmonic(config HarmonicConfig) (*Harmonic, error) {
 			if config.Waves[i].Shape != shape || config.Waves[i].Amplitude != 1 {
 				p.fourWaveRGB = false
 			}
+		}
+	}
+	if config.ColorLookupSize != 0 {
+		if !p.fourWaveRGB {
+			return nil, fmt.Errorf("plasma: color lookup requires the standard four-wave RGB kernel")
+		}
+		bound := amplitudeBound / math.Abs(config.Divisor) * math.Abs(config.ColorFrequency)
+		if bound == 0 {
+			bound = 1
+		}
+		if !finite(2*bound) || !finite(float64(config.ColorLookupSize-1)/(2*bound)) || float64(config.ColorLookupSize-1)/(2*bound) <= 0 {
+			return nil, fmt.Errorf("plasma: color lookup range overflows")
+		}
+		p.colors = make([]uint32, config.ColorLookupSize)
+		p.colorMin = -bound
+		p.colorScale = float64(len(p.colors)-1) / (2 * bound)
+		const third = 0.8660254037844386
+		for i := range p.colors {
+			phase := p.colorMin + float64(i)/p.colorScale
+			sine, cosine := math.Sincos(phase)
+			r := harmonicColor(sine)
+			g := harmonicColor(-.5*sine + third*cosine)
+			b := harmonicColor(-.5*sine - third*cosine)
+			p.colors[i] = uint32(r) | uint32(g)<<8 | uint32(b)<<16 | 0xff000000
 		}
 	}
 
@@ -183,7 +216,11 @@ func (p *Harmonic) RenderRGBA(dst []byte, stride int, seconds float64) error {
 		}
 	}
 	if p.fourWaveRGB {
-		p.renderFourRGBA(dst, stride)
+		if len(p.colors) != 0 {
+			p.renderFourRGBAFast(dst, stride)
+		} else {
+			p.renderFourRGBA(dst, stride)
+		}
 		return nil
 	}
 	for y := 0; y < p.config.Height; y++ {
@@ -240,6 +277,31 @@ func (p *Harmonic) renderFourRGBA(dst []byte, stride int) {
 			dst[pixel] = harmonicColor(s)
 			dst[pixel+1] = harmonicColor(-.5*s + third*c)
 			dst[pixel+2] = harmonicColor(-.5*s - third*c)
+			dst[pixel+3] = 255
+		}
+	}
+}
+
+// renderFourRGBAFast keeps the exact spatial/temporal wave recurrence and
+// substitutes only the three final color sinusoids with a bounded RGB lookup.
+func (p *Harmonic) renderFourRGBAFast(dst []byte, stride int) {
+	xWave, yWave := p.waves[0].animated, p.waves[1].animated
+	radial, diagonal := &p.waves[2], p.waves[3].animated
+	width, height := p.config.Width, p.config.Height
+	divisor, colorFrequency := p.config.Divisor, p.config.ColorFrequency
+	for y := 0; y < height; y++ {
+		row := y * width
+		for x := 0; x < width; x++ {
+			index := row + x
+			r := radial.sine[index]*radial.cosTime + radial.cosine[index]*radial.sinTime
+			value := (xWave[x] + yWave[y] + r + diagonal[x+y]) / divisor
+			lookup := int((value*colorFrequency - p.colorMin) * p.colorScale)
+			lookup = max(0, min(lookup, len(p.colors)-1))
+			color := p.colors[lookup]
+			pixel := y*stride + x*4
+			dst[pixel] = byte(color)
+			dst[pixel+1] = byte(color >> 8)
+			dst[pixel+2] = byte(color >> 16)
 			dst[pixel+3] = 255
 		}
 	}
