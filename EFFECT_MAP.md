@@ -21,7 +21,7 @@ The entries are acceptance work, not claims that all screens are already small.
 | DMA Is Back, intro | `Config.Feed`, configurable CRTOverlay | Music/fade cues can become a typed timeline; message and cue times stay production data. |
 | DMA Is Back, main | `Config.Scanline`, ImageGrid, NestedOrbit, JellyCube | Soundtrack start and whole-scene fade can use the same cue/envelope system as other intros. |
 | Coco, intro | `Config.Feed`, configurable CRTOverlay | Intro-to-main music cue. |
-| Coco, main | `Config.Scanline`, SolidCubeBatch, shared font metrics | Repeating rotozoom; 16-logo formation with phase/spacing; copper-filled title material. |
+| Coco, main | `Config.Scanline`, SolidCubeBatch, sprites.Group grid/translation and shared font metrics | Repeating rotozoom and copper-filled title material. |
 | DOM intro | Atlas, synchronized FontProgram, scrolling | Whole-bank font switch triggered at viewport entry; timed raster backgrounds and animated star atlas instances. |
 | Multiscreen, four embedded productions | SolidCube, sampled DNA and projected-plane engines, atlas recipes | Make the four production scenes reusable constructors rather than copies of their standalone controllers. |
 | Multiscreen, camera tour | Layer/viewport helpers | Camera/zoom director with visibility culling, retained outputs and serialized handoffs. |

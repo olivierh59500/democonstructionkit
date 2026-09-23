@@ -1314,6 +1314,32 @@ clock. The animated material accepts independent scanline, glow, color-fringe,
 curvature and flicker settings, so another intro can use the same pass with a
 different bitmap image or selected source surface.
 
+`sprites.Group` also supports a centered grid plus a shared multi-harmonic
+translation. Coco uses these parameters for sixteen logos and selects
+`AlphaOnly` to preserve its bright RGB values while fading alpha. The reusable
+group owns the phase and prepared poses; a user speed control calls
+`group.Advance(delta)` once per update. The number of images, grid steps,
+harmonic terms, image bank, scale and material can be varied independently.
+
+On mobile, `plasma.HarmonicConfig.ColorLookupSize` may replace the standard
+four-wave kernel's per-pixel color trigonometry with a bounded RGB table. Zero
+keeps exact coloring. At 16,384 entries the source plasma differs from exact
+output by at most one channel level in the regression samples, without frame
+allocations. TeamG1 also enables `composite.ProfileImageConfig.Batch` on mobile
+to submit its sampled logo rows together. The desktop game keeps its exact
+backends. Both switches are explicit options; they do not change the effect's
+clock or layer order.
+
+Short unlocked Pixel 10a SurfaceView present-timestamp samples of the actual
+DCK APKs (63 frames each) measured 59.92 FPS for DMA Is Back, 59.91 for Coco
+and 59.91 for MegaTwist, with no interval above 25 ms. TeamG1's exact DCK
+backend measured 53.07 FPS with eight intervals above 25 ms; its combined
+mobile options measured 59.92 FPS in two later samples, with no such interval.
+The 320×200 CPU color kernel measured 453 µs/frame exact versus 116 µs/frame
+with the lookup on Apple M4 Max; this CPU-only comparison does not identify
+which mobile change produced the end-to-end improvement. The phone samples
+cover visible main screens and do not measure long-run thermal or battery use.
+
 ### Load a font without initializing characters in the demo
 
 The atlas image remains an application asset. Its reusable metrics and lookup
