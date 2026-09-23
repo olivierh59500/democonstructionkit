@@ -13,6 +13,9 @@ feedback ribbons, vectorball geometry, particle batches and continuous scene
 handoffs. The Cuddly application combines fifteen native screens and its menu in
 `demos/go-cuddlymenu/dck`; `demos/go-uniondemo` adds its introduction and eleven
 screens. The recipes below apply the same effects to different source images.
+[Complete components](#build-a-demo-from-complete-components) include the animated
+DMA cube controller and renderer, font construction, perspective text crawl and
+independent background bands; their consumers provide assets and configuration.
 
 ## Try the corrected work
 
@@ -29,6 +32,9 @@ go run ./cmd/gallery -demo go-multiscreen
 # raster bands and independently positioned logos.
 go run ./examples/composer
 go run ./examples/scrollmodes
+
+# Three independently configured cubes, including JSON save/load.
+go run ./examples/jellycubes
 
 # Compare an actual migrated production with its pinned original Git revision.
 go run ./cmd/fidelity -demo bilizir-demo
@@ -102,9 +108,12 @@ settings preserve different control timing and history rules; all return the sam
 | `Recycled` | Reusable visible glyph slots; controls execute as slots recycle | `Ring.Speed`: pixels/Update |
 | `Projected` | Depth-sorted visible slots; forms change while visiting those slots | `PixelsPerUpdate`; `Planes.PhaseStep` per Update |
 | `Sliced` | Bounded history of glyph strips; a control consumes a transport step; rotation is independent | `SlicesPerUpdate`; `RotationSpeed`: film frames/second |
+| `Crawl` | Cached paragraph window projected through configurable rows; bounded surfaces independent of text length | `PixelsPerUpdate`; zero selects manual `SetPosition` on a standalone `Crawl` |
+| `Bands` | Independently moving repeated text lanes in a fixed viewport | Lane `Speed`: pixels/second, or pixels/tick with `UseTicks` |
+| `Slots` | Recycled bitmap glyphs with waves, optional tangent rotation and a custom pose mapper | `Speed`: pixels/Update |
 
 Choose one transport. `Page` belongs to the regular transport. For the other
-three, configure text, fonts, speed and repetition inside that transport rather
+transports, configure text, fonts, speed and repetition inside that transport rather
 than also setting regular `Text`, `Fonts`, `Speed` or `Repeat`. `Projected.Draw`
 and `Sliced.Draw` hold their output placement. A fixed-step setting of 2 at
 60 TPS advances 120 pixels/second; changing TPS changes this authored cadence.
@@ -714,12 +723,13 @@ The serialized subset is deliberately explicit:
 | `scroll` | Font bank, text/braces controls, horizontal/vertical/page layout, repeat bounds/gap, normal/sine/bounce/zoom/perspective/path modes, timed mode sequence |
 | `sprites` | Image animation, count, linear/path/orbit/weave formation, spacing/delay, transform, blend/filter, common and per-instance signal bindings |
 | `background` | Source crop, repeat period, scale, parallax, camera/movement velocities, blend/filter |
+| `jelly_cube` | Editable default/DMA preset, center, half-edge, camera, six colors, mode order/durations, phase, speed, entrance, transition and five deformation gains |
 | All layers | ID, order, start/duration/fades, local clock and final layer blend |
 
 Signals store keys, oscillators and named inputs. `Options.Context` can supply
 music time and live values; otherwise project BPM and layer time define the beat
 clock. Recycled/projected/sliced compatibility transports, DNA, arbitrary image
-passes, particle fields, mesh deformation, procedural kernels and Go callbacks
+passes, particle fields, arbitrary mesh deformation, procedural kernels and Go callbacks
 remain Go APIs rather than saved version-1 layer kinds. Unsupported settings are
 rejected instead of silently discarded. A future schema can add these named
 families without putting effect equations inside an editor.
@@ -863,6 +873,7 @@ Graphics tests require a native/virtual display.
 go test -race ./...
 go vet ./...
 go run ./cmd/checkassets -demos ../../demos
+go run ./cmd/checkfontpixels -demos ../../demos
 go run ./cmd/checkaudio -demos ../../demos
 go run ./cmd/checkboundaries -demos ../../demos
 go run ./cmd/checkeffects -demos ../../demos
@@ -1200,6 +1211,288 @@ over the keyguard without dismissing it. `--el frames 0` starts ordinary continu
 playback. Desktop uses `go run ./examples/effectslab -authoring`; add `-eco`,
 `-frames` and `-profile` to choose a bounded measurement.
 
+## Build a demo from complete components
+
+A complete component includes its state, controller, geometry or text layout,
+and rendering resources. For example, DMA Is Back now constructs
+`effects.NewJellyCube(effects.DMAJellyCubeConfig())` and updates/draws that instance;
+its DCK source no longer implements cube modes, deformation, face sorting or
+triangle submission. Lower-level `geometry`, `motion` and `composite` functions
+remain available for effects with different behavior.
+
+| Component | Complete shared behavior | Production consumers |
+| --- | --- | --- |
+| `scrolling.Atlas` + `presets.FontAtlas` | Font metrics, cached glyph images, case/alias/fallback rules and ribbon layout | DMA Is Back, TeamG1, Megatwist, Coco, Multiscreen, Nonameno, Grodan |
+| `BitmapRecipe`, `BitmapText`, `BitmapParagraph` | Fractional atlas sampling, cached character lookup and paragraph alignment | Cuddly screens, Union screens/menu/loaders |
+| `effects.JellyCube` | Five-mode controller, entrance, deformation, continuous handoffs, projection and rendering | DMA Is Back; `examples/jellycubes` |
+| `effects.SolidCube` / `SolidCubeBatch` | Material, culling, face ordering, outlines and bounded batch submission | Bilizir, Coco, Multiscreen Coco |
+| `effects.TexturedCube` | Live texture mapping, camera, rotation, face ordering and culling | TeamG1 |
+| `scrolling.Config.Crawl` | Paragraph window, vertical transport and perspective projection | Cuddly Starwars |
+| `scrolling.Config.Bands` | Cached repeated text, independent lanes and bounded viewport rendering | Cuddly Spreadpoint |
+| `scrolling.Config.Slots` | Glyph recycling, wave motion, tangent orientation and custom poses | Cuddly Reset |
+| `scrolling.Reveal` | Cached text layout and ordered per-character entrance | Union loader |
+| `composite.Bands` | Independently moving/repeated background strips and batched drawing | Union Multiplane |
+
+For concrete integration, see the constructors in `demos/dma-is-back/dck/game.go`,
+`demos/teamg1-demo/dck/game.go`, `demos/go-cocoisthebest/dck/main.go`,
+`demos/go-multiscreen/dck/main.go`, `demos/go-cuddlymenu/dck/screens/starwars.go`,
+`demos/go-uniondemo/internal/loader/loader.go` and
+`demos/go-uniondemo/internal/screens/b_multiplane.go` in the surrounding workspace.
+Original source versions remain alongside them. This consolidation excludes
+FR-010 and Second Reality; their previously shared components remain available,
+and their source was not modified by this change.
+
+### Load a font without initializing characters in the demo
+
+The atlas image remains an application asset. Its reusable metrics and lookup
+rules come from DCK. This function produces a regular scrolling effect directly:
+
+```go
+func NewMessage(image *ebiten.Image, text string) (*scrolling.Scrolling, error) {
+    atlas, err := presets.FontAtlas("dma-is-back", image)
+    if err != nil { return nil, err }
+    return scrolling.New(scrolling.Config{
+        Text: text,
+        Fonts: map[string]scrolling.Face{"main": atlas.Face()}, Font: "main",
+        X: 640, Y: 180, Speed: 120, Gap: 96, Repeat: true,
+    })
+}
+```
+
+The proportional alphabet, glyph rectangles, spacing and blank entries live in
+one recipe. Other presets include `teamg1-demo` (with its special logo glyph),
+`grodan-up`, `nonameno-small`, `bilizir-demo` and
+`tcb-multi-plane-3d-scroller`. `presets.Fonts()` lists the integer atlas families.
+For a new font, supply `font.NewGrid` or explicit `font.Config` metrics to
+`scrolling.NewAtlas(image, metrics)`. Those metrics can use any character order,
+per-glyph advance/bearing, aliases, fallback and supported blank characters.
+
+`atlas.Glyph(r)` resolves normal case/alias/fallback rules;
+`atlas.ExactGlyph(r)` preserves a literal atlas lookup. Both reuse cached image
+views. `atlas.Layout(text, scrolling.AtlasText{Vertical: true})` advances by line
+height; `Literal` and `SkipMissing` retain authored transport conventions when
+needed. Supply the returned glyphs to `scrolling.Config.Glyphs`. Regular mixed
+fonts, control commands and modes still use `Text` / `Fonts` on the same constructor.
+
+Fractional cells use a separate image recipe to avoid rounding their source
+sampling. The recipe is editable before it is bound to an image:
+
+```go
+func NewFractionalFont(image *ebiten.Image) (scrolling.BitmapGrid, error) {
+    recipe, err := presets.BitmapRecipe("cuddly-bigsprite")
+    if err != nil { return scrolling.BitmapGrid{}, err }
+    // The preset retains 83.25-by-41 cells and a fractional column span.
+    // Set Width, Height, Columns, First or Order here for another atlas.
+    return recipe.Grid(image, ebiten.FilterNearest)
+}
+```
+
+`presets.BitmapFont(id, image, filter)` combines those two calls. Use
+`scrolling.NewBitmapText` for cached static/individually animated glyphs,
+`NewBitmapParagraph` for aligned lines, or a recycled scrolling configuration for
+fractional scrolling cells. `grid.Scrolling(text)` also creates the common scroll
+renderer when its cells have integer dimensions. `presets.CuddlyChromeAlphabet()`
+provides an editable variable-width tile alphabet; `CuddlyChromeTiles(text)`
+compiles its established menu recipe.
+
+Font regressions cover all entries of ten original metric maps and the complete
+byte-range lookups of seven original character mappers. `cmd/checkfontpixels`
+checks cached GPU glyph crops against actual assets: 1,147 drawable glyphs across
+24 integer-atlas catalog entries. These checks concern glyph geometry/pixels; scene-level
+comparisons separately exercise animation and composition.
+
+### Place several complete animated cubes
+
+Each `JellyCube` owns its pose, mode controller and rendering buffers. Configuration
+selects behavior; the caller supplies the clock and draw order:
+
+```go
+func NewCubePair() (kit.Group, error) {
+    config := effects.DefaultJellyCubeConfig()
+    config.X, config.Y, config.Size = 160, 180, 52
+    left, err := effects.NewJellyCube(config)
+    if err != nil { return nil, err }
+
+    config.X = 480
+    config.Phase, config.Speed = 3, 0.8
+    config.Deformation.Twist = 1.8
+    config.Steps = []effects.JellyCubeStep{
+        {Mode: effects.JellyBounce, Duration: 3},
+        {Mode: effects.JellySwing, Duration: 4},
+        {Mode: effects.JellyNormal, Duration: 3},
+    }
+    right, err := effects.NewJellyCube(config)
+    if err != nil { left.Close(); return nil, err }
+    return kit.Group{left, right}, nil
+}
+```
+
+Call the group's `Update(frame)` once per simulation update, `Draw(dst)` in layer
+order and `Close()` when it is no longer needed. `kit.NewLayers` adds start times,
+durations and fades to either cube, with `LocalTime: true` for an entrance relative
+to its layer start. `cube.SetPosition(x, y)` can follow a path or music-driven
+callback without restarting the animation. Use `kit.Func` when connecting such a
+callback: set the position in `OnUpdate`, then call `cube.Update(frame)`; draw the
+same instance in `OnDraw`, and close it explicitly when the wrapper is discarded.
+
+The five modes are normal, tumble, pulsate, swing and bounce. Their durations and
+order are independent of the wobble, ripple, squash, twist and translation gains;
+a zero gain disables its deformation family. `Transition` controls pose handoff,
+`Delay` and `ZoomDuration` control the entrance, and six colors select the palette.
+`DMAJellyCubeConfig` adds the authored entrance to the default configuration.
+**JellyCube `Size` is half an edge; SolidCube and TexturedCube `Size` are full edges.**
+
+The clock uses absolute `Frame.Time` in seconds. `Speed` scales that time and
+`Phase` offsets the complete animation, including its sequence. A deterministic
+60 Hz internal controller keeps mode boundaries consistent across display rates.
+Backward seeks replay the controller; `MaxReplaySteps` bounds work per update
+(default 100,000 steps). Handle an Update error for a seek beyond that budget.
+Ordinary updates and mode changes reuse their Go buffers; this does not assert
+zero allocation for Ebitengine or the complete application.
+
+Try the self-contained three-cube example, which supplies configuration only:
+
+```sh
+go run ./examples/jellycubes
+go run ./examples/jellycubes -save /tmp/cubes.json -frames 600
+go run ./examples/jellycubes -project /tmp/cubes.json
+go run ./examples/jellycubes -eco -frames 600 -capture /tmp/cubes.png
+```
+
+Its JSON uses the same authoring schema as scrolls, sprites and backgrounds. For
+example, this layer can be added to a project's `layers` array without assets:
+
+```json
+{
+  "id": "cube", "kind": "jelly_cube",
+  "window": {"start": 2, "fadeIn": 0.5}, "localTime": true,
+  "jellyCube": {
+    "preset": "dma-is-back", "center": {"x": 320, "y": 180},
+    "halfEdge": 52, "phase": 0, "transition": 0.75,
+    "steps": [{"mode": "normal", "duration": 3}, {"mode": "bounce", "duration": 4}],
+    "deformation": {"twist": 1.5, "translation": 0}
+  }
+}
+```
+
+Omitted cube fields inherit the selected preset; explicit zero values are retained.
+The JSON compiler constructs `effects.JellyCube`; it contains no duplicate cube
+controller. A GUI can edit these data fields and use the same validation/compiler.
+The editor itself is not included.
+
+### Reuse solid materials, live cube textures and text entrances
+
+`presets.BilizirCube(size)`, `CocoCube(size)` and `MultiscreenCocoCube(size)` return
+independent `SolidCubeConfig` values. They retain the palettes, face order, culling
+and outline conventions of their consumers; every field remains editable. Keep
+an instance's `Rotation` continuous, or call `Rotate(dx, dy, dz)` during updates.
+For many cubes, construct `effects.NewSolidCubeBatch(capacity)` once, then
+`Reset()`, `Add(cube, x, y)` in drawing order and `Draw(dst)` per frame. `Add`
+returns false when capacity is exceeded. The batch preserves object insertion
+order; it does not depth-sort faces across separate cubes. It owns its buffers
+and white texture, while the added cubes remain caller-owned.
+
+A textured cube accepts a live image, such as a plasma surface, scroller or logo:
+
+```go
+func NewLiveCube(surface *ebiten.Image) (*effects.TexturedCube, error) {
+    config := presets.TeamG1TexturedCube()
+    config.X, config.Y = 320, 180
+    config.AngularVelocity = geometry.Vec3{X: 0.6, Y: 0.9, Z: 0.3}
+    return effects.NewTexturedCube(surface, config)
+}
+```
+
+Render the texture's contents before drawing the cube. `Update(frame)` samples
+absolute-time rotation; `Rotate` is the alternative for caller-controlled fixed
+steps. Select one clock policy. UVs, filtering, depth order and culling are
+configurable; mapping is affine per triangle. `Close()` releases the reference
+but leaves the borrowed source image alive.
+
+Cuddly's perspective text is also a complete scrolling configuration:
+
+```go
+func NewPerspectiveCredits(atlas *ebiten.Image, lines []string) (*scrolling.Scrolling, error) {
+    grid, err := presets.BitmapFont("cuddly-starwars-crawl", atlas, ebiten.FilterNearest)
+    if err != nil { return nil, err }
+    config, err := presets.CuddlyStarwarsCrawl(grid, lines)
+    if err != nil { return nil, err }
+    config.PixelsPerUpdate = 0.5
+    return scrolling.New(scrolling.Config{Crawl: &config})
+}
+```
+
+The preset expects at least 30 lines, including blank padding. Font, paragraph
+alignment, visible-line count, speed, output crop and placement are editable.
+Replace `Projection` with `composite.NewRowProjection(rows)` for a different
+perspective; the row projector also accepts arbitrary live images. The crawl's
+two working surfaces are bounded by its viewport, not by the total message length.
+Its speed is **pixels per Update**; advance it once at the selected simulation TPS.
+A standalone `scrolling.Crawl` also offers `SetPosition(line, offset)` for seeking.
+
+For the Union loader entrance, `scrolling.NewReveal(presets.UnionCreditsReveal(
+font, lines))` compiles all glyph positions. Customize `Order`, `Delay`, `Duration`,
+`FromX`/`FromY`, `UniformStartY` and an optional `Ease(progress)` function before
+construction. Call `DrawAt(dst, time)` in any consistent time unit. The historical
+preset's delay/duration use its original counter units; convert them when driving
+it with seconds. Changing the supplied time can seek the entrance without changing
+its final layout or creating textures.
+
+For independently scrolling scenery, `composite.NewBands(presets.UnionMountainBands())`
+constructs the complete mountain-strip renderer. Change each crop, velocity,
+phase, wrap period, placement and motion scale in the returned `BandsConfig`;
+`CopyOffsets` controls repetitions. Call `Step()` once per simulation update and
+`DrawAt(dst, atlas, x, y)` during drawing. Velocities are phase units per Step.
+The renderer reuses bounded geometry without copying the source image.
+
+Repeated text lanes use the same scrolling constructor:
+
+```go
+config := presets.CuddlySpreadpointBands(grid, message)
+config.Lanes[0].Speed = 4
+scroll, err := scrolling.New(scrolling.Config{Bands: &config})
+```
+
+Each lane has its own position, speed and phase. Configure the viewport,
+entrance, repetition and final image filter before construction. This preset
+uses `Frame.Tick`; a plain `BitmapBandsConfig` uses seconds unless `UseTicks`
+is enabled. The renderer owns one fixed viewport image and submits batches of
+at most 256 glyph quads. A long message increases cached text data, never texture
+width. This bounds GPU memory by the viewport; it does not imply that a viewport
+image is smaller than every short text strip.
+
+For moving and rotating individual glyphs, use another transport selection:
+
+```go
+config := presets.CuddlyResetSlots(grid, message)
+config.Count = 12
+config.Period = float64(config.Count) * config.Advance
+config.Waves[0].Amplitude = 25
+scroll, err := scrolling.New(scrolling.Config{Slots: &config})
+```
+
+`BitmapSlotsConfig.Map` can change position, angle, scale and opacity per glyph;
+`PreviousTangent` optionally aligns each glyph with the previous visible point.
+Each `Update` advances the fixed-step transport once. `Draw` never advances or
+recycles characters, so repeated draws keep the same pose. Both `Bands` and
+`Slots` support the common `Output` passes for whole-image deformation,
+reflections or magnification. A standalone `BitmapSlots.SetSpeed` changes speed
+without resetting its positions or wave phases.
+
+`BitmapText.DrawWindow(dst, x, y, width)` provides cached visible-range rendering
+when a scene owns the scroll clock. A destination subimage selects an interior
+viewport; text coordinates remain absolute. Union TNT2 uses this instead of
+creating substrings during drawing.
+
+Keep assets alive for every borrowing atlas/effect. Close JellyCube, SolidCube,
+SolidCubeBatch, TexturedCube, Crawl and BitmapBands (or their owning group/layers)
+when finished. Atlas, BitmapText, BitmapSlots, Reveal, RowProjection and
+`composite.Bands` allocate no owned GPU image
+requiring Close. Construct fonts, paragraphs, recipes and geometry buffers outside
+Update/Draw. Callback code should reuse its storage and follow the same rule.
+Existing Pixel measurements above concern their named scenes; new combinations
+need their own measurement, especially when adding full-resolution surfaces.
+
 ## Reusable construction presets
 
 `presets` contains editable effect recipes and shared asset metrics. Messages,
@@ -1258,7 +1551,8 @@ cube, err := effects.NewSolidCube(config)
 Keep `cube.Rotation` in XYZ radians or call `cube.Rotate(dx, dy, dz)` each update;
 render with `cube.DrawAt(dst, centerX, centerY)`, then release its owned texture
 with `cube.Close()`. `effects.DefaultSolidCubeConfig` supplies a neutral material.
-Use `effects.NewMesh` for arbitrary textured/deformable objects. The fixed cube
+Use `effects.NewTexturedCube` for live cube textures and `effects.NewMesh` for
+arbitrary textured/deformable objects. The fixed cube
 geometry path uses zero Go allocations after construction; this is not a claim
 about allocations inside the graphics engine or the whole demo.
 
@@ -1277,3 +1571,26 @@ banks and remove control bytes. `FontAt` uses a zero-allocation binary search;
 its index counts Unicode glyphs, not bytes. Pass another decoder, such as `Braces`,
 for a different syntax. Timing/effect controls are rejected by this specialized
 program; the regular scrolling constructor handles mixed controls and mixed fonts.
+
+
+### Three independent cubes on Pixel 10a
+
+The complete three-cube example was measured for 1,800 updates at each resolution,
+with the first 60 excluded (about 29 seconds). All five mode families and their
+transitions are exercised, with independent phase, speed and palette settings.
+
+| Logical resolution | Draws/s | Updates/s | Mean Update CPU | Mean Draw submission CPU | Logical RGBA images |
+| --- | --- | --- | --- | --- | --- |
+| 640×360 | 59.94 | 59.98 | 77.7 µs | 626.2 µs | 1.76 MiB |
+| 320×180 | 59.95 | 59.99 | 76.5 µs | 276.3 µs | 0.44 MiB |
+
+These are observed application frame rates and CPU submission timings, not GPU
+execution, battery or thermal measurements. Both runs held about 60 updates/s.
+The whole application allocated about 3.1 MB over each 29-second measurement,
+including Ebitengine/runtime and the debug labels. The cube core's zero-allocation
+benchmark is narrower than this application-level measurement.
+
+The shared Android host selects this scene with `--ez cubes true`. Bounded runs
+use `--el frames 1800`, save a report and automatically resume animation.
+`--el frames 0` runs continuously; the normal lifecycle pauses it while the
+phone is locked/backgrounded and resumes it when the activity becomes visible.
