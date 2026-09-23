@@ -1228,6 +1228,8 @@ remain available for effects with different behavior.
 | `effects.SolidCube` / `SolidCubeBatch` | Material, culling, face ordering, outlines and bounded batch submission | Bilizir, Coco, Multiscreen Coco |
 | `effects.TexturedCube` | Live texture mapping, camera, rotation, face ordering and culling | TeamG1 |
 | `scrolling.Config.Crawl` | Paragraph window, vertical transport and perspective projection | Cuddly Starwars |
+| `scrolling.Config.Feed` | Finite glyph insertion into a cached scrolling trail | DMA Is Back, Coco, TeamG1, MegaTwist intros |
+| `scrolling.Config.Scanline` | Proportional text transport, cumulative wave, cyclic bounce and bounded strip rendering | DMA Is Back, Coco, MegaTwist main screens |
 | `scrolling.Config.Bands` | Cached repeated text, independent lanes and bounded viewport rendering | Cuddly Spreadpoint |
 | `scrolling.Config.Slots` | Glyph recycling, wave motion, tangent orientation and custom poses | Cuddly Reset |
 | `scrolling.Reveal` | Cached text layout and ordered per-character entrance | Union loader |
@@ -1241,6 +1243,57 @@ For concrete integration, see the constructors in `demos/dma-is-back/dck/game.go
 Original source versions remain alongside them. This consolidation excludes
 FR-010 and Second Reality; their previously shared components remain available,
 and their source was not modified by this change.
+
+The [effect map](EFFECT_MAP.md) lists every screen in the other native DCK
+catalogs, the complete components already used there and the mechanisms still
+worth extracting. It distinguishes production data from an effect's controller
+and rendering code so shorter adapters keep the intended screen behavior.
+
+### Reuse the finite intro and sampled text ribbon
+
+Both variants use `scrolling.New`, with font dimensions, character order and
+fallback behavior supplied by `scrolling.Atlas`. A finite intro can expose its
+current image to a logo warp or CRT pass:
+
+```go
+feed := presets.DMAIntroFeed(atlas, introMessage)
+intro, err := scrolling.New(scrolling.Config{Feed: &feed})
+if err != nil { return err }
+// Advance once per simulation tick. intro.Finished() signals the last glyph.
+err = intro.Update(frame)
+crt.DrawAt(screen, intro.Image(), 0, 164)
+```
+
+The proportional scanline renderer owns its glyph window, cumulative wave
+sampling, character cursor, bounce and triangle buffers:
+
+```go
+sampled, err := presets.DMAScanlineScroll(atlas, message)
+if err != nil { return err }
+sampled.WaveStep = 12
+sampled.BounceAmplitude = 24
+scroll, err := scrolling.New(scrolling.Config{Scanline: &sampled})
+if err != nil { return err }
+err = scroll.Update(kit.Frame{Tick: tick})
+scroll.Draw(screen)
+```
+
+Choose source height, strip height, visible cursor rows, clock step, bounce,
+background color, destination offset, missing-glyph policy and one of three X
+sampling rules independently. `ScanlineSplit` draws explicit wrapped quads;
+`ScanlineAddressRepeat` delegates repetition to the texture sampler;
+`ScanlineReject` discards partially out-of-range source windows. An optional
+`DisplacementProgram` gives the scroll a one-time introduction before its loop.
+`UseTime` accepts a variable-speed scene clock; default playback uses `Tick`.
+All modes reuse bounded surfaces and triangle arrays. DMA and Coco use the same
+wave recipe but different strip sizes, image formats, clocks and wrap rules;
+MegaTwist adds the introductory wave and strict source-window rejection.
+
+The shared `effects.CRTOverlay` accepts curvature, scanline, chromatic and
+vignette parameters. `composite.ImageGrid` draws finite, independently spaced
+copies of any borrowed image, including overlapping logo tiles. DMA positions
+that grid with `motion.NestedOrbit`; changing the atlas or orbit does not
+change the scroll or cube component.
 
 ### Load a font without initializing characters in the demo
 
