@@ -60,6 +60,7 @@ type Layer struct {
 	Scroll     *Scroll      `json:"scroll,omitempty"`
 	Sprites    *SpriteGroup `json:"sprites,omitempty"`
 	Background *Background  `json:"background,omitempty"`
+	CopperBars *CopperBars  `json:"copperBars,omitempty"`
 	Rotozoom   *Rotozoom    `json:"rotozoom,omitempty"`
 	JellyCube  *JellyCube   `json:"jellyCube,omitempty"`
 }
@@ -226,6 +227,31 @@ type Rotozoom struct {
 	ZoomVelocity     float64 `json:"zoomVelocity,omitempty"`
 	RotationVelocity float64 `json:"rotationVelocity,omitempty"`
 	Filter           string  `json:"filter,omitempty"`
+}
+
+// CopperBars stores one raster bank and two editable motion clocks. The table
+// is project data, so an editor can replace its profile without Go callbacks.
+type CopperBars struct {
+	Image        string  `json:"image"`
+	Offsets      []int   `json:"offsets"`
+	Height       int     `json:"height,omitempty"`
+	Count        int     `json:"count,omitempty"`
+	RowStep      int     `json:"rowStep,omitempty"`
+	SourceStep   int     `json:"sourceStep,omitempty"`
+	SourcePeriod int     `json:"sourcePeriod,omitempty"`
+	SourceY      int     `json:"sourceY,omitempty"`
+	BaseX        int     `json:"baseX,omitempty"`
+	XShift       int     `json:"xShift,omitempty"`
+	PhaseA       float64 `json:"phaseA,omitempty"`
+	PhaseB       float64 `json:"phaseB,omitempty"`
+	VelocityA    float64 `json:"velocityA,omitempty"`
+	VelocityB    float64 `json:"velocityB,omitempty"`
+	IndexStepA   int     `json:"indexStepA,omitempty"`
+	IndexStepB   int     `json:"indexStepB,omitempty"`
+	Clock        string  `json:"clock,omitempty"`
+	DrawMode     string  `json:"drawMode,omitempty"`
+	Filter       string  `json:"filter,omitempty"`
+	Blend        string  `json:"blend,omitempty"`
 }
 
 // Decode rejects unknown fields, duplicate object keys, trailing JSON values and

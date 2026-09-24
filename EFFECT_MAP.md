@@ -16,14 +16,14 @@ The entries are acceptance work, not claims that all screens are already small.
 | Production / screen | Shared today | Extract next, with editable parameters |
 | --- | --- | --- |
 | 3D DOC | Atlas, `Config.RowBands`, `PerspectiveCheckerboard`, `ProjectedBallTrain` | Intro/main cue and whole-scene transform can become a typed timeline; assets and transition time remain scene data. |
-| Bilizir | Atlas, scrolling, independent StripWarp for text/logo, SolidCube, WaterReflection | Copper/raster bank: bars, palette, speed, spacing, order and masks. Historical scroll timing stays a recipe. |
+| Bilizir | Atlas, scrolling, independent StripWarp for text/logo, SolidCube, WaterReflection, `CopperBars` | Historical scroll timing stays a recipe; extra raster palettes and masks can use the shared bank. |
 | DMA 3D | Atlas, `Config.RowColumn` and mesh primitives | Multi-material morphing mesh with per-face blend, sort and winding; masked three-speed starfield. |
 | DMA Is Back, intro | `Config.Feed`, configurable CRTOverlay | Music/fade cues can become a typed timeline; message and cue times stay production data. |
 | DMA Is Back, main | `Config.Scanline`, ImageGrid, NestedOrbit, JellyCube | Soundtrack start and whole-scene fade can use the same cue/envelope system as other intros. |
 | Coco, intro | `Config.Feed`, configurable CRTOverlay | Intro-to-main music cue. |
-| Coco, main | `Config.Scanline`, SolidCubeBatch, sprites.Group grid/translation and shared font metrics | Repeating rotozoom and copper-filled title material. |
+| Coco, main | `Config.Scanline`, SolidCubeBatch, sprites.Group grid/translation, shared font metrics and `CopperBars` | Repeating rotozoom and remaining title-layer presentation. |
 | DOM intro | Atlas, synchronized FontProgram, scrolling | Whole-bank font switch triggered at viewport entry; timed raster backgrounds and animated star atlas instances. |
-| Multiscreen, four embedded productions | SolidCube, sampled DNA and projected-plane engines, atlas recipes | Make the four production scenes reusable constructors rather than copies of their standalone controllers. |
+| Multiscreen, four embedded productions | SolidCube, sampled DNA and projected-plane engines, atlas recipes, `CopperBars` in Coco | Make the four production scenes reusable constructors rather than copies of their standalone controllers. |
 | Multiscreen, camera tour | Layer/viewport helpers | Camera/zoom director with visibility culling, retained outputs and serialized handoffs. |
 | Vectorballs | Projected shape factories, reflection | Reusable point-morph/deformation/action sequence with explicit inherited vs cleared settings and smooth handoffs. |
 | Grodan | Atlas, scrolling and bounded `Background` repetition | Phased sprite chain with count, image selection, spacing and wave envelope; repeated vertical text columns. |

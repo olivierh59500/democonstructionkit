@@ -174,6 +174,8 @@ func (b *compiler) layer(l Layer) (kit.Effect, error) {
 		return b.sprites(*l.Sprites)
 	case "background":
 		return b.background(*l.Background)
+	case "copper_bars":
+		return b.copperBars(*l.CopperBars)
 	case "rotozoom":
 		return b.rotozoom(*l.Rotozoom)
 	}
@@ -379,6 +381,30 @@ func (b *compiler) rotozoom(c Rotozoom) (kit.Effect, error) {
 			PhaseX: c.Phase.X, PhaseY: c.Phase.Y, Filter: f},
 		Velocity: composite.RotozoomVelocity{CenterX: c.CenterVelocity.X, CenterY: c.CenterVelocity.Y,
 			Zoom: c.ZoomVelocity, Rotation: c.RotationVelocity, PhaseX: c.PhaseVelocity.X, PhaseY: c.PhaseVelocity.Y},
+	})
+}
+
+func (b *compiler) copperBars(c CopperBars) (kit.Effect, error) {
+	img, err := b.image(c.Image)
+	if err != nil {
+		return nil, err
+	}
+	f, _ := filter(c.Filter)
+	blendMode, _ := blend(c.Blend)
+	clock := composite.MaskedClock
+	if c.Clock == "single-wrap" {
+		clock = composite.SingleWrapClock
+	}
+	drawMode := composite.CopperQuads
+	if c.DrawMode == "images" {
+		drawMode = composite.CopperImages
+	}
+	return composite.NewCopperBars(composite.CopperBarsConfig{
+		Image: img, Offsets: c.Offsets, Height: c.Height, Count: c.Count,
+		RowStep: c.RowStep, SourceStep: c.SourceStep, SourcePeriod: c.SourcePeriod, SourceY: c.SourceY,
+		BaseX: c.BaseX, XShift: c.XShift, PhaseA: c.PhaseA, PhaseB: c.PhaseB,
+		VelocityA: c.VelocityA, VelocityB: c.VelocityB, IndexStepA: c.IndexStepA, IndexStepB: c.IndexStepB,
+		Clock: clock, DrawMode: drawMode, Filter: f, Blend: blendMode,
 	})
 }
 

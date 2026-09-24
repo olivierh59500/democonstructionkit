@@ -256,6 +256,41 @@ func TestRotozoomLayerRoundTripAndCompile(t *testing.T) {
 	}
 }
 
+func TestCopperBarsLayerRoundTripAndCompile(t *testing.T) {
+	p := testProject()
+	p.Layers[0] = Layer{ID: "rasters", Kind: "copper_bars", CopperBars: &CopperBars{
+		Image: "tile", Offsets: []int{0, 4, 8, 12}, Height: 8, Count: 4,
+		RowStep: 2, SourceStep: 2, SourcePeriod: 8, BaseX: 6, XShift: 1,
+		VelocityA: 1, VelocityB: -1, IndexStepA: 2, IndexStepB: 3,
+		Clock: "masked", DrawMode: "images",
+	}}
+	var encoded bytes.Buffer
+	if err := Encode(&encoded, p); err != nil {
+		t.Fatal(err)
+	}
+	decoded, err := Decode(&encoded)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !reflect.DeepEqual(*decoded, p) {
+		t.Fatalf("copper project changed during round trip: %+v", decoded.Layers[0])
+	}
+	compiled, err := Compile(*decoded, testAssets(t), Options{})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := compiled.Update(kit.Frame{Time: 1}); err != nil {
+		t.Fatal(err)
+	}
+	if err := compiled.Close(); err != nil {
+		t.Fatal(err)
+	}
+	p.Layers[0].CopperBars.Clock = "unknown"
+	if err := p.Validate(); err == nil {
+		t.Fatal("accepted unknown copper clock")
+	}
+}
+
 func TestAssetIDsRetainCaseAndFixedArraysRejectTruncation(t *testing.T) {
 	p := testProject()
 	p.Assets["Tile"] = "image"

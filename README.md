@@ -494,6 +494,32 @@ The MegaTwist migration matches 4,800 decoded frames, covering the intro,
 transition and animated main background. It uses one 672 × 64 source surface
 instead of an image spanning the full message or viewport history.
 
+### Fill a scene or logo with animated copper bars
+
+`composite.CopperBars` owns two independent phase clocks, the displacement
+table, source-strip cache and bounded renderer. Set the number of bars, source
+period, row spacing, phase increments, sample spacing and horizontal shift
+without copying a demo's draw loop. `CopperQuads` batches large overlapping
+rasters; `CopperImages` retains individual DrawImage sampling for short title
+fills. `MaskedClock` uses integer power-of-two phase wrapping, while
+`SingleWrapClock` keeps fractional speed controls.
+
+```go
+bars, err := composite.NewCopperBars(presets.BilizirCopperBars(
+    image, 72, composite.CopperImages, composite.SingleWrapClock))
+if err != nil { return err }
+if err := bars.SetSpeed(1.5); err != nil { return err }
+if err := bars.Update(frame); err != nil { return err }
+bars.Draw(titleCanvas)
+```
+
+Bilizir uses the same table on 300 batched full-screen bars; Coco and its
+Multiscreen panel use 36 cached image strips under their independently moving
+titles. The migrations match 1,200, 3,600 and 1,200 decoded frames. Draw never
+advances the phases or allocates a message-sized texture. A saved project can
+store the table and every clock/geometry setting as a `copper_bars` layer;
+the host still chooses the image asset and layer order.
+
 ### Use one particle field for stars, incoming sprites and trails
 
 `sprites.ProjectedField` owns movement, projection and the bounded renderer.
@@ -1358,6 +1384,7 @@ remain available for effects with different behavior.
 | `composite.RotozoomBackground` | One tiled GPU quad with independent pose, phase, velocity or a staged motion program | Viva TCB |
 | `indexed.Rotozoom256` | Allocation-free fixed-point rotozoom over indexed 256 × 256 textures | Second Reality Rotozoomer |
 | `composite.ScanlineBackground` | Bounded horizontal tile source, independent wave/bounce clocks and batched source rows | MegaTwist |
+| `composite.CopperBars` | Two-phase raster bank with editable table, clocks, source strips and quad/image materials | Bilizir, Coco, Multiscreen Coco |
 
 `FeedConfig.ProgressiveEntry` keeps the active glyph at the viewport edge until
 its full advance has entered, revealing its bitmap over successive updates.

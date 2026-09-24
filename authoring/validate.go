@@ -242,6 +242,9 @@ func (p Project) validateLayer(l Layer) error {
 	if l.Background != nil {
 		n++
 	}
+	if l.CopperBars != nil {
+		n++
+	}
 	if l.Rotozoom != nil {
 		n++
 	}
@@ -302,6 +305,42 @@ func (p Project) validateLayer(l Layer) error {
 			return fmt.Errorf("rotozoom zoom must be positive")
 		}
 		_, err := filter(c.Filter)
+		return err
+	case "copper_bars":
+		if l.CopperBars == nil {
+			return fmt.Errorf("copperBars config required")
+		}
+		c := l.CopperBars
+		if err := p.asset(c.Image, "image"); err != nil {
+			return err
+		}
+		if len(c.Offsets) < 1 || len(c.Offsets) > 1<<20 || c.Height < 1 || c.Height > 8192 || c.Count < 1 || c.Count > 16383 ||
+			c.RowStep < 1 || c.SourceStep < 1 || c.SourcePeriod < 1 || c.SourcePeriod%c.SourceStep != 0 ||
+			c.RowStep > 1<<20 || c.SourceY < 0 || c.XShift < 0 || c.XShift > 31 ||
+			c.IndexStepA < -(1<<20) || c.IndexStepA > 1<<20 || c.IndexStepB < -(1<<20) || c.IndexStepB > 1<<20 ||
+			c.BaseX < -(1<<29) || c.BaseX > 1<<29 ||
+			math.Abs(c.PhaseA) > 1<<20 || math.Abs(c.PhaseB) > 1<<20 ||
+			math.Abs(c.VelocityA) > 1<<20 || math.Abs(c.VelocityB) > 1<<20 {
+			return fmt.Errorf("invalid copper bar table or geometry")
+		}
+		for _, offset := range c.Offsets {
+			if offset < -(1<<29) || offset > 1<<29 {
+				return fmt.Errorf("copper offset exceeds coordinate range")
+			}
+		}
+		if c.Clock != "" && c.Clock != "masked" && c.Clock != "single-wrap" {
+			return fmt.Errorf("unknown copper clock %q", c.Clock)
+		}
+		if c.DrawMode != "" && c.DrawMode != "quads" && c.DrawMode != "images" {
+			return fmt.Errorf("unknown copper draw mode %q", c.DrawMode)
+		}
+		if c.Clock != "single-wrap" && len(c.Offsets)&(len(c.Offsets)-1) != 0 {
+			return fmt.Errorf("masked copper clock needs a power-of-two table")
+		}
+		if _, err := filter(c.Filter); err != nil {
+			return err
+		}
+		_, err := blend(c.Blend)
 		return err
 	default:
 		return fmt.Errorf("unknown effect kind %q", l.Kind)
