@@ -781,7 +781,7 @@ Recent independent regression suites include:
 
 | Extraction | Verified comparison |
 | --- | --- |
-| Backgrounds and choreography | 73 identical PNG pairs across 11 screens; 288 GPU background cases |
+| Backgrounds and choreography | 73 identical PNG pairs across 11 screens; 1,680 identical Grodan/Cuddly decoded frames; 292 GPU background cases |
 | Shared particle field | Five Cuddly starfield and five Union incoming-sprite captures, identical |
 | Sprite group / envelopes / vertical transport | Six Digi, five Delta and five Level16 captures, identical |
 | DMA cube deformation | 42 identical GPU captures across five modes and their handoffs |
