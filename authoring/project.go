@@ -52,17 +52,18 @@ type Window struct {
 // Layer order is drawing order. Exactly one kind-specific configuration is
 // required. Blend combines the complete layer, after its internal image blends.
 type Layer struct {
-	ID         string       `json:"id"`
-	Kind       string       `json:"kind"`
-	Window     Window       `json:"window,omitempty"`
-	LocalTime  bool         `json:"localTime,omitempty"`
-	Blend      string       `json:"blend,omitempty"`
-	Scroll     *Scroll      `json:"scroll,omitempty"`
-	Sprites    *SpriteGroup `json:"sprites,omitempty"`
-	Background *Background  `json:"background,omitempty"`
-	CopperBars *CopperBars  `json:"copperBars,omitempty"`
-	Rotozoom   *Rotozoom    `json:"rotozoom,omitempty"`
-	JellyCube  *JellyCube   `json:"jellyCube,omitempty"`
+	ID            string         `json:"id"`
+	Kind          string         `json:"kind"`
+	Window        Window         `json:"window,omitempty"`
+	LocalTime     bool           `json:"localTime,omitempty"`
+	Blend         string         `json:"blend,omitempty"`
+	Scroll        *Scroll        `json:"scroll,omitempty"`
+	Sprites       *SpriteGroup   `json:"sprites,omitempty"`
+	Background    *Background    `json:"background,omitempty"`
+	CopperBars    *CopperBars    `json:"copperBars,omitempty"`
+	RasterOverlay *RasterOverlay `json:"rasterOverlay,omitempty"`
+	Rotozoom      *Rotozoom      `json:"rotozoom,omitempty"`
+	JellyCube     *JellyCube     `json:"jellyCube,omitempty"`
 }
 
 type Point struct {
@@ -252,6 +253,30 @@ type CopperBars struct {
 	DrawMode     string  `json:"drawMode,omitempty"`
 	Filter       string  `json:"filter,omitempty"`
 	Blend        string  `json:"blend,omitempty"`
+}
+
+// RasterWrap describes an optional reset when a raster phase crosses a bound.
+type RasterWrap struct {
+	Boundary  float64 `json:"boundary"`
+	Restart   float64 `json:"restart"`
+	Inclusive bool    `json:"inclusive,omitempty"`
+}
+
+// RasterOverlay colors previously drawn content using its destination alpha.
+// Alpha nil defaults to one; an explicit zero hides the overlay.
+type RasterOverlay struct {
+	Image        string      `json:"image"`
+	Source       *Rect       `json:"source,omitempty"`
+	Position     Point       `json:"position,omitempty"`
+	Velocity     Point       `json:"velocity,omitempty"`
+	Scale        Point       `json:"scale,omitempty"`
+	AngleDegrees float64     `json:"angleDegrees,omitempty"`
+	Anchor       Point       `json:"anchor,omitempty"`
+	Alpha        *float64    `json:"alpha,omitempty"`
+	WrapX        *RasterWrap `json:"wrapX,omitempty"`
+	WrapY        *RasterWrap `json:"wrapY,omitempty"`
+	Filter       string      `json:"filter,omitempty"`
+	Blend        string      `json:"blend,omitempty"`
 }
 
 // Decode rejects unknown fields, duplicate object keys, trailing JSON values and

@@ -245,6 +245,9 @@ func (p Project) validateLayer(l Layer) error {
 	if l.CopperBars != nil {
 		n++
 	}
+	if l.RasterOverlay != nil {
+		n++
+	}
 	if l.Rotozoom != nil {
 		n++
 	}
@@ -336,6 +339,28 @@ func (p Project) validateLayer(l Layer) error {
 		}
 		if c.Clock != "single-wrap" && len(c.Offsets)&(len(c.Offsets)-1) != 0 {
 			return fmt.Errorf("masked copper clock needs a power-of-two table")
+		}
+		if _, err := filter(c.Filter); err != nil {
+			return err
+		}
+		_, err := blend(c.Blend)
+		return err
+	case "raster_overlay":
+		if l.RasterOverlay == nil {
+			return fmt.Errorf("rasterOverlay config required")
+		}
+		c := l.RasterOverlay
+		if err := p.asset(c.Image, "image"); err != nil {
+			return err
+		}
+		if err := validRect(c.Source); err != nil {
+			return err
+		}
+		if c.Alpha != nil && (*c.Alpha < 0 || *c.Alpha > 1) {
+			return fmt.Errorf("invalid raster alpha")
+		}
+		if l.Window.FadeIn != 0 || l.Window.FadeOut != 0 || l.Blend != "" && l.Blend != "source-over" {
+			return fmt.Errorf("raster overlay must draw directly over previous layers")
 		}
 		if _, err := filter(c.Filter); err != nil {
 			return err

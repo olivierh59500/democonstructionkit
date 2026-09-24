@@ -51,7 +51,7 @@ matches the previous implementation exactly.
 | Menu | TileAlphabet, atlas, background sampler, scrolling | Sprite ensemble's seven motion programs, camera parallax and atlas frame player. Door/input behavior stays in the menu. |
 | Loader | Bitmap font recipes and scrolling | Typed countdown, gain/fade and hold cues; preserve the initial pre-render and decrement boundary. |
 | Introduction | Wave/Profile/Cell strips, sparkles | Serializable logo warp program and pause/audio cues; preserve row-then-column order. |
-| Big Sprite | `sprites.ProjectedField` with strict-wrap vector lines, scrolling, Weave formation | Shared front/back flip material, synchronized dual-font transport and raster mask fill. |
+| Big Sprite | `sprites.ProjectedField` with strict-wrap vector lines, scrolling, Weave formation, `RasterOverlay` fill | Shared front/back flip material and synchronized dual-font transport. |
 | Colorshock II | Background sampler, scrolling | Position-table placement and two-frequency background orbit as an editable motion recipe. |
 | Ehhh | Scrolling, row profile | Lookahead/landing control events, raster train and roller bounce states. |
 | Mega Scroller | Tiled background, WaveStrips, scrolling | Ping-pong text transport and mask material with authored source-atop blending. |
@@ -60,7 +60,7 @@ matches the previous implementation exactly.
 | LED Scroller | Bounded tiled background, cached bubble matrix, scrolling | Raster/color ramp material and amplitude-modulated letter ensemble. |
 | 3D DOC | Scrolling, `PerspectiveCheckerboard`, `ProjectedBallTrain` | Move the paired inner/outer text row program into one parameterized scrolling recipe; audio cue remains scene data. |
 | Fullscreen | `BackgroundLayer` velocity, Weave formation, scrolling | Recycled multi-scroll lanes and raster-filled logo bar. |
-| Starwars | `Config.Crawl`, RowProjection, scrolling, `sprites.ProjectedField` | Sampled sprite train and dual-color wave strip material. |
+| Starwars | `Config.Crawl`, RowProjection, scrolling, `sprites.ProjectedField`, `RasterOverlay` source-in fill | Sampled sprite train and dual-color wave strip material. |
 | Knucklebuster | Scrolling and sprite images | Seeded hit trigger with hold/release envelope; optional music signal must be a distinct mode. |
 | DNA | FeedbackDNA, wave strips, projected discs | Two-sided twisting ribbon with exact front/back occlusion and sampled row-source warp. |
 | Megaball | Scrolling, CoupledOrbit | Two interleaved ball trains with index-dependent phase stepping and editable controls. |
@@ -76,10 +76,10 @@ matches the previous implementation exactly.
 | Beat Dis | Background sampler, scrolling | Phase-spaced letter ensemble with global wobble. |
 | Delta Force | YM register snapshots, scrolling, WaveStrips | Register-change trigger and seven-tick sprite release; source-alpha raster fill. |
 | TNT Crew 3 | Mesh, geometry, bitmap recipes | Model-group draw material and camera recession handoff; authored shapes stay data. |
-| Wow Scroller | Scrolling | Cropped oversized-image repetition with explicit wrap periods and raster fill. |
+| Wow Scroller | Scrolling, `RasterOverlay` source-atop fill | Cropped oversized-image repetition with explicit wrap periods. |
 | Hidden | PointHistory, sprite instances | Delayed pointer trail, palette cycle and source clip. |
 | Starballs | Camera, scrolling, `sprites.ProjectedField` with two materials, live count and depth opacity | Compose the two field materials and logo mask as an editable screen layer recipe. |
-| Replicants | Atlas, scrolling | Configurable bouncing raster train and historically reset scroll clock. |
+| Replicants | Atlas, scrolling, `RasterOverlay` fill | Configurable bouncing raster train and historically reset scroll clock. |
 | TNT Crew 2 | Background sampler, BitmapText.DrawWindow | Layered parallax phase/velocity program with user direction and exact reset policy. |
 | Level 16 | Vertical scrolling, background sampler, NestedOrbit | Raster/water material and authored layer occlusion. |
 | Multi-Plane | Bands, projected scrolling | Logo row lookup/center flip; package the form program and strip background as one editable screen recipe. |

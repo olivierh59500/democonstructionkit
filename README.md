@@ -520,6 +520,37 @@ advances the phases or allocates a message-sized texture. A saved project can
 store the table and every clock/geometry setting as a `copper_bars` layer;
 the host still chooses the image asset and layer order.
 
+### Animate a raster over live text or a logo
+
+`composite.RasterOverlay` draws a borrowed image onto an existing surface with
+an explicit blend mode. `BlendSourceAtop` preserves the destination's text or
+logo alpha; `BlendSourceIn` applies the incoming raster through it. The effect
+owns source cropping, scale, angle, opacity, phase, velocity and exact reset
+thresholds. `Draw` never advances the clock, and `Step` can happen before or
+after drawing to retain a screen's initial frame. No extra GPU surface is
+allocated beyond the composition's existing text or logo canvas.
+
+```go
+raster, err := composite.NewRasterOverlay(composite.RasterOverlayConfig{
+    Image: colors, ScaleX: 85, ScaleY: 1, Alpha: 1,
+    VelocityY: -2,
+    WrapY: &composite.RasterWrap{Boundary: -177, Restart: 0, Inclusive: true},
+    Filter: ebiten.FilterLinear, Blend: ebiten.BlendSourceAtop,
+})
+if err != nil { return err }
+// Draw text into its existing transparent surface, then color and advance it.
+raster.Draw(textSurface)
+raster.Step()
+```
+
+Cuddly Big Sprite and Starwars use different blend modes and opposite boundary
+rules; Union Wow and Replicants use negative and positive phase velocities.
+Their migrations match 1,800 decoded Cuddly frames and 13 exact Union captures,
+including both wrap boundaries. `effects.Mask` remains useful when color and
+alpha are independent effects that need separate working surfaces. In a saved
+`authoring` project, a `raster_overlay` layer must draw directly after its
+alpha source, with no outer fade; its own `alpha` setting remains editable.
+
 ### Use one particle field for stars, incoming sprites and trails
 
 `sprites.ProjectedField` owns movement, projection and the bounded renderer.
@@ -1385,6 +1416,7 @@ remain available for effects with different behavior.
 | `indexed.Rotozoom256` | Allocation-free fixed-point rotozoom over indexed 256 × 256 textures | Second Reality Rotozoomer |
 | `composite.ScanlineBackground` | Bounded horizontal tile source, independent wave/bounce clocks and batched source rows | MegaTwist |
 | `composite.CopperBars` | Two-phase raster bank with editable table, clocks, source strips and quad/image materials | Bilizir, Coco, Multiscreen Coco |
+| `composite.RasterOverlay` | Moving raster material with source crop, blend, scale and exact wrap policy over a live image | Cuddly Big Sprite/Starwars, Union Wow/Replicants |
 
 `FeedConfig.ProgressiveEntry` keeps the active glyph at the viewport edge until
 its full advance has entered, revealing its bitmap over successive updates.

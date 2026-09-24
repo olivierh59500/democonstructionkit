@@ -176,6 +176,8 @@ func (b *compiler) layer(l Layer) (kit.Effect, error) {
 		return b.background(*l.Background)
 	case "copper_bars":
 		return b.copperBars(*l.CopperBars)
+	case "raster_overlay":
+		return b.rasterOverlay(*l.RasterOverlay)
 	case "rotozoom":
 		return b.rotozoom(*l.Rotozoom)
 	}
@@ -406,6 +408,40 @@ func (b *compiler) copperBars(c CopperBars) (kit.Effect, error) {
 		VelocityA: c.VelocityA, VelocityB: c.VelocityB, IndexStepA: c.IndexStepA, IndexStepB: c.IndexStepB,
 		Clock: clock, DrawMode: drawMode, Filter: f, Blend: blendMode,
 	})
+}
+
+func (b *compiler) rasterOverlay(c RasterOverlay) (kit.Effect, error) {
+	img, err := b.image(c.Image)
+	if err != nil {
+		return nil, err
+	}
+	f, _ := filter(c.Filter)
+	blendMode, _ := blend(c.Blend)
+	sx, sy := c.Scale.X, c.Scale.Y
+	if sx == 0 {
+		sx = 1
+	}
+	if sy == 0 {
+		sy = 1
+	}
+	alpha := 1.0
+	if c.Alpha != nil {
+		alpha = *c.Alpha
+	}
+	cfg := composite.RasterOverlayConfig{Image: img, X: c.Position.X, Y: c.Position.Y,
+		VelocityX: c.Velocity.X, VelocityY: c.Velocity.Y, ScaleX: sx, ScaleY: sy,
+		AngleDegrees: c.AngleDegrees, AnchorX: c.Anchor.X, AnchorY: c.Anchor.Y,
+		Alpha: alpha, Filter: f, Blend: blendMode}
+	if c.Source != nil {
+		cfg.Source = rectangle(*c.Source)
+	}
+	if c.WrapX != nil {
+		cfg.WrapX = &composite.RasterWrap{Boundary: c.WrapX.Boundary, Restart: c.WrapX.Restart, Inclusive: c.WrapX.Inclusive}
+	}
+	if c.WrapY != nil {
+		cfg.WrapY = &composite.RasterWrap{Boundary: c.WrapY.Boundary, Restart: c.WrapY.Restart, Inclusive: c.WrapY.Inclusive}
+	}
+	return composite.NewRasterOverlay(cfg)
 }
 
 // Version 1 limits fallback copies as well as canvas and formation sizes. The

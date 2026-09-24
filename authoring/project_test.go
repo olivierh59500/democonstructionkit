@@ -291,6 +291,41 @@ func TestCopperBarsLayerRoundTripAndCompile(t *testing.T) {
 	}
 }
 
+func TestRasterOverlayRoundTripAndCompile(t *testing.T) {
+	p := testProject()
+	alpha := 0.8
+	p.Layers = append(p.Layers, Layer{ID: "raster", Kind: "raster_overlay", RasterOverlay: &RasterOverlay{
+		Image: "tile", Position: Point{X: 2, Y: -4}, Velocity: Point{Y: 1},
+		Scale: Point{X: 3, Y: 1}, Alpha: &alpha,
+		WrapY: &RasterWrap{Boundary: 0, Restart: -8, Inclusive: true}, Blend: "source-atop",
+	}})
+	var encoded bytes.Buffer
+	if err := Encode(&encoded, p); err != nil {
+		t.Fatal(err)
+	}
+	decoded, err := Decode(&encoded)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !reflect.DeepEqual(*decoded, p) {
+		t.Fatalf("raster project changed during round trip: %+v", decoded.Layers[1])
+	}
+	compiled, err := Compile(*decoded, testAssets(t), Options{})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := compiled.Update(kit.Frame{Time: 1}); err != nil {
+		t.Fatal(err)
+	}
+	if err := compiled.Close(); err != nil {
+		t.Fatal(err)
+	}
+	p.Layers[1].Window.FadeIn = 1
+	if err := p.Validate(); err == nil {
+		t.Fatal("accepted a fade that would isolate the alpha destination")
+	}
+}
+
 func TestAssetIDsRetainCaseAndFixedArraysRejectTruncation(t *testing.T) {
 	p := testProject()
 	p.Assets["Tile"] = "image"
