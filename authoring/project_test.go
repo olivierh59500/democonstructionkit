@@ -185,6 +185,42 @@ func TestCompileReportsMissingAssetsAndCropBounds(t *testing.T) {
 	if _, err := Compile(p, assets, Options{}); err == nil {
 		t.Fatal("accepted excessive background density")
 	}
+	p.Layers[0].Background.CopiesX = 3
+	compiled, err := Compile(p, assets, Options{})
+	if err != nil {
+		t.Fatalf("finite background copies rejected: %v", err)
+	}
+	compiled.Close()
+	p.Layers[0].Background.CopiesX = -1
+	if err := p.Validate(); err == nil {
+		t.Fatal("negative background copy count accepted")
+	}
+}
+
+func TestBackgroundFiniteCopiesRoundTrip(t *testing.T) {
+	p := testProject()
+	p.Layers[0].Background.CopiesX = 3
+	p.Layers[0].Background.CopiesY = 2
+	p.Layers[0].Background.Velocity = Point{X: -48, Y: 12}
+	var encoded bytes.Buffer
+	if err := Encode(&encoded, p); err != nil {
+		t.Fatal(err)
+	}
+	decoded, err := Decode(&encoded)
+	if err != nil {
+		t.Fatal(err)
+	}
+	c := decoded.Layers[0].Background
+	if c.CopiesX != 3 || c.CopiesY != 2 || c.Velocity != (Point{X: -48, Y: 12}) {
+		t.Fatalf("finite background settings changed: %+v", c)
+	}
+	compiled, err := Compile(*decoded, testAssets(t), Options{})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := compiled.Close(); err != nil {
+		t.Fatal(err)
+	}
 }
 
 func TestAssetIDsRetainCaseAndFixedArraysRejectTruncation(t *testing.T) {

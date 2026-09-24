@@ -26,7 +26,7 @@ The entries are acceptance work, not claims that all screens are already small.
 | Multiscreen, four embedded productions | SolidCube, sampled DNA and projected-plane engines, atlas recipes | Make the four production scenes reusable constructors rather than copies of their standalone controllers. |
 | Multiscreen, camera tour | Layer/viewport helpers | Camera/zoom director with visibility culling, retained outputs and serialized handoffs. |
 | Vectorballs | Projected shape factories, reflection | Reusable point-morph/deformation/action sequence with explicit inherited vs cleared settings and smooth handoffs. |
-| Grodan | Atlas and scrolling | Bounded layered image repetition; phased sprite chain with count, image selection, spacing and wave envelope; repeated vertical text columns. |
+| Grodan | Atlas, scrolling and bounded `Background` repetition | Phased sprite chain with count, image selection, spacing and wave envelope; repeated vertical text columns. |
 | MegaTwist, intro | `Config.Feed`, atlas | Keep the screenshot-matched splash/transition timing as an editable cue program. |
 | MegaTwist, main | `Config.Scanline` with a one-time/looping DisplacementProgram and strict X rejection | Background scanline layer with independent clock and source wrap; glowing sprite formation and transition overlay. |
 | Nonameno, stars | `sprites.ProjectedField`, editable radial pattern and vector pixel/trail material | The star field is complete; staggered text-page choreography is tracked below. |
@@ -53,7 +53,7 @@ The entries are acceptance work, not claims that all screens are already small.
 | Digi | Scrolling, lookup row warp, Weave formation | Shared bouncing logo and nested-sine letter formation preset with independent phases. |
 | LED Scroller | Bounded tiled background, cached bubble matrix, scrolling | Raster/color ramp material and amplitude-modulated letter ensemble. |
 | 3D DOC | Scrolling, `PerspectiveCheckerboard`, `ProjectedBallTrain` | Move the paired inner/outer text row program into one parameterized scrolling recipe; audio cue remains scene data. |
-| Fullscreen | Background sampler, Weave formation, scrolling | Recycled multi-scroll lanes and raster-filled logo bar. |
+| Fullscreen | `BackgroundLayer` velocity, Weave formation, scrolling | Recycled multi-scroll lanes and raster-filled logo bar. |
 | Starwars | `Config.Crawl`, RowProjection, scrolling, `sprites.ProjectedField` | Sampled sprite train and dual-color wave strip material. |
 | Knucklebuster | Scrolling and sprite images | Seeded hit trigger with hold/release envelope; optional music signal must be a distinct mode. |
 | DNA | FeedbackDNA, wave strips, projected discs | Two-sided twisting ribbon with exact front/back occlusion and sampled row-source warp. |

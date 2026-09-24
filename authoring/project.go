@@ -200,6 +200,8 @@ type Background struct {
 	Image          string `json:"image"`
 	Source         *Rect  `json:"source,omitempty"`
 	Period         Point  `json:"period,omitempty"`
+	CopiesX        int    `json:"copiesX,omitempty"`
+	CopiesY        int    `json:"copiesY,omitempty"`
 	Scale          Point  `json:"scale,omitempty"`
 	Parallax       Point  `json:"parallax,omitempty"`
 	Origin         Point  `json:"origin,omitempty"`

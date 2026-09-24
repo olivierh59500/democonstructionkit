@@ -123,6 +123,31 @@ func checkBackgroundPixels() error {
 			}
 		}
 	}
+	for _, filter := range []ebiten.Filter{ebiten.FilterNearest, ebiten.FilterLinear} {
+		for _, pose := range []BackgroundPose{{X: -14.25, Y: 11.5}, {X: -34, Y: -17}} {
+			config := BackgroundConfig{PeriodX: 17, PeriodY: 19, CopiesX: 3, CopiesY: 2, Filter: filter}
+			background, err := NewBackground(config)
+			if err != nil {
+				return err
+			}
+			actual.Fill(color.NRGBA{R: 10, G: 20, B: 30, A: 100})
+			expected.Fill(color.NRGBA{R: 10, G: 20, B: 30, A: 100})
+			background.Draw(actual, input, pose)
+			for row := 0; row < config.CopiesY; row++ {
+				for column := 0; column < config.CopiesX; column++ {
+					op := ebiten.DrawImageOptions{Filter: filter}
+					op.GeoM.Translate(pose.X+float64(column)*config.PeriodX, pose.Y+float64(row)*config.PeriodY)
+					expected.DrawImage(input, &op)
+				}
+			}
+			actual.ReadPixels(got)
+			expected.ReadPixels(want)
+			if !bytes.Equal(got, want) {
+				return fmt.Errorf("bounded background GPU mismatch filter=%v pose=%+v", filter, pose)
+			}
+			count++
+		}
+	}
 	fmt.Printf("Background GPU output matches brute-force placement in %d cases\n", count)
 	return nil
 }

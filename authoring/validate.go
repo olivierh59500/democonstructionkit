@@ -279,6 +279,9 @@ func (p Project) validateLayer(l Layer) error {
 		if c.Period.X < 0 || c.Period.Y < 0 || c.Scale.X < 0 || c.Scale.Y < 0 {
 			return fmt.Errorf("negative repeat period or scale")
 		}
+		if c.CopiesX < 0 || c.CopiesY < 0 || c.CopiesX > 1<<20 || c.CopiesY > 1<<20 {
+			return fmt.Errorf("invalid background copy count")
+		}
 		if _, err := filter(c.Filter); err != nil {
 			return err
 		}

@@ -369,6 +369,43 @@ larger periods leave gaps; smaller periods overlap copies in row/column order.
 `ScaleX/Y`, filter, blend and tint are independent. Zero parallax intentionally
 pins an axis; use `DefaultBackgroundConfig` for unit parallax defaults.
 
+For an automatically scrolling layer, set `VelocityX` and/or `VelocityY` in
+destination pixels per second. The velocity is added to `Pose` or to the pose
+returned by `Sample`; a custom sampler remains available for bounce, camera
+paths and music-linked movement. `Update` receives the logical frame time, so
+display refresh does not alter the scroll speed.
+
+```go
+renderer, err := composite.NewBackground(composite.BackgroundConfig{
+    PeriodX: 640, PeriodY: 400,
+    CopiesX: 3, CopiesY: 2,
+})
+if err != nil { return err }
+backdrop := &composite.BackgroundLayer{
+    Renderer: renderer, Image: tile,
+    VelocityX: -48, VelocityY: 12,
+}
+// Include backdrop in a kit.Group or kit.Layers and call Update once per tick.
+```
+
+`CopiesX/Y` limit the source indices to `[0, count)` on each repeated axis.
+Leave either count zero for an infinite repeat. Finite counts retain their
+authored origin even after long camera movement; they can preserve intentionally
+empty edge regions and gaps between tiles. Grodan uses three columns and two
+rows with periods different from its 640 × 398 source size. Cuddly Fullscreen
+uses an unbounded 16-pixel strip and `VelocityX` to replace its local scroll
+counter. Their migrated outputs match 1,200 and 480 baseline video frames,
+respectively.
+
+The same finite effect can be saved for an editor or loaded from JSON:
+
+```json
+{"kind":"background","background":{"image":"tile","period":{"x":640,"y":400},"copiesX":3,"copiesY":2,"velocity":{"x":-48,"y":12}}}
+```
+
+The `tile` ID is resolved by the host application. The compiler checks copy
+counts and worst-case visible submissions before allocating render resources.
+
 Combine several `BackgroundLayer` values with different parallax factors for
 scenery. `Background.Draw` accepts a pose directly; `DrawAt` accepts existing
 screen offsets. A destination subimage defines a viewport without another render

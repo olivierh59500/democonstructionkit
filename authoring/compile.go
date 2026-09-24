@@ -342,7 +342,7 @@ func (b *compiler) background(c Background) (kit.Effect, error) {
 	}
 	f, _ := filter(c.Filter)
 	blendMode, _ := blend(c.Blend)
-	config := composite.BackgroundConfig{PeriodX: c.Period.X, PeriodY: c.Period.Y, ScaleX: c.Scale.X, ScaleY: c.Scale.Y, ParallaxX: c.Parallax.X, ParallaxY: c.Parallax.Y, Filter: f, Blend: blendMode}
+	config := composite.BackgroundConfig{PeriodX: c.Period.X, PeriodY: c.Period.Y, CopiesX: c.CopiesX, CopiesY: c.CopiesY, ScaleX: c.Scale.X, ScaleY: c.Scale.Y, ParallaxX: c.Parallax.X, ParallaxY: c.Parallax.Y, Filter: f, Blend: blendMode}
 	if c.Source != nil {
 		config.Source = rectangle(*c.Source)
 		if !config.Source.In(img.Bounds()) {
@@ -360,8 +360,8 @@ func (b *compiler) background(c Background) (kit.Effect, error) {
 	if err != nil {
 		return nil, err
 	}
-	return &composite.BackgroundLayer{Renderer: renderer, Image: img, Sample: func(f kit.Frame) composite.BackgroundPose {
-		return composite.BackgroundPose{X: c.Origin.X + c.Velocity.X*f.Time, Y: c.Origin.Y + c.Velocity.Y*f.Time, CameraX: c.Camera.X + c.CameraVelocity.X*f.Time, CameraY: c.Camera.Y + c.CameraVelocity.Y*f.Time}
+	return &composite.BackgroundLayer{Renderer: renderer, Image: img, VelocityX: c.Velocity.X, VelocityY: c.Velocity.Y, Sample: func(f kit.Frame) composite.BackgroundPose {
+		return composite.BackgroundPose{X: c.Origin.X, Y: c.Origin.Y, CameraX: c.Camera.X + c.CameraVelocity.X*f.Time, CameraY: c.Camera.Y + c.CameraVelocity.Y*f.Time}
 	}}, nil
 }
 
@@ -375,13 +375,17 @@ func backgroundBudget(c Background, width, height int, canvas Canvas) error {
 	if sy == 0 {
 		sy = 1
 	}
-	count := func(extent int, period, scale float64, viewport int) float64 {
+	count := func(extent int, period, scale float64, viewport, copies int) float64 {
 		if period == 0 {
 			return 1
 		}
-		return math.Ceil((float64(viewport)+float64(extent)*scale)/(period*scale)) + 1
+		visible := math.Ceil((float64(viewport)+float64(extent)*scale)/(period*scale)) + 1
+		if copies > 0 {
+			return math.Min(visible, float64(copies))
+		}
+		return visible
 	}
-	x, y := count(width, c.Period.X, sx, canvas.Width), count(height, c.Period.Y, sy, canvas.Height)
+	x, y := count(width, c.Period.X, sx, canvas.Width, c.CopiesX), count(height, c.Period.Y, sy, canvas.Height, c.CopiesY)
 	if math.IsNaN(x) || math.IsNaN(y) || math.IsInf(x, 0) || math.IsInf(y, 0) || x*y > 16384 {
 		return fmt.Errorf("background exceeds 16384 visible-copy budget")
 	}

@@ -13,12 +13,15 @@ import (
 // BackgroundConfig describes a cropped image repeated on either axis. A zero
 // period disables repetition on that axis. Periods are in unscaled source pixels
 // and need not match the crop: a larger period leaves gaps, a smaller one overlaps
-// copies in increasing row/column order. Empty Source uses the complete image.
+// copies in increasing row/column order. CopiesX and CopiesY optionally limit
+// repetition to indices [0, count), matching finite backdrop strips. Empty
+// Source uses the complete image.
 // Zero scale defaults to one. Negative scales are rejected; mirror the source in
 // a preceding image pass when required. Source and destination remain borrowed.
 type BackgroundConfig struct {
 	Source               image.Rectangle
 	PeriodX, PeriodY     float64
+	CopiesX, CopiesY     int // Zero repeats without an index limit.
 	ScaleX, ScaleY       float64
 	ParallaxX, ParallaxY float64
 	Filter               ebiten.Filter
@@ -74,8 +77,9 @@ func NewBackground(c BackgroundConfig) (*Background, error) {
 			return nil, fmt.Errorf("composite: background parameters must be finite")
 		}
 	}
-	if c.PeriodX < 0 || c.PeriodY < 0 || c.ScaleX <= 0 || c.ScaleY <= 0 {
-		return nil, fmt.Errorf("composite: background periods must be nonnegative and scales positive")
+	if c.PeriodX < 0 || c.PeriodY < 0 || c.ScaleX <= 0 || c.ScaleY <= 0 ||
+		c.CopiesX < 0 || c.CopiesY < 0 || c.CopiesX > 1<<20 || c.CopiesY > 1<<20 {
+		return nil, fmt.Errorf("composite: invalid background periods, copy counts or scales")
 	}
 	return &Background{config: c}, nil
 }
@@ -113,8 +117,8 @@ func (b *Background) Draw(dst, source *ebiten.Image, pose BackgroundPose) {
 	if b.repeatedQuad(dst, x, y, w, h) {
 		return
 	}
-	x, firstX, lastX, okX := backgroundCopyRange(x, w, px, float64(view.Min.X), float64(view.Max.X), c.MaxCopies)
-	y, firstY, lastY, okY := backgroundCopyRange(y, h, py, float64(view.Min.Y), float64(view.Max.Y), c.MaxCopies)
+	x, firstX, lastX, okX := backgroundCopyRangeLimit(x, w, px, float64(view.Min.X), float64(view.Max.X), c.MaxCopies, c.CopiesX)
+	y, firstY, lastY, okY := backgroundCopyRangeLimit(y, h, py, float64(view.Min.Y), float64(view.Max.Y), c.MaxCopies, c.CopiesY)
 	if !okX || !okY {
 		b.err = ErrBackgroundBudget
 		return
@@ -141,7 +145,7 @@ func (b *Background) Draw(dst, source *ebiten.Image, pose BackgroundPose) {
 // images. Linear filtering deliberately keeps independent cropped image edges.
 func (b *Background) repeatedQuad(dst *ebiten.Image, x, y, width, height float64) bool {
 	c, source := b.config, b.crop.Bounds()
-	if c.Filter != ebiten.FilterNearest || c.PeriodX == 0 && c.PeriodY == 0 ||
+	if c.Filter != ebiten.FilterNearest || c.CopiesX != 0 || c.CopiesY != 0 || c.PeriodX == 0 && c.PeriodY == 0 ||
 		c.PeriodX != 0 && c.PeriodX != float64(source.Dx()) ||
 		c.PeriodY != 0 && c.PeriodY != float64(source.Dy()) {
 		return false
@@ -212,6 +216,34 @@ func backgroundCopyRange(origin, extent, period, minimum, maximum float64, budge
 	return origin, int(first), int(last), true
 }
 
+// backgroundCopyRangeLimit keeps finite tile indices anchored to their authored
+// origin. Rebasing would change which copies exist when the camera travels far.
+func backgroundCopyRangeLimit(origin, extent, period, minimum, maximum float64, budget, copies int) (float64, int, int, bool) {
+	if copies == 0 || period <= 0 {
+		return backgroundCopyRange(origin, extent, period, minimum, maximum, budget)
+	}
+	if math.IsNaN(extent) || math.IsInf(extent, 0) || math.IsNaN(period) || math.IsInf(period, 0) {
+		return origin, 1, 0, false
+	}
+	first := math.Floor((minimum-origin-extent)/period) + 1
+	last := math.Ceil((maximum-origin)/period) - 1
+	if math.IsNaN(first) || math.IsNaN(last) {
+		return origin, 1, 0, false
+	}
+	if first > float64(copies-1) || last < 0 {
+		return origin, 1, 0, true
+	}
+	first = math.Max(first, 0)
+	last = math.Min(last, float64(copies-1))
+	if first > last {
+		return origin, 1, 0, true
+	}
+	if last-first+1 > float64(budget) {
+		return origin, 1, 0, false
+	}
+	return origin, int(first), int(last), true
+}
+
 // BackgroundLayer adapts a background to kit.Layers or kit.Group. Layers borrow
 // their image and renderer; no texture is allocated or destroyed by this wrapper.
 type BackgroundLayer struct {
@@ -219,7 +251,11 @@ type BackgroundLayer struct {
 	Image    *ebiten.Image
 	Pose     BackgroundPose
 	Sample   func(kit.Frame) BackgroundPose
-	frame    kit.Frame
+	// Velocity is measured in destination pixels per second and is added after
+	// Sample, if one is supplied. It makes a tiled backdrop scroll with only an
+	// image, a renderer and a velocity; custom motion can still use Sample.
+	VelocityX, VelocityY float64
+	frame                kit.Frame
 }
 
 func (b *BackgroundLayer) Update(frame kit.Frame) error {
@@ -227,12 +263,22 @@ func (b *BackgroundLayer) Update(frame kit.Frame) error {
 	if b.Renderer == nil {
 		return fmt.Errorf("composite: nil background renderer")
 	}
+	if math.IsNaN(b.VelocityX) || math.IsInf(b.VelocityX, 0) || math.IsNaN(b.VelocityY) || math.IsInf(b.VelocityY, 0) ||
+		math.IsNaN(frame.Time) || math.IsInf(frame.Time, 0) {
+		return fmt.Errorf("composite: nonfinite background motion")
+	}
 	return b.Renderer.Err()
 }
 func (b *BackgroundLayer) Draw(dst *ebiten.Image) {
+	b.Renderer.Draw(dst, b.Image, b.poseAt())
+}
+
+func (b *BackgroundLayer) poseAt() BackgroundPose {
 	pose := b.Pose
 	if b.Sample != nil {
 		pose = b.Sample(b.frame)
 	}
-	b.Renderer.Draw(dst, b.Image, pose)
+	pose.X += b.VelocityX * b.frame.Time
+	pose.Y += b.VelocityY * b.frame.Time
+	return pose
 }

@@ -3,6 +3,8 @@ package composite
 import (
 	"math"
 	"testing"
+
+	kit "github.com/olivierh59500/democonstructionkit"
 )
 
 func TestBackgroundCopies(t *testing.T) {
@@ -42,6 +44,7 @@ func TestBackgroundConfiguration(t *testing.T) {
 	for _, c := range []BackgroundConfig{
 		{PeriodX: -1}, {PeriodY: -1}, {ScaleX: -1}, {ScaleY: -1},
 		{PeriodX: math.Inf(1)}, {ScaleY: math.NaN()}, {ParallaxX: math.NaN()},
+		{CopiesX: -1}, {CopiesY: -1}, {CopiesX: 1<<20 + 1},
 	} {
 		if _, err := NewBackground(c); err == nil {
 			t.Fatalf("invalid config accepted: %+v", c)
@@ -54,6 +57,64 @@ func TestBackgroundConfiguration(t *testing.T) {
 	c := DefaultBackgroundConfig()
 	if c.ParallaxX != 1 || c.ParallaxY != 1 {
 		t.Fatal("default camera should follow both axes")
+	}
+}
+
+func TestBackgroundLimitedCopies(t *testing.T) {
+	for _, tc := range []struct {
+		name                             string
+		origin, extent, period, min, max float64
+		budget, copies                   int
+		positions                        []float64
+		wantOK                           bool
+	}{
+		{"two copies", 0, 4, 5, 0, 16, 16, 2, []float64{0, 5}, true},
+		{"partial first", -6, 4, 5, 0, 16, 16, 3, []float64{-1, 4}, true},
+		{"all outside", -100, 4, 5, 0, 16, 16, 3, nil, true},
+		{"dense but bounded", 0, 32, 1e-100, 0, 640, 16, 3, []float64{0, 1e-100, 2e-100}, true},
+		{"bounded over budget", 0, 32, 1e-100, 0, 640, 2, 3, nil, false},
+		{"no distant rebase", -10000000, 4, 5, 0, 16, 16, 3, nil, true},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			origin, first, last, ok := backgroundCopyRangeLimit(tc.origin, tc.extent, tc.period, tc.min, tc.max, tc.budget, tc.copies)
+			if ok != tc.wantOK {
+				t.Fatalf("range accepted = %v, want %v", ok, tc.wantOK)
+			}
+			if !ok {
+				return
+			}
+			if got := max(0, last-first+1); got != len(tc.positions) {
+				t.Fatalf("copies = %d, want %d", got, len(tc.positions))
+			}
+			for i, want := range tc.positions {
+				got := origin + float64(first+i)*tc.period
+				if got != want {
+					t.Fatalf("copy %d at %g, want %g", i, got, want)
+				}
+			}
+		})
+	}
+}
+
+func TestBackgroundLayerVelocity(t *testing.T) {
+	renderer, err := NewBackground(DefaultBackgroundConfig())
+	if err != nil {
+		t.Fatal(err)
+	}
+	layer := &BackgroundLayer{Renderer: renderer, Pose: BackgroundPose{X: 10, Y: 3, CameraX: 8}, VelocityX: -12, VelocityY: 7}
+	if err := layer.Update(kit.Frame{Time: 2}); err != nil {
+		t.Fatal(err)
+	}
+	if got := layer.poseAt(); got != (BackgroundPose{X: -14, Y: 17, CameraX: 8}) {
+		t.Fatalf("velocity pose = %+v", got)
+	}
+	layer.Sample = func(f kit.Frame) BackgroundPose { return BackgroundPose{X: f.Time * 3, CameraY: 4} }
+	if got := layer.poseAt(); got != (BackgroundPose{X: -18, Y: 14, CameraY: 4}) {
+		t.Fatalf("sampled pose = %+v", got)
+	}
+	layer.VelocityY = math.Inf(1)
+	if err := layer.Update(kit.Frame{Time: 2}); err == nil {
+		t.Fatal("nonfinite velocity accepted")
 	}
 }
 
