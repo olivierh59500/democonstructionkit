@@ -223,6 +223,39 @@ func TestBackgroundFiniteCopiesRoundTrip(t *testing.T) {
 	}
 }
 
+func TestRotozoomLayerRoundTripAndCompile(t *testing.T) {
+	p := testProject()
+	p.Layers[0] = Layer{ID: "rotating-tile", Kind: "rotozoom", Rotozoom: &Rotozoom{
+		Image: "tile", Center: Point{X: 32, Y: 24}, Phase: Point{X: 80, Y: 40}, Zoom: 1.5, Rotation: .2,
+		CenterVelocity: Point{X: -12, Y: 4}, PhaseVelocity: Point{X: 8, Y: -3}, RotationVelocity: .5,
+	}}
+	var encoded bytes.Buffer
+	if err := Encode(&encoded, p); err != nil {
+		t.Fatal(err)
+	}
+	decoded, err := Decode(&encoded)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !reflect.DeepEqual(*decoded, p) {
+		t.Fatalf("rotozoom project changed during round trip: %+v", decoded.Layers[0])
+	}
+	compiled, err := Compile(*decoded, testAssets(t), Options{})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := compiled.Update(kit.Frame{Time: 2}); err != nil {
+		t.Fatal(err)
+	}
+	if err := compiled.Close(); err != nil {
+		t.Fatal(err)
+	}
+	p.Layers[0].Rotozoom.Zoom = -1
+	if err := p.Validate(); err == nil {
+		t.Fatal("accepted negative rotozoom zoom")
+	}
+}
+
 func TestAssetIDsRetainCaseAndFixedArraysRejectTruncation(t *testing.T) {
 	p := testProject()
 	p.Assets["Tile"] = "image"

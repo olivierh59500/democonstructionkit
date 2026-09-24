@@ -28,7 +28,7 @@ The entries are acceptance work, not claims that all screens are already small.
 | Vectorballs | Projected shape factories, reflection | Reusable point-morph/deformation/action sequence with explicit inherited vs cleared settings and smooth handoffs. |
 | Grodan | Atlas, scrolling and bounded `Background` repetition | Phased sprite chain with count, image selection, spacing and wave envelope; repeated vertical text columns. |
 | MegaTwist, intro | `Config.Feed`, atlas | Keep the screenshot-matched splash/transition timing as an editable cue program. |
-| MegaTwist, main | `Config.Scanline` with a one-time/looping DisplacementProgram and strict X rejection | Background scanline layer with independent clock and source wrap; glowing sprite formation and transition overlay. |
+| MegaTwist, main | `Config.Scanline`, independent `ScanlineBackground` and DisplacementPrograms | Glowing sprite formation and transition overlay. |
 | Nonameno, stars | `sprites.ProjectedField`, editable radial pattern and vector pixel/trail material | The star field is complete; staggered text-page choreography is tracked below. |
 | Nonameno, text pages | Atlas | Staggered per-glyph enter/exit with scale/depth, easing, delays and completion barrier; baseline sine scroll. |
 | Phenomena DNA intro | Atlas, DNAFrames, sliced transport | Whole screen's two-pixel insertion, loop-start and control events as a reusable configuration; separate intro/outro reveal and bounce cues. |
@@ -36,7 +36,13 @@ The entries are acceptance work, not claims that all screens are already small.
 | Replicants | Atlas, `Config.RowColumn` with variable-speed controls | Stepped block reveal, quantized logo zoom bank and layered stars. |
 | TeamG1, intro | `Config.Feed` with progressive right-edge entry, atlas, flat TimedCRTOverlay | Message and intro-to-main cue times remain production data. |
 | TeamG1, main | TexturedCube, HarmonicImage, ProfileImage, `Config.Profiled`, sprites.Group circular formation | Timed scene/audio cues and whole-scene presentation remain composition data. |
-| Viva TCB | Atlas, scrolling, image repetition | Four pseudo-3D glyph banks with per-glyph scale/order/snap; ten-logo harmonic formation; raster title material. |
+| Viva TCB | Atlas, scrolling and staged `RotozoomBackground` | Four pseudo-3D glyph banks with per-glyph scale/order/snap; ten-logo harmonic formation; raster title material. |
+
+Second Reality remains outside this full-screen inventory, but its Rotozoomer
+now uses the `indexed.Rotozoom256` backend. The live RGBA tile used by Viva and
+the palette-indexed fixed-point sampler in Second Reality expose different
+renderers so both retain their source pixels. Its 2,580-frame isolated capture
+matches the previous implementation exactly.
 
 ## Cuddly presentation units
 

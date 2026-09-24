@@ -60,6 +60,7 @@ type Layer struct {
 	Scroll     *Scroll      `json:"scroll,omitempty"`
 	Sprites    *SpriteGroup `json:"sprites,omitempty"`
 	Background *Background  `json:"background,omitempty"`
+	Rotozoom   *Rotozoom    `json:"rotozoom,omitempty"`
 	JellyCube  *JellyCube   `json:"jellyCube,omitempty"`
 }
 
@@ -210,6 +211,21 @@ type Background struct {
 	Velocity       Point  `json:"velocity,omitempty"`
 	Filter         string `json:"filter,omitempty"`
 	Blend          string `json:"blend,omitempty"`
+}
+
+// Rotozoom describes a repeat-addressed image with independently editable
+// center, texture phase, zoom and rotation. Velocities use seconds and radians.
+type Rotozoom struct {
+	Image            string  `json:"image"`
+	Center           Point   `json:"center,omitempty"`
+	Phase            Point   `json:"phase,omitempty"`
+	Zoom             float64 `json:"zoom,omitempty"`
+	Rotation         float64 `json:"rotation,omitempty"`
+	CenterVelocity   Point   `json:"centerVelocity,omitempty"`
+	PhaseVelocity    Point   `json:"phaseVelocity,omitempty"`
+	ZoomVelocity     float64 `json:"zoomVelocity,omitempty"`
+	RotationVelocity float64 `json:"rotationVelocity,omitempty"`
+	Filter           string  `json:"filter,omitempty"`
 }
 
 // Decode rejects unknown fields, duplicate object keys, trailing JSON values and

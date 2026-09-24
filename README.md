@@ -418,6 +418,82 @@ single-quad path remains independent of tile count. Excessive-density frames
 are skipped as a whole and reported by `Background.Err()` and the layer's next
 Update. Saved-project compilation checks this budget before animation starts.
 
+### Animate a repeated texture with a rotozoom
+
+`composite.RotozoomBackground` owns the update/draw boundary and renders one
+repeat-addressed quad. Set a base `Repetition` and `RotozoomVelocity` for a
+simple moving, zooming or rotating tile. A `RotozoomProgram` supplies a complete
+pose when the animation has stages or music cues. The source image is borrowed;
+each effect instance can use its own center, zoom, rotation and texture phase.
+
+```go
+program, err := presets.NewVivaRotozoom(
+    presets.DefaultVivaRotozoomConfig(768, 540))
+if err != nil { return err }
+roto, err := composite.NewRotozoomBackground(
+    composite.RotozoomBackgroundConfig{Image: tile, Program: program})
+if err != nil { return err }
+// Call roto.Update(frame) once per logical tick, then roto.Draw(screen).
+```
+
+The Viva preset exposes its entrance speed and travel, stage thresholds,
+independent orbit/zoom/rotation rates, amplitudes and phase offsets. Its default
+settings match all 1,200 compared frames across the entrance and rotozoom.
+`composite.Repeat` remains available when an existing controller already owns
+the complete pose.
+
+Simple rotozoom layers can also be saved for a future editor. This layer moves
+its center and rotates the texture without any Go callback:
+
+```json
+{"id":"tile","kind":"rotozoom","rotozoom":{"image":"tile","center":{"x":384,"y":270},"zoom":1.5,"rotationVelocity":0.3,"centerVelocity":{"x":-12,"y":4}}}
+```
+
+Second Reality's rotozoomer uses a different sampling backend: 256 × 256
+palette-indexed textures, signed fixed-point steps and 16-bit address wrapping.
+`indexed.Rotozoom256` retains that behavior without RGBA conversion or per-frame
+allocation. The two backends share the rotozoom effect family and configurable
+pose/phase concepts, while preserving their different pixel sampling rules.
+Three reference poses, including the rotated-source branch and wrapped
+coordinates, match the original indexed pixels exactly. A separate 43-second
+capture of the Rotozoomer also matches all 2,580 decoded frames of the
+unmodified DCK production.
+
+```go
+indexedRoto, err := indexed.NewRotozoom256(
+    indexed.Rotozoom256Config{Width: 160, Height: 100})
+if err != nil { return err }
+if err := indexedRoto.Render(dst, picture, rotatedPicture, x, y, xa, ya); err != nil {
+    return err
+}
+```
+
+### Bend a backdrop row by row
+
+`composite.ScanlineBackground` combines a displacement program, a bounded
+horizontally tiled source and a batched row renderer. The foreground scroller
+can use a different program and clock. `WaveStep`, `WaveDivisor`, `BaseX/Y` and
+the bounce amplitude/rate are independent; `Sample` can replace the source-row
+map for a custom effect.
+
+```go
+background, err := composite.NewScanlineBackground(
+    composite.ScanlineBackgroundConfig{
+        Tile: tile, Program: wave,
+        Width: 416, Height: 276,
+        SurfaceWidth: 672, SurfaceHeight: 64,
+        BaseX: 80, WaveDivisor: 2, WaveStep: 5,
+        BounceAmplitude: 30, BounceRate: .1,
+        AlternateDiagonal: true,
+    })
+if err != nil { return err }
+// Update(frame) samples the rows once; Draw(screen) submits one bounded batch.
+```
+
+The MegaTwist migration matches 4,800 decoded frames, covering the intro,
+transition and animated main background. It uses one 672 × 64 source surface
+instead of an image spanning the full message or viewport history.
+
 ### Use one particle field for stars, incoming sprites and trails
 
 `sprites.ProjectedField` owns movement, projection and the bounded renderer.
@@ -781,7 +857,7 @@ Recent independent regression suites include:
 
 | Extraction | Verified comparison |
 | --- | --- |
-| Backgrounds and choreography | 73 identical PNG pairs across 11 screens; 1,680 identical Grodan/Cuddly decoded frames; 292 GPU background cases |
+| Backgrounds and choreography | 73 identical PNG pairs across 11 screens; 10,260 identical Grodan/Cuddly/Viva/MegaTwist/Second Reality decoded frames; 292 GPU background cases; three exact indexed rotozoom reference poses |
 | Shared particle field | Five Cuddly starfield and five Union incoming-sprite captures, identical |
 | Sprite group / envelopes / vertical transport | Six Digi, five Delta and five Level16 captures, identical |
 | DMA cube deformation | 42 identical GPU captures across five modes and their handoffs |
@@ -1279,6 +1355,9 @@ remain available for effects with different behavior.
 | `scrolling.Config.Slots` | Glyph recycling, wave motion, tangent orientation and custom poses | Cuddly Reset |
 | `scrolling.Reveal` | Cached text layout and ordered per-character entrance | Union loader |
 | `composite.Bands` | Independently moving/repeated background strips and batched drawing | Union Multiplane |
+| `composite.RotozoomBackground` | One tiled GPU quad with independent pose, phase, velocity or a staged motion program | Viva TCB |
+| `indexed.Rotozoom256` | Allocation-free fixed-point rotozoom over indexed 256 × 256 textures | Second Reality Rotozoomer |
+| `composite.ScanlineBackground` | Bounded horizontal tile source, independent wave/bounce clocks and batched source rows | MegaTwist |
 
 `FeedConfig.ProgressiveEntry` keeps the active glyph at the viewport edge until
 its full advance has entered, revealing its bitmap over successive updates.

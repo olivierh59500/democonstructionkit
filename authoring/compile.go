@@ -174,6 +174,8 @@ func (b *compiler) layer(l Layer) (kit.Effect, error) {
 		return b.sprites(*l.Sprites)
 	case "background":
 		return b.background(*l.Background)
+	case "rotozoom":
+		return b.rotozoom(*l.Rotozoom)
 	}
 	return nil, fmt.Errorf("unknown effect %q", l.Kind)
 }
@@ -363,6 +365,21 @@ func (b *compiler) background(c Background) (kit.Effect, error) {
 	return &composite.BackgroundLayer{Renderer: renderer, Image: img, VelocityX: c.Velocity.X, VelocityY: c.Velocity.Y, Sample: func(f kit.Frame) composite.BackgroundPose {
 		return composite.BackgroundPose{X: c.Origin.X, Y: c.Origin.Y, CameraX: c.Camera.X + c.CameraVelocity.X*f.Time, CameraY: c.Camera.Y + c.CameraVelocity.Y*f.Time}
 	}}, nil
+}
+
+func (b *compiler) rotozoom(c Rotozoom) (kit.Effect, error) {
+	img, err := b.image(c.Image)
+	if err != nil {
+		return nil, err
+	}
+	f, _ := filter(c.Filter)
+	return composite.NewRotozoomBackground(composite.RotozoomBackgroundConfig{
+		Image: img,
+		Pose: composite.Repetition{CenterX: c.Center.X, CenterY: c.Center.Y, Zoom: c.Zoom, Rotation: c.Rotation,
+			PhaseX: c.Phase.X, PhaseY: c.Phase.Y, Filter: f},
+		Velocity: composite.RotozoomVelocity{CenterX: c.CenterVelocity.X, CenterY: c.CenterVelocity.Y,
+			Zoom: c.ZoomVelocity, Rotation: c.RotationVelocity, PhaseX: c.PhaseVelocity.X, PhaseY: c.PhaseVelocity.Y},
+	})
 }
 
 // Version 1 limits fallback copies as well as canvas and formation sizes. The

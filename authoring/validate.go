@@ -242,6 +242,9 @@ func (p Project) validateLayer(l Layer) error {
 	if l.Background != nil {
 		n++
 	}
+	if l.Rotozoom != nil {
+		n++
+	}
 	if l.JellyCube != nil {
 		n++
 	}
@@ -286,6 +289,19 @@ func (p Project) validateLayer(l Layer) error {
 			return err
 		}
 		_, err := blend(c.Blend)
+		return err
+	case "rotozoom":
+		if l.Rotozoom == nil {
+			return fmt.Errorf("rotozoom config required")
+		}
+		c := l.Rotozoom
+		if err := p.asset(c.Image, "image"); err != nil {
+			return err
+		}
+		if c.Zoom <= 0 {
+			return fmt.Errorf("rotozoom zoom must be positive")
+		}
+		_, err := filter(c.Filter)
 		return err
 	default:
 		return fmt.Errorf("unknown effect kind %q", l.Kind)
