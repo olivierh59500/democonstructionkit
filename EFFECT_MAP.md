@@ -80,7 +80,7 @@ matches the previous implementation exactly.
 
 | Screen | Shared today | Extract next, with editable parameters |
 | --- | --- | --- |
-| Menu | TileAlphabet, `sprites.Atlas` image banks, `sprites.FrameSequence` character animation, background sampler, scrolling | Sprite ensemble's seven motion programs and camera parallax. Door/input behavior stays in the menu. |
+| Menu | TileAlphabet, `sprites.Atlas` image banks, `sprites.FrameSequence` character animation, background sampler, scrolling | Seven selectable sprite formations need editable additive and multiplicative sine/cosine terms, per-index spacing, 8-second holds with 1-second slides, viewport-relative radii and pixel-snapped anchors; camera parallax remains separate. Door/input behavior stays in the menu. |
 | Loader | Bitmap font recipes, scrolling, `timeline.Countdown` and `timeline.CueClock` overlapping fade/hold windows | Bind the typed volume envelope to the playback host; initial pre-render and decrement boundary remain authored. |
 | Introduction | Wave/Profile/Cell strips, sparkles | Serializable logo warp program and pause/audio cues; preserve row-then-column order. |
 | Big Sprite | `sprites.ProjectedField` with strict-wrap vector lines, `scrolling.RingLanes` dual-font transport, `sprites.Group` Weave formation, `RasterOverlay` fill | Shared front/back flip material. |
