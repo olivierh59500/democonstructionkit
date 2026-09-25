@@ -114,7 +114,7 @@ matches the previous implementation exactly.
 | Replicants | Atlas, scrolling, `RasterOverlay` fill, `motion.CuedFormation` letter paths, `sprites.Train` rasters driven by `motion.BounceBank` | Historically reset scroll clock. |
 | TNT Crew 2 | Background sampler, BitmapText.DrawWindow, `motion.WrapBank` three-layer parallax and mutable speeds | Per-key control mapping remains scene data. |
 | Level 16 | Vertical scrolling, background sampler, NestedOrbit, `motion.WrapBank` water and raster offsets | Raster/water material and authored layer occlusion. |
-| Multi-Plane | Bands, projected scrolling, shared TCB logo wave sections with Union's source-index offsets | Central face flip; package the form program and strip background as one editable screen recipe. |
+| Multi-Plane | Bands, projected scrolling, shared TCB logo wave sections with Union's source-index offsets, `sprites.AxisFlip` with strict `motion.SawToggle` face cycle | Package the form program and strip background as one editable screen recipe. |
 | Disk Copier | Bitmap recipes, `sprites.Atlas` LCD regions, `motion.GatedWrapBank` three LCD clocks, `motion.WrapBank` six-strip raster offset, `timeline.CueRanges` stages and `timeline.SteppedEnvelope` palette | Input/state program and LED layer placement remain scene composition data. |
 
 ## Extraction order and acceptance

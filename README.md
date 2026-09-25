@@ -423,6 +423,12 @@ is selected, so differently sized art stays centered. The effect reuses its
 images and creates no intermediate surface. Cuddly Big Sprite uses this
 controller for its two-face emblem; sixteen captures around both switches and
 bounds match the previous screen exactly.
+For a scale that jumps from a strict upper/lower bound and alternates faces on
+each jump, set `Saw` to a `motion.SawToggleConfig` instead of `Motion`. Union
+Multi-Plane uses `Start:0`, `Velocity:.08`, `Boundary:1`, `Restart:-1`; it calls
+`Step` before `DrawAt` to retain the first frame's .08 scale. The front/back
+images and their angles remain editable. Eleven native captures around its
+face changes match the previous screen pixel for pixel.
 
 For repeating image strips, `sprites.NewTrain` owns both the image group and
 its X/Y motion. Each axis can be fixed, use a phase-spaced `motion.Wave`

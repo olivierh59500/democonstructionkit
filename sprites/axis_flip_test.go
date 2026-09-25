@@ -62,3 +62,37 @@ func TestAxisFlipRejectsInvalidMotionAndCanFlipOneImage(t *testing.T) {
 		t.Fatal("single-image flip lost its source")
 	}
 }
+
+func TestAxisFlipSawSwitchesFacesOnlyAtStrictWrap(t *testing.T) {
+	front, back := ebiten.NewImage(80, 16), ebiten.NewImage(80, 16)
+	defer front.Deallocate()
+	defer back.Deallocate()
+	flip, err := NewAxisFlip(AxisFlipConfig{
+		Front: front, Back: back,
+		Saw: &motion.SawToggleConfig{Start: 0, Velocity: .08, Boundary: 1, Restart: -1},
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	scale, alternate := 0.0, false
+	for tick := 0; tick < 300; tick++ {
+		flip.Step()
+		scale += .08
+		if scale > 1 {
+			scale = -1
+			alternate = !alternate
+		}
+		pose := flip.Pose()
+		want := front
+		if alternate {
+			want = back
+		}
+		if pose.Image != want || pose.ScaleY != scale {
+			t.Fatalf("tick %d: pose %+v, want %p at scale %v", tick, pose, want, scale)
+		}
+	}
+	flip.Reset()
+	if flip.Pose().Image != front || flip.Pose().ScaleY != 0 {
+		t.Fatal("saw reset retained face or phase")
+	}
+}

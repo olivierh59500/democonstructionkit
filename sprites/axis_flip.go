@@ -8,12 +8,13 @@ import (
 	"github.com/olivierh59500/democonstructionkit/motion"
 )
 
-// AxisFlipConfig alternates image faces while a signed vertical scale crosses
-// SwitchAt. Back may be nil to flip one image. Motion must contain one bounce
-// lane; its bounds and velocity define the turn points and cycle speed.
+// AxisFlipConfig alternates image faces using either one bouncing scale lane or
+// a saw cycle that toggles faces on each strict wrap. SwitchAt selects the back
+// face in bounce mode. Back may be nil to flip one image.
 type AxisFlipConfig struct {
 	Front, Back           *ebiten.Image
 	Motion                motion.BounceBankConfig
+	Saw                   *motion.SawToggleConfig
 	SwitchAt              float64
 	FrontAngle, BackAngle float64 // Degrees, matching image transform conventions.
 	ScaleX                float64 // Zero defaults to one.
@@ -33,6 +34,7 @@ type AxisFlipPose struct {
 type AxisFlip struct {
 	config AxisFlipConfig
 	motion *motion.BounceBank
+	saw    *motion.SawToggle
 }
 
 func NewAxisFlip(config AxisFlipConfig) (*AxisFlip, error) {
@@ -50,6 +52,16 @@ func NewAxisFlip(config AxisFlipConfig) (*AxisFlip, error) {
 	if config.ScaleX == 0 {
 		config.ScaleX = 1
 	}
+	if config.Saw != nil {
+		if len(config.Motion.Start) != 0 || len(config.Motion.Velocity) != 0 {
+			return nil, fmt.Errorf("sprites: choose bounce motion or saw cycle")
+		}
+		cycle, err := motion.NewSawToggle(*config.Saw)
+		if err != nil {
+			return nil, fmt.Errorf("sprites: axis flip saw: %w", err)
+		}
+		return &AxisFlip{config: config, saw: cycle}, nil
+	}
 	bank, err := motion.NewBounceBank(config.Motion)
 	if err != nil {
 		return nil, fmt.Errorf("sprites: axis flip motion: %w", err)
@@ -62,17 +74,35 @@ func NewAxisFlip(config AxisFlipConfig) (*AxisFlip, error) {
 
 // Pose returns the current face, signed scale and angle before the next Step.
 func (flip *AxisFlip) Pose() AxisFlipPose {
-	scaleY := flip.motion.At(0)
+	scaleY, back := 0.0, false
+	if flip.saw != nil {
+		scaleY, back = flip.saw.At(), flip.saw.Alternate()
+	} else {
+		scaleY = flip.motion.At(0)
+		back = scaleY <= flip.config.SwitchAt
+	}
 	pose := AxisFlipPose{Image: flip.config.Front, ScaleX: flip.config.ScaleX, ScaleY: scaleY, Angle: flip.config.FrontAngle}
-	if scaleY <= flip.config.SwitchAt {
+	if back {
 		pose.Image = flip.config.Back
 		pose.Angle = flip.config.BackAngle
 	}
 	return pose
 }
 
-func (flip *AxisFlip) Step()  { flip.motion.Step() }
-func (flip *AxisFlip) Reset() { flip.motion.Reset() }
+func (flip *AxisFlip) Step() {
+	if flip.saw != nil {
+		flip.saw.Step()
+	} else {
+		flip.motion.Step()
+	}
+}
+func (flip *AxisFlip) Reset() {
+	if flip.saw != nil {
+		flip.saw.Reset()
+	} else {
+		flip.motion.Reset()
+	}
+}
 
 // DrawAt centers the selected image at x,y. Position may come from any DCK
 // motion path or from the caller; drawing leaves the flip clock unchanged.
