@@ -129,6 +129,9 @@ func newTransport(c Config) (*Scrolling, error) {
 	if c.Recycled != nil {
 		count++
 	}
+	if c.RingLanes != nil {
+		count++
+	}
 	if c.Projected != nil {
 		count++
 	}
@@ -171,6 +174,15 @@ func newTransport(c Config) (*Scrolling, error) {
 		config := *c.Recycled
 		config.Vertical = config.Vertical || c.Vertical
 		s.backend = &recycledTransport{ring: r, config: config, x: c.X, y: c.Y}
+	} else if c.RingLanes != nil {
+		if c.X != 0 || c.Y != 0 || c.Vertical {
+			return nil, fmt.Errorf("scrolling: ring lane placement belongs in the composition")
+		}
+		lanes, err := NewRingLanes(*c.RingLanes)
+		if err != nil {
+			return nil, err
+		}
+		s.backend = lanes
 	} else if c.Projected != nil {
 		if c.X != 0 || c.Y != 0 || c.Vertical {
 			return nil, fmt.Errorf("scrolling: projected placement belongs in Projected.Draw")

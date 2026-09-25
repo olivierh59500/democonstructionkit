@@ -83,7 +83,7 @@ matches the previous implementation exactly.
 | Menu | TileAlphabet, atlas, background sampler, scrolling | Sprite ensemble's seven motion programs, camera parallax and atlas frame player. Door/input behavior stays in the menu. |
 | Loader | Bitmap font recipes and scrolling | Typed countdown, gain/fade and hold cues; preserve the initial pre-render and decrement boundary. |
 | Introduction | Wave/Profile/Cell strips, sparkles | Serializable logo warp program and pause/audio cues; preserve row-then-column order. |
-| Big Sprite | `sprites.ProjectedField` with strict-wrap vector lines, scrolling, `sprites.Group` Weave formation, `RasterOverlay` fill | Shared front/back flip material and synchronized dual-font transport. |
+| Big Sprite | `sprites.ProjectedField` with strict-wrap vector lines, `scrolling.RingLanes` dual-font transport, `sprites.Group` Weave formation, `RasterOverlay` fill | Shared front/back flip material. |
 | Colorshock II | Background sampler, scrolling | Position-table placement and two-frequency background orbit as an editable motion recipe. |
 | Ehhh | Scrolling, row profile, `sprites.Train` raster bars with phase-spaced cosine `motion.Wave` | Lookahead/landing control events and roller bounce states. |
 | Mega Scroller | Tiled background, WaveStrips, scrolling and directional `motion.BounceBank` text-surface transport | Mask material with authored source-atop blending. |
@@ -91,7 +91,7 @@ matches the previous implementation exactly.
 | Digi | Scrolling, lookup row warp, `sprites.Group` Weave formation with owned phase step | Shared bouncing logo material. |
 | LED Scroller | Bounded tiled background, cached bubble matrix, scrolling, `motion.WrapBank` backdrop/gradient offsets and harmonic `sprites.Group` with bounce envelope | Raster/color ramp material. |
 | 3D DOC | Scrolling, `PerspectiveCheckerboard`, `ProjectedBallTrain` | Move the paired inner/outer text row program into one parameterized scrolling recipe; audio cue remains scene data. |
-| Fullscreen | `BackgroundLayer` velocity, `sprites.Group` Weave formation, scrolling | Recycled multi-scroll lanes and raster-filled logo bar. |
+| Fullscreen | `BackgroundLayer` velocity, `sprites.Group` Weave formation, `scrolling.Config.RingLanes` with paced vertical wrap | Raster-filled logo bar. |
 | Starwars | `Config.Crawl`, RowProjection, scrolling, `sprites.ProjectedField`, `RasterOverlay` source-in fill | Sampled sprite train and dual-color wave strip material. |
 | Knucklebuster | Scrolling and sprite images | Seeded hit trigger with hold/release envelope; optional music signal must be a distinct mode. |
 | DNA | FeedbackDNA, wave strips, projected discs | Two-sided twisting ribbon with exact front/back occlusion and sampled row-source warp. |

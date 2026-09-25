@@ -53,6 +53,7 @@ type Config struct {
 	Vertical, Repeat bool
 	Page             *PageConfig        // Optional multiline vertical layout; Vertical alone is a glyph column.
 	Recycled         *RecycledConfig    // Authored recycled-slot transport, advanced once per Update.
+	RingLanes        *RingLanesConfig   // Synchronized recycled-slot lanes with paced placement.
 	Projected        *ProjectedConfig   // Authored visible-slot plane transport, advanced once per Update.
 	Bands            *BitmapBandsConfig // Bounded repeated text lanes.
 	Slots            *BitmapSlotsConfig // Recycled glyphs with pose mapping and tangent orientation.
@@ -171,7 +172,7 @@ func New(c Config) (*Scrolling, error) {
 	if c.MaxGlyphsPerDraw < 1 || c.MaxGlyphsPerDraw > 1<<24 {
 		return nil, fmt.Errorf("scrolling: invalid automatic draw budget")
 	}
-	if c.Recycled != nil || c.Projected != nil || c.Sliced != nil || c.Crawl != nil || c.Bands != nil || c.Slots != nil || c.Feed != nil || c.Scanline != nil || c.Profiled != nil || c.RowColumn != nil || c.RowBands != nil {
+	if c.Recycled != nil || c.RingLanes != nil || c.Projected != nil || c.Sliced != nil || c.Crawl != nil || c.Bands != nil || c.Slots != nil || c.Feed != nil || c.Scanline != nil || c.Profiled != nil || c.RowColumn != nil || c.RowBands != nil {
 		return newTransport(c)
 	}
 	if c.Page != nil {

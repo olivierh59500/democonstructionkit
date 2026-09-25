@@ -182,6 +182,28 @@ func NewRecycledScroll(grid scrolling.BitmapGrid) (*scrolling.Scrolling, error) 
 }
 ```
 
+For several simultaneous bitmap scrollers, configure independent `RingConfig`
+values in `RingLanesConfig` and still enter through `scrolling.New`. Fullscreen
+uses seven fonts/messages lanes with a shared vertical shift every 128 ticks;
+`ShiftFirst` fixes the first movement boundary, and a `motion.WrapLimit` recycles
+each lane without moving the text itself:
+
+```go
+laneConfig := scrolling.RingLanesConfig{
+    Rings: ringConfigs, Y: []float64{-28, 52, 132, 212, 292, 372, 452},
+    ShiftEvery: 128, ShiftFirst: 130, ShiftVelocity: []float64{2},
+    ShiftUpper: &motion.WrapLimit{Boundary: 540, Restart: -28, Inclusive: true},
+}
+scroll, err := scrolling.New(scrolling.Config{RingLanes: &laneConfig})
+scroll.Update(frame)
+scroll.Draw(textLayer)
+```
+
+Use `scrolling.NewRingLanes` directly when each ring needs its own destination:
+Big Sprite draws two synchronized fonts into separate masks with `DrawLaneAt`.
+The component owns both glyph transports and lane positions; drawing never
+advances either clock, and no message-width image is allocated.
+
 `BitmapGrid` has independent `Width`, `Height`, `Columns`, `Order` or `First`,
 including fractional cells and an optional `ColumnSpan`. Regular `Face` uses
 `font.NewGrid` or `font.New` for proportional advances, bearings, gaps, aliases,
@@ -1524,6 +1546,7 @@ remain available for effects with different behavior.
 | `scrolling.Config.Profiled` | Independent proportional-text and floating-profile clocks with clipped strip sampling | TeamG1 main scrolling |
 | `scrolling.Config.RowColumn` | Fixed-cell bitmap text, sampled source rows and independent destination columns | DMA 3D and Replicants |
 | `scrolling.Config.RowBands` | Circular bitmap text, ordered row displacement passes and a final crop | 3D DOC intro and main screen |
+| `scrolling.Config.RingLanes` | Independent fonts and texts, synchronized slot updates, paced vertical motion and exact wrap | Cuddly Fullscreen and Big Sprite |
 | `composite.ProfileImage` | Cached source rows, editable displacement table, motion phase and finite wrap copies | TeamG1 logo |
 | `plasma.HarmonicImage` | Harmonic kernel, reusable CPU pixels, live GPU surface and dirty-frame upload | TeamG1 plasma |
 | `sprites.Group` with `CircleFormation` | Indexed circular poses, secondary harmonic motion and independent sprite scales | TeamG1 twelve-logo formation |
