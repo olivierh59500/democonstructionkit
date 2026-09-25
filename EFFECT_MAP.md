@@ -2,8 +2,8 @@
 
 This map covers every DCK production under `demos/` except FR-010 and Second
 Reality. It was checked against the screen implementations and the detailed
-workspace audits on 2026-09-23; the Ehhh, LED and Union wrap-transport rows
-were updated on 2026-09-25. A complete component owns its transport,
+workspace audits on 2026-09-23; the wrap/train inventory was checked across
+all 20 DCK repositories on 2026-09-25. A complete component owns its transport,
 animation state, geometry and rendering resources. The production supplies
 assets, messages, presets, input and scene order. A shared draw helper alone is
 not counted as a complete effect.
@@ -11,6 +11,37 @@ not counted as a complete effect.
 `Shared` names a complete component already used by that screen. `Extract next`
 identifies remaining reusable logic and the parameters that must stay editable.
 The entries are acceptance work, not claims that all screens are already small.
+
+## Cross-catalog check: wrapped motion and image trains
+
+The DCK implementations in all 20 demo repositories, including every Cuddly
+and Union screen, were searched for local threshold resets, per-image phase
+loops and moving raster/background positions. This classification concerns the
+`WrapBank`, `BounceBank` and `sprites.Train` families, not every effect in a
+production. Preserved original implementations remain unchanged.
+
+| Repository | Result for these effect families |
+| --- | --- |
+| `3d_doc` | Projected balls and checkerboard use their own shared components; no equivalent local wrap/train controller found. |
+| `bilizir-demo` | Water reflection, warped logo, raster and cube already use their shared components; text transport is a different scrolling mode. |
+| `dma-3d` | Star field and mesh animation are depth/geometry effects, not an image train or threshold wrap. |
+| `dma-is-back` | Cube, intro feed, CRT and scanline scroll use their dedicated components; timed cues are separate work. |
+| `go-cocoisthebest` | Sprite grid/translation already uses `sprites.Group`; scanline scroll and cube are separate families. |
+| `go-cuddlymenu` | Ehhh raster train, LED backdrop/gradient wraps and LED amplitude bounce are shared. The Mega Scroller's one-time entrance bounce and other glyph ensembles need separate formation/envelope parameters. |
+| `go-dom-intro` | Both vertically wrapped raster/background offsets use `WrapBank`; star atlas choreography remains local. |
+| `go-fr010` | Software-rendered parts were searched; no direct GPU image-train or simple threshold-wrap equivalent was migrated. |
+| `go-multiscreen` | Embedded Viva title rasters and TCB mountain strips use the same DCK presets as their standalone versions. The camera tour is a separate director effect. |
+| `go-secondreality` | Indexed software effects were searched separately; their palette/VRAM clocks are not interchangeable with these Ebitengine image controllers. |
+| `go-uniondemo` | Replicants raster trains, Beat Dis/Wow/TNT2/Level 16 wraps and Disk Copier's six-strip raster are shared. Beat Dis letters still combine a common orbit with per-letter waves. |
+| `go-vectorballs` | Ball projection, morphing and reflection are different shared families; no direct image train/wrap candidate found. |
+| `grodan-kvack-kvack-demo` | Its phased twelve-sprite chain changes its vertical envelope and spacing; a fixed-axis `Train` would change the artwork. A configurable formation is the next candidate. |
+| `megatwist` | Glowing sprites use two-frequency motion, clamping and a custom glow painter; this is beyond a single-axis `Train`. |
+| `nonameno-demo` | Text-page glyphs use staggered enter/exit and depth tweening, not cyclic image transport. |
+| `phenomena-dna-scroll-intro` | Raster-bar thresholds trigger scene-state changes; treating them as a periodic wrap would change the sequence. |
+| `tcb-multi-plane-3d-scroller` | All 32 mountain strips now use the relative `WrapBank` preset also used by Multiscreen. |
+| `tcb-replicants-demo` | Stepped block reveal, zoom bank and layered stars are different motion/state programs. |
+| `teamg1-demo` | Circular sprite formation already uses `sprites.Group`; other timed presentation cues remain local. |
+| `viva_tcb` | Paired title rasters now use the shared `WrapBank` preset; harmonic logos remain a separate formation. |
 
 ## Individual demos and intro screens
 
@@ -23,8 +54,8 @@ The entries are acceptance work, not claims that all screens are already small.
 | DMA Is Back, main | `Config.Scanline`, ImageGrid, NestedOrbit, JellyCube | Soundtrack start and whole-scene fade can use the same cue/envelope system as other intros. |
 | Coco, intro | `Config.Feed`, configurable CRTOverlay | Intro-to-main music cue. |
 | Coco, main | `Config.Scanline`, SolidCubeBatch, sprites.Group grid/translation, shared font metrics and `CopperBars` | Repeating rotozoom and remaining title-layer presentation. |
-| DOM intro | Atlas, synchronized FontProgram, scrolling | Whole-bank font switch triggered at viewport entry; timed raster backgrounds and animated star atlas instances. |
-| Multiscreen, four embedded productions | SolidCube, sampled DNA and projected-plane engines, atlas recipes, `CopperBars` in Coco | Make the four production scenes reusable constructors rather than copies of their standalone controllers. |
+| DOM intro | Atlas, synchronized FontProgram, scrolling, `motion.WrapBank` background and raster offsets | Whole-bank font switch triggered at viewport entry; animated star atlas instances. |
+| Multiscreen, four embedded productions | SolidCube, sampled DNA and projected-plane engines, atlas recipes, `CopperBars` in Coco, shared Viva raster and TCB mountain `motion.WrapBank` presets | Make the four production scenes reusable constructors rather than copies of their standalone controllers. |
 | Multiscreen, camera tour | Layer/viewport helpers | Camera/zoom director with visibility culling, retained outputs and serialized handoffs. |
 | Vectorballs | Projected shape factories, reflection | Reusable point-morph/deformation/action sequence with explicit inherited vs cleared settings and smooth handoffs. |
 | Grodan | Atlas, scrolling and bounded `Background` repetition | Phased sprite chain with count, image selection, spacing and wave envelope; repeated vertical text columns. |
@@ -33,11 +64,11 @@ The entries are acceptance work, not claims that all screens are already small.
 | Nonameno, stars | `sprites.ProjectedField`, editable radial pattern and vector pixel/trail material | The star field is complete; staggered text-page choreography is tracked below. |
 | Nonameno, text pages | Atlas | Staggered per-glyph enter/exit with scale/depth, easing, delays and completion barrier; baseline sine scroll. |
 | Phenomena DNA intro | Atlas, DNAFrames, sliced transport | Whole screen's two-pixel insertion, loop-start and control events as a reusable configuration; separate intro/outro reveal and bounce cues. |
-| TCB multiplane | Projected scrolling, font-independent forms, background bands | Logo row warp and central flip; share screen recipe with Multiscreen and Union while preserving phase-per-visible-slot timing. |
+| TCB multiplane | Projected scrolling, font-independent forms, background bands, relative `motion.WrapBank` mountain transport | Logo row warp and central flip; share screen recipe with Multiscreen and Union while preserving phase-per-visible-slot timing. |
 | Replicants | Atlas, `Config.RowColumn` with variable-speed controls | Stepped block reveal, quantized logo zoom bank and layered stars. |
 | TeamG1, intro | `Config.Feed` with progressive right-edge entry, atlas, flat TimedCRTOverlay | Message and intro-to-main cue times remain production data. |
 | TeamG1, main | TexturedCube, HarmonicImage, ProfileImage, `Config.Profiled`, sprites.Group circular formation | Timed scene/audio cues and whole-scene presentation remain composition data. |
-| Viva TCB | Atlas, scrolling and staged `RotozoomBackground` | Four pseudo-3D glyph banks with per-glyph scale/order/snap; ten-logo harmonic formation; raster title material. |
+| Viva TCB | Atlas, scrolling, staged `RotozoomBackground` and shared `motion.WrapBank` title raster | Four pseudo-3D glyph banks with per-glyph scale/order/snap; ten-logo harmonic formation; raster title material. |
 
 Second Reality remains outside this full-screen inventory, but its Rotozoomer
 now uses the `indexed.Rotozoom256` backend. The live RGBA tile used by Viva and
@@ -58,7 +89,7 @@ matches the previous implementation exactly.
 | Mega Scroller | Tiled background, WaveStrips, scrolling | Ping-pong text transport and mask material with authored source-atop blending. |
 | Spreadpoint | `Config.Bands`, feedback DNA, atlas | Card/audio cue sequence, 20-ball formation and raster-filled logo material. |
 | Digi | Scrolling, lookup row warp, Weave formation | Shared bouncing logo and nested-sine letter formation preset with independent phases. |
-| LED Scroller | Bounded tiled background, cached bubble matrix, scrolling, `motion.WrapBank` backdrop and gradient offsets | Raster/color ramp material and amplitude-modulated letter ensemble. |
+| LED Scroller | Bounded tiled background, cached bubble matrix, scrolling, `motion.WrapBank` backdrop/gradient offsets and `motion.BounceBank` letter-amplitude envelope | Raster/color ramp material and phase-spaced letter ensemble. |
 | 3D DOC | Scrolling, `PerspectiveCheckerboard`, `ProjectedBallTrain` | Move the paired inner/outer text row program into one parameterized scrolling recipe; audio cue remains scene data. |
 | Fullscreen | `BackgroundLayer` velocity, Weave formation, scrolling | Recycled multi-scroll lanes and raster-filled logo bar. |
 | Starwars | `Config.Crawl`, RowProjection, scrolling, `sprites.ProjectedField`, `RasterOverlay` source-in fill | Sampled sprite train and dual-color wave strip material. |
@@ -84,7 +115,7 @@ matches the previous implementation exactly.
 | TNT Crew 2 | Background sampler, BitmapText.DrawWindow, `motion.WrapBank` three-layer parallax and mutable speeds | Per-key control mapping remains scene data. |
 | Level 16 | Vertical scrolling, background sampler, NestedOrbit, `motion.WrapBank` water and raster offsets | Raster/water material and authored layer occlusion. |
 | Multi-Plane | Bands, projected scrolling | Logo row lookup/center flip; package the form program and strip background as one editable screen recipe. |
-| Disk Copier | Bitmap recipes and sprite regions | Stepped color envelope, LED/LCD atlas player and state/cue program. |
+| Disk Copier | Bitmap recipes, sprite regions and `motion.WrapBank` six-strip raster offset | Stepped color envelope, LED/LCD atlas player and state/cue program. |
 
 ## Extraction order and acceptance
 

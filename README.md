@@ -488,6 +488,11 @@ for i, image := range layers {
 current phase, so controls can affect each parallax layer independently.
 Calling `Step` before or after drawing selects the production's original
 update boundary. The bank uses no surface and allocates nothing per step.
+Set `WrapLimit.Relative` when crossing a boundary should add a period to the
+overshooting position instead of jumping to a fixed restart coordinate. The
+editable `presets.VivaRasterWrapConfig` and `presets.TCBMountainWrapConfig`
+keep the corresponding standalone and Multiscreen bands synchronized without
+duplicating their initial offsets, velocities or wrap rules.
 
 ### Animate a repeated texture with a rotozoom
 
@@ -1118,6 +1123,11 @@ go run ./cmd/checkboundaries -demos ../../demos
 go run ./cmd/checkeffects -demos ../../demos
 go run ./cmd/fidelity -demo grodan-kvack-kvack-demo
 ```
+
+`cmd/fidelity -reference <git-revision> -frames 0,1,60,240` compares a new
+production commit to a chosen earlier commit instead of the pinned original.
+This is useful for checking an effect extraction against its immediately
+preceding renderer at update and wrap boundaries.
 
 Run production suites from their own repositories as well as the module tests;
 the preserved original packages and DCK consumers have separate entry points.

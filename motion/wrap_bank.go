@@ -6,10 +6,12 @@ import (
 )
 
 // WrapLimit replaces a position after it crosses Boundary. Inclusive also
-// wraps when the position lands exactly on the boundary.
+// wraps when the position lands exactly on the boundary. Relative adds Restart
+// to the crossed position instead of replacing it, preserving overshoot.
 type WrapLimit struct {
 	Boundary, Restart float64
 	Inclusive         bool
+	Relative          bool
 }
 
 // WrapBankConfig gives independent layers their initial offsets and speeds.
@@ -77,10 +79,18 @@ func (bank *WrapBank) Step() {
 	for index := range bank.positions {
 		position := bank.positions[index] + bank.velocity[index]
 		if limit := bank.config.Upper; limit != nil && (position > limit.Boundary || limit.Inclusive && position >= limit.Boundary) {
-			position = limit.Restart
+			if limit.Relative {
+				position += limit.Restart
+			} else {
+				position = limit.Restart
+			}
 		}
 		if limit := bank.config.Lower; limit != nil && (position < limit.Boundary || limit.Inclusive && position <= limit.Boundary) {
-			position = limit.Restart
+			if limit.Relative {
+				position += limit.Restart
+			} else {
+				position = limit.Restart
+			}
 		}
 		bank.positions[index] = position
 	}

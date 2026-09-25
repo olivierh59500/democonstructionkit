@@ -70,6 +70,7 @@ func run() error {
 	kitRoot := flag.String("kit", ".", "construction kit checkout")
 	out := flag.String("out", "captures/fidelity", "comparison directory")
 	referenceOnly := flag.Bool("reference-only", false, "capture the pinned original only")
+	reference := flag.String("reference", "", "optional Git revision to compare instead of the pinned original")
 	frameList := flag.String("frames", "0,1,60,240,600,1200,2400,4800", "comma-separated capture ticks")
 	flag.Parse()
 	p, ok := probes[*demo]
@@ -88,18 +89,20 @@ func run() error {
 	if err != nil {
 		return err
 	}
-	auditData, err := os.ReadFile(filepath.Join(root, "docs/source-audit.json"))
-	if err != nil {
-		return err
-	}
-	var audit []struct{ Name, Revision string }
-	if err = json.Unmarshal(auditData, &audit); err != nil {
-		return err
-	}
-	revision := ""
-	for _, a := range audit {
-		if a.Name == *demo {
-			revision = a.Revision
+	revision := *reference
+	if revision == "" {
+		auditData, err := os.ReadFile(filepath.Join(root, "docs/source-audit.json"))
+		if err != nil {
+			return err
+		}
+		var audit []struct{ Name, Revision string }
+		if err = json.Unmarshal(auditData, &audit); err != nil {
+			return err
+		}
+		for _, a := range audit {
+			if a.Name == *demo {
+				revision = a.Revision
+			}
 		}
 	}
 	if revision == "" {

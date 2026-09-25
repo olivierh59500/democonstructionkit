@@ -96,3 +96,17 @@ func TestWrapBankPreservesInclusiveSingleBoundaryLoops(t *testing.T) {
 		t.Fatal("raster did not wrap after crossing the lower boundary")
 	}
 }
+
+func TestWrapBankRelativeRulePreservesOvershoot(t *testing.T) {
+	bank, err := NewWrapBank(WrapBankConfig{
+		Start: []float64{-252.5, -255}, Velocity: []float64{-8, -2.5},
+		Lower: &WrapLimit{Boundary: -256, Restart: 256, Inclusive: true, Relative: true},
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	bank.Step()
+	if bank.At(0) != -4.5 || bank.At(1) != -1.5 {
+		t.Fatalf("relative wrap lost fractional overshoot: %v, %v", bank.At(0), bank.At(1))
+	}
+}
