@@ -2,8 +2,8 @@
 
 This map covers every DCK production under `demos/` except FR-010 and Second
 Reality. It was checked against the screen implementations and the detailed
-workspace audits on 2026-09-23; the Ehhh and Union Replicants rows were updated
-on 2026-09-25. A complete component owns its transport,
+workspace audits on 2026-09-23; the Ehhh, LED and Union wrap-transport rows
+were updated on 2026-09-25. A complete component owns its transport,
 animation state, geometry and rendering resources. The production supplies
 assets, messages, presets, input and scene order. A shared draw helper alone is
 not counted as a complete effect.
@@ -58,7 +58,7 @@ matches the previous implementation exactly.
 | Mega Scroller | Tiled background, WaveStrips, scrolling | Ping-pong text transport and mask material with authored source-atop blending. |
 | Spreadpoint | `Config.Bands`, feedback DNA, atlas | Card/audio cue sequence, 20-ball formation and raster-filled logo material. |
 | Digi | Scrolling, lookup row warp, Weave formation | Shared bouncing logo and nested-sine letter formation preset with independent phases. |
-| LED Scroller | Bounded tiled background, cached bubble matrix, scrolling | Raster/color ramp material and amplitude-modulated letter ensemble. |
+| LED Scroller | Bounded tiled background, cached bubble matrix, scrolling, `motion.WrapBank` backdrop and gradient offsets | Raster/color ramp material and amplitude-modulated letter ensemble. |
 | 3D DOC | Scrolling, `PerspectiveCheckerboard`, `ProjectedBallTrain` | Move the paired inner/outer text row program into one parameterized scrolling recipe; audio cue remains scene data. |
 | Fullscreen | `BackgroundLayer` velocity, Weave formation, scrolling | Recycled multi-scroll lanes and raster-filled logo bar. |
 | Starwars | `Config.Crawl`, RowProjection, scrolling, `sprites.ProjectedField`, `RasterOverlay` source-in fill | Sampled sprite train and dual-color wave strip material. |
@@ -74,15 +74,15 @@ matches the previous implementation exactly.
 | Introduction | Image repetition, CellWarp, bitmap recipes | Reusable harmonic cell-offset program and timed music/still cues. |
 | Menu | Scrolling, background sampler, sprite instances | Walkable panorama/parallax, palette cycling and uncover wipe; door navigation stays local. |
 | Loader | Reveal and bitmap recipes | Audio-timed cue wrapper; retain column-major reverse-row glyph order. |
-| Beat Dis | Background sampler, scrolling | Phase-spaced letter ensemble with global wobble. |
+| Beat Dis | Background sampler, scrolling, `motion.WrapBank` wallpaper and pattern offsets | Phase-spaced letter ensemble with global wobble. |
 | Delta Force | YM register snapshots, scrolling, WaveStrips | Register-change trigger and seven-tick sprite release; source-alpha raster fill. |
 | TNT Crew 3 | Mesh, geometry, bitmap recipes | Model-group draw material and camera recession handoff; authored shapes stay data. |
-| Wow Scroller | Scrolling, `RasterOverlay` source-atop fill | Cropped oversized-image repetition with explicit wrap periods. |
+| Wow Scroller | Scrolling, `RasterOverlay` source-atop fill, `motion.WrapBank` paired panel offsets | Cropped oversized-image repetition with explicit wrap periods. |
 | Hidden | PointHistory, sprite instances | Delayed pointer trail, palette cycle and source clip. |
 | Starballs | Camera, scrolling, `sprites.ProjectedField` with two materials, live count and depth opacity | Compose the two field materials and logo mask as an editable screen layer recipe. |
 | Replicants | Atlas, scrolling, `RasterOverlay` fill, `motion.CuedFormation` letter paths, `sprites.Train` rasters driven by `motion.BounceBank` | Historically reset scroll clock. |
-| TNT Crew 2 | Background sampler, BitmapText.DrawWindow | Layered parallax phase/velocity program with user direction and exact reset policy. |
-| Level 16 | Vertical scrolling, background sampler, NestedOrbit | Raster/water material and authored layer occlusion. |
+| TNT Crew 2 | Background sampler, BitmapText.DrawWindow, `motion.WrapBank` three-layer parallax and mutable speeds | Per-key control mapping remains scene data. |
+| Level 16 | Vertical scrolling, background sampler, NestedOrbit, `motion.WrapBank` water and raster offsets | Raster/water material and authored layer occlusion. |
 | Multi-Plane | Bands, projected scrolling | Logo row lookup/center flip; package the form program and strip background as one editable screen recipe. |
 | Disk Copier | Bitmap recipes and sprite regions | Stepped color envelope, LED/LCD atlas player and state/cue program. |
 

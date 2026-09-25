@@ -464,6 +464,31 @@ single-quad path remains independent of tile count. Excessive-density frames
 are skipped as a whole and reported by `Background.Err()` and the layer's next
 Update. Saved-project compilation checks this budget before animation starts.
 
+### Keep mutable backdrop offsets within authored wrap rules
+
+`motion.NewWrapBank` shares the stateful part of repeated scenery. Each layer
+has a start offset and velocity; optional lower/upper rules choose their own
+boundary, restart position and strict or inclusive comparison. This preserves
+historical entrance frames and exact reset ticks while `Background.DrawAt`
+continues to own cropping, repetition and blending:
+
+```go
+offsets, err := motion.NewWrapBank(motion.WrapBankConfig{
+    Start: []float64{-640, -640, -640}, Velocity: []float64{-2, -4, -6},
+    Lower: &motion.WrapLimit{Boundary: -640, Restart: 0},
+    Upper: &motion.WrapLimit{Boundary: 0, Restart: -640},
+})
+offsets.Step()
+for i, image := range layers {
+    background.DrawAt(screen, image, offsets.At(i), 0)
+}
+```
+
+`SetVelocity`, `AddVelocity` and `ReverseAll` change speeds without moving the
+current phase, so controls can affect each parallax layer independently.
+Calling `Step` before or after drawing selects the production's original
+update boundary. The bank uses no surface and allocates nothing per step.
+
 ### Animate a repeated texture with a rotozoom
 
 `composite.RotozoomBackground` owns the update/draw boundary and renders one
