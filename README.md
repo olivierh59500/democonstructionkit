@@ -2245,6 +2245,27 @@ supplies the other authored recipe. Tables are compiled once, outside drawing.
 `BilizirCopperOffsets` also supplies the exact quantized copper table shared by
 Bilizir, Coco and Multiscreen, with independent storage for each caller.
 
+For profiles with holds, gaps or later writes that overwrite earlier samples,
+use `motion.CompileWaveProgram`. `WaveAppend` appends a section; any nonnegative
+`At` writes at an absolute index. `SampleStart` keeps a continuous sine phase
+when only part of its range is written:
+
+```go
+program := presets.CuddlyDigiWaveProgram()
+program[4].Section.Offset = -30 // Change one overlapping hold.
+samples, err := motion.CompileWaveProgram(program...)
+if err != nil { return err }
+profile := composite.ProfileStrips{Offsets: samples, Speed: 1, Thickness: 1}
+```
+
+`presets.CuddlyIntroWaveProgram` and `CuddlyEhhhProfile` use the same compiled
+wave sections. Ehhh reuses Digi's first 763 samples at half amplitude before
+its own tail; `CuddlyEhhhTailWaveProgram` exposes that tail for variations.
+All compilation happens once at setup, and profile drawing samples a finite
+table without trigonometry or per-frame allocation. Thirty capture pairs
+through late profile wraps in the three Cuddly screens match their previous
+renderers pixel for pixel.
+
 The multi-plane scrolling recipe uses the common constructor:
 
 ```go

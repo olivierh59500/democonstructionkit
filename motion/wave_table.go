@@ -13,13 +13,15 @@ type WaveTerm struct {
 	Cosine                 bool
 }
 
-// WaveSection is one finite part of a lookup table. Its local sample index
-// starts at zero. Empty Terms produces a hold at Offset. Sections may be
-// reordered or repeated to program scanline, logo, raster or sprite motion.
+// WaveSection is one finite part of a lookup table. SampleStart shifts its
+// local index from zero to a position in a longer source wave. Empty Terms
+// produces a hold at Offset. Sections may be reordered or repeated to program
+// scanline, logo, raster or sprite motion.
 type WaveSection struct {
-	Samples int
-	Offset  float64
-	Terms   []WaveTerm
+	Samples     int
+	SampleStart int // Source index for a segment cut from a longer continuous wave.
+	Offset      float64
+	Terms       []WaveTerm
 }
 
 // CompileWaveTable precomputes a waveform once; the renderer can subsequently
@@ -46,7 +48,7 @@ func CompileWaveTable(sections ...WaveSection) ([]float64, error) {
 		for i := 0; i < section.Samples; i++ {
 			value := section.Offset
 			for _, term := range section.Terms {
-				phase := float64(i)*term.Step + term.Phase
+				phase := (float64(i)+float64(section.SampleStart))*term.Step + term.Phase
 				var wave float64
 				if term.Cosine {
 					wave = math.Cos(phase)

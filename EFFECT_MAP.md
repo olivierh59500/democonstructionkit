@@ -82,13 +82,13 @@ matches the previous implementation exactly.
 | --- | --- | --- |
 | Menu | TileAlphabet, `sprites.Atlas` image banks, `sprites.FrameSequence` character animation, `sprites.FormationCarousel` with seven compiled formula modes, `composite.CachedTileParallax`, `motion.CameraFollow`, scrolling | Door/input semantics and map content stay local. |
 | Loader | Bitmap font recipes, scrolling, `timeline.Countdown` and `timeline.CueClock` overlapping fade/hold windows | Bind the typed volume envelope to the playback host; initial pre-render and decrement boundary remain authored. |
-| Introduction | Wave/Profile/Cell strips, sparkles | Serializable logo warp program and pause/audio cues; preserve row-then-column order. |
+| Introduction | Wave/Profile/Cell strips, sparkles, compiled `motion.WaveWrite` deformation program | Serializable logo warp program and pause/audio cues; preserve row-then-column order. |
 | Big Sprite | `sprites.ProjectedField` with strict-wrap vector lines, `scrolling.RingLanes` dual-font transport, `sprites.Group` Weave formation, `RasterOverlay` fill, `sprites.AxisFlip` front/back material | Authored layer placement and image order stay scene data. |
 | Colorshock II | Background sampler, scrolling | Position-table placement and two-frequency background orbit as an editable motion recipe. |
-| Ehhh | Scrolling, row profile, `sprites.Train` raster bars with phase-spaced cosine `motion.Wave`, cue-paced roller `motion.WaveClock` | Lookahead/landing control events and authored roller cue mapping. |
+| Ehhh | Scrolling, compiled row-profile program shared with Digi, `sprites.Train` raster bars with phase-spaced cosine `motion.Wave`, cue-paced roller `motion.WaveClock` | Lookahead/landing control events and authored roller cue mapping. |
 | Mega Scroller | Tiled background, WaveStrips, scrolling and directional `motion.BounceBank` text-surface transport | Mask material with authored source-atop blending. |
 | Spreadpoint | `Config.Bands`, feedback DNA, atlas | Card/audio cue sequence, 20-ball formation and raster-filled logo material. |
-| Digi | Scrolling, lookup row warp, `sprites.Group` Weave formation with owned phase step, rectified `motion.WaveClock` for logo and scroll | Shared bouncing logo material. |
+| Digi | Scrolling, compiled overlapping `motion.WaveWrite` row warp, `sprites.Group` Weave formation with owned phase step, rectified `motion.WaveClock` for logo and scroll | Shared bouncing logo material. |
 | LED Scroller | Bounded tiled background, cached bubble matrix, scrolling, `motion.WrapBank` backdrop/gradient offsets, harmonic `sprites.Group` and rectified `motion.WaveClock` | Raster/color ramp material. |
 | 3D DOC | Scrolling, paired `composite.RowWarp` source-sampling programs, `PerspectiveCheckerboard`, `ProjectedBallTrain`, first-main-tick `timeline.IntroHandoff` cue | Raster-filled inner text material remains scene composition data. |
 | Fullscreen | `BackgroundLayer` velocity, `sprites.Group` Weave formation, `scrolling.Config.RingLanes` with paced vertical wrap | Raster-filled logo bar. |
