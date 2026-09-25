@@ -27,7 +27,7 @@ production. Preserved original implementations remain unchanged.
 | `dma-3d` | Star field and mesh animation are depth/geometry effects, not an image train or threshold wrap. |
 | `dma-is-back` | Cube, intro feed, CRT and scanline scroll use their dedicated components; timed cues are separate work. |
 | `go-cocoisthebest` | Sprite grid/translation already uses `sprites.Group`; scanline scroll and cube are separate families. |
-| `go-cuddlymenu` | Ehhh raster train, LED backdrop/gradient wraps and harmonic letters, plus Big Sprite/Fullscreen/Digi Weave groups now use shared formation controllers. Mega Scroller's one-time entrance bounce remains a separate motion rule. |
+| `go-cuddlymenu` | Ehhh raster train, LED backdrop/gradient wraps and harmonic letters, Big Sprite/Fullscreen/Digi Weave groups, and Mega Scroller's directional entrance bounce now use shared controllers. |
 | `go-dom-intro` | Both vertically wrapped raster/background offsets use `WrapBank`; star atlas choreography remains local. |
 | `go-fr010` | Software-rendered parts were searched; no direct GPU image-train or simple threshold-wrap equivalent was migrated. |
 | `go-multiscreen` | Embedded Viva title rasters and TCB mountain strips use the same DCK presets as their standalone versions. The camera tour is a separate director effect. |
@@ -86,7 +86,7 @@ matches the previous implementation exactly.
 | Big Sprite | `sprites.ProjectedField` with strict-wrap vector lines, scrolling, `sprites.Group` Weave formation, `RasterOverlay` fill | Shared front/back flip material and synchronized dual-font transport. |
 | Colorshock II | Background sampler, scrolling | Position-table placement and two-frequency background orbit as an editable motion recipe. |
 | Ehhh | Scrolling, row profile, `sprites.Train` raster bars with phase-spaced cosine `motion.Wave` | Lookahead/landing control events and roller bounce states. |
-| Mega Scroller | Tiled background, WaveStrips, scrolling | Ping-pong text transport and mask material with authored source-atop blending. |
+| Mega Scroller | Tiled background, WaveStrips, scrolling and directional `motion.BounceBank` text-surface transport | Mask material with authored source-atop blending. |
 | Spreadpoint | `Config.Bands`, feedback DNA, atlas | Card/audio cue sequence, 20-ball formation and raster-filled logo material. |
 | Digi | Scrolling, lookup row warp, `sprites.Group` Weave formation with owned phase step | Shared bouncing logo material. |
 | LED Scroller | Bounded tiled background, cached bubble matrix, scrolling, `motion.WrapBank` backdrop/gradient offsets and harmonic `sprites.Group` with bounce envelope | Raster/color ramp material. |

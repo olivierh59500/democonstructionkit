@@ -50,3 +50,33 @@ func TestBounceBankCanReverseAtBoundaryAndClamp(t *testing.T) {
 		t.Fatalf("reversed directions = %v, %v", bank.At(0), bank.At(1))
 	}
 }
+
+func TestBounceBankDirectionalEntranceMatchesMegaScroller(t *testing.T) {
+	if _, err := NewBounceBank(BounceBankConfig{Start: []float64{45}, Velocity: []float64{-2}, Min: -70, Max: 20}); err == nil {
+		t.Fatal("accepted an out-of-range start without entrance mode")
+	}
+	bank, err := NewBounceBank(BounceBankConfig{
+		Start: []float64{45}, Velocity: []float64{-2}, Min: -70, Max: 20,
+		Inclusive: true, Directional: true, AllowOutsideStart: true,
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	position, velocity := 45.0, -2.0
+	for tick := 0; tick < 1000; tick++ {
+		position += velocity
+		if position >= 20 {
+			velocity = -2
+		}
+		if position <= -70 {
+			velocity = 2
+		}
+		bank.Step()
+		if got := bank.At(0); got != position {
+			t.Fatalf("tick %d = %v, want %v", tick, got, position)
+		}
+	}
+	if allocations := testing.AllocsPerRun(100, bank.Step); allocations != 0 {
+		t.Fatalf("directional bounce allocates %v times", allocations)
+	}
+}

@@ -10,10 +10,12 @@ import (
 // have its own velocity. By default, direction reverses only after crossing a
 // bound, preserving the overshoot used by many raster and sprite effects.
 type BounceBankConfig struct {
-	Start, Velocity []float64
-	Min, Max        float64
-	Inclusive       bool // Reverse when touching a bound as well as crossing it.
-	Clamp           bool // Clamp an overshoot to the nearest bound.
+	Start, Velocity   []float64
+	Min, Max          float64
+	Inclusive         bool // Reverse when touching a bound as well as crossing it.
+	Clamp             bool // Clamp an overshoot to the nearest bound.
+	Directional       bool // Reverse only when moving outward through a bound.
+	AllowOutsideStart bool // Allow a one-time entrance from beyond the travel bounds.
 }
 
 // BounceBank keeps the positions and directions of a reusable raster, sprite
@@ -31,7 +33,7 @@ func NewBounceBank(config BounceBankConfig) (*BounceBank, error) {
 		return nil, fmt.Errorf("motion: invalid bounce bank size or bounds")
 	}
 	for _, start := range config.Start {
-		if !finite(start) || start < config.Min || start > config.Max {
+		if !finite(start) || !config.AllowOutsideStart && (start < config.Min || start > config.Max) {
 			return nil, fmt.Errorf("motion: invalid bounce start")
 		}
 	}
@@ -55,10 +57,15 @@ func (bank *BounceBank) At(index int) float64 { return bank.positions[index] }
 // Step advances every item once without allocating.
 func (bank *BounceBank) Step() {
 	for index := range bank.positions {
-		position := bank.positions[index] + bank.velocity[index]
+		velocity := bank.velocity[index]
+		position := bank.positions[index] + velocity
 		crossed := position < bank.config.Min || position > bank.config.Max
 		if bank.config.Inclusive {
 			crossed = position <= bank.config.Min || position >= bank.config.Max
+		}
+		if bank.config.Directional {
+			crossed = velocity < 0 && (position < bank.config.Min || bank.config.Inclusive && position <= bank.config.Min) ||
+				velocity > 0 && (position > bank.config.Max || bank.config.Inclusive && position >= bank.config.Max)
 		}
 		if crossed {
 			bank.velocity[index] = -bank.velocity[index]

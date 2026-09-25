@@ -395,6 +395,11 @@ bars.Draw(screen)                 // May be drawn in several layers.
 
 Image dimensions, image order, scale, blend and layer placement remain
 independent of motion. The train reuses its pose and motion slices.
+Set `Directional` when an axis should reverse only while moving outward. With
+`AllowOutsideStart`, an image can enter from beyond its normal bounds before
+settling into a bounce. Cuddly Mega Scroller uses this pair for its masked text
+surface: start at 45, move upward by 2 per tick, then rebound between -70 and
+20. The default boundary behavior remains unchanged for existing raster banks.
 
 Additional packages provide bitmap metrics (`font`), curves/keyframes (`motion`),
 geometry, palettes (`indexed`), vector font outlines (`outline`), asset loading,
