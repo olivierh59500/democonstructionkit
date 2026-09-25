@@ -451,6 +451,28 @@ clocks after its read, format and write cues, then wraps each strictly after
 frame 82. Call `StepAt(sceneTime)` after drawing when the first visible tile
 must use the phase from the preceding tick.
 
+For formations that multiply waves rather than simply add them,
+`motion.FormulaExpr` provides editable time, index, viewport-radius and count
+inputs with ordered arithmetic, sine and cosine operations. DCK validates and
+compiles each expression once into a bounded numeric program. The
+`sprites.FormationCarousel` then selects modes, places the borrowed atlas
+images, runs entry/exit slides and snaps anchors without per-frame surfaces:
+
+```go
+config := presets.CuddlyMenuCarousel(carebearAtlas)
+config.Hold, config.Slide = 8, 1
+carousel, _ := sprites.NewFormationCarousel(config)
+carousel.Draw(screen, musicOrSceneSeconds)
+```
+
+The preset exposes all seven Cuddly Menu trajectories as data. Each expression
+can be replaced or edited independently, including its per-sprite phase and
+viewport-relative radius. Repeated Draw at the same time remains deterministic.
+On an M4 Max, evaluating all 84 poses from the seven menu modes takes about
+4.6 µs with zero allocations, versus 1.58 µs for the seven fixed Go functions;
+one menu frame evaluates one mode of 12 poses. This kernel measurement does not
+include drawing or establish Pixel 10a performance.
+
 Additional packages provide bitmap metrics (`font`), curves/keyframes (`motion`),
 geometry, palettes (`indexed`), vector font outlines (`outline`), asset loading,
 and device-independent YM/go-zikmu PCM (`sound`). Use `sound/ebiten` with one
