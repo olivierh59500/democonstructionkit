@@ -294,6 +294,8 @@ caller-owned. Resources used by custom mode painters also remain with their owne
 
 - `composite.Sprites`: configurable sprite/logo counts, frames, crops, transforms,
   drawing order and per-instance color/blend/filter options.
+- `sprites.Group` with `motion.CuedFormation`: staggered horizontal, vertical,
+  arcing and looping motion cues for a row or column of arbitrary images.
 - `composite.Strips`: exact row/column sampling for scrollers, distorted logos and
   image-based rasters; source selection is independent of destination geometry.
 - `composite.StripWarp`: a reusable row-then-column deformation, with shared
@@ -315,6 +317,29 @@ caller-owned. Resources used by custom mode painters also remain with their owne
 The full [composer example](examples/composer/main.go) demonstrates these choices.
 The original demo applications contain the production-specific schedules and data.
 Shared code handles rendering; artistic parameters are not replaced with defaults.
+
+For a sprite phrase, put the glyph images in text order and use `FrameStride: 1`.
+`Origin` and `Spacing` define the resting row. Each cue can choose which item
+leads (`LeadIndex`), how long the motion lasts (`Duration`), the delay between
+neighbors (`Stagger`), independent X/Y sine harmonics, and a fade at its ends.
+Several cues may overlap and `Loop` repeats the complete sequence. For example:
+
+```go
+formation, err := motion.NewCuedFormation(motion.CuedFormationConfig{
+    Origin: motion.Point{X: 160, Y: 230}, Spacing: motion.Point{X: 32},
+    Count: len(letters), Loop: 12,
+    Cues: []motion.FormationCue{{
+        Start: 0, Duration: 2, LeadIndex: len(letters)-1, Stagger: .08,
+        Y: []motion.FormationHarmonic{{FirstAmplitude: 60, LastAmplitude: 60, Cycles: 1}},
+    }},
+})
+group, err := sprites.NewGroup(sprites.GroupConfig{
+    Frames: letters, Count: len(letters), FrameStride: 1,
+    Formation: formation.At, Speed: 1,
+})
+group.Update(kit.Frame{Time: seconds})
+group.Draw(screen)
+```
 
 Additional packages provide bitmap metrics (`font`), curves/keyframes (`motion`),
 geometry, palettes (`indexed`), vector font outlines (`outline`), asset loading,

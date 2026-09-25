@@ -24,7 +24,7 @@ type GridFormation struct {
 }
 
 // GroupConfig describes a sprite/logo formation, independent of image metrics.
-// Choose at most one Path, Points, Orbit, Weave or Circle. With none, positions follow
+// Choose at most one Path, Points, Orbit, Weave, Circle or Formation. With none, positions follow
 // Velocity. Speed and PhaseSpacing use path pixels or the orbit's phase units;
 // Delay is seconds per instance. Spacing is an additional screen-space offset.
 // Points offers serializable path data; SplineSamples>0 selects a smooth spline.
@@ -40,6 +40,7 @@ type GroupConfig struct {
 	Orbit                                   *motion.NestedOrbit
 	Weave                                   *motion.Weave
 	Circle                                  *motion.CircleFormation
+	Formation                               func(float64, int) motion.Point `json:"-"`
 	Grid                                    *GridFormation
 	Translation                             *motion.HarmonicTranslation
 	Origin, Velocity, Spacing               motion.Point
@@ -89,6 +90,9 @@ func NewGroup(c GroupConfig) (*Group, error) {
 		kinds++
 	}
 	if c.Circle != nil {
+		kinds++
+	}
+	if c.Formation != nil {
 		kinds++
 	}
 	if kinds > 1 {
@@ -223,11 +227,20 @@ func (g *Group) sample(f kit.Frame) error {
 			}
 		case c.Circle != nil:
 			position, circleScale = c.Circle.At(g.phase+t*c.Speed, i)
+		case c.Formation != nil:
+			position = c.Formation(phase, i)
+			if c.Orient {
+				a, b := c.Formation(phase-1e-4, i), c.Formation(phase+1e-4, i)
+				tangent = motion.Point{X: b.X - a.X, Y: b.Y - a.Y}
+			}
 		default:
 			position = motion.Point{X: c.Velocity.X * t, Y: c.Velocity.Y * t}
 			tangent = c.Velocity
 		}
 		p := GroupPose{X: c.Origin.X + float64(i)*c.Spacing.X + position.X, Y: c.Origin.Y + float64(i)*c.Spacing.Y + position.Y, ScaleX: c.ScaleX, ScaleY: c.ScaleY, Angle: c.Angle, Opacity: c.Opacity}
+		if !finiteField(p.X) || !finiteField(p.Y) {
+			return fmt.Errorf("sprites: nonfinite formation pose")
+		}
 		if c.Grid != nil {
 			column := i % c.Grid.Columns
 			row := i / c.Grid.Columns

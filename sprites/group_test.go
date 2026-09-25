@@ -59,6 +59,33 @@ func TestGroupDistinguishesPathSpacingTimeDelayAndScreenSpacing(t *testing.T) {
 		}
 	}
 }
+
+func TestGroupUsesReusableCuedFormation(t *testing.T) {
+	image := ebiten.NewImage(4, 4)
+	defer image.Deallocate()
+	formation, err := motion.NewCuedFormation(motion.CuedFormationConfig{
+		Origin: motion.Point{X: 10, Y: 20}, Spacing: motion.Point{X: 30}, Count: 2,
+		Cues: []motion.FormationCue{{Start: 0, Duration: 1, Stagger: .5, LeadIndex: 1, Fade: .1,
+			Y: []motion.FormationHarmonic{{FirstAmplitude: 40, LastAmplitude: 40, Cycles: .5}}}},
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	group, err := NewGroup(GroupConfig{Frames: []*ebiten.Image{image}, Count: 2, Formation: formation.At, Speed: 1})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := group.Update(kit.Frame{Time: .5}); err != nil {
+		t.Fatal(err)
+	}
+	if got := group.Poses(); got[0].X != 10 || got[0].Y != 20 || got[1].X != 40 || got[1].Y != 60 {
+		t.Fatalf("unexpected staged poses: %+v", got)
+	}
+	if _, err := NewGroup(GroupConfig{Frames: []*ebiten.Image{image}, Count: 2, Formation: formation.At, Weave: &motion.Weave{}}); err == nil {
+		t.Fatal("two formation trajectories were accepted")
+	}
+}
+
 func TestGroupSamplesMusicOnceAndRetainsPreparedPoses(t *testing.T) {
 	image := ebiten.NewImage(4, 4)
 	defer image.Deallocate()
