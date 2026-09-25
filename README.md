@@ -1429,6 +1429,31 @@ changes and releases music on the following main update; Cuddly 3D DOC uses
 this mode. The standalone 3D DOC screen selects an opaque handoff without a
 music cue because its soundtrack already plays during the intro.
 
+`timeline.CueClock` handles overlapping tick windows for loaders and other
+finite transitions. A window starts accumulating before the end-of-frame tick
+increment, preserving countdown and fade boundaries. `SetRate` changes 50/60 Hz
+playback without resetting elapsed fades; `Reached(duration)` compares a fixed
+recording duration by exact rational ticks. `timeline.Countdown` adds editable
+first/second counts, a final hold and a fade lead without moving those formulas
+back into an individual screen. Cuddly's sector/blipp loader uses both
+components; Union's credits loader uses the same clock with its recorded
+duration and a different bitmap reveal.
+
+```go
+countdown, _ := timeline.NewCountdown(timeline.CountdownConfig{
+    First: 49, Second: 162, Hold: 24, FadeLead: 42,
+})
+clock, _ := timeline.NewCueClock(timeline.CueClockConfig{
+    Rate: 60, Windows: []timeline.CueWindow{
+        {StartTick: countdown.BlankTick(), Duration: .25, Tolerance: 1e-9},
+        {StartTick: countdown.FadeStartTick(), Duration: 1.5},
+    },
+})
+clock.Step()
+shown := countdown.At(clock.Tick())
+volume := max(0, 1-clock.Elapsed(1)/1.5)
+```
+
 For a temporary magnifier in a pipeline:
 
 ```go

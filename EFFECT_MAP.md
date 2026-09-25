@@ -81,7 +81,7 @@ matches the previous implementation exactly.
 | Screen | Shared today | Extract next, with editable parameters |
 | --- | --- | --- |
 | Menu | TileAlphabet, atlas, background sampler, scrolling | Sprite ensemble's seven motion programs, camera parallax and atlas frame player. Door/input behavior stays in the menu. |
-| Loader | Bitmap font recipes and scrolling | Typed countdown, gain/fade and hold cues; preserve the initial pre-render and decrement boundary. |
+| Loader | Bitmap font recipes, scrolling, `timeline.Countdown` and `timeline.CueClock` overlapping fade/hold windows | Bind the typed volume envelope to the playback host; initial pre-render and decrement boundary remain authored. |
 | Introduction | Wave/Profile/Cell strips, sparkles | Serializable logo warp program and pause/audio cues; preserve row-then-column order. |
 | Big Sprite | `sprites.ProjectedField` with strict-wrap vector lines, `scrolling.RingLanes` dual-font transport, `sprites.Group` Weave formation, `RasterOverlay` fill | Shared front/back flip material. |
 | Colorshock II | Background sampler, scrolling | Position-table placement and two-frequency background orbit as an editable motion recipe. |
@@ -104,7 +104,7 @@ matches the previous implementation exactly.
 | --- | --- | --- |
 | Introduction | Image repetition, CellWarp, bitmap recipes | Reusable harmonic cell-offset program and timed music/still cues. |
 | Menu | Scrolling, background sampler, sprite instances | Walkable panorama/parallax, palette cycling and uncover wipe; door navigation stays local. |
-| Loader | Reveal and bitmap recipes | Audio-timed cue wrapper; retain column-major reverse-row glyph order. |
+| Loader | Reveal, bitmap recipes and `timeline.CueClock` exact-duration transition | Playback cue and layer placement remain host composition data; retain column-major reverse-row glyph order. |
 | Beat Dis | Background sampler, scrolling, `motion.WrapBank` wallpaper and pattern offsets, harmonic `sprites.Group` letters with global wobble | Backdrop entrance and layer order stay authored scene data. |
 | Delta Force | YM register snapshots, scrolling, WaveStrips | Register-change trigger and seven-tick sprite release; source-alpha raster fill. |
 | TNT Crew 3 | Mesh, geometry, bitmap recipes | Model-group draw material and camera recession handoff; authored shapes stay data. |
