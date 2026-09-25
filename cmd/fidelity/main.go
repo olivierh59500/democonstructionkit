@@ -1,4 +1,4 @@
-// Command fidelity compares migrated demos with their original Git revisions.
+// Command fidelity compares demo captures with a chosen Git revision.
 package main
 
 import (
@@ -193,8 +193,12 @@ func run() error {
 // resolveLocalRevision keeps local comparison records usable after an explicit
 // history rewrite, without changing the preserved records themselves.
 func resolveLocalRevision(source, revision string) (string, error) {
-	if _, err := command(source, "git", "cat-file", "-e", revision+"^{commit}"); err == nil {
-		return revision, nil
+	resolve := func(value string) (string, error) {
+		data, err := command(source, "git", "rev-parse", "--verify", value+"^{commit}")
+		return strings.TrimSpace(string(data)), err
+	}
+	if resolved, err := resolve(revision); err == nil {
+		return resolved, nil
 	}
 	path, err := command(source, "git", "rev-parse", "--git-path", "info/native-revision-map.txt")
 	if err != nil {
@@ -206,7 +210,7 @@ func resolveLocalRevision(source, revision string) (string, error) {
 	}
 	data, err := os.ReadFile(name)
 	if os.IsNotExist(err) {
-		return revision, nil
+		return resolve(revision)
 	}
 	if err != nil {
 		return "", err
@@ -214,13 +218,10 @@ func resolveLocalRevision(source, revision string) (string, error) {
 	for _, line := range strings.Split(string(data), "\n") {
 		fields := strings.Fields(line)
 		if len(fields) == 2 && fields[0] == revision {
-			if _, err := command(source, "git", "cat-file", "-e", fields[1]+"^{commit}"); err != nil {
-				return "", err
-			}
-			return fields[1], nil
+			return resolve(fields[1])
 		}
 	}
-	return revision, nil
+	return resolve(revision)
 }
 func readImage(path string) (image.Image, error) {
 	f, err := os.Open(path)
