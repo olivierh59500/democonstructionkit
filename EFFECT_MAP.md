@@ -80,7 +80,7 @@ matches the previous implementation exactly.
 
 | Screen | Shared today | Extract next, with editable parameters |
 | --- | --- | --- |
-| Menu | TileAlphabet, `sprites.Atlas` image banks, `sprites.FrameSequence` character animation, `sprites.FormationCarousel` with seven compiled formula modes, background sampler, scrolling | Camera parallax remains separate; door/input behavior stays in the menu. |
+| Menu | TileAlphabet, `sprites.Atlas` image banks, `sprites.FrameSequence` character animation, `sprites.FormationCarousel` with seven compiled formula modes, `composite.CachedTileParallax`, scrolling | Door/input behavior and map camera placement stay local production logic. |
 | Loader | Bitmap font recipes, scrolling, `timeline.Countdown` and `timeline.CueClock` overlapping fade/hold windows | Bind the typed volume envelope to the playback host; initial pre-render and decrement boundary remain authored. |
 | Introduction | Wave/Profile/Cell strips, sparkles | Serializable logo warp program and pause/audio cues; preserve row-then-column order. |
 | Big Sprite | `sprites.ProjectedField` with strict-wrap vector lines, `scrolling.RingLanes` dual-font transport, `sprites.Group` Weave formation, `RasterOverlay` fill | Shared front/back flip material. |

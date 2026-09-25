@@ -473,6 +473,22 @@ On an M4 Max, evaluating all 84 poses from the seven menu modes takes about
 one menu frame evaluates one mode of 12 poses. This kernel measurement does not
 include drawing or establish Pixel 10a performance.
 
+For repeated decor that should cost one draw rather than hundreds of tiles
+per frame, `composite.CachedTileParallax` builds a bounded viewport-plus-overscan
+surface once. Camera divisors, wrap periods, integer quantization, negative
+clamping, blending and tile spacing are independent settings:
+
+```go
+config := presets.CuddlyMenuTileParallax(tile, 768, 400, 32)
+backdrop, _ := composite.NewCachedTileParallax(config)
+backdrop.DrawAt(screen, cameraX, cameraY)
+defer backdrop.Close()
+```
+
+The Cuddly menu keeps its original 800 × 432 unmanaged surface, half-speed
+integer camera motion and one source-copy draw per frame. Another logo or
+scrolling layer can use the same renderer with its own tile, size and phase.
+
 Additional packages provide bitmap metrics (`font`), curves/keyframes (`motion`),
 geometry, palettes (`indexed`), vector font outlines (`outline`), asset loading,
 and device-independent YM/go-zikmu PCM (`sound`). Use `sound/ebiten` with one
