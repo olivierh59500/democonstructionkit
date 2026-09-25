@@ -16,3 +16,9 @@ func FadedIntroHandoff(step, threshold float64) timeline.IntroHandoffConfig {
 func ImmediateIntroHandoff() timeline.IntroHandoffConfig {
 	return timeline.IntroHandoffConfig{FadeStart: 1, FadeMax: 1, Cue: timeline.IntroCueOnEntry}
 }
+
+// MegaTwistSplashRamp retains the authored 90-tick splash and its interior
+// visual offset while leaving the demo's images and transition order editable.
+func MegaTwistSplashRamp() timeline.HoldRampConfig {
+	return timeline.HoldRampConfig{Frames: 90, InteriorOffset: .02}
+}

@@ -1438,6 +1438,11 @@ first/second counts, a final hold and a fade lead without moving those formulas
 back into an individual screen. Cuddly's sector/blipp loader uses both
 components; Union's credits loader uses the same clock with its recorded
 duration and a different bitmap reveal.
+`timeline.HoldRamp` covers a finite splash or interstitial: its configured
+number of ticks reaches full progress, then the following Step reports exit.
+An optional interior offset changes partial-frame opacity without moving the
+zero or full endpoints. MegaTwist uses the editable 90-tick preset; the source
+screen still chooses its images and which scene follows the hold.
 
 ```go
 countdown, _ := timeline.NewCountdown(timeline.CountdownConfig{

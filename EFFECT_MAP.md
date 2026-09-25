@@ -59,8 +59,8 @@ production. Preserved original implementations remain unchanged.
 | Multiscreen, camera tour | Layer/viewport helpers | Camera/zoom director with visibility culling, retained outputs and serialized handoffs. |
 | Vectorballs | Projected shape factories, reflection | Reusable point-morph/deformation/action sequence with explicit inherited vs cleared settings and smooth handoffs. |
 | Grodan | Atlas, scrolling, bounded `Background` repetition and harmonic `sprites.Group` with bounce envelope | Repeated vertical text columns. |
-| MegaTwist, intro | `Config.Feed`, atlas | Keep the screenshot-matched splash/transition timing as an editable cue program. |
-| MegaTwist, main | `Config.Scanline`, independent `ScanlineBackground` and DisplacementPrograms, harmonic `sprites.Group` and `sprites.GlowPainter` | Transition overlay. |
+| MegaTwist, intro | `Config.Feed`, atlas, `timeline.HoldRamp` 90-tick splash | Authored intro image and CRT material remain scene data. |
+| MegaTwist, main | `Config.Scanline`, independent `ScanlineBackground` and DisplacementPrograms, harmonic `sprites.Group` and `sprites.GlowPainter` | Transition overlay material and scene composition. |
 | Nonameno, stars | `sprites.ProjectedField`, editable radial pattern and vector pixel/trail material | The star field is complete; staggered text-page choreography is tracked below. |
 | Nonameno, text pages | Atlas | Staggered per-glyph enter/exit with scale/depth, easing, delays and completion barrier; baseline sine scroll. |
 | Phenomena DNA intro | Atlas, DNAFrames, sliced transport | Whole screen's two-pixel insertion, loop-start and control events as a reusable configuration; separate intro/outro reveal and bounce cues. |
