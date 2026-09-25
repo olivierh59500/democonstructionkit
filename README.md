@@ -1438,6 +1438,24 @@ first/second counts, a final hold and a fade lead without moving those formulas
 back into an individual screen. Cuddly's sector/blipp loader uses both
 components; Union's credits loader uses the same clock with its recorded
 duration and a different bitmap reveal.
+
+For staged visuals, `timeline.CueRanges` owns ordered time windows with explicit
+open or closed endpoints. `timeline.SteppedEnvelope` selects an image/color bank
+level during a stage's entry and exit. Disk Copier supplies its messages and
+LED/LCD images while a DCK preset supplies the editable ranges and eight-step
+palette program:
+
+```go
+ranges, _ := timeline.NewCueRanges(presets.UnionDiskCopierCueRanges())
+fade, _ := timeline.NewSteppedEnvelope(presets.UnionDiskCopierFade())
+if index, window, active := ranges.At(sceneTime); active {
+    shade := fade.At(sceneTime, window.Start, window.End)
+    drawStage(index, palette[shade])
+}
+```
+
+Sampling performs no per-tick allocation. A gap returns `active=false`, so
+the scene may retain or clear previous layers explicitly.
 `timeline.HoldRamp` covers a finite splash or interstitial: its configured
 number of ticks reaches full progress, then the following Step reports exit.
 An optional interior offset changes partial-frame opacity without moving the

@@ -115,7 +115,7 @@ matches the previous implementation exactly.
 | TNT Crew 2 | Background sampler, BitmapText.DrawWindow, `motion.WrapBank` three-layer parallax and mutable speeds | Per-key control mapping remains scene data. |
 | Level 16 | Vertical scrolling, background sampler, NestedOrbit, `motion.WrapBank` water and raster offsets | Raster/water material and authored layer occlusion. |
 | Multi-Plane | Bands, projected scrolling | Logo row lookup/center flip; package the form program and strip background as one editable screen recipe. |
-| Disk Copier | Bitmap recipes, sprite regions and `motion.WrapBank` six-strip raster offset | Stepped color envelope, LED/LCD atlas player and state/cue program. |
+| Disk Copier | Bitmap recipes, sprite regions, `motion.WrapBank` six-strip raster offset, `timeline.CueRanges` stages and `timeline.SteppedEnvelope` palette | LED/LCD atlas player and input/state program. |
 
 ## Extraction order and acceptance
 
