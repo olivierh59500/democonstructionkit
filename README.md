@@ -443,6 +443,13 @@ screen.DrawImage(atlas.Tile(walk.Current(seconds)), nil)
 Cuddly Menu shares one atlas component among its map, character and logo
 tiles. Disk Copier requests LCD regions from the same component while keeping
 its original region-sampling renderer and independent operation clocks.
+For independently timed sprite or atlas lanes, `motion.GatedWrapBank` adds one
+activation threshold per lane to the existing wrapped transport. A strict or
+inclusive gate, velocity, initial phase and boundary are editable; `Frame(i)`
+floors the current phase for atlas lookup. Disk Copier starts three LCD tile
+clocks after its read, format and write cues, then wraps each strictly after
+frame 82. Call `StepAt(sceneTime)` after drawing when the first visible tile
+must use the phase from the preceding tick.
 
 Additional packages provide bitmap metrics (`font`), curves/keyframes (`motion`),
 geometry, palettes (`indexed`), vector font outlines (`outline`), asset loading,

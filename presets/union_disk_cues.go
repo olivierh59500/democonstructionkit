@@ -3,6 +3,7 @@ package presets
 import (
 	"math"
 
+	"github.com/olivierh59500/democonstructionkit/motion"
 	"github.com/olivierh59500/democonstructionkit/timeline"
 )
 
@@ -23,4 +24,13 @@ func UnionDiskCopierCueRanges() []timeline.CueRange {
 // UnionDiskCopierFade selects one of eight editable raster/color bank images.
 func UnionDiskCopierFade() timeline.SteppedEnvelopeConfig {
 	return timeline.SteppedEnvelopeConfig{MaxIndex: 7, EntryLength: 14, ExitLead: 16, Step: 2}
+}
+
+// UnionDiskCopierLCDMotion starts three fractional tile clocks at their
+// independent operation cues, then wraps strictly after source frame 82.
+func UnionDiskCopierLCDMotion() motion.GatedWrapBankConfig {
+	return motion.GatedWrapBankConfig{
+		Start: []float64{0, 0, 0}, Velocity: []float64{.35}, Gates: []float64{120, 500, 760},
+		Upper: &motion.WrapLimit{Boundary: 82, Restart: 0},
+	}
 }
