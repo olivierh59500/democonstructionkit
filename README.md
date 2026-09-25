@@ -341,6 +341,33 @@ group.Update(kit.Frame{Time: seconds})
 group.Draw(screen)
 ```
 
+For a chain of independently phased sprites, use a data-only
+`motion.HarmonicFormationConfig`. Each X/Y term selects sine or cosine, either
+of two phase clocks, an index phase and an optional shared amplitude envelope.
+The group owns both clock advances and a bouncing envelope when configured:
+
+```go
+formation, err := motion.NewHarmonicFormation(presets.GrodanSpriteFormationConfig())
+group, err := sprites.NewGroup(sprites.GroupConfig{
+    Frames: frames, Count: len(frames), FrameStride: 1,
+    ScaleX: 2, ScaleY: 2, Harmonic: formation,
+    HarmonicClockStep: [2]float64{.02, .03},
+    HarmonicEnvelope: &motion.BounceBankConfig{
+        Start: []float64{0}, Velocity: []float64{.1}, Min: -50, Max: 50,
+    },
+})
+group.Update(kit.Frame{})
+group.Draw(screen)
+```
+
+Change `Origin`, `Spacing`, individual term amplitudes/rates/phases or optional
+`Bounds` without rewriting the sprite loop. `SetHarmonicState` accepts external
+phase or music values instead of the group's fixed clock steps. MegaTwist uses
+the same formation component with four time harmonics, two index-only ripples
+and clipping; its `sprites.GlowPainter` draws the prepared group with editable
+halo layer count, scale, opacity and filter. `DrawGroup` never advances motion
+and does not create a full-screen surface.
+
 For repeating image strips, `sprites.NewTrain` owns both the image group and
 its X/Y motion. Each axis can be fixed, use a phase-spaced `motion.Wave`
 (`Cos: true` selects cosine), or use a `motion.BounceBankConfig`. The bounce
@@ -1488,6 +1515,8 @@ remain available for effects with different behavior.
 | `composite.ProfileImage` | Cached source rows, editable displacement table, motion phase and finite wrap copies | TeamG1 logo |
 | `plasma.HarmonicImage` | Harmonic kernel, reusable CPU pixels, live GPU surface and dirty-frame upload | TeamG1 plasma |
 | `sprites.Group` with `CircleFormation` | Indexed circular poses, secondary harmonic motion and independent sprite scales | TeamG1 twelve-logo formation |
+| `sprites.Group` with `HarmonicFormation` | Independent X/Y wave banks, two phase clocks, indexed spacing, bounce envelope and optional bounds | Grodan sprite train, MegaTwist glowing logos |
+| `sprites.GlowPainter` | Configurable outer-to-inner halo layers and final image over prepared group poses | MegaTwist glowing logos |
 | `effects.TimedCRTOverlay` | Adjustable time-varying scanlines, glow, color fringe and flicker | TeamG1 intro |
 | `scrolling.Config.Bands` | Cached repeated text, independent lanes and bounded viewport rendering | Cuddly Spreadpoint |
 | `scrolling.Config.Slots` | Glyph recycling, wave motion, tangent orientation and custom poses | Cuddly Reset |

@@ -24,7 +24,7 @@ type GridFormation struct {
 }
 
 // GroupConfig describes a sprite/logo formation, independent of image metrics.
-// Choose at most one Path, Points, Orbit, Weave, Circle or Formation. With none, positions follow
+// Choose at most one Path, Points, Orbit, Weave, Circle, Harmonic or Formation. With none, positions follow
 // Velocity. Speed and PhaseSpacing use path pixels or the orbit's phase units;
 // Delay is seconds per instance. Spacing is an additional screen-space offset.
 // Points offers serializable path data; SplineSamples>0 selects a smooth spline.
@@ -40,6 +40,9 @@ type GroupConfig struct {
 	Orbit                                   *motion.NestedOrbit
 	Weave                                   *motion.Weave
 	Circle                                  *motion.CircleFormation
+	Harmonic                                *motion.HarmonicFormation `json:"-"`
+	HarmonicClockStart, HarmonicClockStep   [2]float64
+	HarmonicEnvelope                        *motion.BounceBankConfig
 	Formation                               func(float64, int) motion.Point `json:"-"`
 	Grid                                    *GridFormation
 	Translation                             *motion.HarmonicTranslation
@@ -67,9 +70,12 @@ type GroupPose struct {
 // Atlas frames are borrowed. This keeps motion and audio sampling independent of
 // display refresh and allows the same formation to be drawn in several layers.
 type Group struct {
-	config GroupConfig
-	poses  []GroupPose
-	phase  float64
+	config           GroupConfig
+	poses            []GroupPose
+	phase            float64
+	harmonicClocks   [2]float64
+	harmonicEnvelope float64
+	harmonicBounce   *motion.BounceBank
 }
 
 func NewGroup(c GroupConfig) (*Group, error) {
@@ -92,11 +98,22 @@ func NewGroup(c GroupConfig) (*Group, error) {
 	if c.Circle != nil {
 		kinds++
 	}
+	if c.Harmonic != nil {
+		kinds++
+	}
 	if c.Formation != nil {
 		kinds++
 	}
 	if kinds > 1 {
 		return nil, fmt.Errorf("sprites: choose one formation trajectory")
+	}
+	if c.Harmonic == nil && c.HarmonicEnvelope != nil {
+		return nil, fmt.Errorf("sprites: harmonic envelope needs a harmonic formation")
+	}
+	for _, value := range [...]float64{c.HarmonicClockStart[0], c.HarmonicClockStart[1], c.HarmonicClockStep[0], c.HarmonicClockStep[1]} {
+		if !finiteField(value) {
+			return nil, fmt.Errorf("sprites: nonfinite harmonic clock")
+		}
 	}
 	for _, v := range []float64{c.FPS, c.Origin.X, c.Origin.Y, c.Velocity.X, c.Velocity.Y, c.Spacing.X, c.Spacing.Y, c.Speed, c.Phase, c.PhaseSpacing, c.PhaseStep, c.Delay, c.ScaleX, c.ScaleY, c.Angle, c.AnchorX, c.AnchorY, c.Opacity} {
 		if !finiteField(v) {
@@ -176,7 +193,18 @@ func NewGroup(c GroupConfig) (*Group, error) {
 		}
 		c.Circle = &copy
 	}
-	g := &Group{config: c, poses: make([]GroupPose, c.Count), phase: c.Phase}
+	g := &Group{config: c, poses: make([]GroupPose, c.Count), phase: c.Phase, harmonicClocks: c.HarmonicClockStart, harmonicEnvelope: 1}
+	if c.HarmonicEnvelope != nil {
+		var err error
+		g.harmonicBounce, err = motion.NewBounceBank(*c.HarmonicEnvelope)
+		if err != nil {
+			return nil, err
+		}
+		if g.harmonicBounce.Len() != 1 {
+			return nil, fmt.Errorf("sprites: harmonic envelope needs one bounce lane")
+		}
+		g.harmonicEnvelope = g.harmonicBounce.At(0)
+	}
 	g.sample(kit.Frame{})
 	return g, nil
 }
@@ -184,6 +212,17 @@ func NewGroup(c GroupConfig) (*Group, error) {
 func (g *Group) Update(f kit.Frame) error {
 	if !finiteField(f.Time) {
 		return fmt.Errorf("sprites: nonfinite group time")
+	}
+	if g.config.Harmonic != nil {
+		nextClocks := [2]float64{g.harmonicClocks[0] + g.config.HarmonicClockStep[0], g.harmonicClocks[1] + g.config.HarmonicClockStep[1]}
+		if !finiteField(nextClocks[0]) || !finiteField(nextClocks[1]) {
+			return fmt.Errorf("sprites: harmonic clock overflows")
+		}
+		g.harmonicClocks = nextClocks
+		if g.harmonicBounce != nil {
+			g.harmonicBounce.Step()
+			g.harmonicEnvelope = g.harmonicBounce.At(0)
+		}
 	}
 	next := g.phase + g.config.PhaseStep
 	if !finiteField(next) {
@@ -227,6 +266,8 @@ func (g *Group) sample(f kit.Frame) error {
 			}
 		case c.Circle != nil:
 			position, circleScale = c.Circle.At(g.phase+t*c.Speed, i)
+		case c.Harmonic != nil:
+			position = c.Harmonic.At(i, g.harmonicClocks, g.harmonicEnvelope)
 		case c.Formation != nil:
 			position = c.Formation(phase, i)
 			if c.Orient {
@@ -351,6 +392,33 @@ func (g *Group) SetPhase(phase float64) error {
 
 // Phase returns the group's cumulative authored phase.
 func (g *Group) Phase() float64 { return g.phase }
+
+// SetHarmonicState samples a configured harmonic formation with two caller-owned
+// phase clocks and an amplitude envelope. It prepares poses immediately, so
+// callers can draw the group more than once without advancing it again.
+func (g *Group) SetHarmonicState(clocks [2]float64, envelope float64) error {
+	if g.config.Harmonic == nil || !finiteField(clocks[0]) || !finiteField(clocks[1]) || !finiteField(envelope) {
+		return fmt.Errorf("sprites: invalid harmonic state")
+	}
+	g.harmonicClocks = clocks
+	g.harmonicEnvelope = envelope
+	return g.sample(kit.Frame{})
+}
+
+// ResetHarmonics restores configured phase clocks and the optional bouncing
+// envelope, then prepares the initial poses without advancing the group.
+func (g *Group) ResetHarmonics() error {
+	if g.config.Harmonic == nil {
+		return fmt.Errorf("sprites: group has no harmonic formation")
+	}
+	g.harmonicClocks = g.config.HarmonicClockStart
+	g.harmonicEnvelope = 1
+	if g.harmonicBounce != nil {
+		g.harmonicBounce.Reset()
+		g.harmonicEnvelope = g.harmonicBounce.At(0)
+	}
+	return g.sample(kit.Frame{})
+}
 
 // Advance adds a caller-chosen phase increment and samples new poses once.
 // It is useful for variable-speed user controls without exposing a local

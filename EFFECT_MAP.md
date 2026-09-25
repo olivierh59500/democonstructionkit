@@ -34,8 +34,8 @@ production. Preserved original implementations remain unchanged.
 | `go-secondreality` | Indexed software effects were searched separately; their palette/VRAM clocks are not interchangeable with these Ebitengine image controllers. |
 | `go-uniondemo` | Replicants raster trains, Beat Dis/Wow/TNT2/Level 16 wraps and Disk Copier's six-strip raster are shared. Beat Dis letters still combine a common orbit with per-letter waves. |
 | `go-vectorballs` | Ball projection, morphing and reflection are different shared families; no direct image train/wrap candidate found. |
-| `grodan-kvack-kvack-demo` | Its phased twelve-sprite chain changes its vertical envelope and spacing; a fixed-axis `Train` would change the artwork. A configurable formation is the next candidate. |
-| `megatwist` | Glowing sprites use two-frequency motion, clamping and a custom glow painter; this is beyond a single-axis `Train`. |
+| `grodan-kvack-kvack-demo` | Its phased twelve-sprite chain now uses `motion.HarmonicFormation` through `sprites.Group`, with independent phase clocks and a bouncing amplitude envelope. |
+| `megatwist` | Its multi-frequency, clamped sprite motion now uses the same formation family; `sprites.GlowPainter` owns the configurable halo passes. |
 | `nonameno-demo` | Text-page glyphs use staggered enter/exit and depth tweening, not cyclic image transport. |
 | `phenomena-dna-scroll-intro` | Raster-bar thresholds trigger scene-state changes; treating them as a periodic wrap would change the sequence. |
 | `tcb-multi-plane-3d-scroller` | All 32 mountain strips now use the relative `WrapBank` preset also used by Multiscreen. |
@@ -58,9 +58,9 @@ production. Preserved original implementations remain unchanged.
 | Multiscreen, four embedded productions | SolidCube, sampled DNA and projected-plane engines, atlas recipes, `CopperBars` in Coco, shared Viva raster and TCB mountain `motion.WrapBank` presets | Make the four production scenes reusable constructors rather than copies of their standalone controllers. |
 | Multiscreen, camera tour | Layer/viewport helpers | Camera/zoom director with visibility culling, retained outputs and serialized handoffs. |
 | Vectorballs | Projected shape factories, reflection | Reusable point-morph/deformation/action sequence with explicit inherited vs cleared settings and smooth handoffs. |
-| Grodan | Atlas, scrolling and bounded `Background` repetition | Phased sprite chain with count, image selection, spacing and wave envelope; repeated vertical text columns. |
+| Grodan | Atlas, scrolling, bounded `Background` repetition and harmonic `sprites.Group` with bounce envelope | Repeated vertical text columns. |
 | MegaTwist, intro | `Config.Feed`, atlas | Keep the screenshot-matched splash/transition timing as an editable cue program. |
-| MegaTwist, main | `Config.Scanline`, independent `ScanlineBackground` and DisplacementPrograms | Glowing sprite formation and transition overlay. |
+| MegaTwist, main | `Config.Scanline`, independent `ScanlineBackground` and DisplacementPrograms, harmonic `sprites.Group` and `sprites.GlowPainter` | Transition overlay. |
 | Nonameno, stars | `sprites.ProjectedField`, editable radial pattern and vector pixel/trail material | The star field is complete; staggered text-page choreography is tracked below. |
 | Nonameno, text pages | Atlas | Staggered per-glyph enter/exit with scale/depth, easing, delays and completion barrier; baseline sine scroll. |
 | Phenomena DNA intro | Atlas, DNAFrames, sliced transport | Whole screen's two-pixel insertion, loop-start and control events as a reusable configuration; separate intro/outro reveal and bounce cues. |

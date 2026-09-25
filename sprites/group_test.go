@@ -115,3 +115,49 @@ func TestGroupSamplesMusicOnceAndRetainsPreparedPoses(t *testing.T) {
 		t.Fatal(allocs)
 	}
 }
+
+func TestGroupSamplesHarmonicFormationOncePerStateChange(t *testing.T) {
+	image := ebiten.NewImage(4, 4)
+	defer image.Deallocate()
+	formation, err := motion.NewHarmonicFormation(motion.HarmonicFormationConfig{
+		Origin: motion.Point{X: 10, Y: 20}, Spacing: motion.Point{X: 8},
+		X: []motion.IndexedHarmonic{{Amplitude: 4, Rate: 1, IndexPhase: .5, Cos: true}},
+		Y: []motion.IndexedHarmonic{{Amplitude: 2, Rate: 1, SecondaryClock: true, Envelope: true}},
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	group, err := NewGroup(GroupConfig{
+		Frames: []*ebiten.Image{image}, Count: 3, Harmonic: formation,
+		HarmonicClockStep: [2]float64{.2, .3},
+		HarmonicEnvelope:  &motion.BounceBankConfig{Start: []float64{5}, Velocity: []float64{1}, Min: 0, Max: 10},
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := group.Update(kit.Frame{}); err != nil {
+		t.Fatal(err)
+	}
+	for index, pose := range group.Poses() {
+		want := formation.At(index, [2]float64{.2, .3}, 6)
+		if pose.X != want.X || pose.Y != want.Y {
+			t.Fatalf("pose %d = %+v, want %+v", index, pose, want)
+		}
+	}
+	if _, err := NewGroup(GroupConfig{Frames: []*ebiten.Image{image}, Count: 1, Harmonic: formation, Circle: &motion.CircleFormation{}}); err == nil {
+		t.Fatal("accepted two formation modes")
+	}
+	if err := group.ResetHarmonics(); err != nil {
+		t.Fatal(err)
+	}
+	if pose, want := group.Poses()[0], formation.At(0, [2]float64{}, 5); pose.X != want.X || pose.Y != want.Y {
+		t.Fatalf("reset pose = %+v, want %+v", pose, want)
+	}
+	if allocations := testing.AllocsPerRun(100, func() {
+		if err := group.Update(kit.Frame{}); err != nil {
+			panic(err)
+		}
+	}); allocations != 0 {
+		t.Fatalf("harmonic group update allocates %v times", allocations)
+	}
+}
