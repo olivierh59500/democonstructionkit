@@ -80,7 +80,7 @@ matches the previous implementation exactly.
 
 | Screen | Shared today | Extract next, with editable parameters |
 | --- | --- | --- |
-| Menu | TileAlphabet, `sprites.Atlas` image banks, `sprites.FrameSequence` character animation, `sprites.FormationCarousel` with seven compiled formula modes, `composite.CachedTileParallax`, scrolling | Door/input behavior and map camera placement stay local production logic. |
+| Menu | TileAlphabet, `sprites.Atlas` image banks, `sprites.FrameSequence` character animation, `sprites.FormationCarousel` with seven compiled formula modes, `composite.CachedTileParallax`, scrolling | Input-dependent camera follow and map-edge clamping can become a shared motion policy; door/input semantics stay local. |
 | Loader | Bitmap font recipes, scrolling, `timeline.Countdown` and `timeline.CueClock` overlapping fade/hold windows | Bind the typed volume envelope to the playback host; initial pre-render and decrement boundary remain authored. |
 | Introduction | Wave/Profile/Cell strips, sparkles | Serializable logo warp program and pause/audio cues; preserve row-then-column order. |
 | Big Sprite | `sprites.ProjectedField` with strict-wrap vector lines, `scrolling.RingLanes` dual-font transport, `sprites.Group` Weave formation, `RasterOverlay` fill | Shared front/back flip material. |
@@ -103,7 +103,7 @@ matches the previous implementation exactly.
 | Screen | Shared today | Extract next, with editable parameters |
 | --- | --- | --- |
 | Introduction | Image repetition, CellWarp, bitmap recipes | Reusable harmonic cell-offset program and timed music/still cues. |
-| Menu | Scrolling, background sampler, `sprites.Atlas` character frames, `motion.WrapBank` panorama, `motion.LinearTick` uncover wipe, `timeline.PacedIndex` palette/walk cycles and `motion.HoldBounce` logo | Input-dependent hall camera, door navigation and layer composition stay local. |
+| Menu | Scrolling, background sampler, `sprites.Atlas` character frames, `motion.WrapBank` panorama, `motion.LinearTick` uncover wipe, `timeline.PacedIndex` palette/walk cycles and `motion.HoldBounce` logo | Input-dependent hall camera and banner parallax can share a configurable motion policy; door navigation and layer order stay local. |
 | Loader | Reveal, bitmap recipes and `timeline.CueClock` exact-duration transition | Playback cue and layer placement remain host composition data; retain column-major reverse-row glyph order. |
 | Beat Dis | Background sampler, scrolling, `motion.WrapBank` wallpaper and pattern offsets, harmonic `sprites.Group` letters with global wobble | Backdrop entrance and layer order stay authored scene data. |
 | Delta Force | YM register snapshots, scrolling, WaveStrips | Register-change trigger and seven-tick sprite release; source-alpha raster fill. |
