@@ -423,6 +423,27 @@ settling into a bounce. Cuddly Mega Scroller uses this pair for its masked text
 surface: start at 45, move upward by 2 per tick, then rebound between -70 and
 20. The default boundary behavior remains unchanged for existing raster banks.
 
+`sprites.Atlas` caches a row-major image bank once and exposes either borrowed
+sub-images or absolute source regions. Negative indices clamp and positive
+overflow wraps; cell width, height and atlas dimensions are editable. Pair it
+with `sprites.FrameSequence` to choose an arbitrary frame order from scene or
+music time:
+
+```go
+atlas, _ := sprites.NewAtlas(sprites.AtlasConfig{
+    Image: sheet, TileW: 32, TileH: 32,
+})
+walk, _ := sprites.NewFrameSequence(sprites.FrameSequence{
+    Duration: .35, Indices: []int{2, 3, 4, 5, 6, 7, 8, 9}, Loop: true,
+})
+screen.DrawImage(atlas.Tile(walk.Current(seconds)), nil)
+// For a fractional-source renderer, use atlas.Region(walk.Current(seconds)).
+```
+
+Cuddly Menu shares one atlas component among its map, character and logo
+tiles. Disk Copier requests LCD regions from the same component while keeping
+its original region-sampling renderer and independent operation clocks.
+
 Additional packages provide bitmap metrics (`font`), curves/keyframes (`motion`),
 geometry, palettes (`indexed`), vector font outlines (`outline`), asset loading,
 and device-independent YM/go-zikmu PCM (`sound`). Use `sound/ebiten` with one

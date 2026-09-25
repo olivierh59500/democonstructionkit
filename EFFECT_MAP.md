@@ -80,7 +80,7 @@ matches the previous implementation exactly.
 
 | Screen | Shared today | Extract next, with editable parameters |
 | --- | --- | --- |
-| Menu | TileAlphabet, atlas, background sampler, scrolling | Sprite ensemble's seven motion programs, camera parallax and atlas frame player. Door/input behavior stays in the menu. |
+| Menu | TileAlphabet, `sprites.Atlas` image banks, `sprites.FrameSequence` character animation, background sampler, scrolling | Sprite ensemble's seven motion programs and camera parallax. Door/input behavior stays in the menu. |
 | Loader | Bitmap font recipes, scrolling, `timeline.Countdown` and `timeline.CueClock` overlapping fade/hold windows | Bind the typed volume envelope to the playback host; initial pre-render and decrement boundary remain authored. |
 | Introduction | Wave/Profile/Cell strips, sparkles | Serializable logo warp program and pause/audio cues; preserve row-then-column order. |
 | Big Sprite | `sprites.ProjectedField` with strict-wrap vector lines, `scrolling.RingLanes` dual-font transport, `sprites.Group` Weave formation, `RasterOverlay` fill | Shared front/back flip material. |
@@ -115,7 +115,7 @@ matches the previous implementation exactly.
 | TNT Crew 2 | Background sampler, BitmapText.DrawWindow, `motion.WrapBank` three-layer parallax and mutable speeds | Per-key control mapping remains scene data. |
 | Level 16 | Vertical scrolling, background sampler, NestedOrbit, `motion.WrapBank` water and raster offsets | Raster/water material and authored layer occlusion. |
 | Multi-Plane | Bands, projected scrolling | Logo row lookup/center flip; package the form program and strip background as one editable screen recipe. |
-| Disk Copier | Bitmap recipes, sprite regions, `motion.WrapBank` six-strip raster offset, `timeline.CueRanges` stages and `timeline.SteppedEnvelope` palette | LED/LCD atlas player and input/state program. |
+| Disk Copier | Bitmap recipes, `sprites.Atlas` LCD regions, `motion.WrapBank` six-strip raster offset, `timeline.CueRanges` stages and `timeline.SteppedEnvelope` palette | Three gated LCD animation clocks and input/state program. |
 
 ## Extraction order and acceptance
 
