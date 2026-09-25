@@ -96,7 +96,7 @@ matches the previous implementation exactly.
 | Knucklebuster | Scrolling and sprite images | Seeded hit trigger with hold/release envelope; optional music signal must be a distinct mode. |
 | DNA | FeedbackDNA, wave strips, projected discs | Two-sided twisting ribbon with exact front/back occlusion and sampled row-source warp. |
 | Megaball | Scrolling, CoupledOrbit | Two interleaved ball trains with index-dependent phase stepping and editable controls. |
-| Reset | `Config.Slots`, scrolling, atlas | Multi-stage cue director, depth-ordered paired rasters and fill material. |
+| Reset | `Config.Slots`, scrolling, atlas, `timeline.StageSequence` with immediate events, cue windows and paired fades | Depth-ordered paired rasters and fill material. |
 
 ## Union presentation units
 

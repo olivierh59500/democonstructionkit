@@ -1456,6 +1456,14 @@ if index, window, active := ranges.At(sceneTime); active {
 
 Sampling performs no per-tick allocation. A gap returns `active=false`, so
 the scene may retain or clear previous layers explicitly.
+`timeline.EventStages` handles text, input or music events that change the
+active part immediately. Later stage checks in the same update see that change;
+there is no forced one-frame wait. Cuddly Reset combines its five named stages
+with three `CueRanges` windows and two independent `HoldRamp` fades through
+one `timeline.StageSequence`. Its `Window` is sampled before `StepWindow`,
+retaining the first zero-opacity frame. Fonts, rasters, draw order and event
+sources remain in the screen; stage names and fade durations are editable DCK
+preset data.
 `timeline.HoldRamp` covers a finite splash or interstitial: its configured
 number of ticks reaches full progress, then the following Step reports exit.
 An optional interior offset changes partial-frame opacity without moving the
