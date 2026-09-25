@@ -88,6 +88,19 @@ func (p *ProfileImage) Advance() {
 func (p *ProfileImage) Phase() int         { return p.phase }
 func (p *ProfileImage) SetPhase(phase int) { p.phase = phase }
 
+// RowOffset reports the current raw lookup value for one row. It does not
+// advance motion, so an editor can inspect the actual spatial wave shape.
+func (p *ProfileImage) RowOffset(row int) float64 {
+	if p == nil || len(p.config.Offsets) == 0 {
+		return 0
+	}
+	index := (p.phase + row*p.config.RowStep) % len(p.config.Offsets)
+	if index < 0 {
+		index += len(p.config.Offsets)
+	}
+	return p.config.Offsets[index]
+}
+
 func (p *ProfileImage) Draw(dst *ebiten.Image) {
 	if p != nil {
 		p.DrawAt(dst, p.config.BaseX, p.config.BaseY)
@@ -103,11 +116,7 @@ func (p *ProfileImage) DrawAt(dst *ebiten.Image, baseX, baseY float64) {
 		p.batch.Begin(dst, p.source)
 	}
 	for row, img := range p.rows {
-		index := (p.phase + row*c.RowStep) % len(c.Offsets)
-		if index < 0 {
-			index += len(c.Offsets)
-		}
-		x := baseX + movement + c.Offsets[index]*c.Gain - p.width/2
+		x := baseX + movement + p.RowOffset(row)*c.Gain - p.width/2
 		y := baseY + float64(row)
 		if x > -p.width && (c.WrapWidth == 0 || x < c.WrapWidth) {
 			p.drawRow(dst, img, x, y)

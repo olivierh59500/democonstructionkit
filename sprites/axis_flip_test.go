@@ -140,3 +140,26 @@ func TestAxisFlipParentAndBackMirrorMatchAuthoredTransform(t *testing.T) {
 		}
 	}
 }
+
+func TestAxisFlipCanSnapEachFacesCenterIndependently(t *testing.T) {
+	front, back := ebiten.NewImage(5, 3), ebiten.NewImage(7, 5)
+	defer front.Deallocate()
+	defer back.Deallocate()
+	flip, err := NewAxisFlip(AxisFlipConfig{
+		Front: front, Back: back, SnapCenter: true,
+		Saw: &motion.SawToggleConfig{Start: 0, Velocity: 2, Boundary: 1, Restart: -1},
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	frontOptions := flip.OptionsAt(0, 0, nil)
+	if x, y := frontOptions.GeoM.Apply(0, 0); x != -2 || y != 0 {
+		// The saw starts with zero vertical scale, so Y is collapsed.
+		t.Fatalf("front snapped origin = %v,%v", x, y)
+	}
+	flip.Step()
+	backOptions := flip.OptionsAt(0, 0, nil)
+	if x, y := backOptions.GeoM.Apply(0, 0); x != -3 || y != 2 {
+		t.Fatalf("back snapped origin = %v,%v", x, y)
+	}
+}

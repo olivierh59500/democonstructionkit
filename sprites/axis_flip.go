@@ -20,6 +20,7 @@ type AxisFlipConfig struct {
 	ScaleX                float64 // Zero defaults to one.
 	AnchorX, AnchorY      float64 // Pixel anchor; UseAnchor=false centers each selected face.
 	UseAnchor             bool
+	SnapCenter            bool    // Truncate each face's half dimensions to integer pixels.
 	BackMirrorY           bool    // Mirror the back face before anchoring and scaling.
 	BackMirrorShift       float64 // Zero uses the selected image height.
 	Filter                ebiten.Filter
@@ -142,6 +143,9 @@ func (flip *AxisFlip) optionsForPose(pose AxisFlipPose, x, y float64, parent *eb
 		op.GeoM.Translate(0, shift)
 	}
 	anchorX, anchorY := float64(pose.Image.Bounds().Dx())/2, float64(pose.Image.Bounds().Dy())/2
+	if flip.config.SnapCenter {
+		anchorX, anchorY = float64(pose.Image.Bounds().Dx()/2), float64(pose.Image.Bounds().Dy()/2)
+	}
 	if flip.config.UseAnchor {
 		anchorX, anchorY = flip.config.AnchorX, flip.config.AnchorY
 	}

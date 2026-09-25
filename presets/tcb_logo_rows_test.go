@@ -21,9 +21,14 @@ func TestTCBLogoRowProfileKeepsStrictCounterWrap(t *testing.T) {
 		t.Fatal(err)
 	}
 	defer rows.Close()
-	if !config.Batch || config.BaseX != 159.5 || config.BaseY != 96 || config.PhaseWrap != len(values)-80 {
+	if !config.Batch || config.BaseX != 159.5 || config.BaseY != 96 || config.RowStep != 1 || config.PhaseWrap != len(values)-80 {
 		t.Fatalf("unexpected TCB logo placement %+v", config)
 	}
+	rows.SetPhase(40)
+	if rows.RowOffset(0) != values[40] || rows.RowOffset(1) != values[41] || rows.RowOffset(0) == rows.RowOffset(1) {
+		t.Fatal("adjacent logo rows lost their spatial wave phase")
+	}
+	rows.SetPhase(0)
 	counter := 0
 	for tick := 0; tick < 4000; tick++ {
 		counter++
