@@ -12,13 +12,16 @@ import (
 // source row. PhaseStep advances once per Update; RowStep spaces lookup indices.
 // MotionSpan is the peak-to-peak center movement, with a sine amplitude of half
 // that span. A positive WrapWidth draws one opposite-side copy when needed.
+// PhaseWrap resets the phase after a strict upper boundary. ScaleX/Y and
+// OutputX/Y map native row coordinates into a larger parent viewport.
 type ProfileImageConfig struct {
-	Offsets                           []float64
-	Phase, PhaseStep, RowStep         int
-	Gain, BaseX, BaseY                float64
-	MotionRate, MotionSpan, WrapWidth float64
-	Filter                            ebiten.Filter
-	Batch                             bool // Submit all sampled rows in a bounded triangle batch.
+	Offsets                              []float64
+	Phase, PhaseStep, RowStep, PhaseWrap int
+	Gain, BaseX, BaseY                   float64
+	MotionRate, MotionSpan, WrapWidth    float64
+	ScaleX, ScaleY, OutputX, OutputY     float64
+	Filter                               ebiten.Filter
+	Batch                                bool // Submit all sampled rows in a bounded triangle batch.
 }
 
 // ProfileImage owns no GPU image. It caches borrowed source rows once, keeps an
@@ -36,13 +39,19 @@ func NewProfileImage(source *ebiten.Image, c ProfileImageConfig) (*ProfileImage,
 	if source == nil || source.Bounds().Empty() || len(c.Offsets) == 0 || len(c.Offsets) > 1<<20 {
 		return nil, fmt.Errorf("composite: invalid profile image dimensions or phase")
 	}
-	for _, value := range []float64{c.Gain, c.BaseX, c.BaseY, c.MotionRate, c.MotionSpan, c.WrapWidth} {
+	for _, value := range []float64{c.Gain, c.BaseX, c.BaseY, c.MotionRate, c.MotionSpan, c.WrapWidth, c.ScaleX, c.ScaleY, c.OutputX, c.OutputY} {
 		if math.IsNaN(value) || math.IsInf(value, 0) {
 			return nil, fmt.Errorf("composite: nonfinite profile image parameter")
 		}
 	}
-	if c.WrapWidth < 0 {
-		return nil, fmt.Errorf("composite: negative profile wrap width")
+	if c.WrapWidth < 0 || c.PhaseWrap < 0 || c.ScaleX < 0 || c.ScaleY < 0 {
+		return nil, fmt.Errorf("composite: invalid profile wrap or scale")
+	}
+	if c.ScaleX == 0 {
+		c.ScaleX = 1
+	}
+	if c.ScaleY == 0 {
+		c.ScaleY = 1
 	}
 	for _, value := range c.Offsets {
 		if math.IsNaN(value) || math.IsInf(value, 0) {
@@ -67,10 +76,15 @@ func NewProfileImage(source *ebiten.Image, c ProfileImageConfig) (*ProfileImage,
 
 // Update advances the authored phase without drawing or allocating.
 func (p *ProfileImage) Update(kit.Frame) error {
-	p.phase += p.config.PhaseStep
+	p.Advance()
 	return nil
 }
-func (p *ProfileImage) Advance()           { p.phase += p.config.PhaseStep }
+func (p *ProfileImage) Advance() {
+	p.phase += p.config.PhaseStep
+	if p.config.PhaseWrap > 0 && p.phase > p.config.PhaseWrap {
+		p.phase = 0
+	}
+}
 func (p *ProfileImage) Phase() int         { return p.phase }
 func (p *ProfileImage) SetPhase(phase int) { p.phase = phase }
 
@@ -112,11 +126,22 @@ func (p *ProfileImage) DrawAt(dst *ebiten.Image, baseX, baseY float64) {
 }
 
 func (p *ProfileImage) drawRow(dst, row *ebiten.Image, x, y float64) {
+	c := p.config
+	width, height := p.width, 1.0
+	if c.ScaleX != 1 || c.ScaleY != 1 || c.OutputX != 0 || c.OutputY != 0 {
+		x = c.OutputX + x*c.ScaleX
+		y = c.OutputY + y*c.ScaleY
+		width *= c.ScaleX
+		height *= c.ScaleY
+	}
 	if p.batch != nil {
-		p.batch.Rect(row.Bounds(), float32(x), float32(y), float32(p.width), 1)
+		p.batch.Rect(row.Bounds(), float32(x), float32(y), float32(width), float32(height))
 		return
 	}
-	op := ebiten.DrawImageOptions{Filter: p.config.Filter}
+	op := ebiten.DrawImageOptions{Filter: c.Filter}
+	if c.ScaleX != 1 || c.ScaleY != 1 {
+		op.GeoM.Scale(c.ScaleX, c.ScaleY)
+	}
 	op.GeoM.Translate(x, y)
 	dst.DrawImage(row, &op)
 }

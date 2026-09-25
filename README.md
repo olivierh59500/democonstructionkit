@@ -1799,7 +1799,7 @@ remain available for effects with different behavior.
 | `scrolling.Config.RowColumn` | Fixed-cell bitmap text, sampled source rows and independent destination columns | DMA 3D and Replicants |
 | `scrolling.Config.RowBands` | Circular bitmap text, ordered row displacement passes and a final crop | 3D DOC intro and main screen |
 | `scrolling.Config.RingLanes` | Independent fonts and texts, synchronized slot updates, paced vertical motion and exact wrap | Cuddly Fullscreen and Big Sprite |
-| `composite.ProfileImage` | Cached source rows, editable displacement table, motion phase and finite wrap copies | TeamG1 logo |
+| `composite.ProfileImage` | Cached source rows, editable displacement table, strict phase wrap, parent viewport scale and finite wrap copies | TeamG1 and TCB/Union Multi-Plane logos |
 | `plasma.HarmonicImage` | Harmonic kernel, reusable CPU pixels, live GPU surface and dirty-frame upload | TeamG1 plasma |
 | `sprites.Group` with `CircleFormation` | Indexed circular poses, secondary harmonic motion and independent sprite scales | TeamG1 twelve-logo formation |
 | `sprites.Group` with `HarmonicFormation` | Independent X/Y wave banks, two phase clocks, authored index phases, bounce envelope and optional bounds | Grodan sprite train, MegaTwist glowing logos, Union Beat Dis, Cuddly LED |
@@ -2303,6 +2303,23 @@ renderers pixel for pixel.
 Union Multi-Plane also reuses `TCBLogoWaveSections`: setting `SampleStart` to
 40 and 844 on its two sine sections preserves Union's original global-index
 phases. Eight captures at the section joins and wrap match its previous image.
+All three Multi-Plane screens now draw those rows through `composite.ProfileImage`:
+
+```go
+config := presets.TCBLogoRowProfile(samples, 303)
+config.ScaleX, config.ScaleY = 2, 2
+config.OutputX, config.OutputY = 64, 60
+rows, err := composite.NewProfileImage(logo.SubImage(image.Rect(0, 16, 303, 48)).(*ebiten.Image), config)
+if err != nil { return err }
+rows.Advance() // The strict phase wrap is part of the effect.
+rows.Draw(screen)
+```
+
+Union leaves scale at one and draws into its native stage. The source crop,
+profile table, phase limit, native placement, output scale and viewport offset
+are independent parameters. A reusable quad batch draws the 32 rows without an
+intermediate full-screen image. Thirteen Union, ten standalone TCB and nine
+Multiscreen captures match the preceding renderers at table boundaries and wrap.
 
 For the standalone and Multiscreen TCB mountain backgrounds, use
 `presets.TCBMountainBands()` with `composite.NewBands`. Its 32 moving crops
