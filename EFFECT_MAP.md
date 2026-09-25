@@ -68,7 +68,7 @@ production. Preserved original implementations remain unchanged.
 | Replicants | Atlas, `Config.RowColumn` with variable-speed controls | Stepped block reveal, quantized logo zoom bank and layered stars. |
 | TeamG1, intro | `Config.Feed` with progressive right-edge entry, atlas, flat TimedCRTOverlay, `timeline.IntroHandoff` | Message and materials remain production data. |
 | TeamG1, main | TexturedCube, HarmonicImage, ProfileImage, `Config.Profiled`, sprites.Group circular formation | Timed scene/audio cues and whole-scene presentation remain composition data. |
-| Viva TCB | Atlas, four editable `scrolling.Config.Pseudo3D` glyph banks, ten-logo `sprites.RecurrentFormation`, staged `RotozoomBackground` and two-mode `composite.RasterTitle` | Horizontal title cue and whole-scene layer schedule. |
+| Viva TCB | Atlas, four editable `scrolling.Config.Pseudo3D` glyph banks, ten-logo `sprites.RecurrentFormation`, staged `RotozoomBackground`, two-mode `composite.RasterTitle` and held `motion.WaveClock` title path | Whole-scene layer schedule and host music cue. |
 
 Second Reality remains outside this full-screen inventory, but its Rotozoomer
 now uses the `indexed.Rotozoom256` backend. The live RGBA tile used by Viva and

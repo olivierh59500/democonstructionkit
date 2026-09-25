@@ -526,6 +526,12 @@ clock with a different `Start`, `Step` or `Wave.Phase` for a deliberate offset.
 Sampling and stepping allocate no memory per frame. Cuddly Digi, LED,
 Megaball and Ehhh share this clock with different amplitudes and cue rates;
 Starwars uses the same rectified wave to build one segment of its row profile.
+`WaveClockConfig.HoldTicks` delays phase advances without changing the initial
+visible pose; `SetHold` can schedule another pause. `presets.VivaTitleMotion`
+drives the same horizontal cosine title path with a 970-tick hold in standalone
+Viva and zero hold in Multiscreen. The title image is supplied separately to
+`RasterTitle.DrawAt`; fourteen captures per version around the hold and raster
+wrap boundaries remain identical in every channel.
 Set `Directional` when an axis should reverse only while moving outward. With
 `AllowOutsideStart`, an image can enter from beyond its normal bounds before
 settling into a bounce. Cuddly Mega Scroller uses this pair for its masked text

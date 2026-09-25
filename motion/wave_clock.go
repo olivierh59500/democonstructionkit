@@ -10,12 +10,14 @@ import (
 type WaveClockConfig struct {
 	Wave        Wave
 	Start, Step float64
+	HoldTicks   int
 }
 
 // WaveClock keeps one authored wave phase without touching a renderer.
 type WaveClock struct {
 	config WaveClockConfig
 	phase  float64
+	hold   int
 }
 
 func NewWaveClock(config WaveClockConfig) (*WaveClock, error) {
@@ -24,7 +26,10 @@ func NewWaveClock(config WaveClockConfig) (*WaveClock, error) {
 			return nil, fmt.Errorf("motion: nonfinite wave clock setting")
 		}
 	}
-	return &WaveClock{config: config, phase: config.Start}, nil
+	if config.HoldTicks < 0 {
+		return nil, fmt.Errorf("motion: negative wave clock hold")
+	}
+	return &WaveClock{config: config, phase: config.Start, hold: config.HoldTicks}, nil
 }
 
 func (clock *WaveClock) At(position float64) float64 {
@@ -34,8 +39,14 @@ func (clock *WaveClock) At(position float64) float64 {
 // Phase reports the phase used by the next At call.
 func (clock *WaveClock) Phase() float64 { return clock.phase }
 
-// Step advances the phase once, independently of how many times At was called.
-func (clock *WaveClock) Step() { clock.phase += clock.config.Step }
+// Step consumes an initial hold tick or advances the phase exactly once.
+func (clock *WaveClock) Step() {
+	if clock.hold > 0 {
+		clock.hold--
+		return
+	}
+	clock.phase += clock.config.Step
+}
 
 // SetStep changes the next advance without discarding the current phase.
 func (clock *WaveClock) SetStep(step float64) error {
@@ -55,5 +66,19 @@ func (clock *WaveClock) SetPhase(phase float64) error {
 	return nil
 }
 
-// Reset restores the configured starting phase and retains the current step.
-func (clock *WaveClock) Reset() { clock.phase = clock.config.Start }
+// HoldRemaining reports ticks before the next phase advance.
+func (clock *WaveClock) HoldRemaining() int { return clock.hold }
+
+// SetHold schedules another pause without changing the current phase.
+func (clock *WaveClock) SetHold(ticks int) error {
+	if ticks < 0 {
+		return fmt.Errorf("motion: negative wave clock hold")
+	}
+	clock.hold = ticks
+	return nil
+}
+
+// Reset restores the configured starting phase and hold, retaining the step.
+func (clock *WaveClock) Reset() {
+	clock.phase, clock.hold = clock.config.Start, clock.config.HoldTicks
+}
