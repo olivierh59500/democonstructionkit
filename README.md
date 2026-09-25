@@ -755,6 +755,27 @@ editable `presets.VivaRasterWrapConfig` and `presets.TCBMountainWrapConfig`
 keep the corresponding standalone and Multiscreen bands synchronized without
 duplicating their initial offsets, velocities or wrap rules.
 
+`composite.RasterTitle` combines two moving raster phases, a repeated third
+strip and a title image under one `Step`/`DrawAt` boundary. The returned preset
+is editable: source crops, signed scale, phase offset, clipping, fill color and
+blend are independent of artwork and the caller's horizontal trajectory.
+
+```go
+config := presets.VivaRasterTitleCanvas(title, raster)
+config.ThirdOffsetY = 96
+material, err := composite.NewRasterTitle(config)
+if err != nil { return err }
+defer material.Close()
+material.Step()
+material.DrawAt(screen, titleX, 14)
+```
+
+`VivaRasterTitleCanvas` owns only a 528×36 surface for the standalone source.
+`VivaRasterTitleDirect(title, raster, 800)` draws into Multiscreen's 800×72
+clipped region and allocates no intermediate surface. Fourteen capture pairs
+per version, including both raster wraps and the title's departure cue, match
+the preceding renderers in every color and alpha channel.
+
 ### Animate a repeated texture with a rotozoom
 
 `composite.RotozoomBackground` owns the update/draw boundary and renders one
@@ -1870,6 +1891,7 @@ remain available for effects with different behavior.
 | `composite.ScanlineBackground` | Bounded horizontal tile source, independent wave/bounce clocks and batched source rows | MegaTwist |
 | `composite.CopperBars` | Two-phase raster bank with editable table, clocks, source strips and quad/image materials | Bilizir, Coco, Multiscreen Coco |
 | `composite.RasterOverlay` | Moving raster material with source crop, blend, scale and exact wrap policy over a live image | Cuddly Big Sprite/Starwars, Union Wow/Replicants |
+| `composite.RasterTitle` | Two-phase moving raster behind a title, optional small canvas or direct clipped draw | Viva TCB and Multiscreen Viva |
 
 `FeedConfig.ProgressiveEntry` keeps the active glyph at the viewport edge until
 its full advance has entered, revealing its bitmap over successive updates.

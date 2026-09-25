@@ -55,7 +55,7 @@ production. Preserved original implementations remain unchanged.
 | Coco, intro | `Config.Feed`, configurable CRTOverlay, immediate `timeline.IntroHandoff` music cue | Scene materials stay production data. |
 | Coco, main | `Config.Scanline`, SolidCubeBatch, sprites.Group grid/translation, shared font metrics and `CopperBars` | Repeating rotozoom and remaining title-layer presentation. |
 | DOM intro | Atlas, synchronized FontProgram, scrolling, `motion.WrapBank` background and raster offsets | Whole-bank font switch triggered at viewport entry; animated star atlas instances. |
-| Multiscreen, four embedded productions | SolidCube, sampled DNA and projected-plane engines, atlas recipes, `CopperBars` in Coco, shared Viva raster, `scrolling.Config.Pseudo3D` text banks and `sprites.RecurrentFormation` logos, complete TCB `effects.MultiPlaneScene` | Make the other three production scenes reusable constructors rather than copies of their standalone controllers. |
+| Multiscreen, four embedded productions | SolidCube, sampled DNA and projected-plane engines, atlas recipes, `CopperBars` in Coco, Viva `RasterTitle`, `scrolling.Config.Pseudo3D` text banks and `sprites.RecurrentFormation` logos, complete TCB `effects.MultiPlaneScene` | Make the other three production scenes reusable constructors rather than copies of their standalone controllers. |
 | Multiscreen, camera tour | Layer/viewport helpers | Camera/zoom director with visibility culling, retained outputs and serialized handoffs. |
 | Vectorballs | Projected shape factories, reflection | Reusable point-morph/deformation/action sequence with explicit inherited vs cleared settings and smooth handoffs. |
 | Grodan | Atlas, scrolling, bounded `Background` repetition and harmonic `sprites.Group` with bounce envelope | Repeated vertical text columns. |
@@ -68,7 +68,7 @@ production. Preserved original implementations remain unchanged.
 | Replicants | Atlas, `Config.RowColumn` with variable-speed controls | Stepped block reveal, quantized logo zoom bank and layered stars. |
 | TeamG1, intro | `Config.Feed` with progressive right-edge entry, atlas, flat TimedCRTOverlay, `timeline.IntroHandoff` | Message and materials remain production data. |
 | TeamG1, main | TexturedCube, HarmonicImage, ProfileImage, `Config.Profiled`, sprites.Group circular formation | Timed scene/audio cues and whole-scene presentation remain composition data. |
-| Viva TCB | Atlas, four editable `scrolling.Config.Pseudo3D` glyph banks, ten-logo `sprites.RecurrentFormation`, staged `RotozoomBackground` and shared `motion.WrapBank` title raster | Raster title material and whole-scene layer cues. |
+| Viva TCB | Atlas, four editable `scrolling.Config.Pseudo3D` glyph banks, ten-logo `sprites.RecurrentFormation`, staged `RotozoomBackground` and two-mode `composite.RasterTitle` | Horizontal title cue and whole-scene layer schedule. |
 
 Second Reality remains outside this full-screen inventory, but its Rotozoomer
 now uses the `indexed.Rotozoom256` backend. The live RGBA tile used by Viva and
