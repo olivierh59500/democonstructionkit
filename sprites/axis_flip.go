@@ -18,6 +18,10 @@ type AxisFlipConfig struct {
 	SwitchAt              float64
 	FrontAngle, BackAngle float64 // Degrees, matching image transform conventions.
 	ScaleX                float64 // Zero defaults to one.
+	AnchorX, AnchorY      float64 // Pixel anchor; UseAnchor=false centers each selected face.
+	UseAnchor             bool
+	BackMirrorY           bool    // Mirror the back face before anchoring and scaling.
+	BackMirrorShift       float64 // Zero uses the selected image height.
 	Filter                ebiten.Filter
 	Blend                 ebiten.Blend
 }
@@ -27,6 +31,7 @@ type AxisFlipConfig struct {
 type AxisFlipPose struct {
 	Image                 *ebiten.Image
 	ScaleX, ScaleY, Angle float64
+	Back                  bool
 }
 
 // AxisFlip owns one reversible face-selection clock and borrows its images.
@@ -41,7 +46,7 @@ func NewAxisFlip(config AxisFlipConfig) (*AxisFlip, error) {
 	if config.Front == nil {
 		return nil, fmt.Errorf("sprites: axis flip needs a front image")
 	}
-	for _, value := range [...]float64{config.SwitchAt, config.FrontAngle, config.BackAngle, config.ScaleX} {
+	for _, value := range [...]float64{config.SwitchAt, config.FrontAngle, config.BackAngle, config.ScaleX, config.AnchorX, config.AnchorY, config.BackMirrorShift} {
 		if math.IsNaN(value) || math.IsInf(value, 0) {
 			return nil, fmt.Errorf("sprites: nonfinite axis flip setting")
 		}
@@ -81,7 +86,7 @@ func (flip *AxisFlip) Pose() AxisFlipPose {
 		scaleY = flip.motion.At(0)
 		back = scaleY <= flip.config.SwitchAt
 	}
-	pose := AxisFlipPose{Image: flip.config.Front, ScaleX: flip.config.ScaleX, ScaleY: scaleY, Angle: flip.config.FrontAngle}
+	pose := AxisFlipPose{Image: flip.config.Front, ScaleX: flip.config.ScaleX, ScaleY: scaleY, Angle: flip.config.FrontAngle, Back: back}
 	if back {
 		pose.Image = flip.config.Back
 		pose.Angle = flip.config.BackAngle
@@ -104,14 +109,48 @@ func (flip *AxisFlip) Reset() {
 	}
 }
 
-// DrawAt centers the selected image at x,y. Position may come from any DCK
-// motion path or from the caller; drawing leaves the flip clock unchanged.
+// DrawAt places the selected image at x,y. Without UseAnchor, each face is
+// centered independently. Drawing leaves the flip clock unchanged.
 func (flip *AxisFlip) DrawAt(dst *ebiten.Image, x, y float64) {
 	pose := flip.Pose()
+	op := flip.optionsForPose(pose, x, y, nil)
+	dst.DrawImage(pose.Image, &op)
+}
+
+// DrawAtWith applies parent after the local image pose. It can place a native
+// flip into a scaled stage or another composed coordinate system.
+func (flip *AxisFlip) DrawAtWith(dst *ebiten.Image, x, y float64, parent ebiten.GeoM) {
+	pose := flip.Pose()
+	op := flip.optionsForPose(pose, x, y, &parent)
+	dst.DrawImage(pose.Image, &op)
+}
+
+// OptionsAt exposes the same transform used by DrawAt and DrawAtWith, so a
+// caller can submit the face through another renderer or change its material.
+func (flip *AxisFlip) OptionsAt(x, y float64, parent *ebiten.GeoM) ebiten.DrawImageOptions {
+	return flip.optionsForPose(flip.Pose(), x, y, parent)
+}
+
+func (flip *AxisFlip) optionsForPose(pose AxisFlipPose, x, y float64, parent *ebiten.GeoM) ebiten.DrawImageOptions {
 	op := ebiten.DrawImageOptions{Filter: flip.config.Filter, Blend: flip.config.Blend}
-	op.GeoM.Translate(-float64(pose.Image.Bounds().Dx())/2, -float64(pose.Image.Bounds().Dy())/2)
+	if pose.Back && flip.config.BackMirrorY {
+		shift := flip.config.BackMirrorShift
+		if shift == 0 {
+			shift = float64(pose.Image.Bounds().Dy())
+		}
+		op.GeoM.Scale(1, -1)
+		op.GeoM.Translate(0, shift)
+	}
+	anchorX, anchorY := float64(pose.Image.Bounds().Dx())/2, float64(pose.Image.Bounds().Dy())/2
+	if flip.config.UseAnchor {
+		anchorX, anchorY = flip.config.AnchorX, flip.config.AnchorY
+	}
+	op.GeoM.Translate(-anchorX, -anchorY)
 	op.GeoM.Scale(pose.ScaleX, pose.ScaleY)
 	op.GeoM.Rotate(pose.Angle * math.Pi / 180)
 	op.GeoM.Translate(x, y)
-	dst.DrawImage(pose.Image, &op)
+	if parent != nil {
+		op.GeoM.Concat(*parent)
+	}
+	return op
 }

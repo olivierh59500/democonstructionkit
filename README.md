@@ -429,6 +429,13 @@ Multi-Plane uses `Start:0`, `Velocity:.08`, `Boundary:1`, `Restart:-1`; it calls
 `Step` before `DrawAt` to retain the first frame's .08 scale. The front/back
 images and their angles remain editable. Eleven native captures around its
 face changes match the previous screen pixel for pixel.
+`UseAnchor` overrides centering in source pixels; `BackMirrorY` mirrors a single
+source image on alternate cycles, with an editable vertical shift.
+`DrawAtWith` applies a parent `ebiten.GeoM` after the local pose, for example
+the Multi-Plane screen's 2× viewport transform. `OptionsAt` exposes that same
+geometry for a custom material. The autonomous TCB screen and its Multiscreen
+panel now use these settings; eleven and ten captures respectively match their
+previous image exactly.
 
 For repeating image strips, `sprites.NewTrain` owns both the image group and
 its X/Y motion. Each axis can be fixed, use a phase-spaced `motion.Wave`

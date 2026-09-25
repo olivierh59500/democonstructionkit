@@ -96,3 +96,47 @@ func TestAxisFlipSawSwitchesFacesOnlyAtStrictWrap(t *testing.T) {
 		t.Fatal("saw reset retained face or phase")
 	}
 }
+
+func TestAxisFlipParentAndBackMirrorMatchAuthoredTransform(t *testing.T) {
+	image := ebiten.NewImage(79, 15)
+	defer image.Deallocate()
+	flip, err := NewAxisFlip(AxisFlipConfig{
+		Front: image, Saw: &motion.SawToggleConfig{Start: 0, Velocity: .08, Boundary: 1, Restart: -1},
+		UseAnchor: true, AnchorX: 40, AnchorY: 8,
+		BackMirrorY: true, BackMirrorShift: 16,
+		Filter: ebiten.FilterNearest, Blend: ebiten.BlendSourceOver,
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	rotation, alternate := 0.0, false
+	for tick := 0; tick < 100; tick++ {
+		rotation += .08
+		if rotation > 1 {
+			rotation = -1
+			alternate = !alternate
+		}
+		flip.Step()
+		op := ebiten.DrawImageOptions{Filter: ebiten.FilterNearest, Blend: ebiten.BlendSourceOver}
+		if alternate {
+			op.GeoM.Scale(1, -1)
+			op.GeoM.Translate(0, 16)
+		}
+		op.GeoM.Translate(-40, -8)
+		op.GeoM.Scale(1, rotation)
+		op.GeoM.Translate(160, 88)
+		op.GeoM.Scale(2, 2)
+		op.GeoM.Translate(64, 60)
+		parent := ebiten.GeoM{}
+		parent.Scale(2, 2)
+		parent.Translate(64, 60)
+		actual := flip.OptionsAt(160, 88, &parent)
+		for _, point := range [...]struct{ x, y float64 }{{0, 0}, {79, 0}, {0, 15}, {79, 15}} {
+			wantX, wantY := op.GeoM.Apply(point.x, point.y)
+			gotX, gotY := actual.GeoM.Apply(point.x, point.y)
+			if math.Abs(gotX-wantX) > 1e-10 || math.Abs(gotY-wantY) > 1e-10 {
+				t.Fatalf("tick %d corner %+v changed from %v,%v to %v,%v", tick, point, wantX, wantY, gotX, gotY)
+			}
+		}
+	}
+}
