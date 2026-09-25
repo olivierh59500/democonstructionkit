@@ -489,6 +489,14 @@ The Cuddly menu keeps its original 800 × 432 unmanaged surface, half-speed
 integer camera motion and one source-copy draw per frame. Another logo or
 scrolling layer can use the same renderer with its own tile, size and phase.
 
+Union Menu composes smaller independent controllers: `motion.WrapBank` loops
+the panorama; `motion.LinearTick` closes the uncover wipe; two
+`timeline.PacedIndex` instances choose palette and walking frames with distinct
+first-step cadences; `motion.HoldBounce` waits, squeezes and restores its logo.
+The image atlas still belongs to the production, and the menu keeps input and
+door navigation. Each preset exposes its speed, bounds, hold and frame counts;
+all five controllers sample without per-tick allocation.
+
 Additional packages provide bitmap metrics (`font`), curves/keyframes (`motion`),
 geometry, palettes (`indexed`), vector font outlines (`outline`), asset loading,
 and device-independent YM/go-zikmu PCM (`sound`). Use `sound/ebiten` with one

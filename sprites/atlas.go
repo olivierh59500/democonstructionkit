@@ -89,3 +89,10 @@ func (atlas *Atlas) Region(index int) composite.Region {
 		Width: float64(atlas.TileW), Height: float64(atlas.TileH),
 	}
 }
+
+// Rect returns an absolute integer crop for an existing DrawImage/SubImage
+// material that must retain its original filtering and blending path.
+func (atlas *Atlas) Rect(index int) image.Rectangle {
+	region := atlas.Region(index)
+	return image.Rect(int(region.X), int(region.Y), int(region.X+region.Width), int(region.Y+region.Height))
+}

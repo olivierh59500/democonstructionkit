@@ -20,6 +20,9 @@ func TestAtlasCachesRowMajorTilesAndRegions(t *testing.T) {
 	if region.X != 30 || region.Y != 22 || region.Width != 30 || region.Height != 22 {
 		t.Fatalf("last region = %+v", region)
 	}
+	if rect := atlas.Rect(3); rect.Min.X != 30 || rect.Min.Y != 22 || rect.Max.X != 60 || rect.Max.Y != 44 {
+		t.Fatalf("integer atlas crop = %v", rect)
+	}
 	if allocations := testing.AllocsPerRun(100, func() { _ = atlas.Tile(3); _ = atlas.Region(3) }); allocations != 0 {
 		t.Fatalf("atlas sampling allocates %v times", allocations)
 	}
