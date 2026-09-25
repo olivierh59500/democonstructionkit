@@ -19,3 +19,13 @@ func TestWaveSelectsSineOrCosineWithoutChangingItsClock(t *testing.T) {
 		}
 	}
 }
+
+func TestWaveRectificationAndOffsetKeepAuthoredBounce(t *testing.T) {
+	wave := Wave{Amplitude: -160, Speed: 1, Offset: 200, Rectify: true}
+	for _, phase := range []float64{0, .03, 1.2, 3.14, 6.28} {
+		want := 200 - math.Abs(math.Sin(phase)*160)
+		if got := wave.At(0, phase); math.Abs(got-want) > 1e-12 {
+			t.Fatalf("phase %v rectified wave = %v, want %v", phase, got, want)
+		}
+	}
+}

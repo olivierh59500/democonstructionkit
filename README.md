@@ -417,6 +417,26 @@ bars.Draw(screen)                 // May be drawn in several layers.
 
 Image dimensions, image order, scale, blend and layer placement remain
 independent of motion. The train reuses its pose and motion slices.
+`motion.Wave` also supports `Offset` and `Rectify` for an absolute-sine or
+absolute-cosine bounce. Use a `motion.WaveClock` when the phase advances in
+simulation ticks and can change speed or reset at a text/timeline cue:
+
+```go
+clock, err := motion.NewWaveClock(presets.RectifiedSine(340, -60, .08))
+if err != nil { return err }
+// In Update, sample before advancing to keep the authored first frame.
+scrollY := clock.At(0)
+clock.Step()
+// Draw the scrolling surface, logo or sprite at scrollY.
+// A control event can call clock.SetStep(.04), clock.SetPhase(0) or clock.Reset().
+```
+
+Pass a glyph/sprite index to `At(index)` and set `Wave.Spatial` for phase
+spacing. The same clock can drive several layers in phase; construct another
+clock with a different `Start`, `Step` or `Wave.Phase` for a deliberate offset.
+Sampling and stepping allocate no memory per frame. Cuddly Digi, LED,
+Megaball and Ehhh share this clock with different amplitudes and cue rates;
+Starwars uses the same rectified wave to build one segment of its row profile.
 Set `Directional` when an axis should reverse only while moving outward. With
 `AllowOutsideStart`, an image can enter from beyond its normal bounds before
 settling into a bounce. Cuddly Mega Scroller uses this pair for its masked text
