@@ -421,8 +421,10 @@ flip.Step() // Draw-before-step keeps the first fully visible front frame.
 `Back` may be omitted to flip a single image. `DrawAt` centers whichever face
 is selected, so differently sized art stays centered. The effect reuses its
 images and creates no intermediate surface. Cuddly Big Sprite uses this
-controller for its two-face emblem; sixteen captures around both switches and
-bounds match the previous screen exactly.
+controller for its two-face emblem. `SnapCenter` truncates each selected image's
+half dimensions to integer pixels, as Big Sprite requires for its 346×143 and
+347×144 faces. Sixteen channel-aware captures around both switches and bounds
+match the previous screen exactly.
 For a scale that jumps from a strict upper/lower bound and alternates faces on
 each jump, set `Saw` to a `motion.SawToggleConfig` instead of `Motion`. Union
 Multi-Plane uses `Start:0`, `Velocity:.08`, `Boundary:1`, `Restart:-1`; it calls
@@ -591,6 +593,13 @@ parts and ST3 synchronization remain in the production.
 Native comparisons can be generated locally. Audio is disabled during captures;
 clock and random-seed inputs are fixed. Captures and development reports remain
 local working files.
+
+For any two PNG capture trees, run
+`go run ./cmd/compare-frames -reference /path/to/before -candidate /path/to/after`.
+It checks every RGB and alpha channel and exits unsuccessfully when pixels or
+frame sets differ. `-diff /path/to/diffs` writes amplified mismatch images.
+Checking only an RGBA difference image's bounding box can miss changes to RGB
+when both frames have the same alpha; use this channel-aware comparator.
 
 ## Reusable backgrounds, particles and sprite formations
 
@@ -2317,9 +2326,36 @@ rows.Draw(screen)
 
 Union leaves scale at one and draws into its native stage. The source crop,
 profile table, phase limit, native placement, output scale and viewport offset
-are independent parameters. A reusable quad batch draws the 32 rows without an
-intermediate full-screen image. Thirteen Union, ten standalone TCB and nine
-Multiscreen captures match the preceding renderers at table boundaries and wrap.
+are independent parameters. The preset's `RowStep: 1` advances the sine phase
+for each scanline; without it the entire logo slides sideways instead of
+undulating. A reusable quad batch draws the rows without an intermediate
+full-screen image. Nine Union, ten standalone TCB and nine Multiscreen captures
+now match the earlier undulating renderers in all color channels.
+
+`effects.MultiPlaneScene` composes the mountain bands, row-profile logo,
+front/back emblem and projected scrolling in one configurable effect. Supply
+the images, text/font-backed `scrolling.Config`, source crops, wave table and
+viewport. `NativeStage:true` retains Union's 320×200 stage and its two-pass
+scaling; direct mode retains the standalone and Multiscreen clipped draws with
+no intermediate full-screen surface. The host still chooses music, controls
+and any additional layers. Call `Update` once per tick, then `Draw` as needed;
+the component exposes its constituent effects for live editor cues.
+
+```go
+part, err := effects.NewMultiPlaneScene(effects.MultiPlaneSceneConfig{
+    Mountains: mountains, Logo: logo,
+    LogoSource: image.Rect(0, 16, 303, 48),
+    CenterSource: image.Rect(114, 0, 193, 15),
+    Bands: presets.TCBMountainBands(), Rows: config,
+    Center: flipConfig, Scroll: scrollConfig,
+    Viewport: image.Rect(64, 60, 704, 460), StageSize: image.Pt(320, 200),
+    CenterX: 160, CenterY: 88,
+})
+if err != nil { return err }
+defer part.Close()
+if err := part.Update(frame); err != nil { return err }
+part.Draw(screen)
+```
 
 For the standalone and Multiscreen TCB mountain backgrounds, use
 `presets.TCBMountainBands()` with `composite.NewBands`. Its 32 moving crops

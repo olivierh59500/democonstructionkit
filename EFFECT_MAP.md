@@ -55,7 +55,7 @@ production. Preserved original implementations remain unchanged.
 | Coco, intro | `Config.Feed`, configurable CRTOverlay, immediate `timeline.IntroHandoff` music cue | Scene materials stay production data. |
 | Coco, main | `Config.Scanline`, SolidCubeBatch, sprites.Group grid/translation, shared font metrics and `CopperBars` | Repeating rotozoom and remaining title-layer presentation. |
 | DOM intro | Atlas, synchronized FontProgram, scrolling, `motion.WrapBank` background and raster offsets | Whole-bank font switch triggered at viewport entry; animated star atlas instances. |
-| Multiscreen, four embedded productions | SolidCube, sampled DNA and projected-plane engines, atlas recipes, `CopperBars` in Coco, shared Viva raster, TCB `composite.Bands` mountains, `composite.ProfileImage` logo rows and `sprites.AxisFlip` | Make the four production scenes reusable constructors rather than copies of their standalone controllers. |
+| Multiscreen, four embedded productions | SolidCube, sampled DNA and projected-plane engines, atlas recipes, `CopperBars` in Coco, shared Viva raster and complete TCB `effects.MultiPlaneScene` | Make the other three production scenes reusable constructors rather than copies of their standalone controllers. |
 | Multiscreen, camera tour | Layer/viewport helpers | Camera/zoom director with visibility culling, retained outputs and serialized handoffs. |
 | Vectorballs | Projected shape factories, reflection | Reusable point-morph/deformation/action sequence with explicit inherited vs cleared settings and smooth handoffs. |
 | Grodan | Atlas, scrolling, bounded `Background` repetition and harmonic `sprites.Group` with bounce envelope | Repeated vertical text columns. |
@@ -64,7 +64,7 @@ production. Preserved original implementations remain unchanged.
 | Nonameno, stars | `sprites.ProjectedField`, editable radial pattern and vector pixel/trail material | The star field is complete; staggered text-page choreography is tracked below. |
 | Nonameno, text pages | Atlas | Staggered per-glyph enter/exit with scale/depth, easing, delays and completion barrier; baseline sine scroll. |
 | Phenomena DNA intro | Atlas, DNAFrames, sliced transport | Whole screen's two-pixel insertion, loop-start and control events as a reusable configuration; separate intro/outro reveal and bounce cues. |
-| TCB multiplane | Projected scrolling, font-independent forms, snapped `composite.Bands` mountains, `composite.ProfileImage` logo rows, `sprites.AxisFlip` center logo | Share the full screen recipe with Multiscreen and Union while preserving phase-per-visible-slot timing. |
+| TCB multiplane | Complete `effects.MultiPlaneScene`: projected scrolling, font-independent forms, snapped `composite.Bands` mountains, per-row `composite.ProfileImage` logo, `sprites.AxisFlip` emblem | Text, artwork and music remain production parameters. |
 | Replicants | Atlas, `Config.RowColumn` with variable-speed controls | Stepped block reveal, quantized logo zoom bank and layered stars. |
 | TeamG1, intro | `Config.Feed` with progressive right-edge entry, atlas, flat TimedCRTOverlay, `timeline.IntroHandoff` | Message and materials remain production data. |
 | TeamG1, main | TexturedCube, HarmonicImage, ProfileImage, `Config.Profiled`, sprites.Group circular formation | Timed scene/audio cues and whole-scene presentation remain composition data. |
@@ -114,7 +114,7 @@ matches the previous implementation exactly.
 | Replicants | Atlas, scrolling, `RasterOverlay` fill, `motion.CuedFormation` letter paths, `sprites.Train` rasters driven by `motion.BounceBank` | Historically reset scroll clock. |
 | TNT Crew 2 | Background sampler, BitmapText.DrawWindow, `motion.WrapBank` three-layer parallax and mutable speeds | Per-key control mapping remains scene data. |
 | Level 16 | Vertical scrolling, background sampler, NestedOrbit, `motion.WrapBank` water and raster offsets | Raster/water material and authored layer occlusion. |
-| Multi-Plane | Bands, projected scrolling, shared TCB logo wave sections with Union's source-index offsets, `composite.ProfileImage` row renderer, `sprites.AxisFlip` with strict `motion.SawToggle` face cycle | Package the form program and strip background as one editable screen recipe. |
+| Multi-Plane | Complete `effects.MultiPlaneScene` in native-stage mode, with Union's source-index phases, `composite.ProfileImage` row renderer and strict `sprites.AxisFlip` cycle | Artwork, text, soundtrack and door routing remain production data. |
 | Disk Copier | Bitmap recipes, `sprites.Atlas` LCD regions, `motion.GatedWrapBank` three LCD clocks, `motion.WrapBank` six-strip raster offset, `timeline.CueRanges` stages and `timeline.SteppedEnvelope` palette | Input/state program and LED layer placement remain scene composition data. |
 
 ## Extraction order and acceptance
