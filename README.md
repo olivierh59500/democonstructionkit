@@ -465,6 +465,27 @@ geometry for a custom material. The autonomous TCB screen and its Multiscreen
 panel now use these settings; eleven and ten captures respectively match their
 previous image exactly.
 
+For a repeated logo or sprite whose X motion multiplies two harmonics and Y
+motion adds two, `sprites.RecurrentFormation` shares the image and advances
+four sine/cosine seeds across all instances. Count, per-instance phase steps,
+time divisors, sine/cosine choice, native origin, output scale and opacity are
+editable. `Update` samples once for the chosen tick or music phase; repeated
+`Draw` calls reuse poses without trigonometry or an intermediate surface:
+
+```go
+recipe := presets.VivaLogoFormation(logo, 768, 540, 51.5)
+recipe.Count = 12
+recipe.XSecondaryStep = 1.0 / 48.0
+logos, err := sprites.NewRecurrentFormation(recipe)
+if err != nil { return err }
+logos.Update(float64(frame.Tick))
+logos.Draw(screen)
+```
+
+Standalone Viva and its Multiscreen panel both use this component; the latter
+sets its authored vertical amplitude to 37.5. Eight captures per version
+through frame 4,800 match the preceding image in every channel.
+
 For repeating image strips, `sprites.NewTrain` owns both the image group and
 its X/Y motion. Each axis can be fixed, use a phase-spaced `motion.Wave`
 (`Cos: true` selects cosine), or use a `motion.BounceBankConfig`. The bounce
