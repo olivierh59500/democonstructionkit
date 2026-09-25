@@ -12,12 +12,14 @@ import (
 // Velocity and Wrap use phase units per Step; MotionScale converts phase to
 // destination pixels without changing image scale. Signed remainder preserves
 // authored leftward wraps. CopyOffsets permits overlaps or deliberately finite
-// repetitions; an empty list draws one copy.
+// repetitions; an empty list draws one copy. TruncatePhaseX/Y applies integer
+// phase quantization before MotionScale for source screens that snap strips.
 type MovingBand struct {
 	Source                                             image.Rectangle
 	X, Y, Width, Height                                float64
 	PhaseX, PhaseY, VelocityX, VelocityY, WrapX, WrapY float64
 	MotionScaleX, MotionScaleY                         float64
+	TruncatePhaseX, TruncatePhaseY                     bool // Truncate motion before scaling, matching integer strip offsets.
 }
 type BandsConfig struct {
 	Bands       []MovingBand
@@ -80,10 +82,10 @@ func (b *Bands) Step() {
 		p := &b.config.Bands[i]
 		p.PhaseX += p.VelocityX
 		p.PhaseY += p.VelocityY
-		if p.WrapX > 0 {
+		if p.WrapX > 0 && (p.PhaseX >= p.WrapX || p.PhaseX <= -p.WrapX) {
 			p.PhaseX = math.Mod(p.PhaseX, p.WrapX)
 		}
-		if p.WrapY > 0 {
+		if p.WrapY > 0 && (p.PhaseY >= p.WrapY || p.PhaseY <= -p.WrapY) {
 			p.PhaseY = math.Mod(p.PhaseY, p.WrapY)
 		}
 	}
@@ -96,8 +98,15 @@ func (b *Bands) DrawAt(dst, atlas *ebiten.Image, x, y float64) {
 	}
 	b.batch.Begin(dst, atlas)
 	for _, p := range b.config.Bands {
+		phaseX, phaseY := p.PhaseX, p.PhaseY
+		if p.TruncatePhaseX {
+			phaseX = math.Trunc(phaseX)
+		}
+		if p.TruncatePhaseY {
+			phaseY = math.Trunc(phaseY)
+		}
 		for _, offset := range b.config.CopyOffsets {
-			b.batch.Rect(p.Source, float32(x+p.X+p.PhaseX*p.MotionScaleX+offset[0]), float32(y+p.Y+p.PhaseY*p.MotionScaleY+offset[1]), float32(p.Width), float32(p.Height))
+			b.batch.Rect(p.Source, float32(x+p.X+phaseX*p.MotionScaleX+offset[0]), float32(y+p.Y+phaseY*p.MotionScaleY+offset[1]), float32(p.Width), float32(p.Height))
 		}
 	}
 	b.batch.Flush()

@@ -2304,6 +2304,14 @@ Union Multi-Plane also reuses `TCBLogoWaveSections`: setting `SampleStart` to
 40 and 844 on its two sine sections preserves Union's original global-index
 phases. Eight captures at the section joins and wrap match its previous image.
 
+For the standalone and Multiscreen TCB mountain backgrounds, use
+`presets.TCBMountainBands()` with `composite.NewBands`. Its 32 moving crops
+keep the original upper/lower strip order and copy offsets; `TruncatePhaseX`
+quantizes each signed phase before its 2× screen displacement. Band geometry
+is reused and the wrap remainder is calculated only when a boundary is crossed.
+Thirteen standalone and twelve Multiscreen captures match the preceding
+renderers pixel for pixel, including fractional speeds and late wraps.
+
 Colorshock II provides an example of separating a trajectory from its source
 samples. `presets.CuddlyColorshockOrbit()` returns a serializable X/Y formula
 for the backdrop; edit its expression tree to change either frequency, radius
