@@ -397,6 +397,33 @@ horizontal wobble with eight differently phased letter orbits. Cuddly LED uses
 nine authored phases, a vertical cosine and one bouncing amplitude. Both draw
 their prepared group before advancing it, preserving their original first frame.
 
+`sprites.AxisFlip` provides a separate, composable front/back material for a
+logo or sprite. It uses one configurable `motion.BounceBank` lane as a signed
+vertical scale, switches images at `SwitchAt`, and applies independent face
+angles. Draw it on any trajectory or into a mask; `Pose` exposes the selected
+image and transform for a custom renderer:
+
+```go
+flip, err := sprites.NewAxisFlip(sprites.AxisFlipConfig{
+    Front: front, Back: back, SwitchAt: .01, BackAngle: 180,
+    Motion: motion.BounceBankConfig{
+        Start: []float64{1}, Velocity: []float64{-.02},
+        Min: -1, Max: 1, Inclusive: true, Directional: true,
+    },
+    Filter: ebiten.FilterLinear, Blend: ebiten.BlendSourceOver,
+})
+if err != nil { return err }
+position := orbit.At(phase)
+flip.DrawAt(canvas, position.X, position.Y)
+flip.Step() // Draw-before-step keeps the first fully visible front frame.
+```
+
+`Back` may be omitted to flip a single image. `DrawAt` centers whichever face
+is selected, so differently sized art stays centered. The effect reuses its
+images and creates no intermediate surface. Cuddly Big Sprite uses this
+controller for its two-face emblem; sixteen captures around both switches and
+bounds match the previous screen exactly.
+
 For repeating image strips, `sprites.NewTrain` owns both the image group and
 its X/Y motion. Each axis can be fixed, use a phase-spaced `motion.Wave`
 (`Cos: true` selects cosine), or use a `motion.BounceBankConfig`. The bounce
