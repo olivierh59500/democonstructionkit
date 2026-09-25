@@ -2287,6 +2287,9 @@ All compilation happens once at setup, and profile drawing samples a finite
 table without trigonometry or per-frame allocation. Thirty capture pairs
 through late profile wraps in the three Cuddly screens match their previous
 renderers pixel for pixel.
+Union Multi-Plane also reuses `TCBLogoWaveSections`: setting `SampleStart` to
+40 and 844 on its two sine sections preserves Union's original global-index
+phases. Eight captures at the section joins and wrap match its previous image.
 
 The multi-plane scrolling recipe uses the common constructor:
 
