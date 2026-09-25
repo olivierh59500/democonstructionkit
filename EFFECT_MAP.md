@@ -103,7 +103,7 @@ matches the previous implementation exactly.
 | Screen | Shared today | Extract next, with editable parameters |
 | --- | --- | --- |
 | Introduction | Image repetition, CellWarp, bitmap recipes | Reusable harmonic cell-offset program and timed music/still cues. |
-| Menu | Scrolling, background sampler, `sprites.Atlas` character frames, `motion.WrapBank` panorama, `motion.LinearTick` uncover wipe, `timeline.PacedIndex` palette/walk cycles and `motion.HoldBounce` logo | Input-dependent hall camera and banner parallax can share a configurable motion policy; door navigation and layer order stay local. |
+| Menu | Scrolling, background sampler, `sprites.Atlas` character frames, `motion.WrapBank` panorama, `motion.LinearTick` uncover wipe, `timeline.PacedIndex` palette/walk cycles, `motion.HoldBounce` logo and `motion.WalkParallax` hall/banner | Door navigation and authored layer order stay local. |
 | Loader | Reveal, bitmap recipes and `timeline.CueClock` exact-duration transition | Playback cue and layer placement remain host composition data; retain column-major reverse-row glyph order. |
 | Beat Dis | Background sampler, scrolling, `motion.WrapBank` wallpaper and pattern offsets, harmonic `sprites.Group` letters with global wobble | Backdrop entrance and layer order stay authored scene data. |
 | Delta Force | YM register snapshots, scrolling, WaveStrips | Register-change trigger and seven-tick sprite release; source-alpha raster fill. |

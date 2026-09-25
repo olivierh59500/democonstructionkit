@@ -501,6 +501,11 @@ first-step cadences; `motion.HoldBounce` waits, squeezes and restores its logo.
 The image atlas still belongs to the production, and the menu keeps input and
 door navigation. Each preset exposes its speed, bounds, hold and frame counts;
 all five controllers sample without per-tick allocation.
+`motion.WalkParallax` adds independent signed-input speeds and directional
+wrap rules for the hall and banner. `Advance(direction)` moves both layers on
+one walking action; `Set(layer, position)` keeps the background aligned when
+the menu places the character at a selected door. A restart may land exactly
+on the opposite bound without triggering a second wrap in the same action.
 
 Additional packages provide bitmap metrics (`font`), curves/keyframes (`motion`),
 geometry, palettes (`indexed`), vector font outlines (`outline`), asset loading,

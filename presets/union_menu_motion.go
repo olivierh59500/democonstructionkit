@@ -35,3 +35,16 @@ func UnionMenuCharacterCycle() timeline.PacedIndexConfig {
 func UnionMenuLogoBounce() motion.HoldBounceConfig {
 	return motion.HoldBounceConfig{Min: 0, Max: 1, Velocity: -.04, HoldTicks: 1000, LeadTicks: 5}
 }
+
+// UnionMenuWalkParallax gives the hall and banner independent movement and
+// directional wrap rules while the production retains door navigation.
+func UnionMenuWalkParallax(hallLength int) motion.WalkParallaxConfig {
+	return motion.WalkParallaxConfig{Layers: []motion.WalkLayer{
+		{Start: 0, Speed: 5,
+			Lower: &motion.WrapLimit{Boundary: -float64(hallLength), Restart: 0, Inclusive: true},
+			Upper: &motion.WrapLimit{Boundary: 0, Restart: -float64(hallLength), Inclusive: true}},
+		{Start: 0, Speed: 3,
+			Lower: &motion.WrapLimit{Boundary: -94, Restart: -78, Inclusive: true},
+			Upper: &motion.WrapLimit{Boundary: -78, Restart: -94, Inclusive: true}},
+	}}
+}
