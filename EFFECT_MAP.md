@@ -47,7 +47,7 @@ production. Preserved original implementations remain unchanged.
 
 | Production / screen | Shared today | Extract next, with editable parameters |
 | --- | --- | --- |
-| 3D DOC | Atlas, `Config.RowBands`, `PerspectiveCheckerboard`, `ProjectedBallTrain` | Intro/main cue and whole-scene transform can become a typed timeline; assets and transition time remain scene data. |
+| 3D DOC | Atlas, `Config.RowBands` using `composite.RowWarp`, `PerspectiveCheckerboard`, `ProjectedBallTrain` | Intro/main cue and whole-scene transform can become a typed timeline; assets and transition time remain scene data. |
 | Bilizir | Atlas, scrolling, independent StripWarp for text/logo, SolidCube, WaterReflection, `CopperBars` | Historical scroll timing stays a recipe; extra raster palettes and masks can use the shared bank. |
 | DMA 3D | Atlas, `Config.RowColumn` and mesh primitives | Multi-material morphing mesh with per-face blend, sort and winding; masked three-speed starfield. |
 | DMA Is Back, intro | `Config.Feed`, configurable CRTOverlay | Music/fade cues can become a typed timeline; message and cue times stay production data. |
@@ -90,7 +90,7 @@ matches the previous implementation exactly.
 | Spreadpoint | `Config.Bands`, feedback DNA, atlas | Card/audio cue sequence, 20-ball formation and raster-filled logo material. |
 | Digi | Scrolling, lookup row warp, `sprites.Group` Weave formation with owned phase step | Shared bouncing logo material. |
 | LED Scroller | Bounded tiled background, cached bubble matrix, scrolling, `motion.WrapBank` backdrop/gradient offsets and harmonic `sprites.Group` with bounce envelope | Raster/color ramp material. |
-| 3D DOC | Scrolling, `PerspectiveCheckerboard`, `ProjectedBallTrain` | Move the paired inner/outer text row program into one parameterized scrolling recipe; audio cue remains scene data. |
+| 3D DOC | Scrolling, paired `composite.RowWarp` source-sampling programs, `PerspectiveCheckerboard`, `ProjectedBallTrain` | Raster-filled inner text material and audio cue remain scene composition data. |
 | Fullscreen | `BackgroundLayer` velocity, `sprites.Group` Weave formation, `scrolling.Config.RingLanes` with paced vertical wrap | Raster-filled logo bar. |
 | Starwars | `Config.Crawl`, RowProjection, scrolling, `sprites.ProjectedField`, `RasterOverlay` source-in fill | Sampled sprite train and dual-color wave strip material. |
 | Knucklebuster | Scrolling and sprite images | Seeded hit trigger with hold/release envelope; optional music signal must be a distinct mode. |

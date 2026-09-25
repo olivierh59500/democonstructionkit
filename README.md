@@ -1702,6 +1702,16 @@ including two user-speed changes. DMA 3D matches 13 of 15 frames exactly;
 the other two differ by one channel level in a single pixel at their respective
 sample times, including the old text reset boundary.
 
+`composite.RowWarp` is the reusable strip engine behind those DOC passes.
+`RowWarpDestinationX` moves whole source rows, retaining their bitmap edges;
+`RowWarpSourceX` reads fractional horizontal positions from a borrowed image.
+The latter powers Cuddly 3D DOC's paired inner and outer fonts. Each instance
+has an editable lookup table, strip thickness, independent horizontal/vertical
+clocks and filter, while the scene chooses its fonts, raster mask and layer
+order. Call `DrawInto` before or after `Step` to preserve the source screen's
+first-frame timing. The component allocates no image and can process a logo or
+another live layer in the same way.
+
 ### Put a perspective floor under another scene
 
 `PerspectiveCheckerboard` owns the floor surfaces, projected stripe geometry and

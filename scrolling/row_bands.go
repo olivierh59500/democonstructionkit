@@ -40,10 +40,8 @@ type RowBandsConfig struct {
 }
 
 type rowBandStage struct {
-	config        RowBandPass
-	surface       *ebiten.Image
-	wavePhase     int
-	verticalPhase float64
+	surface *ebiten.Image
+	warp    *composite.RowWarp
 }
 
 // RowBands owns a bounded text surface, one image per pass and a cached final
@@ -91,14 +89,17 @@ func NewRowBands(c RowBandsConfig) (*RowBands, error) {
 			r.Close()
 			return nil, fmt.Errorf("scrolling: invalid row-band pass")
 		}
-		for _, value := range pass.Wave {
-			if !finite(value) {
-				r.Close()
-				return nil, fmt.Errorf("scrolling: nonfinite row-band displacement")
-			}
+		warp, err := composite.NewRowWarp(composite.RowWarpConfig{
+			Mode: composite.RowWarpDestinationX, Thickness: pass.Thickness,
+			Wave: pass.Wave, WaveStep: pass.WaveStep,
+			VerticalBase: pass.VerticalBase, VerticalAmplitude: pass.VerticalAmplitude,
+			VerticalDivisor: pass.VerticalDivisor, VerticalStep: pass.VerticalStep,
+		})
+		if err != nil {
+			r.Close()
+			return nil, err
 		}
-		pass.Wave = append([]float64(nil), pass.Wave...)
-		r.stages = append(r.stages, rowBandStage{config: pass, surface: ebiten.NewImage(pass.Width, pass.Height)})
+		r.stages = append(r.stages, rowBandStage{surface: ebiten.NewImage(pass.Width, pass.Height), warp: warp})
 		previousHeight = pass.Height
 	}
 	final := r.work
@@ -147,11 +148,8 @@ func (r *RowBands) Update(kit.Frame) error {
 	}
 	r.position = next
 	for i := range r.stages {
-		stage := &r.stages[i]
-		stage.wavePhase += stage.config.WaveStep
-		stage.verticalPhase += stage.config.VerticalStep
-		if !finite(stage.verticalPhase) {
-			return fmt.Errorf("scrolling: row-band vertical clock overflows")
+		if err := r.stages[i].warp.Step(); err != nil {
+			return err
 		}
 	}
 	return nil
@@ -175,25 +173,7 @@ func (r *RowBands) Draw(dst *ebiten.Image) {
 	for i := range r.stages {
 		stage := &r.stages[i]
 		stage.surface.Clear()
-		vertical := stage.config.VerticalBase
-		if stage.config.VerticalDivisor > 0 {
-			vertical += stage.config.VerticalAmplitude * math.Cos(stage.verticalPhase/stage.config.VerticalDivisor)
-		}
-		for top, row := 0, 0; top < source.Bounds().Dy(); top, row = top+stage.config.Thickness, row+1 {
-			horizontal := 0.0
-			if len(stage.config.Wave) > 0 {
-				index := (stage.wavePhase + row) % len(stage.config.Wave)
-				if index < 0 {
-					index += len(stage.config.Wave)
-				}
-				horizontal = stage.config.Wave[index]
-			}
-			crop := image.Rect(source.Bounds().Min.X, source.Bounds().Min.Y+top,
-				source.Bounds().Max.X, source.Bounds().Min.Y+min(top+stage.config.Thickness, source.Bounds().Dy()))
-			op := ebiten.DrawImageOptions{}
-			op.GeoM.Translate(horizontal, float64(top)+vertical)
-			composite.Instance{Image: source, Source: &crop, Options: op}.Draw(stage.surface)
-		}
+		stage.warp.DrawInto(stage.surface, source)
 		source = stage.surface
 	}
 	op := ebiten.DrawImageOptions{}

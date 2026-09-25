@@ -4,6 +4,8 @@ import (
 	"image"
 	"math"
 
+	"github.com/hajimehoshi/ebiten/v2"
+	"github.com/olivierh59500/democonstructionkit/composite"
 	"github.com/olivierh59500/democonstructionkit/scrolling"
 )
 
@@ -21,6 +23,35 @@ func DOCRowWave() []float64 {
 		result = append(result, 30*math.Sin(float64(i)*step))
 	}
 	return result
+}
+
+// CuddlyDOCRowWave retains the shorter three-section sampled-source program
+// used by the paired inner and outer fonts of the Cuddly screen.
+func CuddlyDOCRowWave() []float64 {
+	wave := make([]float64, 389)
+	for i := range wave {
+		wave[i] = 20*math.Sin(float64(i)*(7.0/180*math.Pi)) + 30*math.Cos(float64(i)*(3.0/180*math.Pi))
+	}
+	for i := 0; i < 68; i++ {
+		wave = append(wave, 30*math.Sin(float64(i)*(8.0/180*math.Pi)))
+	}
+	for i := 0; i < 189; i++ {
+		wave = append(wave, 30*math.Sin(float64(i)*(8.0/180*math.Pi)))
+	}
+	return wave
+}
+
+// CuddlyDOCRowWarps returns two independently advancing strip programs over
+// the same editable source-X lookup. The inner font also moves vertically.
+func CuddlyDOCRowWarps() (outer, inner composite.RowWarpConfig) {
+	outer = composite.RowWarpConfig{
+		Mode: composite.RowWarpSourceX, Thickness: 2, SourceX: 64, SourceWidth: 640,
+		Wave: CuddlyDOCRowWave(), WaveStep: 1, Filter: ebiten.FilterLinear,
+	}
+	inner = outer
+	inner.VerticalBase, inner.VerticalAmplitude = 30, 30
+	inner.VerticalDivisor, inner.VerticalStep = 20, 1.2
+	return outer, inner
 }
 
 // DOCIntroRowBands keeps the scene cue in the message while DCK owns the
