@@ -1399,6 +1399,32 @@ subtracts the activation time from `Frame.Time`; `Frame.Tick` remains global.
 `SetWindow(index, window)` can retrigger a layer from a key, touch or music event.
 Close the layer tree once; do not share one mutable child between owning trees.
 
+For finite intros that hand off to a main scene, `timeline.IntroHandoff` owns
+the entry tick, a clamped per-update fade and one one-shot cue. The production
+still supplies its text, music stream and scene layers:
+
+```go
+handoff, _ := timeline.NewIntroHandoff(presets.FadedIntroHandoff(.03, .1))
+if !handoff.Main() {
+    intro.Update(frame)
+    handoff.Step(intro.Finished())
+} else {
+    handoff.Step(false)
+    if handoff.CueReady() && player != nil {
+        player.Play()
+        handoff.MarkCue()
+    }
+    updateMain()
+}
+// Draw the main scene with handoff.Fade(); Draw never advances the cue.
+```
+
+The fade starts at zero on the entry tick and advances on the next main tick.
+DMA Is Back and TeamG1 use the strict `fade > .1` cue; Coco selects
+`presets.ImmediateIntroHandoff()` for opaque entry and same-tick music. The
+configuration is data-only, so an editor can change the fade and cue threshold
+without changing either renderer.
+
 For a temporary magnifier in a pipeline:
 
 ```go

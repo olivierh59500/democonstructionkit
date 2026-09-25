@@ -50,9 +50,9 @@ production. Preserved original implementations remain unchanged.
 | 3D DOC | Atlas, `Config.RowBands` using `composite.RowWarp`, `PerspectiveCheckerboard`, `ProjectedBallTrain` | Intro/main cue and whole-scene transform can become a typed timeline; assets and transition time remain scene data. |
 | Bilizir | Atlas, scrolling, independent StripWarp for text/logo, SolidCube, WaterReflection, `CopperBars` | Historical scroll timing stays a recipe; extra raster palettes and masks can use the shared bank. |
 | DMA 3D | Atlas, `Config.RowColumn` and mesh primitives | Multi-material morphing mesh with per-face blend, sort and winding; masked three-speed starfield. |
-| DMA Is Back, intro | `Config.Feed`, configurable CRTOverlay | Music/fade cues can become a typed timeline; message and cue times stay production data. |
-| DMA Is Back, main | `Config.Scanline`, ImageGrid, NestedOrbit, JellyCube | Soundtrack start and whole-scene fade can use the same cue/envelope system as other intros. |
-| Coco, intro | `Config.Feed`, configurable CRTOverlay | Intro-to-main music cue. |
+| DMA Is Back, intro | `Config.Feed`, configurable CRTOverlay, `timeline.IntroHandoff` | Message and scene materials stay production data. |
+| DMA Is Back, main | `Config.Scanline`, ImageGrid, NestedOrbit, JellyCube, shared fade/music cue | Other whole-scene timed layers can use the general cue director. |
+| Coco, intro | `Config.Feed`, configurable CRTOverlay, immediate `timeline.IntroHandoff` music cue | Scene materials stay production data. |
 | Coco, main | `Config.Scanline`, SolidCubeBatch, sprites.Group grid/translation, shared font metrics and `CopperBars` | Repeating rotozoom and remaining title-layer presentation. |
 | DOM intro | Atlas, synchronized FontProgram, scrolling, `motion.WrapBank` background and raster offsets | Whole-bank font switch triggered at viewport entry; animated star atlas instances. |
 | Multiscreen, four embedded productions | SolidCube, sampled DNA and projected-plane engines, atlas recipes, `CopperBars` in Coco, shared Viva raster and TCB mountain `motion.WrapBank` presets | Make the four production scenes reusable constructors rather than copies of their standalone controllers. |
@@ -66,7 +66,7 @@ production. Preserved original implementations remain unchanged.
 | Phenomena DNA intro | Atlas, DNAFrames, sliced transport | Whole screen's two-pixel insertion, loop-start and control events as a reusable configuration; separate intro/outro reveal and bounce cues. |
 | TCB multiplane | Projected scrolling, font-independent forms, background bands, relative `motion.WrapBank` mountain transport | Logo row warp and central flip; share screen recipe with Multiscreen and Union while preserving phase-per-visible-slot timing. |
 | Replicants | Atlas, `Config.RowColumn` with variable-speed controls | Stepped block reveal, quantized logo zoom bank and layered stars. |
-| TeamG1, intro | `Config.Feed` with progressive right-edge entry, atlas, flat TimedCRTOverlay | Message and intro-to-main cue times remain production data. |
+| TeamG1, intro | `Config.Feed` with progressive right-edge entry, atlas, flat TimedCRTOverlay, `timeline.IntroHandoff` | Message and materials remain production data. |
 | TeamG1, main | TexturedCube, HarmonicImage, ProfileImage, `Config.Profiled`, sprites.Group circular formation | Timed scene/audio cues and whole-scene presentation remain composition data. |
 | Viva TCB | Atlas, scrolling, staged `RotozoomBackground` and shared `motion.WrapBank` title raster | Four pseudo-3D glyph banks with per-glyph scale/order/snap; ten-logo harmonic formation; raster title material. |
 
