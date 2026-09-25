@@ -488,6 +488,11 @@ defer backdrop.Close()
 The Cuddly menu keeps its original 800 × 432 unmanaged surface, half-speed
 integer camera motion and one source-copy draw per frame. Another logo or
 scrolling layer can use the same renderer with its own tile, size and phase.
+`motion.CameraFollow` separately keeps an object at an editable viewport anchor
+until the camera reaches a world edge. It returns camera and on-screen object
+coordinates together, with independent X/Y world extents. Cuddly Menu rounds
+its actor position first, then samples this motion policy for the map camera;
+door selection and input remain application decisions.
 
 Union Menu composes smaller independent controllers: `motion.WrapBank` loops
 the panorama; `motion.LinearTick` closes the uncover wipe; two
