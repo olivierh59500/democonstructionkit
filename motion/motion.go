@@ -11,12 +11,20 @@ func Wrap(value, period float64) float64 {
 	return value - math.Floor(value/period)*period
 }
 
-// Wave is a spatial sine wave traveling with angular speed in radians/second.
-type Wave struct{ Amplitude, Spatial, Speed, Phase float64 }
+// Wave is a spatial sine or cosine traveling with angular speed in radians per
+// caller-selected time unit. Cos chooses cosine; the default remains sine.
+type Wave struct {
+	Amplitude, Spatial, Speed, Phase float64
+	Cos                              bool
+}
 
 // At samples a wave at a position and an absolute time.
 func (w Wave) At(position, seconds float64) float64 {
-	return w.Amplitude * math.Sin(position*w.Spatial+seconds*w.Speed+w.Phase)
+	phase := position*w.Spatial + seconds*w.Speed + w.Phase
+	if w.Cos {
+		return w.Amplitude * math.Cos(phase)
+	}
+	return w.Amplitude * math.Sin(phase)
 }
 
 // Waves combines independent harmonics without allocating when sampled.

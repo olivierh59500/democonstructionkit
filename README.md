@@ -341,6 +341,27 @@ group.Update(kit.Frame{Time: seconds})
 group.Draw(screen)
 ```
 
+For repeating image strips, `sprites.NewTrain` owns both the image group and
+its X/Y motion. Each axis can be fixed, use a phase-spaced `motion.Wave`
+(`Cos: true` selects cosine), or use a `motion.BounceBankConfig`. The bounce
+bank accepts one or several velocities and defaults to the one-step overshoot
+seen in classic raster effects; `Inclusive` and `Clamp` are optional. For
+example, a complete three-raster train needs only its assets and parameters:
+
+```go
+bars, err := sprites.NewTrain(sprites.TrainConfig{
+    Images: []*ebiten.Image{pink, green, brown}, ScaleX: 390,
+    Y: sprites.TrainAxis{Offset: 60, Bounce: &motion.BounceBankConfig{
+        Start: []float64{94, 124, 154}, Velocity: []float64{2}, Min: 94, Max: 160,
+    }},
+})
+bars.Update(kit.Frame{Tick: tick}) // Once per simulation update.
+bars.Draw(screen)                 // May be drawn in several layers.
+```
+
+Image dimensions, image order, scale, blend and layer placement remain
+independent of motion. The train reuses its pose and motion slices.
+
 Additional packages provide bitmap metrics (`font`), curves/keyframes (`motion`),
 geometry, palettes (`indexed`), vector font outlines (`outline`), asset loading,
 and device-independent YM/go-zikmu PCM (`sound`). Use `sound/ebiten` with one

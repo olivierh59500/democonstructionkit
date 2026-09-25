@@ -2,7 +2,8 @@
 
 This map covers every DCK production under `demos/` except FR-010 and Second
 Reality. It was checked against the screen implementations and the detailed
-workspace audits on 2026-09-23. A complete component owns its transport,
+workspace audits on 2026-09-23; the Ehhh and Union Replicants rows were updated
+on 2026-09-25. A complete component owns its transport,
 animation state, geometry and rendering resources. The production supplies
 assets, messages, presets, input and scene order. A shared draw helper alone is
 not counted as a complete effect.
@@ -53,7 +54,7 @@ matches the previous implementation exactly.
 | Introduction | Wave/Profile/Cell strips, sparkles | Serializable logo warp program and pause/audio cues; preserve row-then-column order. |
 | Big Sprite | `sprites.ProjectedField` with strict-wrap vector lines, scrolling, Weave formation, `RasterOverlay` fill | Shared front/back flip material and synchronized dual-font transport. |
 | Colorshock II | Background sampler, scrolling | Position-table placement and two-frequency background orbit as an editable motion recipe. |
-| Ehhh | Scrolling, row profile | Lookahead/landing control events, raster train and roller bounce states. |
+| Ehhh | Scrolling, row profile, `sprites.Train` raster bars with phase-spaced cosine `motion.Wave` | Lookahead/landing control events and roller bounce states. |
 | Mega Scroller | Tiled background, WaveStrips, scrolling | Ping-pong text transport and mask material with authored source-atop blending. |
 | Spreadpoint | `Config.Bands`, feedback DNA, atlas | Card/audio cue sequence, 20-ball formation and raster-filled logo material. |
 | Digi | Scrolling, lookup row warp, Weave formation | Shared bouncing logo and nested-sine letter formation preset with independent phases. |
@@ -79,7 +80,7 @@ matches the previous implementation exactly.
 | Wow Scroller | Scrolling, `RasterOverlay` source-atop fill | Cropped oversized-image repetition with explicit wrap periods. |
 | Hidden | PointHistory, sprite instances | Delayed pointer trail, palette cycle and source clip. |
 | Starballs | Camera, scrolling, `sprites.ProjectedField` with two materials, live count and depth opacity | Compose the two field materials and logo mask as an editable screen layer recipe. |
-| Replicants | Atlas, scrolling, `RasterOverlay` fill | Configurable bouncing raster train and historically reset scroll clock. |
+| Replicants | Atlas, scrolling, `RasterOverlay` fill, `motion.CuedFormation` letter paths, `sprites.Train` rasters driven by `motion.BounceBank` | Historically reset scroll clock. |
 | TNT Crew 2 | Background sampler, BitmapText.DrawWindow | Layered parallax phase/velocity program with user direction and exact reset policy. |
 | Level 16 | Vertical scrolling, background sampler, NestedOrbit | Raster/water material and authored layer occlusion. |
 | Multi-Plane | Bands, projected scrolling | Logo row lookup/center flip; package the form program and strip background as one editable screen recipe. |
