@@ -2291,6 +2291,14 @@ Union Multi-Plane also reuses `TCBLogoWaveSections`: setting `SampleStart` to
 40 and 844 on its two sine sections preserves Union's original global-index
 phases. Eight captures at the section joins and wrap match its previous image.
 
+Colorshock II provides an example of separating a trajectory from its source
+samples. `presets.CuddlyColorshockOrbit()` returns a serializable X/Y formula
+for the backdrop; edit its expression tree to change either frequency, radius
+or center. `presets.CuddlyColorshockTableClock()` returns a strict `WrapBank`
+that reads two position samples per tick and resets after index 1872. The
+position table stays in the demo's data. Ten captures across its table wrap
+match the previous screen pixel for pixel.
+
 The multi-plane scrolling recipe uses the common constructor:
 
 ```go

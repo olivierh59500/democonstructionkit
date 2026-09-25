@@ -27,7 +27,7 @@ production. Preserved original implementations remain unchanged.
 | `dma-3d` | Star field and mesh animation are depth/geometry effects, not an image train or threshold wrap. |
 | `dma-is-back` | Cube, intro feed, CRT and scanline scroll use their dedicated components; timed cues are separate work. |
 | `go-cocoisthebest` | Sprite grid/translation already uses `sprites.Group`; scanline scroll and cube are separate families. |
-| `go-cuddlymenu` | Ehhh raster train, LED backdrop/gradient wraps and harmonic letters, Big Sprite front/back `sprites.AxisFlip`, Big Sprite/Fullscreen/Digi Weave groups, and Mega Scroller's directional entrance bounce now use shared controllers. |
+| `go-cuddlymenu` | Colorshock's orbit/table clock, Ehhh raster train, LED backdrop/gradient wraps and harmonic letters, Big Sprite front/back `sprites.AxisFlip`, Big Sprite/Fullscreen/Digi Weave groups, and Mega Scroller's directional entrance bounce now use shared controllers. |
 | `go-dom-intro` | Both vertically wrapped raster/background offsets use `WrapBank`; star atlas choreography remains local. |
 | `go-fr010` | Software-rendered parts were searched; no direct GPU image-train or simple threshold-wrap equivalent was migrated. |
 | `go-multiscreen` | Embedded Viva title rasters and TCB mountain strips use the same DCK presets as their standalone versions. The camera tour is a separate director effect. |
@@ -84,7 +84,7 @@ matches the previous implementation exactly.
 | Loader | Bitmap font recipes, scrolling, `timeline.Countdown` and `timeline.CueClock` overlapping fade/hold windows | Bind the typed volume envelope to the playback host; initial pre-render and decrement boundary remain authored. |
 | Introduction | Wave/Profile/Cell strips, sparkles, compiled `motion.WaveWrite` deformation program | Serializable logo warp program and pause/audio cues; preserve row-then-column order. |
 | Big Sprite | `sprites.ProjectedField` with strict-wrap vector lines, `scrolling.RingLanes` dual-font transport, `sprites.Group` Weave formation, `RasterOverlay` fill, `sprites.AxisFlip` front/back material | Authored layer placement and image order stay scene data. |
-| Colorshock II | Background sampler, scrolling | Position-table placement and two-frequency background orbit as an editable motion recipe. |
+| Colorshock II | Background sampler, scrolling, editable `FormulaFormation` two-frequency orbit and `WrapBank` position-table clock | Source position samples and artwork remain screen data. |
 | Ehhh | Scrolling, compiled row-profile program shared with Digi, `sprites.Train` raster bars with phase-spaced cosine `motion.Wave`, cue-paced roller `motion.WaveClock` | Lookahead/landing control events and authored roller cue mapping. |
 | Mega Scroller | Tiled background, WaveStrips, scrolling and directional `motion.BounceBank` text-surface transport | Mask material with authored source-atop blending. |
 | Spreadpoint | `Config.Bands`, feedback DNA, atlas | Card/audio cue sequence, 20-ball formation and raster-filled logo material. |
