@@ -1640,7 +1640,29 @@ Place this pass after all other composition to magnify the complete demo.
 cell width/height, source cropping, destination gaps, filtering and a
 `Sample(row,column,frame)` callback returning `CellTransform`. Row/column identity
 is preserved when fragments cross; this differs from stretching a continuous
-mesh. Union's introduction uses it for crossed waves on 32×16 fragments.
+mesh. For separable sine/cosine motion, `composite.HarmonicCellWarp` accepts four
+independent `motion.Waves` banks: X/Y displacement from row and column. They may
+be combined and changed at a timeline cue with `SetWaves`:
+
+```go
+cells, err := composite.NewHarmonicCellWarp(composite.HarmonicCellWarpConfig{
+    Cell: image.Pt(32, 16), Filter: ebiten.FilterLinear,
+    Waves: composite.CellWaveBank{
+        XRows: motion.Waves{{Amplitude: 32, Spatial: .3, Speed: .08}},
+        YColumns: motion.Waves{{Amplitude: 16, Spatial: .3, Speed: .08}},
+    },
+})
+if err != nil { return err }
+defer cells.Close()
+cells.DrawAt(dst, letters, kit.Frame{Tick: tick}, 70, 136)
+```
+
+`UseTime` selects seconds instead of ticks. The source image and destination
+position are independent of the wave program. The Union intro's 512×224 image
+contains 224 cells: its two original per-cell waves required 448 sine samples
+per frame, while the shared renderer caches the same values for 14 rows and
+16 columns, using 30 samples. Eight native captures remain pixel-identical.
+Use the lower-level `CellWarp.Sample` for nonlinear or per-cell transforms.
 
 `motion.NewPointHistory(capacity, initial)` stores recent positions (or any Go
 value). `Push` belongs in Update, `At(delay)` in sampling/rendering. A 61-entry
