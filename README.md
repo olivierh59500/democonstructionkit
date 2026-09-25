@@ -1424,6 +1424,10 @@ DMA Is Back and TeamG1 use the strict `fade > .1` cue; Coco selects
 `presets.ImmediateIntroHandoff()` for opaque entry and same-tick music. The
 configuration is data-only, so an editor can change the fade and cue threshold
 without changing either renderer.
+`IntroCueOnFirstMainTick` keeps a final intro frame visible after the state
+changes and releases music on the following main update; Cuddly 3D DOC uses
+this mode. The standalone 3D DOC screen selects an opaque handoff without a
+music cue because its soundtrack already plays during the intro.
 
 For a temporary magnifier in a pipeline:
 

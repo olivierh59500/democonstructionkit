@@ -11,6 +11,7 @@ type IntroCue uint8
 const (
 	IntroCueNone IntroCue = iota
 	IntroCueOnEntry
+	IntroCueOnFirstMainTick
 	IntroCueAboveFade
 )
 
@@ -31,6 +32,7 @@ type IntroHandoff struct {
 	config      IntroHandoffConfig
 	main        bool
 	justEntered bool
+	mainTicks   uint64
 	fade        float64
 	cueFired    bool
 }
@@ -62,14 +64,15 @@ func (handoff *IntroHandoff) Step(introFinished bool) {
 	if handoff.fade < handoff.config.FadeMax {
 		handoff.fade = min(handoff.config.FadeMax, handoff.fade+handoff.config.FadeStep)
 	}
+	handoff.mainTicks++
 }
 
 func (handoff *IntroHandoff) Main() bool        { return handoff.main }
 func (handoff *IntroHandoff) JustEntered() bool { return handoff.justEntered }
 func (handoff *IntroHandoff) Fade() float64     { return handoff.fade }
 
-// CueReady stays true after the fade threshold until MarkCue is called. An
-// entry cue is available only on the entry tick, preserving one-shot timing.
+// CueReady stays true after the fade threshold until MarkCue is called. Entry
+// and first-main-tick cues are available only on their respective boundary.
 func (handoff *IntroHandoff) CueReady() bool {
 	if !handoff.main || handoff.cueFired {
 		return false
@@ -77,6 +80,8 @@ func (handoff *IntroHandoff) CueReady() bool {
 	switch handoff.config.Cue {
 	case IntroCueOnEntry:
 		return handoff.justEntered
+	case IntroCueOnFirstMainTick:
+		return handoff.mainTicks == 1
 	case IntroCueAboveFade:
 		return handoff.fade > handoff.config.CueThreshold || handoff.config.CueInclusive && handoff.fade == handoff.config.CueThreshold
 	default:
@@ -90,5 +95,6 @@ func (handoff *IntroHandoff) MarkCue() { handoff.cueFired = true }
 // Reset restores the intro phase and the configured fade start.
 func (handoff *IntroHandoff) Reset() {
 	handoff.main, handoff.justEntered, handoff.cueFired = false, false, false
+	handoff.mainTicks = 0
 	handoff.fade = handoff.config.FadeStart
 }

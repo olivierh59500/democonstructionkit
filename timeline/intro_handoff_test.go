@@ -60,6 +60,25 @@ func TestIntroHandoffCanTriggerImmediatelyOnEntry(t *testing.T) {
 	}
 }
 
+func TestIntroHandoffCanCueTheFirstMainTick(t *testing.T) {
+	handoff, err := NewIntroHandoff(IntroHandoffConfig{FadeStart: 1, FadeMax: 1, Cue: IntroCueOnFirstMainTick})
+	if err != nil {
+		t.Fatal(err)
+	}
+	handoff.Step(true)
+	if handoff.CueReady() {
+		t.Fatal("main-tick cue fired while drawing the last intro frame")
+	}
+	handoff.Step(false)
+	if !handoff.CueReady() || handoff.Fade() != 1 {
+		t.Fatalf("first main-tick cue = %+v", handoff)
+	}
+	handoff.Step(false)
+	if handoff.CueReady() {
+		t.Fatal("first main-tick cue repeated")
+	}
+}
+
 func TestIntroHandoffRejectsInvalidSettings(t *testing.T) {
 	for _, config := range []IntroHandoffConfig{
 		{FadeStep: -1},
