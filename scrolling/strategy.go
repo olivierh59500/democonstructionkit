@@ -135,6 +135,9 @@ func newTransport(c Config) (*Scrolling, error) {
 	if c.Projected != nil {
 		count++
 	}
+	if c.Pseudo3D != nil {
+		count++
+	}
 	if c.Sliced != nil {
 		count++
 	}
@@ -200,6 +203,15 @@ func newTransport(c Config) (*Scrolling, error) {
 			return nil, err
 		}
 		s.backend = &projectedTransport{planes: p, renderer: r, config: cfg}
+	} else if c.Pseudo3D != nil {
+		if c.X != 0 || c.Y != 0 || c.Vertical {
+			return nil, fmt.Errorf("scrolling: pseudo-3d placement belongs in Pseudo3DConfig")
+		}
+		pseudo, err := NewPseudo3D(*c.Pseudo3D)
+		if err != nil {
+			return nil, err
+		}
+		s.backend = pseudo
 	} else if c.Feed != nil {
 		if c.X != 0 || c.Y != 0 || c.Vertical {
 			return nil, fmt.Errorf("scrolling: feed placement belongs in the composition")

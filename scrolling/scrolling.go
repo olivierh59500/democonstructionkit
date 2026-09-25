@@ -55,6 +55,7 @@ type Config struct {
 	Recycled         *RecycledConfig    // Authored recycled-slot transport, advanced once per Update.
 	RingLanes        *RingLanesConfig   // Synchronized recycled-slot lanes with paced placement.
 	Projected        *ProjectedConfig   // Authored visible-slot plane transport, advanced once per Update.
+	Pseudo3D         *Pseudo3DConfig    // Multiple pseudo-3D text banks with shared harmonics and independent transport.
 	Bands            *BitmapBandsConfig // Bounded repeated text lanes.
 	Slots            *BitmapSlotsConfig // Recycled glyphs with pose mapping and tangent orientation.
 	Crawl            *CrawlConfig       // Bounded paragraph transport and configurable perspective rows.
@@ -150,6 +151,15 @@ func (s *Scrolling) SetTransportMultiplier(value float64) error {
 	return fmt.Errorf("scrolling: selected transport has no speed multiplier")
 }
 
+// Pseudo3DController exposes per-bank speed, position and time cues when the
+// shared scrolling facade uses the pseudo-3D transport.
+func (s *Scrolling) Pseudo3DController() *Pseudo3D {
+	if p, ok := s.backend.(*Pseudo3D); ok {
+		return p
+	}
+	return nil
+}
+
 // CursorRune returns the current character for transports that expose a text
 // cursor. Other transport kinds return zero.
 func (s *Scrolling) CursorRune() rune {
@@ -172,7 +182,7 @@ func New(c Config) (*Scrolling, error) {
 	if c.MaxGlyphsPerDraw < 1 || c.MaxGlyphsPerDraw > 1<<24 {
 		return nil, fmt.Errorf("scrolling: invalid automatic draw budget")
 	}
-	if c.Recycled != nil || c.RingLanes != nil || c.Projected != nil || c.Sliced != nil || c.Crawl != nil || c.Bands != nil || c.Slots != nil || c.Feed != nil || c.Scanline != nil || c.Profiled != nil || c.RowColumn != nil || c.RowBands != nil {
+	if c.Recycled != nil || c.RingLanes != nil || c.Projected != nil || c.Pseudo3D != nil || c.Sliced != nil || c.Crawl != nil || c.Bands != nil || c.Slots != nil || c.Feed != nil || c.Scanline != nil || c.Profiled != nil || c.RowColumn != nil || c.RowBands != nil {
 		return newTransport(c)
 	}
 	if c.Page != nil {

@@ -107,6 +107,7 @@ settings preserve different control timing and history rules; all return the sam
 | `Page` | Newline-separated horizontal lines moving vertically; mixed-font alignment and line-position controls | `Speed`: pixels/second |
 | `Recycled` | Reusable visible glyph slots; controls execute as slots recycle | `Ring.Speed`: pixels/Update |
 | `Projected` | Depth-sorted visible slots; forms change while visiting those slots | `PixelsPerUpdate`; `Planes.PhaseStep` per Update |
+| `Pseudo3D` | Independent text banks with reverse-order harmonic X/Y/depth poses, clipping and mirrored scale | `PixelsPerUpdate` per bank; shared tick or caller time |
 | `Sliced` | Bounded history of glyph strips; a control consumes a transport step; rotation is independent | `SlicesPerUpdate`; `RotationSpeed`: film frames/second |
 | `Crawl` | Cached paragraph window projected through configurable rows; bounded surfaces independent of text length | `PixelsPerUpdate`; zero selects manual `SetPosition` on a standalone `Crawl` |
 | `Bands` | Independently moving repeated text lanes in a fixed viewport | Lane `Speed`: pixels/second, or pixels/tick with `UseTicks` |
@@ -117,6 +118,31 @@ transports, configure text, fonts, speed and repetition inside that transport ra
 than also setting regular `Text`, `Fonts`, `Speed` or `Repeat`. `Projected.Draw`
 and `Sliced.Draw` hold their output placement. A fixed-step setting of 2 at
 60 TPS advances 120 pixels/second; changing TPS changes this authored cadence.
+
+Four pseudo-3D text lanes can share one transport without assuming the same
+message, character order or viewport. `presets.VivaPseudo3D` supplies editable
+bank positions, inverted depth scales, sine/cosine rates, pixel snapping,
+clipping and alpha:
+
+```go
+pseudo := presets.VivaPseudo3D(face, nil, [4]string{text1, text2, text3, text4}, 768, 540)
+pseudo.Banks[2].BaseY = 390
+pseudo.Pose.XAmplitude = 40
+scroll, err := scrolling.New(scrolling.Config{Pseudo3D: &pseudo})
+if err != nil { return err }
+controller := scroll.Pseudo3DController()
+controller.SetBankSpeed(0, 2) // A cue may change one lane without resetting it.
+scroll.Update(frame)
+scroll.Draw(screen)
+```
+
+Set `Atlas` instead of `Face` for an existing pre-sliced alphabet. `UseFrameTime`
+uses the caller's music or timeline position; otherwise `TicksPerSecond` and
+`TimeOffset` define a deterministic clock. `SetTransportMultiplier` pauses or
+speeds all lanes, while the controller exposes per-bank speed, position and
+global phase cues. Viva TCB and its Multiscreen panel render the same four-bank
+pose program with different texts and viewport sizes; eight captures per
+version through frame 4,800 match their preceding images in all channels.
 
 The following helpers can be placed in an application's Go package. Package
 names match the DCK subpackages; `kit` denotes the module root, and `bitmap`
