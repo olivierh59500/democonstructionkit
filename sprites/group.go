@@ -110,6 +110,9 @@ func NewGroup(c GroupConfig) (*Group, error) {
 	if c.Harmonic == nil && c.HarmonicEnvelope != nil {
 		return nil, fmt.Errorf("sprites: harmonic envelope needs a harmonic formation")
 	}
+	if c.Harmonic != nil && c.Harmonic.IndexOffsetCount() > 0 && c.Count > c.Harmonic.IndexOffsetCount() {
+		return nil, fmt.Errorf("sprites: harmonic index offsets are shorter than group count")
+	}
 	for _, value := range [...]float64{c.HarmonicClockStart[0], c.HarmonicClockStart[1], c.HarmonicClockStep[0], c.HarmonicClockStep[1]} {
 		if !finiteField(value) {
 			return nil, fmt.Errorf("sprites: nonfinite harmonic clock")
@@ -370,6 +373,9 @@ func (g *Group) Draw(dst *ebiten.Image) {
 func (g *Group) SetCount(count int) error {
 	if count < 0 || count > 1_000_000 {
 		return fmt.Errorf("sprites: invalid group count")
+	}
+	if g.config.Harmonic != nil && g.config.Harmonic.IndexOffsetCount() > 0 && count > g.config.Harmonic.IndexOffsetCount() {
+		return fmt.Errorf("sprites: harmonic index offsets are shorter than group count")
 	}
 	if count > cap(g.poses) {
 		g.poses = make([]GroupPose, count)

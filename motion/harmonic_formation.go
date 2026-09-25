@@ -6,14 +6,14 @@ import (
 )
 
 // IndexedHarmonic contributes a sine or cosine to one coordinate. The phase
-// is (clock + index*IndexPhase)*Rate + index*IndexRate + Phase. SecondaryClock
-// selects clocks[1]; otherwise clocks[0] is used. Envelope multiplies the
-// amplitude by the caller's current envelope value.
+// is (clock + index*IndexPhase)*Rate + index*IndexRate + Phase. Divisor
+// replaces multiplication by Rate with division when nonzero. UseIndexOffsets
+// adds the formation's authored phase for this item before rate/division.
+// SecondaryClock selects clocks[1]; otherwise clocks[0] is used. Envelope
+// multiplies the amplitude by the caller's current envelope value.
 type IndexedHarmonic struct {
-	Amplitude, Rate, IndexPhase, IndexRate, Phase float64
-	Cos                                           bool
-	SecondaryClock                                bool
-	Envelope                                      bool
+	Amplitude, Rate, Divisor, IndexPhase, IndexRate, Phase float64
+	Cos, SecondaryClock, Envelope, UseIndexOffsets         bool
 }
 
 // FormationBounds optionally restricts the final sprite position. Bounds are
@@ -27,6 +27,7 @@ type FormationBounds struct{ Min, Max Point }
 type HarmonicFormationConfig struct {
 	Origin, Spacing Point
 	X, Y            []IndexedHarmonic
+	IndexOffsets    []float64
 	Bounds          *FormationBounds
 }
 
@@ -36,7 +37,7 @@ type HarmonicFormation struct{ config HarmonicFormationConfig }
 
 func NewHarmonicFormation(config HarmonicFormationConfig) (*HarmonicFormation, error) {
 	finite := func(value float64) bool { return !math.IsNaN(value) && !math.IsInf(value, 0) }
-	if len(config.X) > 64 || len(config.Y) > 64 {
+	if len(config.X) > 64 || len(config.Y) > 64 || len(config.IndexOffsets) > 1_000_000 {
 		return nil, fmt.Errorf("motion: too many formation harmonics")
 	}
 	for _, value := range []float64{config.Origin.X, config.Origin.Y, config.Spacing.X, config.Spacing.Y} {
@@ -45,10 +46,18 @@ func NewHarmonicFormation(config HarmonicFormationConfig) (*HarmonicFormation, e
 		}
 	}
 	for _, term := range append(append([]IndexedHarmonic(nil), config.X...), config.Y...) {
-		for _, value := range []float64{term.Amplitude, term.Rate, term.IndexPhase, term.IndexRate, term.Phase} {
+		for _, value := range []float64{term.Amplitude, term.Rate, term.Divisor, term.IndexPhase, term.IndexRate, term.Phase} {
 			if !finite(value) {
 				return nil, fmt.Errorf("motion: nonfinite formation harmonic")
 			}
+		}
+		if term.Divisor < 0 || term.Divisor != 0 && term.Rate != 0 || term.UseIndexOffsets && len(config.IndexOffsets) == 0 {
+			return nil, fmt.Errorf("motion: invalid formation phase source")
+		}
+	}
+	for _, value := range config.IndexOffsets {
+		if !finite(value) {
+			return nil, fmt.Errorf("motion: nonfinite formation index offset")
 		}
 	}
 	if config.Bounds != nil {
@@ -60,16 +69,20 @@ func NewHarmonicFormation(config HarmonicFormationConfig) (*HarmonicFormation, e
 	}
 	config.X = append([]IndexedHarmonic(nil), config.X...)
 	config.Y = append([]IndexedHarmonic(nil), config.Y...)
+	config.IndexOffsets = append([]float64(nil), config.IndexOffsets...)
 	return &HarmonicFormation{config: config}, nil
 }
+
+// IndexOffsetCount reports the authored table length for validating a group.
+func (formation *HarmonicFormation) IndexOffsetCount() int { return len(formation.config.IndexOffsets) }
 
 // At returns one position. Clocks and envelope are caller-owned simulation
 // values; they need not use seconds as their unit.
 func (formation *HarmonicFormation) At(index int, clocks [2]float64, envelope float64) Point {
 	config := formation.config
 	p := Point{X: config.Origin.X + float64(index)*config.Spacing.X, Y: config.Origin.Y + float64(index)*config.Spacing.Y}
-	p.X = sampleFormationAxis(p.X, config.X, index, clocks, envelope)
-	p.Y = sampleFormationAxis(p.Y, config.Y, index, clocks, envelope)
+	p.X = sampleFormationAxis(p.X, config.X, config.IndexOffsets, index, clocks, envelope)
+	p.Y = sampleFormationAxis(p.Y, config.Y, config.IndexOffsets, index, clocks, envelope)
 	if config.Bounds != nil {
 		p.X = min(max(p.X, config.Bounds.Min.X), config.Bounds.Max.X)
 		p.Y = min(max(p.Y, config.Bounds.Min.Y), config.Bounds.Max.Y)
@@ -77,13 +90,22 @@ func (formation *HarmonicFormation) At(index int, clocks [2]float64, envelope fl
 	return p
 }
 
-func sampleFormationAxis(value float64, terms []IndexedHarmonic, index int, clocks [2]float64, envelope float64) float64 {
+func sampleFormationAxis(value float64, terms []IndexedHarmonic, offsets []float64, index int, clocks [2]float64, envelope float64) float64 {
 	for _, term := range terms {
 		clock := clocks[0]
 		if term.SecondaryClock {
 			clock = clocks[1]
 		}
-		phase := (clock+float64(index)*term.IndexPhase)*term.Rate + float64(index)*term.IndexRate + term.Phase
+		phase := clock + float64(index)*term.IndexPhase
+		if term.UseIndexOffsets && index >= 0 && index < len(offsets) {
+			phase += offsets[index]
+		}
+		if term.Divisor != 0 {
+			phase /= term.Divisor
+		} else {
+			phase *= term.Rate
+		}
+		phase += float64(index)*term.IndexRate + term.Phase
 		wave := math.Sin(phase)
 		if term.Cos {
 			wave = math.Cos(phase)

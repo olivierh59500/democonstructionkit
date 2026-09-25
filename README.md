@@ -368,6 +368,13 @@ and clipping; its `sprites.GlowPainter` draws the prepared group with editable
 halo layer count, scale, opacity and filter. `DrawGroup` never advances motion
 and does not create a full-screen surface.
 
+For nonuniform letter spacing in phase rather than pixels, set `IndexOffsets`
+and `UseIndexOffsets` on the affected terms. A term may use `Divisor` instead
+of `Rate` to retain exact authored division. Union Beat Dis combines a shared
+horizontal wobble with eight differently phased letter orbits. Cuddly LED uses
+nine authored phases, a vertical cosine and one bouncing amplitude. Both draw
+their prepared group before advancing it, preserving their original first frame.
+
 For repeating image strips, `sprites.NewTrain` owns both the image group and
 its X/Y motion. Each axis can be fixed, use a phase-spaced `motion.Wave`
 (`Cos: true` selects cosine), or use a `motion.BounceBankConfig`. The bounce
@@ -1515,7 +1522,7 @@ remain available for effects with different behavior.
 | `composite.ProfileImage` | Cached source rows, editable displacement table, motion phase and finite wrap copies | TeamG1 logo |
 | `plasma.HarmonicImage` | Harmonic kernel, reusable CPU pixels, live GPU surface and dirty-frame upload | TeamG1 plasma |
 | `sprites.Group` with `CircleFormation` | Indexed circular poses, secondary harmonic motion and independent sprite scales | TeamG1 twelve-logo formation |
-| `sprites.Group` with `HarmonicFormation` | Independent X/Y wave banks, two phase clocks, indexed spacing, bounce envelope and optional bounds | Grodan sprite train, MegaTwist glowing logos |
+| `sprites.Group` with `HarmonicFormation` | Independent X/Y wave banks, two phase clocks, authored index phases, bounce envelope and optional bounds | Grodan sprite train, MegaTwist glowing logos, Union Beat Dis, Cuddly LED |
 | `sprites.GlowPainter` | Configurable outer-to-inner halo layers and final image over prepared group poses | MegaTwist glowing logos |
 | `effects.TimedCRTOverlay` | Adjustable time-varying scanlines, glow, color fringe and flicker | TeamG1 intro |
 | `scrolling.Config.Bands` | Cached repeated text, independent lanes and bounded viewport rendering | Cuddly Spreadpoint |

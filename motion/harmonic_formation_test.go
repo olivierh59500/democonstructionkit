@@ -37,9 +37,28 @@ func TestHarmonicFormationRejectsInvalidGeometry(t *testing.T) {
 		{X: []IndexedHarmonic{{Amplitude: math.NaN()}}},
 		{Bounds: &FormationBounds{Min: Point{X: 5}, Max: Point{X: 4}}},
 		{Spacing: Point{Y: math.Inf(1)}},
+		{X: []IndexedHarmonic{{Divisor: 10, Rate: 1}}},
+		{X: []IndexedHarmonic{{UseIndexOffsets: true}}},
 	} {
 		if _, err := NewHarmonicFormation(config); err == nil {
 			t.Fatalf("accepted invalid formation: %+v", config)
 		}
+	}
+}
+
+func TestHarmonicFormationUsesAuthoredIndexPhasesAndExactDivision(t *testing.T) {
+	offsets := []float64{.2, 1.4}
+	formation, err := NewHarmonicFormation(HarmonicFormationConfig{
+		Origin: Point{Y: 75}, IndexOffsets: offsets,
+		Y: []IndexedHarmonic{{Amplitude: -1, Divisor: 10, Cos: true, SecondaryClock: true, Envelope: true, UseIndexOffsets: true}},
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	offsets[1] = 100
+	got := formation.At(1, [2]float64{0, 1.2}, 40)
+	want := 75 - 40*math.Cos((1.2+1.4)/10)
+	if math.Abs(got.Y-want) > 1e-12 || formation.IndexOffsetCount() != 2 {
+		t.Fatalf("indexed phase = %v, want %v", got.Y, want)
 	}
 }

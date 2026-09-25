@@ -147,6 +147,15 @@ func TestGroupSamplesHarmonicFormationOncePerStateChange(t *testing.T) {
 	if _, err := NewGroup(GroupConfig{Frames: []*ebiten.Image{image}, Count: 1, Harmonic: formation, Circle: &motion.CircleFormation{}}); err == nil {
 		t.Fatal("accepted two formation modes")
 	}
+	indexed, err := motion.NewHarmonicFormation(motion.HarmonicFormationConfig{
+		IndexOffsets: []float64{0}, X: []motion.IndexedHarmonic{{Rate: 1, UseIndexOffsets: true}},
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, err := NewGroup(GroupConfig{Frames: []*ebiten.Image{image}, Count: 2, Harmonic: indexed}); err == nil {
+		t.Fatal("accepted incomplete authored phase table")
+	}
 	if err := group.ResetHarmonics(); err != nil {
 		t.Fatal(err)
 	}

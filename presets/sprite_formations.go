@@ -53,3 +53,27 @@ func MegaTwistGlowPainterConfig(spriteSize, zoom float64) sprites.GlowPainterCon
 		Layers: 3, GlowAlpha: .3, GlowFilter: ebiten.FilterLinear,
 	}
 }
+
+// BeatDisLetterFormationConfig keeps the authored nonuniform phase order while
+// allowing the shared horizontal wobble and individual letter orbit to differ.
+func BeatDisLetterFormationConfig() motion.HarmonicFormationConfig {
+	return motion.HarmonicFormationConfig{
+		Origin:       motion.Point{X: 360, Y: 186},
+		IndexOffsets: []float64{.2, .4, .6, .8, 1, 1.4, 1.6, 1.8},
+		X: []motion.IndexedHarmonic{
+			{Amplitude: 180, Divisor: 60, Cos: true},
+			{Amplitude: 100, Rate: 1, SecondaryClock: true, UseIndexOffsets: true},
+		},
+		Y: []motion.IndexedHarmonic{{Amplitude: 84, Rate: 1.5, Cos: true, SecondaryClock: true, UseIndexOffsets: true}},
+	}
+}
+
+// CuddlyLEDLetterFormationConfig gives each letter its authored wave phase and
+// horizontal cell while sharing one externally adjustable amplitude envelope.
+func CuddlyLEDLetterFormationConfig() motion.HarmonicFormationConfig {
+	return motion.HarmonicFormationConfig{
+		Origin: motion.Point{X: 32, Y: 75}, Spacing: motion.Point{X: 64},
+		IndexOffsets: []float64{0, 2, 4, 6, 8, 6, 4, 2, 0},
+		Y:            []motion.IndexedHarmonic{{Amplitude: -1, Divisor: 10, Cos: true, SecondaryClock: true, Envelope: true, UseIndexOffsets: true}},
+	}
+}
