@@ -237,7 +237,23 @@ the completed message leaves the screen. `presets.BilizirScrollLoop(width)`
 provides its editable four-pixel step and message-width boundary. This keeps
 the first traversal's positions and removes the viewport-width blank interval
 from the DCK version's later loops; the preserved original implementation is
-unchanged. A pure 12,000-tick test covers the seam and live speed changes.
+unchanged. `scrolling.NewCyclicWindow` now narrows those two copies to glyphs
+whose proportional pen and optional bearing can intersect an editable viewport.
+It searches the immutable layout and caches the final pen clip once instead of
+visiting every glyph each frame:
+
+```go
+visible, err := scrolling.NewCyclicWindow(scroll, scrolling.CyclicWindowConfig{
+    Scale: 2, Minimum: -64, Maximum: 1824, Copies: 2,
+})
+if err != nil { return err }
+state := visible.At(loop.At(0))
+state.ScaleY = 2
+scroll.DrawAt(workSurface, state)
+```
+
+Pure tests cover the 12,000-tick seam/live speed policy and the bounded glyph
+search over 5,000 fractional positions without per-frame allocations.
 
 For several simultaneous bitmap scrollers, configure independent `RingConfig`
 values in `RingLanesConfig` and still enter through `scrolling.New`. Fullscreen

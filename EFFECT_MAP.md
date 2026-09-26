@@ -51,7 +51,7 @@ production. Preserved original implementations remain unchanged.
 | Production / screen | Shared today | Remaining responsibility or extraction |
 | --- | --- | --- |
 | 3D DOC | Atlas, `Config.RowBands` using `composite.RowWarp`, `PerspectiveCheckerboard`, `ProjectedBallTrain`, `timeline.IntroHandoff` | Whole-scene transform remains scene composition data. |
-| Bilizir | Atlas, scrolling with a relative `motion.WrapBank` and two virtual text copies, two `StripWarp` instances on one `motion.WarpTableClock` with independent phase/gain variations, batched `SolidCubeTrain`, WaterReflection and `CopperBars` | Authored text and artwork stay production data; the DCK text loop now bridges its former blank reset while the original source remains intact. |
+| Bilizir | Atlas, scrolling with a relative `motion.WrapBank` and `scrolling.CyclicWindow` over two bounded virtual text copies, two `StripWarp` instances on one `motion.WarpTableClock` with independent phase/gain variations, batched `SolidCubeTrain`, WaterReflection and `CopperBars` | Authored text and artwork stay production data; the DCK text loop bridges its former blank reset while the original source remains intact. |
 | DMA 3D | Atlas, `Config.RowColumn`, `sprites.BatchedSolidField` with timed wrap, and complete `effects.MorphingMesh` with ordered per-face materials | Artwork, text, soundtrack and scene layer order stay production data. |
 | DMA Is Back, intro | `Config.Feed`, configurable CRTOverlay, `timeline.IntroHandoff` | Message and scene materials stay production data. |
 | DMA Is Back, main | `Config.Scanline`, ImageGrid, NestedOrbit, JellyCube, shared fade/music cue | Other whole-scene timed layers can use the general cue director. |
