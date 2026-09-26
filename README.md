@@ -1013,6 +1013,31 @@ copies text and delay data; updates and stable depth sorting allocate nothing.
 The Nonameno preset retains its source spiral's repeated delay value and the
 original elastic equations. Its two page texts remain production data.
 
+For a scrolling baseline with several independent waves, use
+`scrolling.HarmonicSine` or `HarmonicSineWith`. The latter can restart the
+spatial phase at each repeated text copy while leaving the time phase running.
+`WaveVertical` and `WaveHorizontal` select the displacement axis; the result
+is an ordinary `Mode` and can be combined with other mappers through `Chain`.
+Nonameno's bottom ribbon is one editable recipe for that common renderer:
+
+```go
+config, err := presets.NonamenoBottomScroll(message, smallFont.Face(),
+    presets.NonamenoScrollOptions{
+        Width: 640, BaselineY: 442, TicksPerSecond: 60,
+        PixelsPerTick: 1, Gap: 641,
+    })
+if err != nil { return err }
+scroll, err := scrolling.New(config)
+if err != nil { return err }
+// One update per 60 Hz simulation tick, then scroll.Draw(screen).
+if err := scroll.Update(kit.Frame{Tick: tick, Time: float64(tick)/60}); err != nil { return err }
+```
+
+The gap of 641 pixels matches Nonameno's strict original restart. Set `Gap:0`
+for a continuous ribbon where the next copy follows the tail directly. Font
+metrics determine the pen advance; `presets.NonamenoBottomWaves` returns the
+two sine terms for editing their amplitude, frequency or direction.
+
 ### Control count, spacing, delay and music-driven properties
 
 ```go
@@ -1911,6 +1936,7 @@ remain available for effects with different behavior.
 | `effects.ProjectedBallTrain` | Blended movement programs, projected sprites/shadows, phase and depth/palette ordering | 3D DOC and Cuddly 3D DOC |
 | `sprites.ProjectedField` | Bounded spawn/respawn, strict/wide wrap, projection, history and pixel/sprite/vector materials | Nonameno stars, Union Starballs, Cuddly Starwars and Big Sprite |
 | `motion.GlyphPageCycle` + `sprites.GlyphPages` | Font-independent staggered pages, editable delay grids, elastic depth motion, completion barriers and stable atlas rendering | Nonameno text pages |
+| `scrolling.HarmonicSine` / `HarmonicSineWith` | Independent sine banks over the common text pipeline, optionally resetting spatial phase per repeated copy | Nonameno bottom scroll |
 | `scrolling.Config.Crawl` | Paragraph window, vertical transport and perspective projection | Cuddly Starwars |
 | `scrolling.Config.Feed` | Finite glyph insertion into a cached scrolling trail | DMA Is Back, Coco, TeamG1, MegaTwist intros |
 | `scrolling.Config.Scanline` | Proportional text transport, cumulative wave, cyclic bounce and bounded strip rendering | DMA Is Back, Coco, MegaTwist main screens |

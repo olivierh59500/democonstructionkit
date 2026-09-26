@@ -43,6 +43,59 @@ func Sine(w motion.Wave) Mode {
 	}}
 }
 
+// WaveDirection selects the displacement axis for a harmonic text baseline.
+type WaveDirection uint8
+
+const (
+	WaveVertical WaveDirection = iota
+	WaveHorizontal
+)
+
+// HarmonicSineConfig can restart spatial wave phase for each repeated ribbon.
+// A zero SpatialPeriod keeps a continuous wave across successive copies.
+type HarmonicSineConfig struct {
+	Direction     WaveDirection
+	SpatialPeriod float64
+	Waves         []motion.Wave
+}
+
+// HarmonicSine sums independent spatial/time waves over a single scrolling
+// baseline. Compose the returned mapper with Chain to add another effect.
+func HarmonicSine(direction WaveDirection, waves ...motion.Wave) (Mode, error) {
+	return HarmonicSineWith(HarmonicSineConfig{Direction: direction, Waves: waves})
+}
+
+// HarmonicSineWith copies the waves so editor changes to the input recipe do
+// not alter an already running scroller. SpatialPeriod repeats glyph-space
+// phases while the time phase continues through a text loop.
+func HarmonicSineWith(c HarmonicSineConfig) (Mode, error) {
+	if c.Direction > WaveHorizontal || len(c.Waves) == 0 || len(c.Waves) > 64 ||
+		!finite(c.SpatialPeriod) || c.SpatialPeriod < 0 {
+		return Mode{}, fmt.Errorf("scrolling: invalid harmonic wave bank")
+	}
+	for _, wave := range c.Waves {
+		for _, value := range [...]float64{wave.Amplitude, wave.Spatial, wave.Speed, wave.Phase, wave.Offset} {
+			if !finite(value) {
+				return Mode{}, fmt.Errorf("scrolling: nonfinite harmonic wave")
+			}
+		}
+	}
+	bank := append(motion.Waves(nil), c.Waves...)
+	return Mode{Map: func(s Sample, op *ebiten.DrawImageOptions) bool {
+		position := s.Glyph.Offset
+		if c.SpatialPeriod > 0 {
+			position = motion.Wrap(position, c.SpatialPeriod)
+		}
+		delta := bank.At(position, s.Time)
+		if c.Direction == WaveHorizontal {
+			op.GeoM.Translate(delta, 0)
+		} else {
+			op.GeoM.Translate(0, delta)
+		}
+		return true
+	}}, nil
+}
+
 // Bounce moves the complete baseline; Amplitude is in pixels and Speed in
 // radians per second. Phase allows independent scrollers to share a clock.
 func Bounce(w motion.Wave) Mode { w.Spatial = 0; return Sine(w) }

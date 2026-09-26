@@ -36,7 +36,7 @@ production. Preserved original implementations remain unchanged.
 | `go-vectorballs` | Ball projection, morphing and reflection are different shared families; no direct image train/wrap candidate found. |
 | `grodan-kvack-kvack-demo` | Its phased twelve-sprite chain now uses `motion.HarmonicFormation` through `sprites.Group`, with independent phase clocks and a bouncing amplitude envelope. |
 | `megatwist` | Its multi-frequency, clamped sprite motion now uses the same formation family; `sprites.GlowPainter` owns the configurable halo passes. |
-| `nonameno-demo` | Its text pages use the shared `motion.GlyphPageCycle` and `sprites.GlyphPages` instead of cyclic image transport. |
+| `nonameno-demo` | Its text pages use `motion.GlyphPageCycle` and `sprites.GlyphPages`; the bottom ribbon uses the common scrolling transport and harmonic mode. |
 | `phenomena-dna-scroll-intro` | Raster-bar thresholds trigger scene-state changes; treating them as a periodic wrap would change the sequence. |
 | `tcb-multi-plane-3d-scroller` | All 32 mountain strips now use the relative `WrapBank` preset also used by Multiscreen. |
 | `tcb-replicants-demo` | Stepped block reveal, zoom bank and layered stars are different motion/state programs. |
@@ -62,7 +62,7 @@ production. Preserved original implementations remain unchanged.
 | MegaTwist, intro | `Config.Feed`, atlas, `timeline.HoldRamp` 90-tick splash | Authored intro image and CRT material remain scene data. |
 | MegaTwist, main | `Config.Scanline`, independent `ScanlineBackground` and DisplacementPrograms, harmonic `sprites.Group` and `sprites.GlowPainter` | Transition overlay material and scene composition. |
 | Nonameno, stars | `sprites.ProjectedField`, editable radial pattern and vector pixel/trail material | The star field is complete. |
-| Nonameno, text pages | Atlas, `motion.GlyphPageCycle`, three delay generators, `sprites.GlyphPages`, editable preset | Baseline two-wave sine scroll remains a local transport recipe. |
+| Nonameno, text pages and bottom scroll | Atlas, `motion.GlyphPageCycle`, three delay generators, `sprites.GlyphPages`, `scrolling.Config` with `HarmonicSineWith` and editable presets | Page text and bottom message remain production data. |
 | Phenomena DNA intro | Atlas, DNAFrames, sliced transport | Whole screen's two-pixel insertion, loop-start and control events as a reusable configuration; separate intro/outro reveal and bounce cues. |
 | TCB multiplane | Complete `effects.MultiPlaneScene`: projected scrolling, font-independent forms, snapped `composite.Bands` mountains, per-row `composite.ProfileImage` logo, `sprites.AxisFlip` emblem | Text, artwork and music remain production parameters. |
 | Replicants | Atlas, `Config.RowColumn` with variable-speed controls | Stepped block reveal, quantized logo zoom bank and layered stars. |
