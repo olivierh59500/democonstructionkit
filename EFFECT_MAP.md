@@ -117,7 +117,7 @@ matches the previous implementation exactly.
 | Loader | Reveal, bitmap recipes and `timeline.CueClock` exact-duration transition | Playback cue and layer placement remain host composition data; retain column-major reverse-row glyph order. |
 | Beat Dis | Background sampler with independent single-copy entrance, scrolling, `motion.WrapBank` wallpaper and pattern offsets, harmonic `sprites.Group` letters with global wobble | Layer order stays authored scene data. |
 | Delta Force | YM register snapshots, `modulation.Change` and `Decay` for the three voice-triggered ball frames, scrolling, WaveStrips, `motion.BounceToggle` logo, `motion.WrapBank` gold fill, `motion.EnterHoldExit` handoff and one reusable `RasterOverlay` source-atop material for both texts | Authored text, images and layer order remain screen composition. |
-| TNT Crew 3 | Complete `effects.SolidMeshCarousel` over `motion.ModelCarousel` and `geometry.OrderedEuler`, plus `scrolling.CaptionCarousel` for ordered slide/hold/exit text | Authored vertices, face groups, messages and input mapping stay production data. |
+| TNT Crew 3 | Complete `effects.SolidMeshCarousel` over `motion.ModelCarousel` and `geometry.OrderedEuler`, reusable `SolidSphereModel` with editable checker and pole materials, plus `scrolling.CaptionCarousel` for ordered slide/hold/exit text | Other authored vertices, face groups, messages and input mapping stay production data. |
 | Wow Scroller | Scrolling, `RasterOverlay` source-atop fill and `motion.WrapBank` paired panel offsets | The two 640×1235 images are single oversized draws naturally clipped by the 640×400 stage; no additional repeated-image transport is present. |
 | Hidden | `sprites.DelayedTrail` over `PointHistory` and `timeline.PacedIndex` for the one-tick palette offset | Authored palette colors, crosshair and border clipping remain scene composition. |
 | Starballs | Camera, scrolling, `sprites.MaskedProjectedField` with one projected population, two borrowed materials, editable mask paint, live count and depth opacity | Authored logo, scroll message and input mapping remain screen data. |
@@ -185,6 +185,11 @@ matches the previous implementation exactly.
   sampling at boundaries where the former literal and new uniform shader
   constants round differently. A dedicated GPU check verifies default
   source-over and explicit copy blending on transparent and opaque source areas.
+- Union TNT Crew 3's faceted ball now comes from `effects.SolidSphereModel`.
+  A pure comparison matched all 512 coordinates and 112 ordered colored faces
+  exactly against the previous builder. Complete GPU captures at frames 1, 60,
+  240 and 600 are byte-identical; the remaining four object models retain their
+  authored point and face data.
 - Pixel 10a (Android 17/API 37) was reconnected and sampled at 60 Hz with
   current DCK APKs. Cuddly's Big Sprite, DNA main stage, Mega Scroller, Reset,
   Starwars, Fullscreen and introduction reported 59.81–60.25 observed FPS in

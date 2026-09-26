@@ -2162,9 +2162,17 @@ pure `motion.ModelCarousel` with grouped `MeshEffect` instances. The production
 supplies points and triangle/quad faces; the configurable clock handles entry,
 rotation, recession and a retargetable selection during recession. Face colors
 stay independent by group, and the renderer shares one white GPU source across
-all opaque meshes:
+all opaque meshes. Given a five-model catalog `models`, replace its third entry
+with a generated sphere before constructing the Union-style carousel:
 
 ```go
+sphere, err := effects.SolidSphereModel(effects.SolidSphereConfig{
+    Radius: 80, Rows: 8, Columns: 16,
+    BodyColors: [2]uint32{0xffffff, 0xff0000},
+    PoleColors: [2]uint32{0x00ff00, 0x0000ff}, PoleBand: true,
+})
+if err != nil { return err }
+models[2] = sphere
 config := presets.UnionTNTMeshCarousel(models)
 config.Motion.EntranceAt = 700
 carousel, err := effects.NewSolidMeshCarousel(config)
@@ -2174,6 +2182,13 @@ if err := carousel.Select(3); err != nil { return err }
 if err := carousel.Step(); err != nil { return err }
 carousel.Draw(screen)
 ```
+
+`SolidSphereModel` also supports an ordinary complete latitude grid when
+`PoleBand` is false. Radius, row/column density, longitudinal offset and the
+two alternating body/pole materials are independent parameters. The pole-band
+option retains Union TNT Crew 3's authored closure and exact face order. Its
+512 points and 112 faces match the previous model value for value, and four
+complete frame captures remain pixel-identical after migration.
 
 `RotationOrder`, mirrored axes, camera sign, near plane, culling and per-model
 angle speeds are editable. `geometry.OrderedEuler` preserves the source's
@@ -3081,6 +3096,7 @@ remain available for effects with different behavior.
 | `scrolling.BitmapPage` | One retained still from ordered glyphs, independent lines, optional background and alternate material banks | Phenomena intro text pages |
 | `effects.JellyCube` | Five-mode controller, entrance, deformation, continuous handoffs, projection and rendering | DMA Is Back; `examples/jellycubes` |
 | `motion.ModelCarousel` + `effects.SolidMeshCarousel` | Selectable grouped meshes, per-face material, exact entry/recession/rotation handoffs and shared white source | Union TNT Crew 3 |
+| `effects.SolidSphereModel` | Configurable faceted sphere grid, checker materials and optional pole-band closure | Union TNT Crew 3 ball; other solid-mesh scenes |
 | `motion.CaptionCycle` + `scrolling.CaptionCarousel` | Cached bitmap lines, small banner fill and exact slide/hold/page timing | Union TNT Crew 3 |
 | `composite.ScalarStagePainter` | Ordered stage-gated image/rectangle passes with compiled position, RGB, HSL and premultiplied-alpha formulas | Phenomena full presentation and Multiscreen main panel |
 | `motion.CameraTour` + `composite.SceneTour` | Held/eased camera poses, continuous scene updates, direct fixed views, visibility culling, retained canvases and shader/fallback composition | Multiscreen four-scene tour |
