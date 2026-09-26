@@ -1306,6 +1306,26 @@ The two canvases are 320 × 200 in that recipe, then scaled into the scene.
 an existing renderer. A custom field and mask painter can reuse this component
 with different sprites, depth movement, palette and output placement.
 
+`sprites.LatchedOverlay` groups ordered sprite images by trigger channel. Its
+pure `motion.LatchedTriggers` can sample deterministic random values at a fixed
+period or accept a live music/event signal. A hit stays visible until the
+authored release tick, and a cached high value may reassert it on the next
+tick. Knucklebuster uses three channels for head/bass, left and right drums:
+
+```go
+config := presets.CuddlyKnucklebusterHits(head, bass, left, right, randomFloat)
+hits, err := sprites.NewLatchedOverlay(config)
+if err != nil { return err }
+if err := hits.Update(frame); err != nil { return err }
+hits.Draw(stage)
+```
+
+For music-driven hits, use `presets.CuddlyKnucklebusterSignalHits` and pass a
+callback that returns one boolean per channel/tick. The random and signal modes
+are distinct; the original screen retains its seeded cadence. A pure test
+compares every channel over 5,000 ticks and checks the signal mode, with no
+allocation per update.
+
 `FieldStyle.Sample` can change size, tint, rotation or visibility from depth,
 index or modulation. `Frames` are atlas rectangles selected by each point's
 `Image`. `Streak:true` draws between successive sampled positions; recycling
@@ -2669,6 +2689,7 @@ remain available for effects with different behavior.
 | `sprites.RotatingDiscCloud` | Y-axis rotation, depth projection, stable painter order and batched circular material | Cuddly DNA particle sphere |
 | `sprites.ProjectedField` | Bounded spawn/respawn, strict/wide wrap, projection, history and pixel/sprite/vector materials | Nonameno stars, Union Starballs, Cuddly Starwars and Big Sprite |
 | `sprites.MaskedProjectedField` | One projected population rendered with two materials, reusable alpha canvas, independent output transforms and live count controls | Union Starballs |
+| `motion.LatchedTriggers` + `sprites.LatchedOverlay` | Configurable sampled hits, held visibility and ordered multi-image channels | Cuddly Knucklebuster |
 | `motion.FrameField` + `sprites.AnimatedField` | Independent fractional atlas clocks or planar motion, single-edge wrap, ordered respawn and per-instance image selection | DOM animated stars, Replicants layered stars |
 | `motion.FrameField` + `sprites.BatchedSolidField` | Layered planar positions, tick-dependent wrap callbacks, origin mask, colored solid materials and bounded triangle batches | DMA 3D stars |
 | `motion.CoupledLogoMotion` + `sprites.CoupledLogoPair` | Two linked logo paths, cached quantized scale banks, depth-based frame selection and draw order | Replicants paired logos |
