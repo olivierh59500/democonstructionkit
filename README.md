@@ -292,6 +292,24 @@ continues. `RotationAt(frame)` can retain an existing phase accumulator exactly;
 available for direct `Step`, `SetFrames`, `Cursor`, `Reset`, `Slices` and `Head`
 access. Phenomena and its Multiscreen variant share that implementation.
 
+Cuddly's DNA screen uses a different effect family: two live text images twist
+as front and back faces of a twenty-strip ribbon. `composite.TwistingRibbon`
+owns the phase, source crops, vertical mirroring and ordered occlusion; any
+images of the configured dimensions can replace the text surfaces:
+
+```go
+ribbon, err := composite.NewTwistingRibbon(presets.CuddlyDNARibbon(front, back))
+if err != nil { return err }
+if err := ribbon.Update(frame); err != nil { return err }
+ribbon.DrawAt(screen, 52, 0)
+```
+
+The preset holds its first Update so the first visible frame keeps phase zero.
+Change strip width, phase/index steps, near/far amplitudes, angle periods and
+front/back visibility thresholds independently. A pure test compares every
+strip pose through 1,000 frames and two strict phase wraps without per-frame Go
+allocation; the renderer reuses `DrawRegion` to retain source sampling order.
+
 ### Stack whole-image effects after any scroll
 
 Regular glyph modes run first. A mode has one painter and optional depth sorter;
@@ -2241,6 +2259,7 @@ remain available for effects with different behavior.
 | `effects.TexturedCube` | Live texture mapping, camera, rotation, face ordering and culling | TeamG1 |
 | `effects.PerspectiveCheckerboard` | Perspective stripe geometry, two-axis motion, XOR composition and bounded surfaces | 3D DOC and Cuddly 3D DOC |
 | `effects.ProjectedBallTrain` | Blended movement programs, projected sprites/shadows, phase and depth/palette ordering | 3D DOC and Cuddly 3D DOC |
+| `composite.TwistingRibbon` | Two borrowed face images, exact strip crops, phase/occlusion clocks and ordered mirrored draw passes | Cuddly DNA |
 | `sprites.ProjectedField` | Bounded spawn/respawn, strict/wide wrap, projection, history and pixel/sprite/vector materials | Nonameno stars, Union Starballs, Cuddly Starwars and Big Sprite |
 | `motion.FrameField` + `sprites.AnimatedField` | Independent fractional atlas clocks or planar motion, single-edge wrap, ordered respawn and per-instance image selection | DOM animated stars, Replicants layered stars |
 | `motion.CoupledLogoMotion` + `sprites.CoupledLogoPair` | Two linked logo paths, cached quantized scale banks, depth-based frame selection and draw order | Replicants paired logos |
