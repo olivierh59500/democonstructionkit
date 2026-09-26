@@ -811,6 +811,9 @@ restarts its clock. Ehhh's backdrop, DMA Is Back's logo and Union Level 16's
 ball use the same controller with different centers, radii and steps. Pure
 5,000-tick comparisons cover all four original pre-draw advances, including
 Big Sprite's nonzero initial phase; steady updates allocate no memory.
+Cuddly Colorshock II supplies a compiled `FormulaFormation` through `Sample`
+and draws before stepping, showing the same clock can drive a user-defined
+trajectory without changing the renderer.
 
 `Back` may be omitted to flip a single image. `DrawAt` centers whichever face
 is selected, so differently sized art stays centered. The effect reuses its

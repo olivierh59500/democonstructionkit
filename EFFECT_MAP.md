@@ -95,7 +95,7 @@ matches the previous implementation exactly.
 | Loader | Bitmap font recipes, scrolling, `timeline.Countdown`, `timeline.CueClock` overlapping fade/hold windows and `timeline.CueRamp` gain applied by the playback host | Initial pre-render, text and layer placement remain authored. |
 | Introduction | `composite.WaveChain` with an editable row-then-column logo preset, `ProfileStrips` with compiled `motion.WaveWrite` table, configurable sparkles and `timeline.StillThenMain` for the still/blank/music handoff | Authored artwork, star positions, music filename and layer order remain scene data. |
 | Big Sprite | `sprites.ProjectedField` with strict-wrap vector lines, `scrolling.RingLanes` dual-font transport, `sprites.Group` Weave formation, `RasterOverlay` fill, `sprites.AxisFlip` front/back material on a `motion.TrajectoryClock` orbit | Authored layer placement and image order stay scene data. |
-| Colorshock II | Background sampler, scrolling, editable `FormulaFormation` two-frequency orbit and `WrapBank` position-table clock | Source position samples and artwork remain screen data. |
+| Colorshock II | Background sampler, scrolling, editable `FormulaFormation` two-frequency orbit on `motion.TrajectoryClock` and `WrapBank` position-table clock | Source position samples and artwork remain screen data. |
 | Ehhh | Scrolling, `composite.TableWarpLogo` over the compiled row profile shared with Digi, `sprites.Train` raster bars, `motion.TrajectoryClock` backdrop orbit, `motion.CuedWaveClock` lookahead/landing roller, `motion.WrapBank` inner strip and `RasterOverlay` middle-text fill | Authored art, text and layer order remain screen composition. |
 | Mega Scroller | `composite.TiledWaveBackdrop` for the cached two-wave tile field, finite overlapping `composite.Background` mask copies, scrolling, directional `motion.BounceBank` text-surface transport and reusable `RasterOverlay` source-atop fill | Authored text, bar artwork and scene layer order remain production data. |
 | Spreadpoint | `Config.Bands`, feedback DNA, atlas, a 20-ball `sprites.Group` with pixel-snapped formula, a dynamic `SurfaceLayer` for the raster-filled logo, `motion.PhaseSequence` with `motion.HarmonicTransform` for its orbit/zoom and `timeline.TintedCards` for the four stills and handoff cues | Authored card images, music filenames and layer order remain scene data. |
@@ -154,6 +154,10 @@ matches the previous implementation exactly.
   for Cuddly, `e608b27`/`678afb7` for Union and `aaa9946`/`025a53f` for DMA.
   These checks cover the four migrated scenes, not the full catalog or every
   transition.
+- Cuddly Colorshock II also moved its compiled formula orbit to the same
+  trajectory clock. Full-frame captures before and after this migration have
+  zero differing RGBA pixels at 0, 60, 240, 600, 1,200, 2,400 and 4,800,
+  covering its indexed scroll-table wrap (`a1823ca`/`525b7fa`).
 - No Pixel appeared among the currently attached USB products, and Android
   tooling is not on this session's PATH. Pixel 10a CPU/frame, logical-surface
   and visual measurements are still missing for combined scanline,
