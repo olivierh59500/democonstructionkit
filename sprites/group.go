@@ -24,7 +24,7 @@ type GridFormation struct {
 }
 
 // GroupConfig describes a sprite/logo formation, independent of image metrics.
-// Choose at most one Path, Points, Orbit, Weave, Circle, Harmonic or Formation. With none, positions follow
+// Choose at most one Path, Points, Orbit, Weave, Circle, Harmonic, Formula or Formation. With none, positions follow
 // Velocity. Speed and PhaseSpacing use path pixels or the orbit's phase units;
 // Delay is seconds per instance. Spacing is an additional screen-space offset.
 // Points offers serializable path data; SplineSamples>0 selects a smooth spline.
@@ -41,6 +41,8 @@ type GroupConfig struct {
 	Weave                                   *motion.Weave
 	Circle                                  *motion.CircleFormation
 	Harmonic                                *motion.HarmonicFormation `json:"-"`
+	Formula                                 *motion.FormulaFormation  `json:"-"`
+	FormulaWidth, FormulaHeight             float64
 	HarmonicClockStart, HarmonicClockStep   [2]float64
 	HarmonicEnvelope                        *motion.BounceBankConfig
 	Formation                               func(float64, int) motion.Point `json:"-"`
@@ -103,6 +105,9 @@ func NewGroup(c GroupConfig) (*Group, error) {
 	if c.Harmonic != nil {
 		kinds++
 	}
+	if c.Formula != nil {
+		kinds++
+	}
 	if c.Formation != nil {
 		kinds++
 	}
@@ -115,6 +120,9 @@ func NewGroup(c GroupConfig) (*Group, error) {
 	if c.Harmonic != nil && c.Harmonic.IndexOffsetCount() > 0 && c.Count > c.Harmonic.IndexOffsetCount() {
 		return nil, fmt.Errorf("sprites: harmonic index offsets are shorter than group count")
 	}
+	if c.Formula != nil && (c.Formula.X == nil || c.Formula.Y == nil) {
+		return nil, fmt.Errorf("sprites: incomplete formula formation")
+	}
 	if c.Translation != nil && c.RecurrentTranslation != nil {
 		return nil, fmt.Errorf("sprites: choose direct or recurrent shared translation")
 	}
@@ -123,7 +131,7 @@ func NewGroup(c GroupConfig) (*Group, error) {
 			return nil, fmt.Errorf("sprites: nonfinite harmonic clock")
 		}
 	}
-	for _, v := range []float64{c.FPS, c.Origin.X, c.Origin.Y, c.Velocity.X, c.Velocity.Y, c.Spacing.X, c.Spacing.Y, c.Speed, c.Phase, c.PhaseSpacing, c.PhaseStep, c.Delay, c.ScaleX, c.ScaleY, c.Angle, c.AnchorX, c.AnchorY, c.Opacity} {
+	for _, v := range []float64{c.FPS, c.Origin.X, c.Origin.Y, c.Velocity.X, c.Velocity.Y, c.Spacing.X, c.Spacing.Y, c.Speed, c.Phase, c.PhaseSpacing, c.PhaseStep, c.Delay, c.ScaleX, c.ScaleY, c.Angle, c.AnchorX, c.AnchorY, c.Opacity, c.FormulaWidth, c.FormulaHeight} {
 		if !finiteField(v) {
 			return nil, fmt.Errorf("sprites: nonfinite group parameter")
 		}
@@ -289,6 +297,13 @@ func (g *Group) sample(f kit.Frame) error {
 			position, circleScale = c.Circle.At(g.phase+t*c.Speed, i)
 		case c.Harmonic != nil:
 			position = c.Harmonic.At(i, g.harmonicClocks, g.harmonicEnvelope)
+		case c.Formula != nil:
+			position = c.Formula.At(phase, i, c.FormulaWidth, c.FormulaHeight, c.Count)
+			if c.Orient {
+				a := c.Formula.At(phase-1e-4, i, c.FormulaWidth, c.FormulaHeight, c.Count)
+				b := c.Formula.At(phase+1e-4, i, c.FormulaWidth, c.FormulaHeight, c.Count)
+				tangent = motion.Point{X: b.X - a.X, Y: b.Y - a.Y}
+			}
 		case c.Formation != nil:
 			position = c.Formation(phase, i)
 			if c.Orient {

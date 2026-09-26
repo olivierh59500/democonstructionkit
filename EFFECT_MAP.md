@@ -95,7 +95,7 @@ matches the previous implementation exactly.
 | Colorshock II | Background sampler, scrolling, editable `FormulaFormation` two-frequency orbit and `WrapBank` position-table clock | Source position samples and artwork remain screen data. |
 | Ehhh | Scrolling, compiled row-profile program shared with Digi, `sprites.Train` raster bars with phase-spaced cosine `motion.Wave`, cue-paced roller `motion.WaveClock` | Lookahead/landing control events and authored roller cue mapping. |
 | Mega Scroller | Tiled background, WaveStrips, scrolling and directional `motion.BounceBank` text-surface transport | Mask material with authored source-atop blending. |
-| Spreadpoint | `Config.Bands`, feedback DNA, atlas | Card/audio cue sequence, 20-ball formation and raster-filled logo material. |
+| Spreadpoint | `Config.Bands`, feedback DNA, atlas and a 20-ball `sprites.Group` using a compiled pixel-snapped formula | Card/audio cue sequence and raster-filled logo material. |
 | Digi | Scrolling, compiled overlapping `motion.WaveWrite` row warp, `sprites.Group` Weave formation with owned phase step, rectified `motion.WaveClock` for logo and scroll | Shared bouncing logo material. |
 | LED Scroller | Bounded tiled background, cached bubble matrix, scrolling, `motion.WrapBank` backdrop/gradient offsets, harmonic `sprites.Group` and rectified `motion.WaveClock` | Raster/color ramp material. |
 | 3D DOC | Scrolling, paired `composite.RowWarp` source-sampling programs, `PerspectiveCheckerboard`, `ProjectedBallTrain`, first-main-tick `timeline.IntroHandoff` cue | Raster-filled inner text material remains scene composition data. |

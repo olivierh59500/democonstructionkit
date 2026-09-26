@@ -22,6 +22,7 @@ const (
 	FormulaDiv      FormulaOp = "divide"
 	FormulaSin      FormulaOp = "sine"
 	FormulaCos      FormulaOp = "cosine"
+	FormulaFloor    FormulaOp = "floor"
 )
 
 // FormulaExpr is data, suitable for an editor or a Go preset. Args are kept
@@ -52,6 +53,9 @@ func ExprDiv(a, b FormulaExpr) FormulaExpr {
 }
 func ExprSin(a FormulaExpr) FormulaExpr { return FormulaExpr{Op: FormulaSin, Args: []FormulaExpr{a}} }
 func ExprCos(a FormulaExpr) FormulaExpr { return FormulaExpr{Op: FormulaCos, Args: []FormulaExpr{a}} }
+func ExprFloor(a FormulaExpr) FormulaExpr {
+	return FormulaExpr{Op: FormulaFloor, Args: []FormulaExpr{a}}
+}
 
 type formulaOpcode uint8
 
@@ -68,6 +72,7 @@ const (
 	formulaDiv
 	formulaSin
 	formulaCos
+	formulaFloor
 	formulaTimeSin
 	formulaTimeCos
 	formulaLagSin
@@ -162,6 +167,9 @@ func CompileFormula(expr FormulaExpr) (*FormulaProgram, error) {
 		case FormulaCos:
 			opcode = formulaCos
 			arity = 1
+		case FormulaFloor:
+			opcode = formulaFloor
+			arity = 1
 		case FormulaAdd:
 			opcode = formulaAdd
 			arity = 2
@@ -251,6 +259,8 @@ func (program *FormulaProgram) At(time, index, width, height, count float64) flo
 			stack[sp-1] = math.Sin(stack[sp-1])
 		case formulaCos:
 			stack[sp-1] = math.Cos(stack[sp-1])
+		case formulaFloor:
+			stack[sp-1] = math.Floor(stack[sp-1])
 		case formulaTimeSin:
 			stack[sp] = math.Sin(time * instruction.value)
 			sp++

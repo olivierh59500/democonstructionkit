@@ -2794,6 +2794,26 @@ at most 256 glyph quads. A long message increases cached text data, never textur
 width. This bounds GPU memory by the viewport; it does not imply that a viewport
 image is smaller than every short text strip.
 
+Spreadpoint's twenty balls use the same `sprites.Group` image bank with a
+compiled `motion.FormulaFormation`. `FormulaFloor` supplies the screen's
+`floor(value+0.5)` pixel placement without a production draw loop:
+
+```go
+config, err := presets.CuddlySpreadpointBallFormation(ball, 20)
+if err != nil { return err }
+group, err := sprites.NewGroup(config)
+if err != nil { return err }
+// Update only during the ball cue; the first update samples formula time zero.
+if err := group.Update(kit.Frame{}); err != nil { return err }
+group.Draw(screen)
+```
+
+To change the curve, edit `presets.DefaultSpreadpointBallPath()`, compile it
+with `presets.SpreadpointBallFormula(path)`, and assign the result to
+`config.Formula`. Time/index divisors, X/Y amplitudes and frequencies, count,
+artwork and snapping are independent. The pure formula test matches all twenty
+source positions over 400 ticks and samples without Go allocations.
+
 For moving and rotating individual glyphs, use another transport selection:
 
 ```go

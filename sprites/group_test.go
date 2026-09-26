@@ -157,6 +157,41 @@ func TestGroupAppliesOneRecurrentOffsetAcrossGrid(t *testing.T) {
 	}
 }
 
+func TestGroupSamplesCompiledFormulaAtTheFirstVisibleTick(t *testing.T) {
+	image := ebiten.NewImage(2, 2)
+	defer image.Deallocate()
+	formula, err := motion.NewFormulaFormation(motion.FormulaFormationConfig{
+		X: motion.ExprAdd(motion.ExprConst(10), motion.ExprTime()),
+		Y: motion.ExprMul(motion.ExprIndex(), motion.ExprConst(3)),
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	group, err := NewGroup(GroupConfig{
+		Frames: []*ebiten.Image{image}, Count: 2,
+		Formula: formula, Phase: -1, PhaseStep: 1,
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := group.Update(kit.Frame{}); err != nil {
+		t.Fatal(err)
+	}
+	if got := group.Poses(); got[0].X != 10 || got[0].Y != 0 || got[1].X != 10 || got[1].Y != 3 {
+		t.Fatalf("first formula tick poses = %+v", got)
+	}
+	if err := group.Update(kit.Frame{}); err != nil {
+		t.Fatal(err)
+	}
+	if got := group.Poses(); got[0].X != 11 || got[1].X != 11 {
+		t.Fatalf("second formula tick poses = %+v", got)
+	}
+	if _, err := NewGroup(GroupConfig{Frames: []*ebiten.Image{image}, Count: 2,
+		Formula: formula, Weave: &motion.Weave{}}); err == nil {
+		t.Fatal("two formation strategies were accepted")
+	}
+}
+
 func TestGroupSamplesHarmonicFormationOncePerStateChange(t *testing.T) {
 	image := ebiten.NewImage(4, 4)
 	defer image.Deallocate()
