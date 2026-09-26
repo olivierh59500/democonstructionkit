@@ -312,6 +312,40 @@ threshold, per-strip delay, baseline, amplitude, angle and phase step are data;
 the pure controller matched the preceding recurrence at flat, boundary and late
 times while skipping invalid source strips, without drawing-time allocations.
 
+For a long strip scroll with in-band commands, `scrolling.SliceProgram` combines
+the same bounded `SliceStream` with a pure `motion.CuedScrollClock`. A command
+can pause insertion, change rotation or text speed and decide whether the
+remaining insertion budget is consumed. Rotation continues during pauses; the
+resume tick restores configured speeds without inserting an extra strip.
+Phenomena and its Multiscreen panel use one recipe for the original control
+characters and the one-time message prefix:
+
+```go
+config, err := presets.PhenomenaDNAProgram(message, glyphIndex)
+if err != nil { return err }
+program, err := scrolling.NewSliceProgram(config)
+if err != nil { return err }
+if err := program.Warmup(320, 1); err != nil { return err }
+// Each main-demo Update: program.Step(), then advance the scene's visual time.
+// Each Draw, after rows.Begin(sceneTime):
+program.Draw(screen, film, draw)
+```
+
+Edit `Clock.Cues`, `Clock.ResumeRotationStep`, `Stream.Tokens`, `Stream.LoopStart`
+or `Offsets` without changing the renderer. `Clock().State()` exposes current
+pause, rotation and text speed for controls or an editor; `Stream()` exposes
+the circular history and cursor for inspection. The source screen still owns
+its message, font artwork and intro/outro layer schedule.
+The graphics-free source-file test compares a 320-tick pre-roll and 4,000
+subsequent ticks against an independent strip/command reference, including all
+ring contents, cue state, rotation and multiple loop crossings. It confirms
+zero allocations per transport step:
+
+```sh
+go test scrolling/slice_stream.go scrolling/slice_program.go \
+  scrolling/slice_stream_test.go scrolling/slice_program_pure_test.go
+```
+
 Cuddly's DNA screen uses a different effect family: two live text images twist
 as front and back faces of a twenty-strip ribbon. `composite.TwistingRibbon`
 owns the phase, source crops, vertical mirroring and ordered occlusion; any

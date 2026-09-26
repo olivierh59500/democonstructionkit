@@ -146,9 +146,6 @@ func (d *DNAFrames) FrameAt(rotation, offset float64) int {
 	return int(motion.Wrap(rotation+offset, float64(d.Count)))
 }
 
-// DNASlice represents a single source column in a circular scroll buffer.
-type DNASlice struct{ Glyph, Frame, Slice int }
-
 type DNADrawConfig struct {
 	SliceWidth       int
 	ScaleX, ScaleY   float32

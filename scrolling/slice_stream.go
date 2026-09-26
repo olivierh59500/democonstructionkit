@@ -5,6 +5,11 @@ import (
 	"math"
 )
 
+// DNASlice identifies one glyph column and animation frame in a strip ring.
+type DNASlice struct{ Glyph, Frame, Slice int }
+
+func finiteSlice(v float64) bool { return !math.IsNaN(v) && !math.IsInf(v, 0) }
+
 // SliceToken is either a glyph with an integer pixel advance or a control event.
 // Glyph indexes the caller's filmstrip. A negative glyph emits transparent slots.
 // Width need not equal the bitmap width: additional columns provide spacing.
@@ -129,11 +134,11 @@ func (s *SliceStream) nextToken() {
 // of transport. Empty offsets selects a flat profile. Frame indices wrap before
 // truncation; existing small-range profiles retain their original arithmetic.
 func (s *SliceStream) SetFrames(rotation float64, offsets []float64, frames int) error {
-	if frames < 1 || !finite(rotation) || (len(offsets) != 0 && len(offsets) != len(s.slices)) {
+	if frames < 1 || !finiteSlice(rotation) || (len(offsets) != 0 && len(offsets) != len(s.slices)) {
 		return fmt.Errorf("scrolling: invalid strip animation profile")
 	}
 	for _, offset := range offsets {
-		if !finite(offset) || !finite(rotation+offset) {
+		if !finiteSlice(offset) || !finiteSlice(rotation+offset) {
 			return fmt.Errorf("scrolling: nonfinite strip animation phase")
 		}
 	}
