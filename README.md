@@ -361,6 +361,9 @@ drawAt(screen, photonImage, 285, photon.Position())
 Start position and velocity, gravity, floor, rebound, damping and terminal
 comparison are independent parameters. The pure controller matches the
 source's complete photon path through the fade cue without per-step allocation.
+`presets.PhenomenaPhotonHueCycle()` uses the shared `motion.WrapBank` for the
+main-screen color: advance once per main tick, then divide `At(0)` by 360 for
+the HSL hue. The strict boundary keeps the authored last value before reset.
 
 DNA face colors and raster bars can be built once from `palette.GradientConfig`;
 the axis, dimensions and stop colors/positions are independent. `composite`
