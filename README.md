@@ -2692,7 +2692,9 @@ Ordinary ticks apply rotation, then translation, then animations in their
 listed order: a bounce can replace Y and an orbit can replace the whole model
 position. A morph captures the current points at entry, keeping the handoff
 continuous. Vectorballs keeps its shape strings and stage data in a separate
-pure-Go production package; its complete stage cycle is tested without a GPU.
+pure-Go production package. A frozen controller oracle compares every point,
+model pose, caption cue and stage boundary over two complete cycles without a
+GPU; rendered-frame and Pixel measurements remain separate checks.
 
 `effects.SolidCubeTrain` owns the entire repeated-cube animation when each cube
 follows a path and rotates independently. It updates the phases and rotations
