@@ -362,6 +362,31 @@ Start position and velocity, gravity, floor, rebound, damping and terminal
 comparison are independent parameters. The pure controller matches the
 source's complete photon path through the fade cue without per-step allocation.
 
+DNA face colors and raster bars can be built once from `palette.GradientConfig`;
+the axis, dimensions and stop colors/positions are independent. `composite`
+uploads that bounded CPU image, and also provides a white alpha silhouette and
+an RGB-inverted image for tintable sprites and fonts:
+
+```go
+gradient, err := composite.NewGradientImage(palette.GradientConfig{
+    Width: 480, Height: 33, Stops: presets.PhenomenaFrontStops(),
+})
+if err != nil { return err }
+defer gradient.Deallocate()
+whiteLogo, err := composite.NewWhiteSilhouette(logoSource)
+if err != nil { return err }
+defer whiteLogo.Deallocate()
+r, g, b := palette.HSLToRGB(hue, 1, .5)
+var op ebiten.DrawImageOptions
+op.ColorScale.Scale(float32(r), float32(g), float32(b), 1)
+screen.DrawImage(whiteLogo, &op)
+```
+
+The CPU gradient tests compare all channel bytes at the original strip heights
+with the previous interpolation, including its truncation. The materials are
+constructed at initialization and add no per-frame CPU work; their GPU images
+remain caller-owned.
+
 Cuddly's DNA screen uses a different effect family: two live text images twist
 as front and back faces of a twenty-strip ribbon. `composite.TwistingRibbon`
 owns the phase, source crops, vertical mirroring and ordered occlusion; any
