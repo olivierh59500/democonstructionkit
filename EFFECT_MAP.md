@@ -137,11 +137,22 @@ matches the previous implementation exactly.
   `modulation` test suites pass. Six opt-in GPU comparators for staged materials,
   copper titles, tiled waves, windowed rasters, repeated backgrounds and bitmap
   pages compile at the current DCK revision.
-- Those GPU comparators have not run at this revision. Ebitengine's macOS UI
-  receives a nil monitor; `system_profiler SPDisplaysDataType` currently lists
-  the M4 Max GPU but no attached display. `adb devices -l` lists no Pixel.
-  Recent migrations therefore still need complete-frame pixel comparisons at
-  startup, cue boundaries, wraps and late playback.
+- Seven GPU comparators ran successfully at DCK `f9ebe64` in a native graphics
+  process: water reflection plus the six compiled checks above. The ordinary
+  sandbox still exposes no monitor, so the graphics process needs native access.
+  Bilizir's logo/scroll comparator also passed at eight checkpoints through
+  frame 4,800, with zero scroll-reference pixel differences.
+- Before/after full-frame GPU captures of the trajectory-clock migrations have
+  zero differing RGBA pixels: Cuddly Big Sprite and Ehhh at frames 0, 600,
+  1,200, 2,400 and 4,800 each; Union Level 16 at 0, 600, 1,200 and 2,400;
+  DMA Is Back at 0, 1, 60, 240, 600, 1,200 and 2,400. Earlier Cuddly captures
+  also matched at 60 and 240. The compared revisions were `640b95a`/`a1823ca`
+  for Cuddly, `e608b27`/`678afb7` for Union and `aaa9946`/`025a53f` for DMA.
+  These checks cover the four migrated scenes, not the full catalog or every
+  transition.
+- Android tooling is not on this tool session's PATH; the Pixel 10a was not
+  exercised in this run. Whole-scene device measurements and visual inspection
+  remain outstanding.
 - Pixel 10a CPU/frame and logical-surface measurements are still missing for
   combined scanline, projected-field/mask and multi-layer scenes. Small pure
   controller benchmarks do not establish whole-scene mobile performance.
