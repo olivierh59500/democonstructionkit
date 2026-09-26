@@ -3779,6 +3779,29 @@ supplies the other authored recipe. Tables are compiled once, outside drawing.
 `BilizirCopperOffsets` also supplies the exact quantized copper table shared by
 Bilizir, Coco and Multiscreen, with independent storage for each caller.
 
+`motion.WarpTableClock` couples such a row table to a separately advancing
+column cosine. `presets.BilizirWarpClockConfig()` supplies the original table,
+64-pixel source origin and vertical phase rate; `BilizirStripWarpConfig(clock)`
+adapts the same clock to several `composite.StripWarp` instances:
+
+```go
+clockConfig, err := presets.BilizirWarpClockConfig()
+if err != nil { return err }
+clock, err := motion.NewWarpTableClock(clockConfig)
+if err != nil { return err }
+warpConfig, err := presets.BilizirStripWarpConfig(clock)
+if err != nil { return err }
+textWarp, err := composite.NewStripWarp(textSize, warpConfig)
+if err != nil { return err }
+defer textWarp.Close()
+if err := clock.Step(speedMultiplier); err != nil { return err }
+```
+
+Construct a second warp from the same config and set its `WarpVariation` to
+change row/column phases, gains and source padding for a logo without moving
+the text's own deformation. Pure 5,000-tick tests compare row and column
+offsets through speed changes and signed logo phases without allocations.
+
 For profiles with holds, gaps or later writes that overwrite earlier samples,
 use `motion.CompileWaveProgram`. `WaveAppend` appends a section; any nonnegative
 `At` writes at an absolute index. `SampleStart` keeps a continuous sine phase
