@@ -1516,6 +1516,29 @@ order. `effects.MeshEffect` is available for new solid/textured/Glenz models;
 its triangle renderer is not claimed to replace every legacy quad/material
 renderer identically.
 
+DMA 3D's cyclic Glenz mesh has a separate complete component because its
+sequential Euler arithmetic, ascending face order, projected winding test and
+per-face blend choices are part of its appearance. The pure
+`geometry.MorphingMesh` owns equal-sized shape targets, interpolation/hold
+durations, rotation, projection and sorted faces. `effects.MorphingMesh` draws
+those faces using editable solid materials. Its recipe holds the 14 vertices in
+each of three forms and all 24 face/material assignments:
+
+```go
+config := presets.DMA3DMorphMesh(whitePixel)
+config.Geometry.RotationStep.Z = .06 // Try a faster Z rotation.
+config.Materials[0].Color = color.RGBA{R: 20, G: 180, B: 80, A: 128}
+mesh, err := effects.NewMorphingMesh(config)
+if err != nil { return err }
+defer mesh.Close()
+// In Update: mesh.Update(frame). In Draw: mesh.Draw(screen).
+```
+
+Keep the default recipe for DMA 3D's original timing and colors. Supply other
+equal-sized forms, topology, face materials, camera and cycle lengths for a new
+object; its initial and target forms meet at the 120/240-tick boundaries without
+a position jump.
+
 ```go
 func NewRibbonProgram() (*composite.DisplacementProgram, error) {
     curves, err := presets.RibbonCurves(1)
@@ -2325,6 +2348,7 @@ remain available for effects with different behavior.
 | `scrolling.Atlas` + `presets.FontAtlas` | Font metrics, cached glyph images, case/alias/fallback rules and ribbon layout | DMA Is Back, TeamG1, Megatwist, Coco, Multiscreen, Nonameno, Grodan |
 | `BitmapRecipe`, `BitmapText`, `BitmapParagraph` | Fractional atlas sampling, cached character lookup and paragraph alignment | Cuddly screens, Union screens/menu/loaders |
 | `effects.JellyCube` | Five-mode controller, entrance, deformation, continuous handoffs, projection and rendering | DMA Is Back; `examples/jellycubes` |
+| `geometry.MorphingMesh` + `effects.MorphingMesh` | Cyclic shape morph, sequential Euler rotation, sorted projected faces, culling and per-face tint/blend | DMA 3D |
 | `effects.SolidCube` / `SolidCubeBatch` | Material, culling, face ordering, outlines and bounded batch submission | Bilizir, Multiscreen Coco |
 | `effects.SolidCubeTrain` | Independent cube phases, editable X/Y curves or a custom path, optional reanchored recurrence, per-index rotation and one bounded batch | Coco and Multiscreen Coco cube processions |
 | `effects.TexturedCube` | Live texture mapping, camera, rotation, face ordering and culling | TeamG1 |
@@ -2335,6 +2359,7 @@ remain available for effects with different behavior.
 | `sprites.RotatingDiscCloud` | Y-axis rotation, depth projection, stable painter order and batched circular material | Cuddly DNA particle sphere |
 | `sprites.ProjectedField` | Bounded spawn/respawn, strict/wide wrap, projection, history and pixel/sprite/vector materials | Nonameno stars, Union Starballs, Cuddly Starwars and Big Sprite |
 | `motion.FrameField` + `sprites.AnimatedField` | Independent fractional atlas clocks or planar motion, single-edge wrap, ordered respawn and per-instance image selection | DOM animated stars, Replicants layered stars |
+| `motion.FrameField` + `sprites.BatchedSolidField` | Layered planar positions, tick-dependent wrap callbacks, origin mask, colored solid materials and bounded triangle batches | DMA 3D stars |
 | `motion.CoupledLogoMotion` + `sprites.CoupledLogoPair` | Two linked logo paths, cached quantized scale banks, depth-based frame selection and draw order | Replicants paired logos |
 | `motion.SteppedReveal` + `composite.BlockReveal` | Grid-cell reveal order, fixed tick cadence and independent completion hold | Replicants splash screen |
 | `scrolling.Config.SizeBank` | Shared transport, controlled font-size cues, synchronized scaled offsets and repeated cached text layers | DOM four-size scroll |

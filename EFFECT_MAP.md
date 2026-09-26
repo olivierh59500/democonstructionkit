@@ -24,7 +24,7 @@ production. Preserved original implementations remain unchanged.
 | --- | --- |
 | `3d_doc` | Projected balls and checkerboard use their own shared components; no equivalent local wrap/train controller found. |
 | `bilizir-demo` | Water reflection, warped logo, raster and cube already use their shared components; text transport is a different scrolling mode. |
-| `dma-3d` | The masked three-speed starfield now uses `motion.FrameField` strict wrapping and `sprites.BatchedSolidField`; mesh morphing remains a separate geometry effect. |
+| `dma-3d` | The masked three-speed starfield uses `motion.FrameField` and `sprites.BatchedSolidField`; its cyclic three-form mesh uses `geometry.MorphingMesh` and `effects.MorphingMesh`. |
 | `dma-is-back` | Cube, intro feed, CRT and scanline scroll use their dedicated components; timed cues are separate work. |
 | `go-cocoisthebest` | Sprite grid/translation already uses `sprites.Group`; scanline scroll and cube are separate families. |
 | `go-cuddlymenu` | Colorshock's orbit/table clock, Ehhh raster train, LED backdrop/gradient wraps and harmonic letters, Big Sprite front/back `sprites.AxisFlip`, Big Sprite/Fullscreen/Digi Weave groups, and Mega Scroller's directional entrance bounce now use shared controllers. |
@@ -49,7 +49,7 @@ production. Preserved original implementations remain unchanged.
 | --- | --- | --- |
 | 3D DOC | Atlas, `Config.RowBands` using `composite.RowWarp`, `PerspectiveCheckerboard`, `ProjectedBallTrain`, `timeline.IntroHandoff` | Whole-scene transform remains scene composition data. |
 | Bilizir | Atlas, scrolling, independent StripWarp for text/logo, SolidCube, WaterReflection, `CopperBars` | Historical scroll timing stays a recipe; extra raster palettes and masks can use the shared bank. |
-| DMA 3D | Atlas, `Config.RowColumn`, `sprites.BatchedSolidField` with timed `motion.FrameField` wrap, and mesh primitives | Multi-material morphing mesh with per-face blend, sort and winding. |
+| DMA 3D | Atlas, `Config.RowColumn`, `sprites.BatchedSolidField` with timed wrap, and complete `effects.MorphingMesh` with ordered per-face materials | Artwork, text, soundtrack and scene layer order stay production data. |
 | DMA Is Back, intro | `Config.Feed`, configurable CRTOverlay, `timeline.IntroHandoff` | Message and scene materials stay production data. |
 | DMA Is Back, main | `Config.Scanline`, ImageGrid, NestedOrbit, JellyCube, shared fade/music cue | Other whole-scene timed layers can use the general cue director. |
 | Coco, intro | `Config.Feed`, configurable CRTOverlay, immediate `timeline.IntroHandoff` music cue | Scene materials stay production data. |
