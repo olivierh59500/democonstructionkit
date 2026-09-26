@@ -1037,6 +1037,14 @@ uses an unbounded 16-pixel strip and `VelocityX` to replace its local scroll
 counter. Their migrated outputs match 1,200 and 480 baseline video frames,
 respectively.
 
+`SingleCopyOnEntryX/Y` makes an image enter once before its repeated pattern
+starts. While the transformed origin is beyond that viewport edge, only the
+first image is drawn; at the edge and afterward the regular tiled background
+continues. The option applies independently on each axis and costs no extra
+surface. Union Beat Dis uses `SingleCopyOnEntryY` with a starting Y of 328,
+a velocity of -3 pixels per tick and an 800-pixel repeat period. Other
+backgrounds retain their existing repetition when the option is false.
+
 The same finite effect can be saved for an editor or loaded from JSON:
 
 ```json
@@ -2881,6 +2889,7 @@ remain available for effects with different behavior.
 | `scrolling.Config.Slots` | Glyph recycling, wave motion, tangent orientation and custom poses | Cuddly Reset |
 | `scrolling.Reveal` | Cached text layout and ordered per-character entrance | Union loader |
 | `composite.Bands` | Independently moving/repeated background strips and batched drawing | Union Multiplane |
+| `composite.Background` entry mode | An image enters once before repeat copies appear on either axis | Union Beat Dis wallpaper |
 | `composite.RotozoomBackground` | One tiled GPU quad with independent pose, phase, velocity, source-sized geometry or a staged motion program | Viva TCB, Coco, Multiscreen Coco/Viva |
 | `indexed.Rotozoom256` | Allocation-free fixed-point rotozoom over indexed 256 × 256 textures | Second Reality Rotozoomer |
 | `composite.ScanlineBackground` | Bounded horizontal tile source, independent wave/bounce clocks and batched source rows | MegaTwist |

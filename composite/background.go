@@ -19,15 +19,16 @@ import (
 // Zero scale defaults to one. Negative scales are rejected; mirror the source in
 // a preceding image pass when required. Source and destination remain borrowed.
 type BackgroundConfig struct {
-	Source               image.Rectangle
-	PeriodX, PeriodY     float64
-	CopiesX, CopiesY     int // Zero repeats without an index limit.
-	ScaleX, ScaleY       float64
-	ParallaxX, ParallaxY float64
-	Filter               ebiten.Filter
-	Blend                ebiten.Blend
-	ColorScale           ebiten.ColorScale
-	MaxCopies            int // Fallback draw budget; zero defaults to 16384. Repeated quads cost one.
+	Source                                 image.Rectangle
+	PeriodX, PeriodY                       float64
+	SingleCopyOnEntryX, SingleCopyOnEntryY bool // Suppress repeats while the origin enters from that viewport edge.
+	CopiesX, CopiesY                       int  // Zero repeats without an index limit.
+	ScaleX, ScaleY                         float64
+	ParallaxX, ParallaxY                   float64
+	Filter                                 ebiten.Filter
+	Blend                                  ebiten.Blend
+	ColorScale                             ebiten.ColorScale
+	MaxCopies                              int // Fallback draw budget; zero defaults to 16384. Repeated quads cost one.
 }
 
 // DefaultBackgroundConfig follows the camera at full speed with unit scaling.
@@ -114,7 +115,9 @@ func (b *Background) Draw(dst, source *ebiten.Image, pose BackgroundPose) {
 	view, tile := dst.Bounds(), b.crop.Bounds()
 	w, h := float64(tile.Dx())*c.ScaleX, float64(tile.Dy())*c.ScaleY
 	px, py := c.PeriodX*c.ScaleX, c.PeriodY*c.ScaleY
-	if b.repeatedQuad(dst, x, y, w, h) {
+	px = backgroundEntryPeriod(x, float64(view.Min.X), px, c.SingleCopyOnEntryX)
+	py = backgroundEntryPeriod(y, float64(view.Min.Y), py, c.SingleCopyOnEntryY)
+	if px == c.PeriodX*c.ScaleX && py == c.PeriodY*c.ScaleY && b.repeatedQuad(dst, x, y, w, h) {
 		return
 	}
 	x, firstX, lastX, okX := backgroundCopyRangeLimit(x, w, px, float64(view.Min.X), float64(view.Max.X), c.MaxCopies, c.CopiesX)
