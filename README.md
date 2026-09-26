@@ -1339,6 +1339,28 @@ The existing `sprites.NewStreaks` API remains available. `DrawImages:true`
 retains exact image transform/crop arithmetic; the ordinary path batches
 geometry. Close the `ProjectedField`, not its borrowed skin.
 
+For a sprite train that follows authored XY samples rather than depth,
+`sprites.SampledSpriteTrain` combines one copied path with adjustable count,
+index spacing, an extra delay after a chosen sprite, independent X/Y harmonics
+and an ordered atlas crop per sprite. A custom `Motion.Position` callback can
+replace the harmonics while keeping the same bounded transport and renderer:
+
+```go
+config := presets.CuddlyStarwarsSpriteTrain(spriteSheet, pathX, pathY)
+config.Motion.Spacing = 5
+config.Motion.XAmplitude = 10
+train, err := sprites.NewSampledSpriteTrain(config)
+if err != nil { return err }
+if err := train.Update(frame); err != nil { return err }
+train.Draw(screen)
+```
+
+The Starwars recipe visits the final path index before a strict wrap, preserving
+its one-frame phase difference. Its pure test matches all eight sprites across
+several wraps without step allocations. The source formerly duplicated both
+coordinate arrays; the shared controller stores each table once and wraps
+indices at lookup, giving the same positions with less memory.
+
 For a complete radial star recipe, start with `presets.DefaultNonamenoStarsConfig()`.
 Its count, speed, camera, spawn strides, pixel size, brightness, colors and
 trail threshold are plain editable values. Compile it with
@@ -2692,6 +2714,7 @@ remain available for effects with different behavior.
 | `motion.LatchedTriggers` + `sprites.LatchedOverlay` | Configurable sampled hits, held visibility and ordered multi-image channels | Cuddly Knucklebuster |
 | `motion.FrameField` + `sprites.AnimatedField` | Independent fractional atlas clocks or planar motion, single-edge wrap, ordered respawn and per-instance image selection | DOM animated stars, Replicants layered stars |
 | `motion.FrameField` + `sprites.BatchedSolidField` | Layered planar positions, tick-dependent wrap callbacks, origin mask, colored solid materials and bounded triangle batches | DMA 3D stars |
+| `motion.SampledSpriteTrain` + `sprites.SampledSpriteTrain` | Authored XY path, indexed train spacing, extra delays, harmonics and cached sprite crops | Cuddly Starwars |
 | `motion.CoupledLogoMotion` + `sprites.CoupledLogoPair` | Two linked logo paths, cached quantized scale banks, depth-based frame selection and draw order | Replicants paired logos |
 | `motion.SteppedReveal` + `composite.BlockReveal` | Grid-cell reveal order, fixed tick cadence and independent completion hold | Replicants splash screen |
 | `scrolling.Config.SizeBank` | Shared transport, controlled font-size cues, synchronized scaled offsets and repeated cached text layers | DOM four-size scroll |
