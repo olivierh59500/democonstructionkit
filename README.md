@@ -1757,6 +1757,31 @@ equal-sized forms, topology, face materials, camera and cycle lengths for a new
 object; its initial and target forms meet at the 120/240-tick boundaries without
 a position jump.
 
+For several selectable solid models, `effects.SolidMeshCarousel` composes a
+pure `motion.ModelCarousel` with grouped `MeshEffect` instances. The production
+supplies points and triangle/quad faces; the configurable clock handles entry,
+rotation, recession and a retargetable selection during recession. Face colors
+stay independent by group, and the renderer shares one white GPU source across
+all opaque meshes:
+
+```go
+config := presets.UnionTNTMeshCarousel(models)
+config.Motion.EntranceAt = 700
+carousel, err := effects.NewSolidMeshCarousel(config)
+if err != nil { return err }
+defer carousel.Close()
+if err := carousel.Select(3); err != nil { return err }
+if err := carousel.Step(); err != nil { return err }
+carousel.Draw(screen)
+```
+
+`RotationOrder`, mirrored axes, camera sign, near plane, culling and per-model
+angle speeds are editable. `geometry.OrderedEuler` preserves the source's
+individual Z/Y/X matrix operations instead of collapsing them into one matrix.
+Pure tests match the object pose through multiple handoffs and every sampled
+point rotation across 1,000 angle steps; both controllers advance without Go
+allocations.
+
 ```go
 func NewRibbonProgram() (*composite.DisplacementProgram, error) {
     curves, err := presets.RibbonCurves(1)
@@ -2566,6 +2591,7 @@ remain available for effects with different behavior.
 | `scrolling.Atlas` + `presets.FontAtlas` | Font metrics, cached glyph images, case/alias/fallback rules and ribbon layout | DMA Is Back, TeamG1, Megatwist, Coco, Multiscreen, Nonameno, Grodan |
 | `BitmapRecipe`, `BitmapText`, `BitmapParagraph` | Fractional atlas sampling, cached character lookup and paragraph alignment | Cuddly screens, Union screens/menu/loaders |
 | `effects.JellyCube` | Five-mode controller, entrance, deformation, continuous handoffs, projection and rendering | DMA Is Back; `examples/jellycubes` |
+| `motion.ModelCarousel` + `effects.SolidMeshCarousel` | Selectable grouped meshes, per-face material, exact entry/recession/rotation handoffs and shared white source | Union TNT Crew 3 |
 | `motion.CameraTour` + `composite.SceneTour` | Held/eased camera poses, continuous scene updates, direct fixed views, visibility culling, retained canvases and shader/fallback composition | Multiscreen four-scene tour |
 | `geometry.MorphingMesh` + `effects.MorphingMesh` | Cyclic shape morph, sequential Euler rotation, sorted projected faces, culling and per-face tint/blend | DMA 3D |
 | `effects.SolidCube` / `SolidCubeBatch` | Material, culling, face ordering, outlines and bounded batch submission | Bilizir, Multiscreen Coco |

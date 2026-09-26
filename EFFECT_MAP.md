@@ -115,7 +115,7 @@ matches the previous implementation exactly.
 | Loader | Reveal, bitmap recipes and `timeline.CueClock` exact-duration transition | Playback cue and layer placement remain host composition data; retain column-major reverse-row glyph order. |
 | Beat Dis | Background sampler, scrolling, `motion.WrapBank` wallpaper and pattern offsets, harmonic `sprites.Group` letters with global wobble | Backdrop entrance and layer order stay authored scene data. |
 | Delta Force | YM register snapshots, scrolling, WaveStrips | Register-change trigger and seven-tick sprite release; source-alpha raster fill. |
-| TNT Crew 3 | Mesh, geometry, bitmap recipes | Model-group draw material and camera recession handoff; authored shapes stay data. |
+| TNT Crew 3 | Complete `effects.SolidMeshCarousel` over `motion.ModelCarousel` and `geometry.OrderedEuler`: per-face palettes, grouped models, entrance/rotation/recession handoffs | Authored vertices, face groups, caption text and input mapping stay production data. |
 | Wow Scroller | Scrolling, `RasterOverlay` source-atop fill, `motion.WrapBank` paired panel offsets | Cropped oversized-image repetition with explicit wrap periods. |
 | Hidden | `sprites.DelayedTrail` over `PointHistory` and `timeline.PacedIndex` for the one-tick palette offset | Authored palette colors, crosshair and border clipping remain scene composition. |
 | Starballs | Camera, scrolling, `sprites.MaskedProjectedField` with one projected population, two borrowed materials, editable mask paint, live count and depth opacity | Authored logo, scroll message and input mapping remain screen data. |
