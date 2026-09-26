@@ -2413,6 +2413,11 @@ Recent independent regression suites include:
 | Float32 camera tracks | All nine FR-010 camera/target tracks |
 
 These suites can overlap; the rows are not summed into a unique-frame total.
+
+The two small `effects` image-readback checks run inside Ebitengine with
+`go test -tags dck_composition_rendercheck -run '^$' ./effects`; the regular
+`go test ./effects` suite keeps its mask update-order check and requires no
+graphics window.
 Existing original packages remain available as references. The pure geometry
 comparison allows only 1e-11 float64 variation from compiler operation fusion;
 submitted cube images are still checked byte for byte. Comparison render targets
