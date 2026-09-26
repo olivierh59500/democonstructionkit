@@ -346,6 +346,22 @@ go test scrolling/slice_stream.go scrolling/slice_program.go \
   scrolling/slice_stream_test.go scrolling/slice_program_pure_test.go
 ```
 
+Phenomena's falling photon uses the separate `motion.GravityBounce` path. Its
+acceleration runs before movement; crossing the floor changes the velocity and
+damps the *next* rebound without snapping the image to the floor. The terminal
+rebound threshold can hand off to a fade on the exact tick:
+
+```go
+photon, err := motion.NewGravityBounce(presets.PhenomenaPhotonBounce())
+if err != nil { return err }
+if photon.Step() { startFade() }
+drawAt(screen, photonImage, 285, photon.Position())
+```
+
+Start position and velocity, gravity, floor, rebound, damping and terminal
+comparison are independent parameters. The pure controller matches the
+source's complete photon path through the fade cue without per-step allocation.
+
 Cuddly's DNA screen uses a different effect family: two live text images twist
 as front and back faces of a twenty-strip ribbon. `composite.TwistingRibbon`
 owns the phase, source crops, vertical mirroring and ordered occlusion; any
