@@ -230,6 +230,15 @@ For in-band font, speed and shape controls, use the regular `Text`/`Controls`
 mode of `scrolling.New`, whose automatic repeat already keeps short messages
 continuous across whole-message boundaries.
 
+Bilizir's proportional text uses another existing transport option: a relative
+`motion.WrapBank` retains the current pixel overshoot, while
+`DrawState{Cycle: true}` draws the current and following virtual copies before
+the completed message leaves the screen. `presets.BilizirScrollLoop(width)`
+provides its editable four-pixel step and message-width boundary. This keeps
+the first traversal's positions and removes the viewport-width blank interval
+from the DCK version's later loops; the preserved original implementation is
+unchanged. A pure 12,000-tick test covers the seam and live speed changes.
+
 For several simultaneous bitmap scrollers, configure independent `RingConfig`
 values in `RingLanesConfig` and still enter through `scrolling.New`. Fullscreen
 uses seven fonts/messages lanes with a shared vertical shift every 128 ticks;
