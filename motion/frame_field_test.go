@@ -1,6 +1,9 @@
 package motion
 
-import "testing"
+import (
+	"math"
+	"testing"
+)
 
 func TestFrameFieldPreservesFractionalFrameAndOrderedRespawn(t *testing.T) {
 	var initial, resets [2]int
@@ -59,6 +62,35 @@ func TestFrameFieldRejectsInvalidState(t *testing.T) {
 	}
 }
 
+func TestFrameFieldMovesPlanarLayersAndPreservesSingleWrapOvershoot(t *testing.T) {
+	wraps := 0
+	field, err := NewFrameField(FrameFieldConfig{Count: 2, EndPhase: 0,
+		Spawn: func(index int, _ bool) FrameParticle {
+			return FrameParticle{X: []float64{639, 0}[index], Y: 5,
+				VelocityX: []float64{11.2, 5.6}[index], Image: index}
+		},
+		WrapX: &FrameAxisWrap{Boundary: 640, Shift: 640,
+			OnWrap: func(index int, p *FrameParticle) { wraps++; p.Y = float64(50 + index) }},
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := field.SetSpeedMultiplier(1.4); err != nil {
+		t.Fatal(err)
+	}
+	if err := field.Step(); err != nil {
+		t.Fatal(err)
+	}
+	first, second := field.Samples()[0], field.Samples()[1]
+	if wraps != 1 || math.Abs(first.X-(639+11.2*1.4-640)) > 1e-12 || first.Y != 50 || first.Image != 0 ||
+		math.Abs(second.X-5.6*1.4) > 1e-12 || second.Y != 5 || second.Image != 1 {
+		t.Fatalf("planar wrap changed positions: wraps=%d first=%+v second=%+v", wraps, first, second)
+	}
+	if got := testing.AllocsPerRun(100, func() { _ = field.Step() }); got != 0 {
+		t.Fatalf("planar frame field update allocates %.2f objects", got)
+	}
+}
+
 func BenchmarkFrameField500(b *testing.B) {
 	field, err := NewFrameField(FrameFieldConfig{Count: 500, EndPhase: 9,
 		Spawn: func(index int, _ bool) FrameParticle {
@@ -66,6 +98,28 @@ func BenchmarkFrameField500(b *testing.B) {
 		},
 	})
 	if err != nil {
+		b.Fatal(err)
+	}
+	b.ReportAllocs()
+	for b.Loop() {
+		if err := field.Step(); err != nil {
+			b.Fatal(err)
+		}
+	}
+}
+
+func BenchmarkFrameFieldPlanar105(b *testing.B) {
+	field, err := NewFrameField(FrameFieldConfig{Count: 105,
+		Spawn: func(index int, _ bool) FrameParticle {
+			return FrameParticle{X: float64(index * 6), VelocityX: []float64{11.2, 5.6, 2.8}[index/35]}
+		},
+		WrapX: &FrameAxisWrap{Boundary: 640, Shift: 640,
+			OnWrap: func(index int, p *FrameParticle) { p.Y = float64(index % 280) }},
+	})
+	if err != nil {
+		b.Fatal(err)
+	}
+	if err := field.SetSpeedMultiplier(1.4); err != nil {
 		b.Fatal(err)
 	}
 	b.ReportAllocs()

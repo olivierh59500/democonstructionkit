@@ -1044,6 +1044,28 @@ The source recipe's initial frame may exceed its nine-frame lifetime; the
 next update respawns that sprite, and out-of-range art is skipped until then.
 The DOM spawn callback and per-tick state updates allocate nothing after
 construction.
+The same field can also move particles independently on X and Y. A signed
+`motion.FrameAxisWrap` retains a single strict or inclusive boundary crossing
+and may edit the particle in `OnWrap`, such as choosing a new height while
+preserving horizontal overshoot. `ImageByParticle` selects a fixed material per
+instance instead of sampling a frame clock. Replicants combines three editable
+star layers with this mode:
+
+```go
+frames, err := sprites.NewSolidFrames(presets.ReplicantsStarMaterials())
+if err != nil { return err }
+options := presets.DefaultReplicantsStarOptions(random.Intn)
+options.Layers[1].Speed = 6.5
+config, err := presets.ReplicantsStars(frames, options)
+if err != nil { return err }
+stars, err := sprites.NewAnimatedField(config)
+if err != nil { return err }
+if err := stars.Motion().SetSpeedMultiplier(1.4); err != nil { return err }
+```
+
+The caller owns the three solid images. Count, speed, color, tile size, wrap
+width, height range and speed multiplier can be changed independently; a
+music or timeline cue may change the multiplier on the next update.
 
 `scrolling.Config.SizeBank` composes several differently scaled atlases over
 one message and one transport clock. Font controls select the active bank when
@@ -2028,7 +2050,7 @@ remain available for effects with different behavior.
 | `effects.PerspectiveCheckerboard` | Perspective stripe geometry, two-axis motion, XOR composition and bounded surfaces | 3D DOC and Cuddly 3D DOC |
 | `effects.ProjectedBallTrain` | Blended movement programs, projected sprites/shadows, phase and depth/palette ordering | 3D DOC and Cuddly 3D DOC |
 | `sprites.ProjectedField` | Bounded spawn/respawn, strict/wide wrap, projection, history and pixel/sprite/vector materials | Nonameno stars, Union Starballs, Cuddly Starwars and Big Sprite |
-| `motion.FrameField` + `sprites.AnimatedField` | Independent fractional atlas clocks, ordered respawn, editable frame selection and placement | DOM animated stars |
+| `motion.FrameField` + `sprites.AnimatedField` | Independent fractional atlas clocks or planar motion, single-edge wrap, ordered respawn and per-instance image selection | DOM animated stars, Replicants layered stars |
 | `scrolling.Config.SizeBank` | Shared transport, controlled font-size cues, synchronized scaled offsets and repeated cached text layers | DOM four-size scroll |
 | `motion.GlyphPageCycle` + `sprites.GlyphPages` | Font-independent staggered pages, editable delay grids, elastic depth motion, completion barriers and stable atlas rendering | Nonameno text pages |
 | `scrolling.HarmonicSine` / `HarmonicSineWith` | Independent sine banks over the common text pipeline, optionally resetting spatial phase per repeated copy | Nonameno bottom scroll |

@@ -17,6 +17,7 @@ type AnimatedFieldConfig struct {
 	Frames           []*ebiten.Image
 	OffsetX, OffsetY float64
 	Select           func(phase float64) int
+	ImageByParticle  bool // Use FrameParticle.Image for layered static materials.
 	Filter           ebiten.Filter
 	Blend            ebiten.Blend
 }
@@ -39,7 +40,7 @@ func NewAnimatedField(c AnimatedFieldConfig) (*AnimatedField, error) {
 		return nil, err
 	}
 	c.Frames = append([]*ebiten.Image(nil), c.Frames...)
-	if c.Select == nil {
+	if c.Select == nil && !c.ImageByParticle {
 		c.Select = func(phase float64) int { return int(math.Round(phase)) }
 	}
 	if c.Blend == (ebiten.Blend{}) {
@@ -56,7 +57,10 @@ func (f *AnimatedField) Draw(dst *ebiten.Image) {
 	}
 	c := f.config
 	for _, p := range f.motion.Samples() {
-		index := c.Select(p.Phase)
+		index := p.Image
+		if !c.ImageByParticle {
+			index = c.Select(p.Phase)
+		}
 		if index < 0 || index >= len(c.Frames) || c.Frames[index] == nil {
 			continue
 		}
