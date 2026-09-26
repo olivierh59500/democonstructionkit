@@ -24,7 +24,7 @@ type GridFormation struct {
 }
 
 // GroupConfig describes a sprite/logo formation, independent of image metrics.
-// Choose at most one Path, Points, Orbit, Weave, Circle, Harmonic, Formula or Formation. With none, positions follow
+// Choose at most one Path, Points, Orbit, Weave, Circle, Harmonic, Formula, Coupled or Formation. With none, positions follow
 // Velocity. Speed and PhaseSpacing use path pixels or the orbit's phase units;
 // Delay is seconds per instance. Spacing is an additional screen-space offset.
 // Points offers serializable path data; SplineSamples>0 selects a smooth spline.
@@ -43,6 +43,7 @@ type GroupConfig struct {
 	Harmonic                                *motion.HarmonicFormation `json:"-"`
 	Formula                                 *motion.FormulaFormation  `json:"-"`
 	FormulaWidth, FormulaHeight             float64
+	Coupled                                 *motion.CoupledOrbitFormationConfig
 	HarmonicClockStart, HarmonicClockStep   [2]float64
 	HarmonicEnvelope                        *motion.BounceBankConfig
 	Formation                               func(float64, int) motion.Point `json:"-"`
@@ -80,6 +81,8 @@ type Group struct {
 	harmonicEnvelope float64
 	harmonicBounce   *motion.BounceBank
 	recurrent        *motion.RecurrentTranslation
+	coupled          *motion.CoupledOrbitFormation
+	ready            bool
 }
 
 func NewGroup(c GroupConfig) (*Group, error) {
@@ -106,6 +109,9 @@ func NewGroup(c GroupConfig) (*Group, error) {
 		kinds++
 	}
 	if c.Formula != nil {
+		kinds++
+	}
+	if c.Coupled != nil {
 		kinds++
 	}
 	if c.Formation != nil {
@@ -210,6 +216,17 @@ func NewGroup(c GroupConfig) (*Group, error) {
 		c.Circle = &copy
 	}
 	g := &Group{config: c, poses: make([]GroupPose, c.Count), phase: c.Phase, harmonicClocks: c.HarmonicClockStart, harmonicEnvelope: 1}
+	if c.Coupled != nil {
+		var err error
+		g.coupled, err = motion.NewCoupledOrbitFormation(*c.Coupled)
+		if err != nil {
+			return nil, err
+		}
+		if g.coupled.Len() != c.Count {
+			return nil, fmt.Errorf("sprites: coupled orbit ranges do not match group count")
+		}
+		g.config.Coupled = nil // The group owns its phase and range bank.
+	}
 	if c.RecurrentTranslation != nil {
 		var err error
 		g.recurrent, err = motion.NewRecurrentTranslation(*c.RecurrentTranslation)
@@ -229,7 +246,9 @@ func NewGroup(c GroupConfig) (*Group, error) {
 		}
 		g.harmonicEnvelope = g.harmonicBounce.At(0)
 	}
-	g.sample(kit.Frame{})
+	if g.coupled == nil {
+		g.sample(kit.Frame{})
+	}
 	return g, nil
 }
 
@@ -256,6 +275,9 @@ func (g *Group) Update(f kit.Frame) error {
 	if g.recurrent != nil {
 		g.recurrent.Step()
 	}
+	if g.coupled != nil {
+		g.coupled.Step()
+	}
 	return g.sample(f)
 }
 
@@ -273,12 +295,18 @@ func (g *Group) sample(f kit.Frame) error {
 	}
 	common := GroupPose{ScaleX: 1, ScaleY: 1, Opacity: 1}
 	applyGroupSignals(&common, c.Signals, context)
+	var coupledPoses []motion.Point
+	if g.coupled != nil {
+		coupledPoses = g.coupled.Poses()
+	}
 	for i := range g.poses {
 		t := f.Time - float64(i)*c.Delay
 		phase := g.phase + t*c.Speed + float64(i)*c.PhaseSpacing
 		position, tangent := motion.Point{}, motion.Point{X: 1}
 		circleScale := 1.0
 		switch {
+		case g.coupled != nil:
+			position = coupledPoses[i]
 		case c.Path != nil:
 			position, tangent = c.Path.At(phase)
 		case c.Orbit != nil:
@@ -351,6 +379,7 @@ func (g *Group) sample(f kit.Frame) error {
 		p.Frame = int(frame)
 		g.poses[i] = p
 	}
+	g.ready = true
 	return nil
 }
 
@@ -378,6 +407,9 @@ func applyGroupSignals(p *GroupPose, s GroupSignals, c modulation.Context) {
 // Poses returns borrowed prepared transforms for inspection or another renderer.
 func (g *Group) Poses() []GroupPose { return g.poses }
 func (g *Group) Draw(dst *ebiten.Image) {
+	if !g.ready {
+		return
+	}
 	c := g.config
 	for n := range g.poses {
 		i := n
@@ -410,6 +442,9 @@ func (g *Group) SetCount(count int) error {
 	if g.config.Harmonic != nil && g.config.Harmonic.IndexOffsetCount() > 0 && count > g.config.Harmonic.IndexOffsetCount() {
 		return fmt.Errorf("sprites: harmonic index offsets are shorter than group count")
 	}
+	if g.coupled != nil && count != g.coupled.Len() {
+		return fmt.Errorf("sprites: coupled orbit count needs matching ranges")
+	}
 	if count > cap(g.poses) {
 		g.poses = make([]GroupPose, count)
 	} else {
@@ -421,8 +456,8 @@ func (g *Group) SetCount(count int) error {
 // SetPhase accepts an authored phase accumulator without converting it through
 // seconds. The new phase is sampled on the next Update, alongside all bindings.
 func (g *Group) SetPhase(phase float64) error {
-	if g.recurrent != nil {
-		return fmt.Errorf("sprites: use Update for recurrent translation")
+	if g.recurrent != nil || g.coupled != nil {
+		return fmt.Errorf("sprites: use Update for a stateful formation")
 	}
 	if !finiteField(phase) {
 		return fmt.Errorf("sprites: nonfinite group phase")
@@ -466,8 +501,8 @@ func (g *Group) ResetHarmonics() error {
 // It is useful for variable-speed user controls without exposing a local
 // per-sprite controller. Do not also call Update for the same simulation tick.
 func (g *Group) Advance(delta float64) error {
-	if g.recurrent != nil {
-		return fmt.Errorf("sprites: use Update for recurrent translation")
+	if g.recurrent != nil || g.coupled != nil {
+		return fmt.Errorf("sprites: use Update for a stateful formation")
 	}
 	if !finiteField(delta) || !finiteField(g.phase+delta) {
 		return fmt.Errorf("sprites: invalid group phase increment")
@@ -492,4 +527,24 @@ func (g *Group) ResetRecurrentTranslation() error {
 	}
 	g.recurrent.Reset()
 	return g.sample(kit.Frame{})
+}
+
+// CoupledOrbitController exposes the owned sequential orbit for input or music
+// cues. Change parameters before Group.Update; Draw never advances its phase.
+func (g *Group) CoupledOrbitController() *motion.CoupledOrbitFormation {
+	if g == nil {
+		return nil
+	}
+	return g.coupled
+}
+
+// ResetCoupledOrbit restores authored parameters and waits for the next Update.
+func (g *Group) ResetCoupledOrbit() error {
+	if g == nil || g.coupled == nil {
+		return fmt.Errorf("sprites: group has no coupled orbit")
+	}
+	g.coupled.Reset()
+	clear(g.poses)
+	g.ready = false
+	return nil
 }

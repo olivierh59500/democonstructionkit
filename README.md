@@ -2814,6 +2814,26 @@ with `presets.SpreadpointBallFormula(path)`, and assign the result to
 artwork and snapping are independent. The pure formula test matches all twenty
 source positions over 400 ticks and samples without Go allocations.
 
+Megaball uses `GroupConfig.Coupled` when each sprite sample advances one shared
+orbital state. `motion.OrbitRange` preserves the two runs of indices 0–18 and
+40–58; the group prepares all 38 poses once per Update, then draws without
+moving the orbit. This differs from a stateless path sampled at one common
+time. Edit the owned orbit before Update to react to controls or music:
+
+```go
+group, err := sprites.NewGroup(presets.CuddlyMegaballFormation(ball))
+if err != nil { return err }
+orbit := group.CoupledOrbitController().Orbit()
+orbit.XIncrement, orbit.YIncrement = 1, -2
+if err := group.Update(kit.Frame{}); err != nil { return err }
+group.Draw(screen)
+```
+
+The initial pose waits for the first Update, preserving screens that pre-render
+frame zero. Count, index ranges, phase step, amplitudes, offsets, artwork and
+anchor are parameters. A pure 500-tick comparison checks the ordered positions
+through live control changes, with no Go allocation per formation step.
+
 For moving and rotating individual glyphs, use another transport selection:
 
 ```go

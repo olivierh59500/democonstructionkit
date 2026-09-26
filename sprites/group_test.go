@@ -192,6 +192,45 @@ func TestGroupSamplesCompiledFormulaAtTheFirstVisibleTick(t *testing.T) {
 	}
 }
 
+func TestGroupKeepsStatefulOrbitColdUntilFirstUpdate(t *testing.T) {
+	image := ebiten.NewImage(16, 16)
+	defer image.Deallocate()
+	config := motion.CoupledOrbitFormationConfig{
+		Orbit: motion.CoupledOrbit{CenterX: 20, CenterY: 30, Radius: 5,
+			DepthRadius: 2, PhaseStep: .1, XIncrement: 1, YIncrement: 2, ZIncrement: 3},
+		Ranges: []motion.OrbitRange{{Start: 0, Count: 2, Step: 1}, {Start: 5, Count: 1, Step: 1}},
+	}
+	group, err := NewGroup(GroupConfig{Frames: []*ebiten.Image{image}, Count: 3,
+		Coupled: &config, AnchorX: .5, AnchorY: .5})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if group.ready || group.CoupledOrbitController() == nil || group.Poses()[0] != (GroupPose{}) {
+		t.Fatal("orbit moved during construction before its first visible tick")
+	}
+	reference, err := motion.NewCoupledOrbitFormation(config)
+	if err != nil {
+		t.Fatal(err)
+	}
+	for tick := 0; tick < 25; tick++ {
+		if err := group.Update(kit.Frame{}); err != nil {
+			t.Fatal(err)
+		}
+		want := reference.Step()
+		for i, pose := range group.Poses() {
+			if pose.X != want[i].X || pose.Y != want[i].Y {
+				t.Fatalf("tick %d slot %d pose %+v, want %+v", tick, i, pose, want[i])
+			}
+		}
+	}
+	if err := group.SetCount(2); err == nil {
+		t.Fatal("accepted a count shorter than the authored orbit ranges")
+	}
+	if err := group.ResetCoupledOrbit(); err != nil || group.ready {
+		t.Fatalf("orbit reset failed: %v", err)
+	}
+}
+
 func TestGroupSamplesHarmonicFormationOncePerStateChange(t *testing.T) {
 	image := ebiten.NewImage(4, 4)
 	defer image.Deallocate()
