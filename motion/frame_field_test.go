@@ -129,3 +129,55 @@ func BenchmarkFrameFieldPlanar105(b *testing.B) {
 		}
 	}
 }
+
+func TestFrameFieldTimedWrapMatchesDMA3DStars(t *testing.T) {
+	const width, height, perLayer = 640, 280, 35
+	speeds := [...]float64{11.2, 5.6, 2.8}
+	type star struct{ x, y, speed float64 }
+	legacy := make([]star, perLayer*len(speeds))
+	spawn := func(index int, _ bool) FrameParticle {
+		local, layer := index%perLayer, index/perLayer
+		speed := speeds[layer]
+		x := math.Mod(float64(local*73+int(speed)*137)*1.234/1000.0*width, width)
+		y := math.Mod(float64(local*97+int(speed)*211)*2.345/1000.0*height, height)
+		legacy[index] = star{x, y, speed}
+		return FrameParticle{X: x, Y: y, VelocityX: speed, Image: layer}
+	}
+	field, err := NewFrameField(FrameFieldConfig{
+		Count: len(legacy), Spawn: spawn,
+		WrapX: &FrameAxisWrap{Boundary: width, Shift: width,
+			OnWrapAt: func(index, tick int, p *FrameParticle) {
+				p.Y = math.Mod(float64(index*97+tick), height)
+			}},
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	for tick := 1; tick <= 5000; tick++ {
+		for i := range legacy {
+			legacy[i].x += legacy[i].speed
+			if legacy[i].x > width {
+				legacy[i].x -= width
+				legacy[i].y = math.Mod(float64(i*97+tick), height)
+			}
+		}
+		if err := field.Step(); err != nil {
+			t.Fatal(err)
+		}
+		if field.Tick() != tick {
+			t.Fatalf("tick = %d, want %d", field.Tick(), tick)
+		}
+		for i, p := range field.Samples() {
+			if p.X != legacy[i].x || p.Y != legacy[i].y || p.Image != i/perLayer {
+				t.Fatalf("tick %d star %d = (%.10f, %.10f, %d), want (%.10f, %.10f, %d)",
+					tick, i, p.X, p.Y, p.Image, legacy[i].x, legacy[i].y, i/perLayer)
+			}
+		}
+	}
+	if got := testing.AllocsPerRun(100, func() { _ = field.Step() }); got != 0 {
+		t.Fatalf("timed star wrap allocated %.2f objects", got)
+	}
+	if err := field.Reset(); err != nil || field.Tick() != 0 {
+		t.Fatalf("reset tick = %d, error %v", field.Tick(), err)
+	}
+}

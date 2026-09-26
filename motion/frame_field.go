@@ -14,11 +14,14 @@ type FrameParticle struct {
 
 // FrameAxisWrap subtracts Shift after crossing Boundary. Positive Shift tests
 // the upper boundary; negative Shift tests the lower boundary. OnWrap can
-// change the other coordinate or material while preserving overshoot.
+// change the other coordinate or material while preserving overshoot. OnWrapAt
+// receives the one-based simulation tick after OnWrap, for deterministic
+// respawn formulas that depend on time as well as particle index.
 type FrameAxisWrap struct {
 	Boundary, Shift float64
 	Inclusive       bool
 	OnWrap          func(index int, particle *FrameParticle)
+	OnWrapAt        func(index, tick int, particle *FrameParticle)
 }
 
 // FrameFieldConfig describes a bounded population of independently animated
@@ -37,6 +40,7 @@ type FrameField struct {
 	config FrameFieldConfig
 	items  []FrameParticle
 	speed  float64
+	tick   int
 }
 
 func NewFrameField(c FrameFieldConfig) (*FrameField, error) {
@@ -75,6 +79,7 @@ func validFrameParticle(p FrameParticle, animated bool) bool {
 // Reset reinitializes the population in index order. A source can deliberately
 // start beyond EndPhase; the first Step then respawns that particle exactly once.
 func (f *FrameField) Reset() error {
+	f.tick = 0
 	for i := range f.items {
 		p := f.config.Spawn(i, false)
 		if !validFrameParticle(p, f.config.EndPhase > 0) {
@@ -88,6 +93,7 @@ func (f *FrameField) Reset() error {
 // Step advances one simulation tick and respawns completed particles in index
 // order. It neither allocates nor changes the frame clock while drawing.
 func (f *FrameField) Step() error {
+	f.tick++
 	for i := range f.items {
 		p := &f.items[i]
 		p.X += p.VelocityX * f.speed
@@ -129,6 +135,9 @@ func (f *FrameField) wrap(p *FrameParticle, index int, rule *FrameAxisWrap, hori
 		if rule.OnWrap != nil {
 			rule.OnWrap(index, p)
 		}
+		if rule.OnWrapAt != nil {
+			rule.OnWrapAt(index, f.tick, p)
+		}
 		if !validFrameParticle(*p, f.config.EndPhase > 0) {
 			return fmt.Errorf("motion: invalid wrapped frame particle %d", index)
 		}
@@ -147,6 +156,9 @@ func (f *FrameField) SetSpeedMultiplier(speed float64) error {
 }
 
 func (f *FrameField) Count() int { return len(f.items) }
+
+// Tick is the number of simulation steps since the last Reset.
+func (f *FrameField) Tick() int { return f.tick }
 
 // Samples returns borrowed state until the next Step or Reset. Do not mutate it.
 func (f *FrameField) Samples() []FrameParticle { return f.items }

@@ -1160,6 +1160,34 @@ The caller owns the three solid images. Count, speed, color, tile size, wrap
 width, height range and speed multiplier can be changed independently; a
 music or timeline cue may change the multiplier on the next update.
 
+For planar stars or tiny sprites that share a solid material, use
+`sprites.BatchedSolidField`. It retains one `motion.FrameField`, accepts any
+number of colored rectangle materials and an optional origin mask, and draws
+up to 16,383 visible particles per triangle batch. The source image is borrowed;
+pass nil to let the component own its one-pixel white source. DMA 3D's complete
+three-speed recipe preserves its deterministic initial positions, strict X
+wrap, Y position on each wrap, and center mask:
+
+```go
+options := presets.DefaultDMA3DStarOptions(640, 480)
+options.Source = whitePixel // Optional borrowed 1x1 white image.
+options.Layers[1].Speed = 6.4 // A faster middle layer than the original.
+options.Mask = nil          // Or show the stars across the entire scene.
+config, err := presets.DMA3DStarfield(options)
+if err != nil { return err }
+stars, err := sprites.NewBatchedSolidField(config)
+if err != nil { return err }
+defer stars.Close()
+// In Update: stars.Update(frame). In Draw: stars.Draw(screen).
+```
+
+Changing `Materials` independently changes each layer's size and color. A
+custom `motion.FrameFieldConfig` can instead supply arbitrary starting points,
+velocities and a `FrameAxisWrap.OnWrapAt` callback; it receives the one-based
+simulation tick, which makes a time-dependent respawn deterministic. Draw the
+field before or after a logo, scroll or mesh to choose its layer. The mask tests
+integer-truncated particle origins and does not cut rectangles at its edge.
+
 For logo art that must grow through discrete bitmap sizes, `sprites.NewScaleFrames`
 pre-renders an editable size sequence once. `sprites.CoupledLogoPair` combines
 two such banks with linked depth and Y motion; it chooses each frame from
