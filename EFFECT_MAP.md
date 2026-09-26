@@ -176,10 +176,11 @@ matches the previous implementation exactly.
 - The Go `cmd/pixelprobe` samples SurfaceFlinger's actual-present timestamps.
   Twelve history windows at two-second spacing yielded 744 distinct intervals
   for each of Union Multi-Plane and Starballs, Multiscreen's four-demo tour,
-  Bilizir, DMA Is Back and Phenomena DNA. All six measured scenes had zero
-  intervals above 20 ms; detailed p95/max values appear below. Union intro and
-  Replicants additionally had 63-frame spot checks with zero intervals above
-  20 ms. Screenshots confirmed the effects, and thermal status remained 0.
+  Bilizir, DMA Is Back, Phenomena DNA and standalone TCB Replicants. All seven
+  measured scenes had zero intervals above 20 ms; detailed p95/max values
+  appear below. Union intro and its Replicants screen additionally had 63-frame
+  spot checks with zero intervals above 20 ms. Screenshots confirmed the
+  effects, and thermal status remained 0.
 - The remaining catalog screens, longer playback, varying device refresh rates
   and battery consumption still need device checks. The sampled windows do not
   prove that every cue boundary or full megademo tour stays at 60 FPS.
@@ -192,6 +193,7 @@ matches the previous implementation exactly.
 | Bilizir | 744 | 16.719 ms | 17.168 ms | 0 |
 | DMA Is Back | 744 | 16.728 ms | 16.901 ms | 0 |
 | Phenomena DNA | 744 | 16.712 ms | 16.919 ms | 0 |
+| TCB Replicants | 744 | 16.768 ms | 18.365 ms | 0 |
 
 The Pixel's physical landscape display was 2,424×1,080. The main logical
 surfaces measured here include 768×540 for Cuddly, 768×536 for Union and
