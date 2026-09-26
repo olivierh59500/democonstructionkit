@@ -1399,6 +1399,28 @@ gold.Step()
 material are independently configurable. A pure test matches the source's
 scale, direction and tile over 2,000 ticks without per-step allocations.
 
+For an entrance, hold, exit and one-time handoff, `motion.EnterHoldExit` emits
+an ordered list of poses to draw on each update. It can emit two content poses
+on a transition tick, or the final content pose followed by the next effect.
+Delta Force uses this to keep its gold-filled title wave and main scrolling
+wave exactly synchronized at the handoff:
+
+```go
+program, err := motion.NewEnterHoldExit(presets.UnionDeltaWordSlide())
+if err != nil { return err }
+for _, event := range program.Step() {
+    if event.Kind == motion.SlideContent {
+        drawTitleAt(event.X)
+    } else {
+        drawMainScroll()
+    }
+}
+```
+
+Enter/exit speeds, boundary comparisons, start position and hold ticks are
+editable. The pure test compares all emitted poses and modes through the
+double-draw boundaries and into the ongoing scroll, with no per-step allocation.
+
 For planar stars or tiny sprites that share a solid material, use
 `sprites.BatchedSolidField`. It retains one `motion.FrameField`, accepts any
 number of colored rectangle materials and an optional origin mask, and draws
