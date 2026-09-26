@@ -885,6 +885,10 @@ bars.Draw(screen)                 // May be drawn in several layers.
 
 Image dimensions, image order, scale, blend and layer placement remain
 independent of motion. The train reuses its pose and motion slices.
+Set `OwnTime`, `TimeStart` and `TimeStep` when the train should own its wave
+clock. `SetSpeedMultiplier` changes the next advance without resetting the
+phase; zero pauses and a negative multiplier reverses the train. Leave
+`OwnTime` unset to sample the caller's `Frame.Time`, as the Ehhh raster bars do.
 `motion.Wave` also supports `Offset` and `Rectify` for an absolute-sine or
 absolute-cosine bounce. Use a `motion.WaveClock` when the phase advances in
 simulation ticks and can change speed or reset at a text/timeline cue:
@@ -1851,12 +1855,17 @@ config := presets.ReplicantsBouncingSprites(spriteImage)
 config.Spacing.X = 520
 pair, err := sprites.NewTrain(config)
 if err != nil { return err }
-if err := pair.Update(kit.Frame{Time: phase}); err != nil { return err }
+if err := pair.SetSpeedMultiplier(1.4); err != nil { return err }
+if err := pair.Update(kit.Frame{}); err != nil { return err }
 pair.Draw(screen)
 ```
 
-The host may feed an absolute simulation phase, music-driven phase or a
-custom trajectory while keeping the same cached sprite images.
+The preset sets `OwnTime:true` and `TimeStep:.1`, so Replicants no longer keeps
+a duplicate phase. To feed an absolute simulation or music phase instead, set
+`config.OwnTime=false` and `config.TimeStep=0` before construction, then call
+`Update(kit.Frame{Time: phase})`. Both modes reuse the same cached images and
+wave geometry. Nine seeded full-frame GPU captures around the splash handoff
+and through frame 2,400 match the preceding DCK version exactly.
 
 `scrolling.Config.SizeBank` composes several differently scaled atlases over
 one message and one transport clock. Font controls select the active bank when

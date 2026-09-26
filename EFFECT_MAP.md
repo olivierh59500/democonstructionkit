@@ -68,7 +68,7 @@ production. Preserved original implementations remain unchanged.
 | Nonameno, text pages and bottom scroll | Atlas, `motion.GlyphPageCycle`, three delay generators, `sprites.GlyphPages`, `scrolling.Config` with `HarmonicSineWith` and editable presets | Page text and bottom message remain production data. |
 | Phenomena DNA intro | Atlas, `scrolling.BitmapPage` retained intro stills, DNAFrames, `scrolling.SliceProgram` with two-pixel insertion, loop-start and configurable control cues, `motion.RecurrentRowWave` baseline and owned scene clock, `motion.GravityBounce` photon path, `motion.WrapBank` hue clock, `timeline.ScalarStages` intro/outro thresholds, `composite.ScalarStagePainter` ordered reveal/fade and HSL main materials, and reusable gradient/silhouette/inverted-font assets | Live DNA scroller, input/music and final black mask remain production composition. |
 | TCB multiplane | Complete `effects.MultiPlaneScene`: projected scrolling, font-independent forms, snapped `composite.Bands` mountains, per-row `composite.ProfileImage` logo, `sprites.AxisFlip` emblem | Text, artwork and music remain production parameters. |
-| Replicants | Atlas, `Config.RowColumn` with variable-speed controls, `sprites.AnimatedField` stars, `CoupledLogoPair`, `BlockReveal` and `sprites.Train` foreground pair | Authored text, input and scene order. |
+| Replicants | Atlas, `Config.RowColumn` with variable-speed controls, `sprites.AnimatedField` stars, `CoupledLogoPair`, `BlockReveal` and `sprites.Train` foreground pair with owned speed-scaled phase | Authored text, input and scene order. |
 | TeamG1, intro | `Config.Feed` with progressive right-edge entry, atlas, flat TimedCRTOverlay, `timeline.IntroHandoff` | Message and materials remain production data. |
 | TeamG1, main | TexturedCube, HarmonicImage, ProfileImage, `Config.Profiled`, sprites.Group circular formation | Timed scene/audio cues and whole-scene presentation remain composition data. |
 | Viva TCB | Atlas, four editable `scrolling.Config.Pseudo3D` glyph banks, ten-logo `sprites.RecurrentFormation`, staged `RotozoomBackground`, two-mode `composite.RasterTitle` and held `motion.WaveClock` title path | Whole-scene layer schedule and host music cue. |
@@ -162,6 +162,11 @@ matches the previous implementation exactly.
   row wave's owned 0.30-step frame clock. Each native comparator matched its
   independent previous-formula timer and strip pixels at eleven checkpoints
   through frame 48,000, including pauses and late loop playback.
+- The Replicants foreground `sprites.Train` now owns its speed-scaled wave
+  phase. Nine seeded full-frame captures before and after this extraction had
+  zero differing RGBA pixels at frames 0, 1, 99, 100, 101, 240, 600, 1,200
+  and 2,400. A separate 5,000-tick controller test includes live speed changes
+  and allocation-free sampling.
 - Pixel 10a (Android 17/API 37) was reconnected and sampled at 60 Hz with
   current DCK APKs. Cuddly's Big Sprite, DNA main stage, Mega Scroller, Reset,
   Starwars, Fullscreen and introduction reported 59.81–60.25 observed FPS in

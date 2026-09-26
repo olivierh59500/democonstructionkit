@@ -14,6 +14,7 @@ import (
 func ReplicantsBouncingSprites(image *ebiten.Image) sprites.TrainConfig {
 	return sprites.TrainConfig{
 		Images: []*ebiten.Image{image, image}, Count: 2,
+		OwnTime: true, TimeStep: .1,
 		X: sprites.TrainAxis{Offset: 32},
 		Y: sprites.TrainAxis{Offset: 326, Wave: &motion.Wave{
 			Amplitude: -24, Spatial: -math.Pi / 2, Speed: 1,

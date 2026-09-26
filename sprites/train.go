@@ -20,7 +20,9 @@ type TrainAxis struct {
 
 // TrainConfig describes a reusable train of raster strips, sprites or logos.
 // Images are borrowed; Count defaults to their number. Spacing is additional
-// screen-space separation independent of each axis's motion.
+// screen-space separation independent of each axis's motion. OwnTime makes the
+// train advance an internal phase by TimeStep before each Update; otherwise
+// wave axes sample Frame.Time exactly as before.
 type TrainConfig struct {
 	Images                           []*ebiten.Image
 	Count                            int
@@ -28,6 +30,8 @@ type TrainConfig struct {
 	Spacing                          motion.Point
 	ScaleX, ScaleY, AnchorX, AnchorY float64
 	Opacity                          float64
+	TimeStart, TimeStep              float64
+	OwnTime                          bool
 	Filter                           ebiten.Filter
 	Blend                            ebiten.Blend
 	Reverse                          bool
@@ -35,12 +39,22 @@ type TrainConfig struct {
 
 // Train owns its motion and prepared image poses but borrows the images.
 type Train struct {
-	group   *Group
-	xBounce *motion.BounceBank
-	yBounce *motion.BounceBank
+	group            *Group
+	xBounce, yBounce *motion.BounceBank
+	timeStart, time  float64
+	timeStep, speed  float64
+	ownTime          bool
 }
 
 func NewTrain(config TrainConfig) (*Train, error) {
+	for _, value := range [...]float64{config.TimeStart, config.TimeStep} {
+		if math.IsNaN(value) || math.IsInf(value, 0) {
+			return nil, fmt.Errorf("sprites: nonfinite train clock")
+		}
+	}
+	if !config.OwnTime && (config.TimeStart != 0 || config.TimeStep != 0) {
+		return nil, fmt.Errorf("sprites: train clock settings need OwnTime")
+	}
 	count := config.Count
 	if count == 0 {
 		count = len(config.Images)
@@ -76,7 +90,15 @@ func NewTrain(config TrainConfig) (*Train, error) {
 	if err != nil {
 		return nil, err
 	}
-	return &Train{group: group, xBounce: xBounce, yBounce: yBounce}, nil
+	train := &Train{group: group, xBounce: xBounce, yBounce: yBounce,
+		timeStart: config.TimeStart, time: config.TimeStart, timeStep: config.TimeStep,
+		speed: 1, ownTime: config.OwnTime}
+	if config.OwnTime && config.TimeStart != 0 {
+		if err := group.Update(kit.Frame{Time: config.TimeStart}); err != nil {
+			return nil, err
+		}
+	}
+	return train, nil
 }
 
 func compileTrainAxis(axis TrainAxis, count int) (*motion.BounceBank, *motion.Wave, error) {
@@ -108,6 +130,9 @@ func compileTrainAxis(axis TrainAxis, count int) (*motion.BounceBank, *motion.Wa
 // Update advances bouncing axes and samples all poses once. Draw never advances
 // motion, so a train can be drawn into more than one destination per update.
 func (train *Train) Update(frame kit.Frame) error {
+	if train.ownTime {
+		frame.Time = train.time + train.timeStep*train.speed
+	}
 	if math.IsNaN(frame.Time) || math.IsInf(frame.Time, 0) {
 		return fmt.Errorf("sprites: nonfinite train time")
 	}
@@ -117,15 +142,41 @@ func (train *Train) Update(frame kit.Frame) error {
 	if train.yBounce != nil {
 		train.yBounce.Step()
 	}
-	return train.group.Update(frame)
+	if err := train.group.Update(frame); err != nil {
+		return err
+	}
+	train.time = frame.Time
+	return nil
 }
+
+// SetSpeedMultiplier changes the owned clock pace without resetting its phase.
+// Zero pauses wave motion; a negative value reverses it.
+func (train *Train) SetSpeedMultiplier(speed float64) error {
+	if !train.ownTime || math.IsNaN(speed) || math.IsInf(speed, 0) {
+		return fmt.Errorf("sprites: invalid owned train speed")
+	}
+	train.speed = speed
+	return nil
+}
+
+// SetTimeStep changes the base clock increment without moving the current pose.
+func (train *Train) SetTimeStep(step float64) error {
+	if !train.ownTime || math.IsNaN(step) || math.IsInf(step, 0) {
+		return fmt.Errorf("sprites: invalid owned train step")
+	}
+	train.timeStep = step
+	return nil
+}
+
+// Time reports the last sampled phase, whether owned or supplied by Frame.Time.
+func (train *Train) Time() float64 { return train.time }
 
 func (train *Train) Draw(dst *ebiten.Image) { train.group.Draw(dst) }
 
 // Poses returns borrowed poses for inspection or an alternate renderer.
 func (train *Train) Poses() []GroupPose { return train.group.Poses() }
 
-// Reset restores bouncing axes and the initial time-zero pose.
+// Reset restores bouncing axes and the configured starting time.
 func (train *Train) Reset() error {
 	if train.xBounce != nil {
 		train.xBounce.Reset()
@@ -133,5 +184,13 @@ func (train *Train) Reset() error {
 	if train.yBounce != nil {
 		train.yBounce.Reset()
 	}
-	return train.group.Update(kit.Frame{})
+	start := 0.0
+	if train.ownTime {
+		start = train.timeStart
+	}
+	if err := train.group.Update(kit.Frame{Time: start}); err != nil {
+		return err
+	}
+	train.time = start
+	return nil
 }
