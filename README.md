@@ -1235,6 +1235,28 @@ wrap threshold, font, scale, baseline and culling. `RibbonController` exposes
 the live offset and speed for editor cues. Choose ordinary `Config.Repeat`
 for a seamless loop instead of a historical exit-and-restart interval.
 
+`composite.SurfaceLayer` composes one or more scrolling/image effects into a
+single persistent surface, applies ordered raster passes and draws output
+copies at editable positions and scales. It uses one surface per configured
+layer, so Grodan's two small ribbons still share the same 320×32 target:
+
+```go
+recipes := presets.GrodanRasterLayers(scrolls, bigRaster, upRaster,
+    smallTopRaster, smallBottomRaster)
+layers := make([]*composite.SurfaceLayer, len(recipes))
+for i, recipe := range recipes {
+    var err error
+    layers[i], err = composite.NewSurfaceLayer(recipe)
+    if err != nil { return err }
+}
+if err := layers[2].Update(frame); err != nil { return err }
+layers[2].Draw(screen)
+```
+
+Source effects, raster crops/transforms/blends, destination copies, clear or
+feedback mode and ownership are independent choices. The host chooses when
+each layer updates and where it sits among backgrounds, logos and sprites.
+
 ### Control count, spacing, delay and music-driven properties
 
 ```go
@@ -2139,6 +2161,7 @@ remain available for effects with different behavior.
 | `motion.GlyphPageCycle` + `sprites.GlyphPages` | Font-independent staggered pages, editable delay grids, elastic depth motion, completion barriers and stable atlas rendering | Nonameno text pages |
 | `scrolling.HarmonicSine` / `HarmonicSineWith` | Independent sine banks over the common text pipeline, optionally resetting spatial phase per repeated copy | Nonameno bottom scroll |
 | `scrolling.Config.Ribbon` | Fixed-tick horizontal/vertical atlas transport, editable strict wraps, independent cull width and scale | Grodan four scroll lanes |
+| `composite.SurfaceLayer` | One bounded canvas with ordered source effects, raster passes and repeated output placements | Grodan big, vertical and paired small scrolls |
 | `scrolling.Config.Crawl` | Paragraph window, vertical transport and perspective projection | Cuddly Starwars |
 | `scrolling.Config.Feed` | Finite glyph insertion into a cached scrolling trail | DMA Is Back, Coco, TeamG1, MegaTwist intros |
 | `scrolling.Config.Scanline` | Proportional text transport, cumulative wave, cyclic bounce and bounded strip rendering | DMA Is Back, Coco, MegaTwist main screens |
