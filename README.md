@@ -310,6 +310,29 @@ front/back visibility thresholds independently. A pure test compares every
 strip pose through 1,000 frames and two strict phase wraps without per-frame Go
 allocation; the renderer reuses `DrawRegion` to retain source sampling order.
 
+The same DNA screen's logo uses `composite.SampledRows` for two outer row trains
+and one central zoomed train. Each borrowed source row may choose its own Y crop,
+placement and scale through a `motion.SampledRowProgram`. The supplied
+`OuterSineRows` and `ZoomSineRows` recipes keep the source's truncation, reverse
+row sampling and copy order. Use the screen's absolute logical tick so an intro
+does not restart the logo's wave:
+
+```go
+outerConfig, err := presets.CuddlyDNAOuterLogoRows(logo)
+if err != nil { return err }
+outer, err := composite.NewSampledRows(outerConfig)
+if err != nil { return err }
+if err := outer.Update(kit.Frame{Time: float64(sceneTick)}); err != nil { return err }
+outer.Draw(screen)
+```
+
+The center program uses the same constructor with
+`presets.CuddlyDNACenterLogoRows(logo)`. Change the program fields or supply
+`motion.SampledRowFunc` without altering the row renderer.
+All 168 row poses are cached without a message-sized texture or per-tick Go
+allocation. Pure tests compare the original coordinates at intro, middle and
+late ticks; graphical sampling still needs a rendered-frame comparison.
+
 ### Stack whole-image effects after any scroll
 
 Regular glyph modes run first. A mode has one painter and optional depth sorter;
@@ -2260,6 +2283,7 @@ remain available for effects with different behavior.
 | `effects.PerspectiveCheckerboard` | Perspective stripe geometry, two-axis motion, XOR composition and bounded surfaces | 3D DOC and Cuddly 3D DOC |
 | `effects.ProjectedBallTrain` | Blended movement programs, projected sprites/shadows, phase and depth/palette ordering | 3D DOC and Cuddly 3D DOC |
 | `composite.TwistingRibbon` | Two borrowed face images, exact strip crops, phase/occlusion clocks and ordered mirrored draw passes | Cuddly DNA |
+| `composite.SampledRows` | Arbitrary source row, placement and scale per copy and row, sampled from an absolute scene clock | Cuddly DNA logo |
 | `sprites.ProjectedField` | Bounded spawn/respawn, strict/wide wrap, projection, history and pixel/sprite/vector materials | Nonameno stars, Union Starballs, Cuddly Starwars and Big Sprite |
 | `motion.FrameField` + `sprites.AnimatedField` | Independent fractional atlas clocks or planar motion, single-edge wrap, ordered respawn and per-instance image selection | DOM animated stars, Replicants layered stars |
 | `motion.CoupledLogoMotion` + `sprites.CoupledLogoPair` | Two linked logo paths, cached quantized scale banks, depth-based frame selection and draw order | Replicants paired logos |
