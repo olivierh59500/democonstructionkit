@@ -162,11 +162,39 @@ matches the previous implementation exactly.
   row wave's owned 0.30-step frame clock. Each native comparator matched its
   independent previous-formula timer and strip pixels at eleven checkpoints
   through frame 48,000, including pauses and late loop playback.
-- No Pixel appeared among the currently attached USB products, and Android
-  tooling is not on this session's PATH. Pixel 10a CPU/frame, logical-surface
-  and visual measurements are still missing for combined scanline,
-  projected-field/mask and multi-layer scenes. Pure controller benchmarks do
-  not establish whole-scene mobile performance.
+- Pixel 10a (Android 17/API 37) was reconnected and sampled at 60 Hz with
+  current DCK APKs. Cuddly's Big Sprite, DNA main stage, Mega Scroller, Reset,
+  Starwars, Fullscreen and introduction reported 59.81–60.25 observed FPS in
+  repeated 250-update windows. The largest measured CPU Update time was about
+  5.43 ms (DNA main); Draw submission was at most about 0.34 ms. These host
+  timings exclude asynchronous GPU work.
+- The Go `cmd/pixelprobe` samples SurfaceFlinger's actual-present timestamps.
+  Twelve history windows at two-second spacing yielded 744 distinct intervals
+  for each of Union Multi-Plane and Starballs, Multiscreen's four-demo tour,
+  Bilizir, DMA Is Back and Phenomena DNA. All six measured scenes had zero
+  intervals above 20 ms; detailed p95/max values appear below. Union intro and
+  Replicants additionally had 63-frame spot checks with zero intervals above
+  20 ms. Screenshots confirmed the effects, and thermal status remained 0.
+- The remaining catalog screens, longer playback, varying device refresh rates
+  and battery consumption still need device checks. The sampled windows do not
+  prove that every cue boundary or full megademo tour stays at 60 FPS.
+
+| Pixel 10a DCK scene | Distinct intervals | p95 present interval | Maximum | Above 20 ms |
+| --- | ---: | ---: | ---: | ---: |
+| Union Multi-Plane | 744 | 16.717 ms | 16.831 ms | 0 |
+| Union Starballs | 744 | 16.718 ms | 16.895 ms | 0 |
+| Multiscreen tour | 744 | 16.736 ms | 17.267 ms | 0 |
+| Bilizir | 744 | 16.719 ms | 17.168 ms | 0 |
+| DMA Is Back | 744 | 16.728 ms | 16.901 ms | 0 |
+| Phenomena DNA | 744 | 16.712 ms | 16.919 ms | 0 |
+
+The Pixel's physical landscape display was 2,424×1,080. The main logical
+surfaces measured here include 768×540 for Cuddly, 768×536 for Union and
+800×600 for Multiscreen. Single `dumpsys meminfo` snapshots reported process
+PSS / graphics memory of 249,775 / 121,068 KiB for Cuddly's intro,
+276,724 / 138,044 KiB for Union Starballs and 263,663 / 147,364 KiB for
+Multiscreen. These snapshots are not peak-memory measurements. Android reported
+thermal status 0 after the sampled runs.
 
 The common `scrolling.New` repeat renderer already has coverage for short
 horizontal and vertical messages, gap boundaries and mixed-font controls.

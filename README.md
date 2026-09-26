@@ -2951,6 +2951,26 @@ removes destination content outside it. Clear scratch targets before reuse.
   with stable resolution, refresh rate and effects. The example's timings report
   CPU submission time and observed FPS/TPS; they are not power measurements.
 
+`cmd/pixelprobe` measures actual Android SurfaceView presentation intervals
+without adding instrumentation to a demo. It finds the package's active BLAST
+layer, samples SurfaceFlinger's presentation history, removes overlapping
+timestamps and writes a JSON report:
+
+```sh
+go run ./cmd/pixelprobe \
+  -adb /path/to/android-sdk/platform-tools/adb \
+  -package com.olivierh.cuddlydemo -samples 12 -interval 2s \
+  -out /tmp/cuddly-pixel.json
+```
+
+Launch the desired scene and wait for its transition before running the probe.
+Its interval coverage can include frames before the first sample; samples are
+not a continuous long-run trace. `-serial` selects one USB device and `-slow-ms`
+changes the default 20 ms threshold. The tool reads the second timestamp
+column, which Android's [FrameTracker source](https://android.googlesource.com/platform/frameworks/native/+/24257dda488651ad2c05875761b9e9ad110975c5/services/surfaceflinger/FrameTracker.cpp)
+identifies as the actual presentation time. This complements the CPU timers
+inside `examples/effectslab` and Cuddly's optional mobile metrics.
+
 ### Shared effects and remaining production-specific code
 
 All 20 current demo repositories use DCK, but that does not mean every algorithm
