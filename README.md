@@ -1385,6 +1385,19 @@ value that extends the strict wrap tick. Its pure test matches all 733 profile
 values and several loops with no per-step allocation. The effect keeps only
 320×25, 320×25 and 320×200 working surfaces, matching the source budget.
 
+`modulation.PeriodicDecay` supplies a small reusable flash envelope for a
+background, logo or sprite. Its period, trigger tick, peak, decay and opacity
+gain are data; an optional live callback can add music or input triggers.
+Starwars fires once every 301 ticks and decays on the trigger tick itself:
+
+```go
+flash, err := modulation.NewPeriodicDecay(presets.CuddlyStarwarsFlash())
+if err != nil { return err }
+drawBackgroundWithOpacity(flash.Step())
+```
+
+The pure test compares 5,000 source ticks and confirms zero update allocations.
+
 For a complete radial star recipe, start with `presets.DefaultNonamenoStarsConfig()`.
 Its count, speed, camera, spawn strides, pixel size, brightness, colors and
 trail threshold are plain editable values. Compile it with
