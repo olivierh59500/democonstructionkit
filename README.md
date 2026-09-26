@@ -1257,6 +1257,25 @@ Source effects, raster crops/transforms/blends, destination copies, clear or
 feedback mode and ownership are independent choices. The host chooses when
 each layer updates and where it sits among backgrounds, logos and sprites.
 
+`effects.GatedBackgroundPair` shares two `composite.Background` renderers with
+one image-free `motion.GatedBackgroundPair` controller. The first background
+bounces vertically and enables horizontal motion during an editable gate;
+the second changes its horizontal speed when its vertical axis crosses a
+boundary. Both images, limits, velocities, repetition and layer order can be
+configured. Grodan uses this complete effect without another canvas:
+
+```go
+config := presets.GrodanBackgroundPair(greenImage, pinkImage)
+config.Motion.GateOpen = 12
+backgrounds, err := effects.NewGatedBackgroundPair(config)
+if err != nil { return err }
+if err := backgrounds.Update(frame); err != nil { return err }
+backgrounds.Draw(screen)
+```
+
+The pure controller is checked against the original boundary and gate order
+over 50,000 ticks, including overshoot, speed reversals and both X clamps.
+
 ### Control count, spacing, delay and music-driven properties
 
 ```go
@@ -2162,6 +2181,7 @@ remain available for effects with different behavior.
 | `scrolling.HarmonicSine` / `HarmonicSineWith` | Independent sine banks over the common text pipeline, optionally resetting spatial phase per repeated copy | Nonameno bottom scroll |
 | `scrolling.Config.Ribbon` | Fixed-tick horizontal/vertical atlas transport, editable strict wraps, independent cull width and scale | Grodan four scroll lanes |
 | `composite.SurfaceLayer` | One bounded canvas with ordered source effects, raster passes and repeated output placements | Grodan big, vertical and paired small scrolls |
+| `motion.GatedBackgroundPair` + `effects.GatedBackgroundPair` | Timed horizontal gate, coupled X/Y bounce and two repeated image layers | Grodan green and pink backgrounds |
 | `scrolling.Config.Crawl` | Paragraph window, vertical transport and perspective projection | Cuddly Starwars |
 | `scrolling.Config.Feed` | Finite glyph insertion into a cached scrolling trail | DMA Is Back, Coco, TeamG1, MegaTwist intros |
 | `scrolling.Config.Scanline` | Proportional text transport, cumulative wave, cyclic bounce and bounded strip rendering | DMA Is Back, Coco, MegaTwist main screens |
