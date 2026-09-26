@@ -1007,6 +1007,32 @@ next update respawns that sprite, and out-of-range art is skipped until then.
 The DOM spawn callback and per-tick state updates allocate nothing after
 construction.
 
+`scrolling.Config.SizeBank` composes several differently scaled atlases over
+one message and one transport clock. Font controls select the active bank when
+they reach an editable right-edge lookahead; the other bank offsets stay
+aligned to the same reference position. Each bank has its own scale, cached
+glyph strip and vertical repetition. It uses the same `scrolling.New` entry
+point as ordinary horizontal, vertical and projected text:
+
+```go
+recipe, err := presets.DOMSizeBank(message, fontImage)
+if err != nil { return err }
+recipe.Layers[3].ScaleY = 10 // Edit the largest font independently.
+scroll, err := scrolling.New(scrolling.Config{SizeBank: &recipe})
+if err != nil { return err }
+bank := scroll.SizeBankController()
+if err := bank.SetSpeedMultiplier(2); err != nil { return err }
+if err := scroll.Update(frame); err != nil { return err }
+scroll.Draw(textLayer)
+```
+
+`motion.ScaledTextClock` is the image-free controller behind the bank. It
+accepts any number of scales, per-mode reference speeds, a control program,
+strict or loose wrapping, and an initial offset. Its 20,000-tick unit test and
+the DOM text's 100,000-tick parity test cover bank changes, speed controls and
+wraps without a graphics device. Surfaces and glyph views are constructed
+once; only the currently visible bank is redrawn each update.
+
 ### Animate staggered text pages
 
 `motion.GlyphPageCycle` owns the per-character entrance, exit, page rotation,
@@ -1965,6 +1991,7 @@ remain available for effects with different behavior.
 | `effects.ProjectedBallTrain` | Blended movement programs, projected sprites/shadows, phase and depth/palette ordering | 3D DOC and Cuddly 3D DOC |
 | `sprites.ProjectedField` | Bounded spawn/respawn, strict/wide wrap, projection, history and pixel/sprite/vector materials | Nonameno stars, Union Starballs, Cuddly Starwars and Big Sprite |
 | `motion.FrameField` + `sprites.AnimatedField` | Independent fractional atlas clocks, ordered respawn, editable frame selection and placement | DOM animated stars |
+| `scrolling.Config.SizeBank` | Shared transport, controlled font-size cues, synchronized scaled offsets and repeated cached text layers | DOM four-size scroll |
 | `motion.GlyphPageCycle` + `sprites.GlyphPages` | Font-independent staggered pages, editable delay grids, elastic depth motion, completion barriers and stable atlas rendering | Nonameno text pages |
 | `scrolling.HarmonicSine` / `HarmonicSineWith` | Independent sine banks over the common text pipeline, optionally resetting spatial phase per repeated copy | Nonameno bottom scroll |
 | `scrolling.Config.Crawl` | Paragraph window, vertical transport and perspective projection | Cuddly Starwars |

@@ -65,6 +65,7 @@ type Config struct {
 	Profiled         *ProfiledConfig    // Bitmap text sampled through a floating-point row profile.
 	RowColumn        *RowColumnConfig   // Fixed-advance text, row-source lookup and column displacement.
 	RowBands         *RowBandsConfig    // Circular bitmap text with ordered destination-row passes.
+	SizeBank         *SizeBankConfig    // Synchronized font-scale layers with one transport and cue clock.
 	Output           *OutputConfig      // Ordered image operations over the common text renderer.
 	// RepeatBounds selects the visible pen coordinates before any mappers run.
 	// Empty uses the destination bounds. Enlarge it for paths or projections that
@@ -160,6 +161,15 @@ func (s *Scrolling) Pseudo3DController() *Pseudo3D {
 	return nil
 }
 
+// SizeBankController exposes the active scale and speed controls of a
+// synchronized font bank selected through scrolling.New.
+func (s *Scrolling) SizeBankController() *SizeBank {
+	if bank, ok := s.backend.(*SizeBank); ok {
+		return bank
+	}
+	return nil
+}
+
 // CursorRune returns the current character for transports that expose a text
 // cursor. Other transport kinds return zero.
 func (s *Scrolling) CursorRune() rune {
@@ -182,7 +192,7 @@ func New(c Config) (*Scrolling, error) {
 	if c.MaxGlyphsPerDraw < 1 || c.MaxGlyphsPerDraw > 1<<24 {
 		return nil, fmt.Errorf("scrolling: invalid automatic draw budget")
 	}
-	if c.Recycled != nil || c.RingLanes != nil || c.Projected != nil || c.Pseudo3D != nil || c.Sliced != nil || c.Crawl != nil || c.Bands != nil || c.Slots != nil || c.Feed != nil || c.Scanline != nil || c.Profiled != nil || c.RowColumn != nil || c.RowBands != nil {
+	if c.Recycled != nil || c.RingLanes != nil || c.Projected != nil || c.Pseudo3D != nil || c.Sliced != nil || c.Crawl != nil || c.Bands != nil || c.Slots != nil || c.Feed != nil || c.Scanline != nil || c.Profiled != nil || c.RowColumn != nil || c.RowBands != nil || c.SizeBank != nil {
 		return newTransport(c)
 	}
 	if c.Page != nil {
