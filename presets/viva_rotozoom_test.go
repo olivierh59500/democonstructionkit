@@ -61,3 +61,66 @@ func TestVivaRotozoomPhaseOptions(t *testing.T) {
 		t.Fatal("accepted a stalled entrance")
 	}
 }
+
+func TestCocoRotozoomStartsInHarmonicStageAndKeepsAllClocks(t *testing.T) {
+	config := CocoRotozoom(800, 600)
+	program, err := NewVivaRotozoom(config)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if program.stage != 3 {
+		t.Fatal("Coco entered Viva's staged introduction")
+	}
+	xPhase, zPhase, rPhase := 0.0, 0.0, 0.0
+	for tick := 1; tick <= 750; tick++ {
+		speed := 1.0
+		if tick >= 300 {
+			speed = 1.5
+		}
+		if err := program.SetSpeedMultiplier(speed); err != nil {
+			t.Fatal(err)
+		}
+		xPhase += .008 * speed
+		zPhase += .003 * speed
+		rPhase += .005 * speed
+		if err := program.Update(kit.Frame{}); err != nil {
+			t.Fatal(err)
+		}
+		wantZoom := .5 + math.Abs(math.Sin(zPhase)*2.5)
+		wantRotation := 360.0 / 4.0 * math.Cos(rPhase*4-math.Cos(rPhase-.01)) * .3 * math.Pi / 180
+		wantX := 400 + 200*math.Cos(xPhase*4-math.Cos(xPhase-.1))
+		wantY := 300 + (600.0/2.7)*-math.Sin(xPhase*2.3-math.Cos(xPhase-.1))
+		pose := program.Repetition()
+		if program.stage != 3 || math.Abs(pose.CenterX-wantX) > 1e-11 ||
+			math.Abs(pose.CenterY-wantY) > 1e-11 || math.Abs(pose.Zoom-wantZoom) > 1e-11 ||
+			math.Abs(pose.Rotation-wantRotation) > 1e-11 ||
+			pose.PhaseX != 1600 || pose.PhaseY != 1200 || pose.Color != ([4]float32{.5, .5, .5, 1}) {
+			t.Fatalf("tick %d Coco pose differs: %+v", tick, pose)
+		}
+	}
+}
+
+func TestVivaRotozoomPausePreservesStageAndPose(t *testing.T) {
+	config := DefaultVivaRotozoomConfig(320, 200)
+	program, err := NewVivaRotozoom(config)
+	if err != nil {
+		t.Fatal(err)
+	}
+	for tick := 0; tick < 160; tick++ {
+		if err := program.Update(kit.Frame{}); err != nil {
+			t.Fatal(err)
+		}
+	}
+	if err := program.SetSpeedMultiplier(0); err != nil {
+		t.Fatal(err)
+	}
+	stage, entryAngles, pose := program.stage, program.entryAngles, program.Repetition()
+	for tick := 0; tick < 100; tick++ {
+		if err := program.Update(kit.Frame{}); err != nil {
+			t.Fatal(err)
+		}
+	}
+	if program.stage != stage || program.entryAngles != entryAngles || program.Repetition() != pose {
+		t.Fatalf("pause changed rotozoom pose: stage %d -> %d, pose %+v -> %+v", stage, program.stage, pose, program.Repetition())
+	}
+}

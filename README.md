@@ -806,6 +806,29 @@ settings match all 1,200 compared frames across the entrance and rotozoom.
 `composite.Repeat` remains available when an existing controller already owns
 the complete pose.
 
+Coco uses the same motion program with `presets.CocoRotozoom(800, 600)`: it
+starts in the harmonic stage, advances all three clocks together, and tints
+the tile to half brightness. Its source quad spans 3,200 × 2,400 pixels, so
+the rotated vertex rounding and repeat-addressed texture coordinates match the
+authored renderer. Other images can use the same component with different
+quad dimensions, phase offsets, tint, and a live speed multiplier:
+
+```go
+program, err := presets.NewVivaRotozoom(presets.CocoRotozoom(800, 600))
+if err != nil { return err }
+roto, err := composite.NewRotozoomBackground(composite.RotozoomBackgroundConfig{
+    Image: tile, Program: program, SourceQuad: image.Pt(3200, 2400),
+})
+if err != nil { return err }
+if err := program.SetSpeedMultiplier(1.5); err != nil { return err }
+if err := roto.Update(frame); err != nil { return err }
+roto.Draw(screen)
+```
+
+Omit `SourceQuad` for viewport inverse sampling. Set it when a large, source-
+sized rotating quad is part of the intended rasterization; DCK caches its
+vertices and submits one repeat-addressed draw call per frame.
+
 Simple rotozoom layers can also be saved for a future editor. This layer moves
 its center and rotates the texture without any Go callback:
 
@@ -2199,7 +2222,7 @@ remain available for effects with different behavior.
 | `scrolling.Config.Slots` | Glyph recycling, wave motion, tangent orientation and custom poses | Cuddly Reset |
 | `scrolling.Reveal` | Cached text layout and ordered per-character entrance | Union loader |
 | `composite.Bands` | Independently moving/repeated background strips and batched drawing | Union Multiplane |
-| `composite.RotozoomBackground` | One tiled GPU quad with independent pose, phase, velocity or a staged motion program | Viva TCB |
+| `composite.RotozoomBackground` | One tiled GPU quad with independent pose, phase, velocity, source-sized geometry or a staged motion program | Viva TCB, Coco |
 | `indexed.Rotozoom256` | Allocation-free fixed-point rotozoom over indexed 256 × 256 textures | Second Reality Rotozoomer |
 | `composite.ScanlineBackground` | Bounded horizontal tile source, independent wave/bounce clocks and batched source rows | MegaTwist |
 | `composite.CopperBars` | Two-phase raster bank with editable table, clocks, source strips and quad/image materials | Bilizir, Coco, Multiscreen Coco |

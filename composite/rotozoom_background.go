@@ -2,6 +2,7 @@ package composite
 
 import (
 	"fmt"
+	"image"
 	"math"
 
 	"github.com/hajimehoshi/ebiten/v2"
@@ -26,10 +27,11 @@ type RotozoomVelocity struct {
 // program or a base pose with velocity. Repetition handles texture wrapping,
 // zoom, rotation and sampling in one GPU quad without a tiled render target.
 type RotozoomBackgroundConfig struct {
-	Image    *ebiten.Image
-	Pose     Repetition
-	Velocity RotozoomVelocity
-	Program  RotozoomProgram
+	Image      *ebiten.Image
+	Pose       Repetition
+	Velocity   RotozoomVelocity
+	Program    RotozoomProgram
+	SourceQuad image.Point // Empty uses inverse sampling of the destination viewport.
 }
 
 // RotozoomBackground is a complete kit.Effect with a fixed update/draw order.
@@ -37,11 +39,15 @@ type RotozoomBackgroundConfig struct {
 type RotozoomBackground struct {
 	config RotozoomBackgroundConfig
 	pose   Repetition
+	quad   [4]ebiten.Vertex
 }
 
 func NewRotozoomBackground(c RotozoomBackgroundConfig) (*RotozoomBackground, error) {
 	if c.Image == nil {
 		return nil, fmt.Errorf("composite: rotozoom source image is nil")
+	}
+	if c.SourceQuad != (image.Point{}) && (c.SourceQuad.X < 1 || c.SourceQuad.Y < 1 || c.SourceQuad.X > 1<<20 || c.SourceQuad.Y > 1<<20) {
+		return nil, fmt.Errorf("composite: invalid rotozoom source quad")
 	}
 	if c.Program == nil && c.Pose.Zoom == 0 {
 		c.Pose.Zoom = 1
@@ -49,7 +55,13 @@ func NewRotozoomBackground(c RotozoomBackgroundConfig) (*RotozoomBackground, err
 	if !finiteRotoVelocity(c.Velocity) || c.Program == nil && !finiteRepetition(c.Pose) {
 		return nil, fmt.Errorf("composite: invalid rotozoom pose or velocity")
 	}
-	return &RotozoomBackground{config: c, pose: c.Pose}, nil
+	pose := c.Pose
+	if c.Program != nil {
+		if initial := c.Program.Repetition(); finiteRepetition(initial) {
+			pose = initial
+		}
+	}
+	return &RotozoomBackground{config: c, pose: pose}, nil
 }
 
 func (r *RotozoomBackground) Update(f kit.Frame) error {
@@ -79,6 +91,12 @@ func (r *RotozoomBackground) Update(f kit.Frame) error {
 
 func (r *RotozoomBackground) Draw(dst *ebiten.Image) {
 	if r == nil || dst == nil {
+		return
+	}
+	if r.config.SourceQuad != (image.Point{}) {
+		fillSourceQuadVertices(&r.quad, r.pose, r.config.SourceQuad)
+		dst.DrawTriangles(r.quad[:], sourceQuadIndices[:], r.config.Image,
+			&ebiten.DrawTrianglesOptions{Address: ebiten.AddressRepeat, Filter: r.pose.Filter})
 		return
 	}
 	Repeat(dst, r.config.Image, r.pose)

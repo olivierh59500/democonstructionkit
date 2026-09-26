@@ -22,6 +22,9 @@ type VivaRotozoomConfig struct {
 	ZoomBase, ZoomAmplitude, RotationBaseDegrees, RotationScale float64
 	RotationRate, RotationLag                                   float64
 	Filter                                                      ebiten.Filter
+	StartStage                                                  int     // Zero keeps Viva's staged entrance; three starts all harmonic clocks.
+	SpeedMultiplier                                             float64 // Zero defaults to one; SetSpeedMultiplier can pause later.
+	Color                                                       [4]float32
 }
 
 func DefaultVivaRotozoomConfig(width, height float64) VivaRotozoomConfig {
@@ -42,6 +45,7 @@ type VivaRotozoom struct {
 	config                        VivaRotozoomConfig
 	stage, entryAngles            int
 	entryX, orbit, zoom, rotation float64
+	speed                         float64
 }
 
 func NewVivaRotozoom(c VivaRotozoomConfig) (*VivaRotozoom, error) {
@@ -49,39 +53,63 @@ func NewVivaRotozoom(c VivaRotozoomConfig) (*VivaRotozoom, error) {
 		c.OrbitStep <= 0 || c.ZoomStep <= 0 || c.RotationStep <= 0 || c.OrbitStart <= 0 || c.ZoomStart <= 0 || c.ZoomBase <= 0 || c.ZoomAmplitude < 0 {
 		return nil, fmt.Errorf("presets: invalid rotozoom dimensions or clocks")
 	}
+	if c.StartStage < 0 || c.StartStage > 3 || c.SpeedMultiplier < 0 {
+		return nil, fmt.Errorf("presets: invalid rotozoom start stage or speed")
+	}
 	for _, value := range [...]float64{c.Width, c.Height, c.TilePhaseX, c.TilePhaseY, c.EntryPanStep, c.EntryPanDistance, c.EntryAngleDegrees,
 		c.OrbitStep, c.ZoomStep, c.RotationStep, c.OrbitStart, c.ZoomStart, c.OrbitXAmplitude, c.OrbitYAmplitude,
 		c.OrbitXRate, c.OrbitYRate, c.OrbitLag, c.OrbitPhase, c.ZoomPhase, c.RotationPhase, c.ZoomBase,
-		c.ZoomAmplitude, c.RotationBaseDegrees, c.RotationScale, c.RotationRate, c.RotationLag} {
+		c.ZoomAmplitude, c.RotationBaseDegrees, c.RotationScale, c.RotationRate, c.RotationLag, c.SpeedMultiplier} {
 		if math.IsNaN(value) || math.IsInf(value, 0) {
 			return nil, fmt.Errorf("presets: nonfinite rotozoom setting")
 		}
 	}
-	return &VivaRotozoom{config: c}, nil
+	for _, value := range c.Color {
+		if math.IsNaN(float64(value)) || math.IsInf(float64(value), 0) {
+			return nil, fmt.Errorf("presets: nonfinite rotozoom color")
+		}
+	}
+	speed := c.SpeedMultiplier
+	if speed == 0 {
+		speed = 1
+	}
+	return &VivaRotozoom{config: c, stage: c.StartStage, speed: speed}, nil
+}
+
+// SetSpeedMultiplier changes all live clocks together without resetting pose.
+func (v *VivaRotozoom) SetSpeedMultiplier(speed float64) error {
+	if v == nil || math.IsNaN(speed) || math.IsInf(speed, 0) || speed < 0 {
+		return fmt.Errorf("presets: invalid rotozoom speed")
+	}
+	v.speed = speed
+	return nil
 }
 
 func (v *VivaRotozoom) Update(kit.Frame) error {
 	if v == nil {
 		return fmt.Errorf("presets: nil rotozoom program")
 	}
+	if v.speed == 0 {
+		return nil
+	}
 	c := v.config
 	if v.stage >= 1 {
-		v.orbit += c.OrbitStep
+		v.orbit += c.OrbitStep * v.speed
 	}
 	if v.stage >= 2 {
-		v.zoom += c.ZoomStep
+		v.zoom += c.ZoomStep * v.speed
 	}
 	if v.stage >= 3 {
-		v.rotation += c.RotationStep
+		v.rotation += c.RotationStep * v.speed
 	}
-	if v.orbit >= c.OrbitStart {
+	if v.stage < 2 && v.orbit >= c.OrbitStart {
 		v.stage = 2
 	}
-	if v.zoom >= c.ZoomStart {
+	if v.stage < 3 && v.zoom >= c.ZoomStart {
 		v.stage = 3
 	}
 	if v.stage == 0 {
-		v.entryX -= c.EntryPanStep
+		v.entryX -= c.EntryPanStep * v.speed
 		if v.entryX <= -c.EntryPanDistance {
 			v.entryAngles++
 		}
@@ -94,7 +122,7 @@ func (v *VivaRotozoom) Update(kit.Frame) error {
 
 func (v *VivaRotozoom) Repetition() composite.Repetition {
 	c := v.config
-	p := composite.Repetition{PhaseX: c.TilePhaseX, PhaseY: c.TilePhaseY, Filter: c.Filter}
+	p := composite.Repetition{PhaseX: c.TilePhaseX, PhaseY: c.TilePhaseY, Filter: c.Filter, Color: c.Color}
 	if v.stage == 0 {
 		p.CenterX = c.Width/2 + v.entryX
 		p.CenterY = c.Height / 2

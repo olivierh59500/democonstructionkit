@@ -1,6 +1,7 @@
 package composite
 
 import (
+	"image"
 	"math"
 	"testing"
 
@@ -13,6 +14,33 @@ type testRotozoomProgram struct{ pose Repetition }
 func (p *testRotozoomProgram) Update(f kit.Frame) error {
 	p.pose = Repetition{CenterX: f.Time * 2, Zoom: 2}
 	return nil
+}
+
+func TestSourceQuadKeepsCocoVertexGeometryAndTint(t *testing.T) {
+	pose := Repetition{CenterX: 400, CenterY: 300, Zoom: 2,
+		PhaseX: 1600, PhaseY: 1200, Color: [4]float32{.5, .5, .5, 1}}
+	var vertices [4]ebiten.Vertex
+	fillSourceQuadVertices(&vertices, pose, image.Pt(3200, 2400))
+	if vertices[0].DstX != -2800 || vertices[0].DstY != -2100 ||
+		vertices[0].SrcX != 0 || vertices[0].SrcY != 0 ||
+		vertices[3].DstX != 3600 || vertices[3].DstY != 2700 ||
+		vertices[3].SrcX != 3200 || vertices[3].SrcY != 2400 ||
+		vertices[2].ColorR != .5 || vertices[2].ColorA != 1 {
+		t.Fatalf("source quad differs from the authored corners: %+v", vertices)
+	}
+}
+
+func TestRotozoomBackgroundUsesReadyProgramAtFrameZero(t *testing.T) {
+	image := ebiten.NewImage(2, 2)
+	defer image.Deallocate()
+	program := &testRotozoomProgram{pose: Repetition{CenterX: 3, Zoom: 1.5}}
+	background, err := NewRotozoomBackground(RotozoomBackgroundConfig{Image: image, Program: program})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if got := background.Repetition(); got.CenterX != 3 || got.Zoom != 1.5 {
+		t.Fatalf("ready initial program pose %+v", got)
+	}
 }
 func (p *testRotozoomProgram) Repetition() Repetition { return p.pose }
 

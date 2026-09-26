@@ -1,8 +1,10 @@
 package composite
 
 import (
-	"github.com/hajimehoshi/ebiten/v2"
+	"image"
 	"math"
+
+	"github.com/hajimehoshi/ebiten/v2"
 )
 
 // Repetition maps a viewport back into an infinitely repeated source image.
@@ -31,4 +33,38 @@ func Repeat(dst, texture *ebiten.Image, p Repetition) {
 	}
 	indices := [6]uint16{0, 1, 2, 1, 2, 3}
 	dst.DrawTriangles(vertices[:], indices[:], texture, &ebiten.DrawTrianglesOptions{Address: ebiten.AddressRepeat, Filter: p.Filter})
+}
+
+// RepeatSourceQuad preserves a source-sized textured quad before rotation and
+// zoom. This is useful when a production's rasterization depended on rounded
+// destination vertices of a deliberately oversized repeating texture.
+func RepeatSourceQuad(dst, texture *ebiten.Image, p Repetition, size image.Point) {
+	if dst == nil || texture == nil || p.Zoom <= 0 || size.X <= 0 || size.Y <= 0 {
+		return
+	}
+	var vertices [4]ebiten.Vertex
+	fillSourceQuadVertices(&vertices, p, size)
+	dst.DrawTriangles(vertices[:], sourceQuadIndices[:], texture,
+		&ebiten.DrawTrianglesOptions{Address: ebiten.AddressRepeat, Filter: p.Filter})
+}
+
+var sourceQuadIndices = [6]uint16{0, 1, 2, 1, 2, 3}
+
+func fillSourceQuadVertices(vertices *[4]ebiten.Vertex, p Repetition, size image.Point) {
+	color := p.Color
+	if color == ([4]float32{}) {
+		color = [4]float32{1, 1, 1, 1}
+	}
+	cosRot, sinRot := math.Cos(p.Rotation), math.Sin(p.Rotation)
+	for i, corner := range [...]image.Point{{}, {X: size.X}, {Y: size.Y}, {X: size.X, Y: size.Y}} {
+		x := float64(corner.X) - float64(size.X)/2
+		y := float64(corner.Y) - float64(size.Y)/2
+		vertices[i] = ebiten.Vertex{
+			DstX:   float32((x*cosRot-y*sinRot)*p.Zoom + p.CenterX),
+			DstY:   float32((x*sinRot+y*cosRot)*p.Zoom + p.CenterY),
+			SrcX:   float32(float64(corner.X) + p.PhaseX - float64(size.X)/2),
+			SrcY:   float32(float64(corner.Y) + p.PhaseY - float64(size.Y)/2),
+			ColorR: color[0], ColorG: color[1], ColorB: color[2], ColorA: color[3],
+		}
+	}
 }
