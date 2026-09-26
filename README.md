@@ -2644,6 +2644,11 @@ first/second counts, a final hold and a fade lead without moving those formulas
 back into an individual screen. Cuddly's sector/blipp loader uses both
 components; Union's credits loader uses the same clock with its recorded
 duration and a different bitmap reveal.
+`timeline.CueRamp` binds a scalar envelope to one of these windows. Cuddly's
+loader uses it for its 1.5-second gain fade, and its playback host multiplies
+that gain by the soundtrack's base volume before calling the DCK audio player.
+The same controller can drive opacity or position. A pure 50/60 Hz check covers
+the full loader fade, a live rate change and reset without per-frame allocation.
 
 For staged visuals, `timeline.CueRanges` owns ordered time windows with explicit
 open or closed endpoints. `timeline.SteppedEnvelope` selects an image/color bank
@@ -2686,9 +2691,12 @@ clock, _ := timeline.NewCueClock(timeline.CueClockConfig{
         {StartTick: countdown.FadeStartTick(), Duration: 1.5},
     },
 })
+gain, _ := timeline.NewCueRamp(clock, timeline.CueRampConfig{
+    Window: 1, From: 1, To: 0, // Duration defaults to that cue window's 1.5 s.
+})
 clock.Step()
 shown := countdown.At(clock.Tick())
-volume := max(0, 1-clock.Elapsed(1)/1.5)
+volume := gain.Value()
 ```
 
 For a temporary magnifier in a pipeline:
