@@ -29,3 +29,12 @@ func CuddlyResetRasterOrbit(upLeft, upRight, downLeft, downRight *ebiten.Image) 
 		Filter: ebiten.FilterNearest, Blend: ebiten.BlendSourceOver,
 	}
 }
+
+// CuddlyResetRasterScroll is the vertical source-atop fill offset. The screen
+// draws At(0) before Step so the initial raster starts at zero.
+func CuddlyResetRasterScroll() motion.WrapBankConfig {
+	return motion.WrapBankConfig{
+		Start: []float64{0}, Velocity: []float64{-2},
+		Lower: &motion.WrapLimit{Boundary: -480, Restart: 3, Inclusive: true},
+	}
+}
