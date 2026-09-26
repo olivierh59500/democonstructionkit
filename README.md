@@ -3490,6 +3490,29 @@ with `presets.SpreadpointBallFormula(path)`, and assign the result to
 artwork and snapping are independent. The pure formula test matches all twenty
 source positions over 400 ticks and samples without Go allocations.
 
+Spreadpoint's logo uses a separate reusable motion program. `PhaseSequence`
+compiles holds, explicit resets and incremental turns into one cyclic table;
+`HarmonicTransform` turns any phase into X/Y position and independent X/Y scale.
+Sine, cosine, scale coupling and a phase offset can be edited per image. The
+same pose may control several passes of a logo material:
+
+```go
+phases, err := motion.NewPhaseSequence(presets.CuddlySpreadpointLogoPhases())
+if err != nil { return err }
+transform, err := motion.NewHarmonicTransform(presets.CuddlySpreadpointLogoTransform())
+if err != nil { return err }
+pose := transform.At(phases.Current())
+if err := logoLayer.SetPassTransform(0, pose.X, pose.Y, pose.ScaleX, pose.ScaleY, 0); err != nil { return err }
+if err := logoLayer.SetPassTransform(2, pose.X, pose.Y, pose.ScaleX, pose.ScaleY, 0); err != nil { return err }
+phases.Step()
+```
+
+The preset's 2,272-phase cycle is checked over two full turns against the
+previous screen formula. Both motion samples and phase advances allocate
+nothing per frame. Keeping the sequence separate from the transform lets the
+same timeline drive a sprite formation, text layer or second logo with its own
+phase offset.
+
 Megaball uses `GroupConfig.Coupled` when each sprite sample advances one shared
 orbital state. `motion.OrbitRange` preserves the two runs of indices 0–18 and
 40–58; the group prepares all 38 poses once per Update, then draws without
