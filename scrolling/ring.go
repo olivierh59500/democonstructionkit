@@ -83,6 +83,7 @@ type RingConfig struct {
 	Waves           []RingWave
 	Controls        bool
 	Commands        map[string]func()
+	SeamlessSeed    bool // Repeat a short message across all initial slots.
 }
 type RingLetter struct {
 	X, Y float64
@@ -91,7 +92,8 @@ type RingLetter struct {
 
 // Ring is a legacy timing adapter for recycled-glyph scrollers. New compositions
 // can use Scrolling with multiple Faces and named modes; this adapter preserves
-// old slot initialization, fractional widths and command timing exactly.
+// old slot initialization, fractional widths and command timing exactly unless
+// SeamlessSeed explicitly requests continuous initial copies for short text.
 type Ring struct {
 	config          RingConfig
 	letters         []RingLetter
@@ -113,10 +115,10 @@ func NewRing(c RingConfig) (*Ring, error) {
 	}
 	r := &Ring{config: c, text: []rune(c.Text), speed: c.Speed, letters: make([]RingLetter, wide+1), order: make([]int, wide+1), waves: append([]RingWave(nil), c.Waves...)}
 	for i := range r.letters {
-		r.letters[i] = RingLetter{X: math.Ceil(float64(wide+i) * c.Font.Width), Rune: r.character(r.next)}
-		r.next++
+		r.letters[i] = RingLetter{X: math.Ceil(float64(wide+i) * c.Font.Width), Rune: r.character(ringSeedIndex(i, len(r.text), c.SeamlessSeed))}
 		r.order[i] = i
 	}
+	r.next = ringSeedCursor(len(r.letters), len(r.text), c.SeamlessSeed)
 	return r, nil
 }
 

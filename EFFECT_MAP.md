@@ -146,6 +146,13 @@ matches the previous implementation exactly.
   combined scanline, projected-field/mask and multi-layer scenes. Small pure
   controller benchmarks do not establish whole-scene mobile performance.
 
+The common `scrolling.New` repeat renderer already has coverage for short
+horizontal and vertical messages, gap boundaries and mixed-font controls.
+`RingConfig.SeamlessSeed` additionally fills the initial slot bank for a short
+recycled message. It is opt-in so existing Cuddly and Union seed timing stays
+unchanged; its cursor/slot policy has a pure test and a compiled image-backed
+regression test.
+
 ## Extraction order and acceptance
 
 1. Keep the scrolling facade cohesive: DMA, Coco and MegaTwist share the

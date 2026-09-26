@@ -49,3 +49,35 @@ func TestRingControlCallbackAndPause(t *testing.T) {
 		t.Fatal("pause did not restore speed")
 	}
 }
+
+func TestRingSeamlessSeedAvoidsInitialShortMessageGap(t *testing.T) {
+	img := ebiten.NewImage(16, 8)
+	defer img.Deallocate()
+	config := RingConfig{Text: "AB", Font: BitmapGrid{Image: img, Width: 8, Height: 8, Columns: 2, First: 'A'},
+		Viewport: 32, Speed: 8}
+	legacy, err := NewRing(config)
+	if err != nil {
+		t.Fatal(err)
+	}
+	config.SeamlessSeed = true
+	seamless, err := NewRing(config)
+	if err != nil {
+		t.Fatal(err)
+	}
+	for i, letter := range seamless.letters {
+		want := rune('A' + i%2)
+		if letter.Rune != want {
+			t.Fatalf("initial slot %d = %q, want %q", i, letter.Rune, want)
+		}
+	}
+	if legacy.letters[2].Rune != -1 || seamless.Cursor() != 0 || legacy.Cursor() != len(legacy.letters) {
+		t.Fatal("legacy spacing or seamless cursor changed")
+	}
+	for range 6 {
+		legacy.Step()
+		seamless.Step()
+	}
+	if legacy.letters[0].Rune != -1 || seamless.letters[0].Rune != 'A' || seamless.Cursor() != 1 {
+		t.Fatal("first recycled glyph did not bridge the short-text loop")
+	}
+}
