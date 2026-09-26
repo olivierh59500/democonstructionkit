@@ -1071,6 +1071,28 @@ single-quad path remains independent of tile count. Excessive-density frames
 are skipped as a whole and reported by `Background.Err()` and the layer's next
 Update. Saved-project compilation checks this budget before animation starts.
 
+For a tiled picture that also undulates by rows or columns, use
+`composite.TiledWaveBackdrop`. It caches the tile field once, owns the wave
+phases and optionally scrolls a second bounded source surface. Mega Scroller
+draws the cached tiles directly through two waves; LED keeps uncovered pixels
+in its moving source while one wave samples it. Tile periods, canvas size,
+filter, wave terms, source motion and retention are separate settings:
+
+```go
+backdrop, err := composite.NewTiledWaveBackdrop(
+    presets.CuddlyLEDBackdrop(tile))
+if err != nil { return err }
+defer backdrop.Close()
+backdrop.Draw(warped)
+backdrop.Step()
+// The LED screen calls this pair once during setup before its first display.
+```
+
+Drawing never advances the wave or tile clock. The retained source and explicit
+setup draw preserve LED's preloaded first frame. A 2,000-tick pure check covers
+its tile wrap; the opt-in comparison for both old GPU pipelines uses
+`-tags dck_tiled_wave_rendercheck` in a graphical session.
+
 ### Keep mutable backdrop offsets within authored wrap rules
 
 `motion.NewWrapBank` shares the stateful part of repeated scenery. Each layer
@@ -2959,6 +2981,7 @@ remain available for effects with different behavior.
 | `composite.ScanlineBackground` | Bounded horizontal tile source, independent wave/bounce clocks and batched source rows | MegaTwist |
 | `composite.CopperBars` | Two-phase raster bank with editable table, clocks, source strips and quad/image materials | Bilizir, Coco, Multiscreen Coco |
 | `composite.CopperTitleBand` | Copper bank, timed logo and background with retained-surface or direct output | Coco and Multiscreen Coco titles |
+| `composite.TiledWaveBackdrop` | Cached tile field, ordered wave strips, optional wrapped retained source and explicit prewarm | Cuddly Mega Scroller and LED Scroller |
 | `composite.RasterOverlay` | Moving raster material with source crop, blend, scale, independent copies and exact wrap policy | Cuddly Big Sprite/Starwars, Union Wow/Replicants, DOM |
 | `composite.WindowedImageBank` | Ordered cropped views of one image, per-window offsets, independent X/Y wrap clocks and retained window surfaces | Union Disk Copier raster |
 | `effects.Mask` / `NewMaskWith` | Two owned working surfaces, configurable alpha blend/offset, output placement and top crop | DOM raster-filled scrolling; reusable for logos and scene layers |
