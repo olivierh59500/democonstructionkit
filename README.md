@@ -3669,6 +3669,14 @@ tick. Artwork placement and the layer order remain the scene's choice; the
 same passes can deform another image by changing their amplitudes, phases,
 thickness or filters.
 
+Union's opening screen reuses `motion.HarmonicTransform` for its horizontal
+logo path. The borrowed logo, 190-pixel sine amplitude, phase rate, fixed Y and
+unit scale are separate parameters. `motion.WrapBank` controls the 96-pixel
+backdrop repeat, while `presets.UnionIntroTextCells()` supplies the two active
+row/column wave banks to `composite.HarmonicCellWarp`. A 5,000-tick pure check
+compares the logo position and every backdrop wrap with the previous formulas;
+the screen still owns the image placement and draw order.
+
 Union Multi-Plane also reuses `TCBLogoWaveSections`: setting `SampleStart` to
 40 and 844 on its two sine sections preserves Union's original global-index
 phases. Eight captures at the section joins and wrap match its previous image.
