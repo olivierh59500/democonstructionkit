@@ -1320,6 +1320,29 @@ The mask owns two bounded working surfaces and its input effects. A logo,
 scrolling surface or whole scene can supply the alpha image; the raster copies,
 phase and Porter-Duff blend remain editable independently.
 
+For several independently clipped views of one moving image, use
+`composite.WindowedImageBank`. Each window has a destination rectangle and a
+source offset; optional X/Y `WrapBank` clocks move the shared image. Filter,
+blend and scale are parameters. The bank owns one window-sized working surface
+per view, retaining the two-pass alpha and clipping of screens that already
+draw into transparent strips:
+
+```go
+bank, err := composite.NewWindowedImageBank(
+    presets.UnionDiskCopierRasterWindows(raster))
+if err != nil { return err }
+defer bank.Close()
+bank.Draw(screen) // Sample the initial offset first.
+bank.Step()
+```
+
+Union Disk Copier uses six 768 × 32 windows with five-pixel source-phase
+spacing. The screen now supplies only its raster image and layer order; the
+transport and clipped rendering are in DCK. A pure 5,000-tick comparison
+checks every window position and wrap. The opt-in GPU pixel comparison is
+available with `-tags dck_window_bank_rendercheck`; it still needs a desktop
+session with a visible Ebitengine monitor to run.
+
 For a background assembled from vertically sampled source strips,
 `composite.VerticalStripTrain` caches the source views once and owns the moving
 source phase. Configure source stride and crop height separately from the
@@ -2895,6 +2918,7 @@ remain available for effects with different behavior.
 | `composite.ScanlineBackground` | Bounded horizontal tile source, independent wave/bounce clocks and batched source rows | MegaTwist |
 | `composite.CopperBars` | Two-phase raster bank with editable table, clocks, source strips and quad/image materials | Bilizir, Coco, Multiscreen Coco |
 | `composite.RasterOverlay` | Moving raster material with source crop, blend, scale, independent copies and exact wrap policy | Cuddly Big Sprite/Starwars, Union Wow/Replicants, DOM |
+| `composite.WindowedImageBank` | Ordered cropped views of one image, per-window offsets, independent X/Y wrap clocks and retained window surfaces | Union Disk Copier raster |
 | `effects.Mask` / `NewMaskWith` | Two owned working surfaces, configurable alpha blend/offset, output placement and top crop | DOM raster-filled scrolling; reusable for logos and scene layers |
 | `composite.VerticalStripTrain` | Cached source bands, independent sample/destination steps, moving phase and exact edge skipping | DOM scrolling scenery |
 | `composite.RasterTitle` | Two-phase moving raster behind a title, optional small canvas or direct clipped draw | Viva TCB and Multiscreen Viva |
