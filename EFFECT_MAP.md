@@ -182,12 +182,13 @@ matches the previous implementation exactly.
 - The Go `cmd/pixelprobe` samples SurfaceFlinger's actual-present timestamps.
   Twelve history windows at two-second spacing yielded 744 distinct intervals
   for each of Union Multi-Plane and Starballs, Multiscreen's four-demo tour,
-  Bilizir, DMA Is Back, Phenomena DNA, standalone TCB Replicants and Vectorballs'
-  authored sequence. All eight measured scenes had zero intervals above 20 ms;
-  detailed p95/max values
-  appear below. Union intro and its Replicants screen additionally had 63-frame
-  spot checks with zero intervals above 20 ms. Screenshots confirmed the
-  effects, and thermal status remained 0.
+  Bilizir, DMA Is Back, Phenomena DNA, standalone TCB Replicants, Vectorballs'
+  authored sequence, 3D DOC, DMA 3D, Coco, MegaTwist, TeamG1 and Nonameno.
+  All fourteen measured scenes had zero intervals above 20 ms; detailed p95/max
+  values appear below. Union intro and its Replicants screen additionally had
+  63-frame spot checks with zero intervals above 20 ms. Screenshots confirmed
+  the effects, and thermal status remained 0 during the earlier eight-scene
+  run. The newer six scenes were each inspected at a visible main-stage frame.
 - The remaining catalog screens, longer playback, varying device refresh rates
   and battery consumption still need device checks. The sampled windows do not
   prove that every cue boundary or full megademo tour stays at 60 FPS.
@@ -202,6 +203,12 @@ matches the previous implementation exactly.
 | Phenomena DNA | 744 | 16.712 ms | 16.919 ms | 0 |
 | TCB Replicants | 744 | 16.768 ms | 18.365 ms | 0 |
 | Vectorballs authored sequence | 744 | 16.780 ms | 17.072 ms | 0 |
+| 3D DOC main | 744 | 16.764 ms | 16.897 ms | 0 |
+| DMA 3D | 744 | 16.783 ms | 16.944 ms | 0 |
+| Coco main | 744 | 16.772 ms | 17.654 ms | 0 |
+| MegaTwist main | 744 | 16.761 ms | 16.923 ms | 0 |
+| TeamG1 main | 744 | 16.736 ms | 16.935 ms | 0 |
+| Nonameno main | 744 | 16.748 ms | 16.970 ms | 0 |
 
 The Pixel's physical landscape display was 2,424×1,080. The main logical
 surfaces measured here include 768×540 for Cuddly, 768×536 for Union and
@@ -235,7 +242,7 @@ regression test.
    common cases while Go callbacks remain available for special cases.
 4. Continue measuring combined scene classes on Pixel. The ledger now samples
    scanline/warp, projected field, masks and multi-layer compositions, with
-   Cuddly CPU timings and eight scene-level presentation traces. Long-running
+   Cuddly CPU timings and fourteen scene-level presentation traces. Long-running
    tours, additional catalog screens, cue boundaries, memory peaks and battery
    use still need device evidence.
 
