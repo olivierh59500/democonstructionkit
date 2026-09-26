@@ -348,19 +348,27 @@ Those two screens also share `motion.RecurrentRowWave` for the DNA strips'
 staggered transition from a flat baseline into a cosine wave. The component
 resets its sine/cosine recurrence at each draw and advances it only when
 `DNAFrames.DrawSlices` calls `Y` for a valid source strip. That distinction
-keeps startup, missing-glyph and loop frames aligned:
+keeps startup, missing-glyph and loop frames aligned. It also owns the scene
+time; `FrameStart` and `FrameStep` can be edited independently of the strip
+sampling cadence:
 
 ```go
 rows, err := motion.NewRecurrentRowWave(presets.PhenomenaDNARows())
 if err != nil { return err }
 draw := scrolling.DNADrawConfig{SliceWidth: 2, ScaleX: 2, ScaleY: 1.5,
     OriginY: 156, Y: rows.At}
-if err := rows.Begin(sceneTime); err != nil { return err }
+// AdvanceFrame once per active simulation update, after the initial frame.
+if err := rows.AdvanceFrame(); err != nil { return err }
+if err := rows.BeginFrame(); err != nil { return err }
 film.DrawSlices(screen, stream.Slices(), stream.Head(), draw)
 ```
 
 `ScaleX`, `ScaleY` and `OriginY` may differ between scenes. The wave's reveal
-threshold, per-strip delay, baseline, amplitude, angle and phase step are data;
+threshold, per-strip delay, baseline, amplitude, angle and phase step are data.
+`SetFrameStep` changes tempo, `SetFrameTime` seeks to a cue, and `ResetFrame`
+returns to the authored start without resetting the strip program. The old
+`Begin(time)` still accepts an externally scheduled clock. The owned clock
+replaces local scene-time accumulators in both Phenomena variants;
 the pure controller matched the preceding recurrence at flat, boundary and late
 times while skipping invalid source strips, without drawing-time allocations.
 

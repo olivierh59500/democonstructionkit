@@ -9,5 +9,6 @@ func PhenomenaDNARows() motion.RecurrentRowWaveConfig {
 		Base: 67, Flat: 80, Amplitude: 80,
 		RevealTime: 5 * 50, IndexDelay: .0033, SampleTimeStep: 1.0 / 6.0,
 		StartAngle: 5 * 10.50, TimeDivisor: 6, AngleStep: 1.0 / 36.0,
+		FrameStep: .30,
 	}
 }

@@ -47,3 +47,72 @@ func TestRecurrentRowWaveMatchesPhenomenaAtSkippedStripsAndReveal(t *testing.T) 
 		t.Fatalf("row wave draw allocated %.2f objects", got)
 	}
 }
+
+func TestRecurrentRowWaveOwnedFrameClockMatchesExternalSchedule(t *testing.T) {
+	c := RecurrentRowWaveConfig{
+		Base: 67, Flat: 80, Amplitude: 80,
+		RevealTime: 250, IndexDelay: .0033, SampleTimeStep: 1.0 / 6.0,
+		StartAngle: 52.5, TimeDivisor: 6, AngleStep: 1.0 / 36.0,
+		FrameStep: .30,
+	}
+	owned, err := NewRecurrentRowWave(c)
+	if err != nil {
+		t.Fatal(err)
+	}
+	external, err := NewRecurrentRowWave(c)
+	if err != nil {
+		t.Fatal(err)
+	}
+	frameTime := 0.0
+	step := .30
+	for frame := 0; frame < 5000; frame++ {
+		if frame == 2500 {
+			step = .45
+			if err := owned.SetFrameStep(step); err != nil {
+				t.Fatal(err)
+			}
+		}
+		if frame > 0 {
+			frameTime += step
+			if err := owned.AdvanceFrame(); err != nil {
+				t.Fatal(err)
+			}
+		}
+		if owned.FrameTime() != frameTime {
+			t.Fatalf("frame %d time = %g, want %g", frame, owned.FrameTime(), frameTime)
+		}
+		if err := owned.BeginFrame(); err != nil {
+			t.Fatal(err)
+		}
+		if err := external.Begin(frameTime); err != nil {
+			t.Fatal(err)
+		}
+		for row := 0; row < 120; row++ {
+			if row%7 == 0 {
+				continue
+			}
+			if got, want := owned.At(row), external.At(row); got != want {
+				t.Fatalf("frame %d row %d = %g, want %g", frame, row, got, want)
+			}
+		}
+	}
+	if err := owned.SetFrameStep(math.NaN()); err == nil {
+		t.Fatal("accepted nonfinite frame step")
+	}
+	if err := owned.SetFrameTime(7.5); err != nil || owned.FrameTime() != 7.5 {
+		t.Fatalf("could not seek scene time: %g, %v", owned.FrameTime(), err)
+	}
+	owned.ResetFrame()
+	if owned.FrameTime() != c.FrameStart {
+		t.Fatalf("reset time = %g, want %g", owned.FrameTime(), c.FrameStart)
+	}
+	if got := testing.AllocsPerRun(100, func() {
+		_ = owned.AdvanceFrame()
+		_ = owned.BeginFrame()
+		for row := 0; row < 120; row++ {
+			owned.At(row)
+		}
+	}); got != 0 {
+		t.Fatalf("owned row-wave frame allocated %v times", got)
+	}
+}
