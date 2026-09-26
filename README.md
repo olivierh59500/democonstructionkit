@@ -1791,8 +1791,8 @@ subsequent waits:
 ```go
 caption, err := scrolling.NewCaptionCarousel(presets.UnionTNTCaption(lines, font))
 if err != nil { return err }
-caption.Draw(stage) // Paint the current pose first.
-caption.Step()      // Advance to the next pose afterward.
+caption.Step()      // Capture this tick's pose, then advance the clock.
+caption.Draw(stage) // Repeated draws retain the captured pose.
 ```
 
 The pure clock was compared through several line changes and loop crossings;

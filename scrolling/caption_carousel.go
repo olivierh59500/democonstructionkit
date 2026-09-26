@@ -34,11 +34,12 @@ type captionLine struct {
 }
 
 // CaptionCarousel caches font regions once and borrows the background image.
-// Draw clears only the configured banner and paints the current caption; Step
-// is called afterward to retain the first source pose and held boundaries.
+// Update prepares the current caption before advancing the clock, so the
+// usual Update-then-Draw order retains the first source pose and hold bounds.
 type CaptionCarousel struct {
 	config         CaptionCarouselConfig
 	motion         *motion.CaptionCycle
+	prepared       motion.CaptionPose
 	lines          []captionLine
 	lastDst        *ebiten.Image
 	backgroundView *ebiten.Image
@@ -65,7 +66,8 @@ func NewCaptionCarousel(c CaptionCarouselConfig) (*CaptionCarousel, error) {
 		c.CenterStep = c.Font.Width * c.ScaleX / 2
 	}
 	c.Lines = append([]string(nil), c.Lines...)
-	result := &CaptionCarousel{config: c, motion: clock, lines: make([]captionLine, len(c.Lines))}
+	result := &CaptionCarousel{config: c, motion: clock, prepared: clock.Pose(),
+		lines: make([]captionLine, len(c.Lines))}
 	for i, line := range c.Lines {
 		runes := []rune(line)
 		count := len(runes)
@@ -101,7 +103,7 @@ func (c *CaptionCarousel) Draw(dst *ebiten.Image) {
 	if c.backgroundView != nil {
 		c.backgroundView.Fill(c.config.BackgroundColor)
 	}
-	pose := c.motion.Pose()
+	pose := c.prepared
 	line := c.lines[pose.Index]
 	x := c.config.CenterX - line.centerWidth
 	for _, glyph := range line.glyphs {
@@ -113,6 +115,10 @@ func (c *CaptionCarousel) Draw(dst *ebiten.Image) {
 	}
 }
 
-func (c *CaptionCarousel) Step()                        { c.motion.Step() }
+func (c *CaptionCarousel) Step() {
+	c.prepared = c.motion.Pose()
+	c.motion.Step()
+}
 func (c *CaptionCarousel) Update(kit.Frame) error       { c.Step(); return nil }
+func (c *CaptionCarousel) Pose() motion.CaptionPose     { return c.prepared }
 func (c *CaptionCarousel) Motion() *motion.CaptionCycle { return c.motion }
