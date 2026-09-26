@@ -148,6 +148,52 @@ func checkBackgroundPixels() error {
 			count++
 		}
 	}
+	if err := checkMegaScrollerMaskPixels(); err != nil {
+		return err
+	}
 	fmt.Printf("Background GPU output matches brute-force placement in %d cases\n", count)
 	return nil
+}
+
+func checkMegaScrollerMaskPixels() error {
+	pixels := image.NewNRGBA(image.Rect(0, 0, 640, 480))
+	for y := 0; y < 480; y++ {
+		for x := 0; x < 640; x++ {
+			pixels.SetNRGBA(x, y, color.NRGBA{
+				R: uint8(x * 3), G: uint8(y * 5), B: 180,
+				A: uint8(40 + (x+y)%216),
+			})
+		}
+	}
+	source := ebiten.NewImageFromImage(pixels)
+	defer source.Deallocate()
+	actual := ebiten.NewImageWithOptions(image.Rect(0, 0, 320, 240), &ebiten.NewImageOptions{Unmanaged: true})
+	expected := ebiten.NewImageWithOptions(image.Rect(0, 0, 320, 240), &ebiten.NewImageOptions{Unmanaged: true})
+	defer actual.Deallocate()
+	defer expected.Deallocate()
+	background, err := NewBackground(BackgroundConfig{
+		PeriodX: 8, CopiesX: 48, Filter: ebiten.FilterLinear, Blend: ebiten.BlendSourceOver,
+	})
+	if err != nil {
+		return err
+	}
+	background.DrawAt(actual, source, 0, 0)
+	for i := 0; i < 48; i++ {
+		var op ebiten.DrawImageOptions
+		op.Filter, op.Blend = ebiten.FilterLinear, ebiten.BlendSourceOver
+		op.GeoM.Translate(float64(i*8), 0)
+		expected.DrawImage(source, &op)
+	}
+	got, want := make([]byte, 320*240*4), make([]byte, 320*240*4)
+	actual.ReadPixels(got)
+	expected.ReadPixels(want)
+	if !bytes.Equal(got, want) {
+		pixel := 0
+		for got[pixel] == want[pixel] {
+			pixel++
+		}
+		return fmt.Errorf("finite overlapping Mega Scroller mask differs at (%d,%d): got %v, want %v",
+			(pixel/4)%320, pixel/(4*320), got[pixel/4*4:pixel/4*4+4], want[pixel/4*4:pixel/4*4+4])
+	}
+	return background.Err()
 }

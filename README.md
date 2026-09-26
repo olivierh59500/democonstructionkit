@@ -1059,6 +1059,13 @@ The same finite effect can be saved for an editor or loaded from JSON:
 The `tile` ID is resolved by the host application. The compiler checks copy
 counts and worst-case visible submissions before allocating render resources.
 
+Finite copies can also overlap. Mega Scroller's large bar image starts at X=0
+and is drawn at eight-pixel intervals for 48 authored positions. Configure
+`CopiesX: 48` and `PeriodX: 8` to keep the same ascending blend order;
+`Background` submits the 40 positions that intersect its 320-pixel mask and
+skips the eight entirely outside it. The opt-in background GPU check compares
+all mask pixels with the former 48-draw loop, including translucent overlap.
+
 Combine several `BackgroundLayer` values with different parallax factors for
 scenery. `Background.Draw` accepts a pose directly; `DrawAt` accepts existing
 screen offsets. A destination subimage defines a viewport without another render
@@ -2975,7 +2982,7 @@ remain available for effects with different behavior.
 | `scrolling.Config.Slots` | Glyph recycling, wave motion, tangent orientation and custom poses | Cuddly Reset |
 | `scrolling.Reveal` | Cached text layout and ordered per-character entrance | Union loader |
 | `composite.Bands` | Independently moving/repeated background strips and batched drawing | Union Multiplane |
-| `composite.Background` entry mode | An image enters once before repeat copies appear on either axis | Union Beat Dis wallpaper |
+| `composite.Background` entry and finite-copy modes | A single image enters before repetition, or overlaps a bounded ordered mask bank | Union Beat Dis wallpaper, Cuddly Mega Scroller mask |
 | `composite.RotozoomBackground` | One tiled GPU quad with independent pose, phase, velocity, source-sized geometry or a staged motion program | Viva TCB, Coco, Multiscreen Coco/Viva |
 | `indexed.Rotozoom256` | Allocation-free fixed-point rotozoom over indexed 256 × 256 textures | Second Reality Rotozoomer |
 | `composite.ScanlineBackground` | Bounded horizontal tile source, independent wave/bounce clocks and batched source rows | MegaTwist |
