@@ -412,6 +412,26 @@ the full introduction and exit against the previous source, with no per-step
 allocations. An embedded panel can start at `presets.PhenomenaMain` without
 playing the introduction.
 
+For a camera that tours several continuously running scenes, `motion.CameraTour`
+keeps held views and eased handoffs as data. Each segment selects a world-center
+or camera-offset coordinate system, zoom, visible-scene mask and an optional
+direct source index for fixed views. Multiscreen's editable recipe visits four
+800×600 screens in a 2×2 world and then zooms out:
+
+```go
+config := presets.MultiscreenCameraTour()
+config.Segments[presets.MultiscreenMove12].Duration = 5
+tour, err := motion.NewCameraTour(config)
+if err != nil { return err }
+tour.Step()
+pose := tour.State() // CenterX, CenterY, Zoom, VisibleMask, Direct.
+```
+
+The pure recipe test compares every pose and mask across multiple complete
+loops, including exact held-to-moving and moving-to-held boundaries. The
+controller advances without allocations; the retained canvases and shader
+composition are a separate renderer extraction.
+
 Cuddly's DNA screen uses a different effect family: two live text images twist
 as front and back faces of a twenty-strip ribbon. `composite.TwistingRibbon`
 owns the phase, source crops, vertical mirroring and ordered occlusion; any
