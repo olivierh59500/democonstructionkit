@@ -83,3 +83,40 @@ func TestSolidCubeTrainAcceptsCustomPathAndMaterials(t *testing.T) {
 		t.Fatal("accepted fewer cube materials than instances")
 	}
 }
+
+func TestMultiscreenCubeTrainKeepsReanchoredRecurrence(t *testing.T) {
+	config := presets.MultiscreenCocoCubeTrain(800, 600, 40, 12)
+	train, err := effects.NewSolidCubeTrain(config)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer train.Close()
+	phase := .15
+	pathSin, pathCos := math.Sincos(phase)
+	bobSin, bobCos := math.Sincos(phase * 2.5)
+	pathStepSin, pathStepCos := math.Sincos(.04)
+	bobStepSin, bobStepCos := math.Sincos(.1)
+	for tick := 1; tick <= 10_000; tick++ {
+		if err := train.Update(kit.Frame{}); err != nil {
+			t.Fatal(err)
+		}
+		phase += .04
+		if tick&1023 == 0 {
+			phase = math.Mod(phase, 4*math.Pi)
+			pathSin, pathCos = math.Sincos(phase)
+			bobSin, bobCos = math.Sincos(phase * 2.5)
+		} else {
+			pathSin, pathCos = pathSin*pathStepCos+pathCos*pathStepSin, pathCos*pathStepCos-pathSin*pathStepSin
+			bobSin, bobCos = bobSin*bobStepCos+bobCos*bobStepSin, bobCos*bobStepCos-bobSin*bobStepSin
+		}
+		position, _, ok := train.Pose(0)
+		if !ok || math.Abs(position.X-(380+380*pathSin)) > 1e-11 ||
+			math.Abs(position.Y-(300+84*bobCos)) > 1e-11 {
+			t.Fatalf("tick %d cached cube position %+v differs", tick, position)
+		}
+	}
+	config.Path = func(int, float64) motion.Point { return motion.Point{} }
+	if _, err := effects.NewSolidCubeTrain(config); err == nil {
+		t.Fatal("accepted a custom path with harmonic recurrence")
+	}
+}

@@ -30,7 +30,11 @@ type SolidCubeTrainConfig struct {
 	RotationStep        geometry.Vec3
 	RotationIndexFactor geometry.Vec3
 	Speed               float64 // Zero defaults to one; SetSpeed can pause later.
+	RecurrenceInterval  int     // Zero samples X/Y waves directly on each Draw.
+	RecurrencePeriod    float64 // Positive phase wrap when recurrence reanchors.
 }
+
+type cubeWaveState struct{ sinX, cosX, sinY, cosY float64 }
 
 // SolidCubeTrain owns the cube geometry and one bounded batch. Update changes
 // pose once per logical tick; repeated Draw calls retain the same positions.
@@ -40,6 +44,9 @@ type SolidCubeTrain struct {
 	phases []float64
 	batch  *SolidCubeBatch
 	speed  float64
+	waves  []cubeWaveState
+	step   [4]float64
+	tick   uint64
 }
 
 func NewSolidCubeTrain(c SolidCubeTrainConfig) (*SolidCubeTrain, error) {
@@ -47,7 +54,7 @@ func NewSolidCubeTrain(c SolidCubeTrainConfig) (*SolidCubeTrain, error) {
 		return nil, fmt.Errorf("effects: invalid solid cube train count or materials")
 	}
 	for _, value := range [...]float64{
-		c.PhaseStart, c.PhaseSpacing, c.PhaseIndexOrigin, c.PhaseStep, c.Speed,
+		c.PhaseStart, c.PhaseSpacing, c.PhaseIndexOrigin, c.PhaseStep, c.Speed, c.RecurrencePeriod,
 		c.X.Amplitude, c.X.Spatial, c.X.Speed, c.X.Phase, c.X.Offset,
 		c.Y.Amplitude, c.Y.Spatial, c.Y.Speed, c.Y.Phase, c.Y.Offset,
 		c.RotationStart.X, c.RotationStart.Y, c.RotationStart.Z,
@@ -61,6 +68,10 @@ func NewSolidCubeTrain(c SolidCubeTrainConfig) (*SolidCubeTrain, error) {
 	}
 	if c.Speed < 0 {
 		return nil, fmt.Errorf("effects: negative solid cube train speed")
+	}
+	if c.RecurrenceInterval < 0 || c.RecurrenceInterval > 1_000_000 ||
+		c.RecurrenceInterval > 0 && (c.RecurrencePeriod <= 0 || c.Path != nil) {
+		return nil, fmt.Errorf("effects: invalid solid cube train recurrence")
 	}
 	speed := c.Speed
 	if speed == 0 {
@@ -88,6 +99,14 @@ func NewSolidCubeTrain(c SolidCubeTrainConfig) (*SolidCubeTrain, error) {
 		train.cubes[i] = cube
 		train.phases[i] = c.PhaseStart + c.PhaseSpacing*(float64(i)+c.PhaseIndexOrigin)
 	}
+	if c.RecurrenceInterval > 0 {
+		train.waves = make([]cubeWaveState, c.Count)
+		for i, phase := range train.phases {
+			train.waves[i].sinX, train.waves[i].cosX = math.Sincos(phase*c.X.Speed + c.X.Phase)
+			train.waves[i].sinY, train.waves[i].cosY = math.Sincos(phase*c.Y.Speed + c.Y.Phase)
+		}
+		train.setRecurrenceStep()
+	}
 	return train, nil
 }
 
@@ -97,7 +116,16 @@ func (t *SolidCubeTrain) SetSpeed(speed float64) error {
 		return fmt.Errorf("effects: invalid solid cube train speed")
 	}
 	t.speed = speed
+	if t.waves != nil {
+		t.setRecurrenceStep()
+	}
 	return nil
+}
+
+func (t *SolidCubeTrain) setRecurrenceStep() {
+	delta := t.config.PhaseStep * t.speed
+	t.step[0], t.step[1] = math.Sincos(delta * t.config.X.Speed)
+	t.step[2], t.step[3] = math.Sincos(delta * t.config.Y.Speed)
 }
 
 func (t *SolidCubeTrain) Update(kit.Frame) error {
@@ -108,8 +136,21 @@ func (t *SolidCubeTrain) Update(kit.Frame) error {
 		return nil
 	}
 	c := t.config
+	t.tick++
+	reanchor := c.RecurrenceInterval > 0 && t.tick%uint64(c.RecurrenceInterval) == 0
 	for i, cube := range t.cubes {
 		t.phases[i] += c.PhaseStep * t.speed
+		if t.waves != nil {
+			wave := &t.waves[i]
+			if reanchor {
+				t.phases[i] = math.Mod(t.phases[i], c.RecurrencePeriod)
+				wave.sinX, wave.cosX = math.Sincos(t.phases[i]*c.X.Speed + c.X.Phase)
+				wave.sinY, wave.cosY = math.Sincos(t.phases[i]*c.Y.Speed + c.Y.Phase)
+			} else {
+				wave.sinX, wave.cosX = wave.sinX*t.step[1]+wave.cosX*t.step[0], wave.cosX*t.step[1]-wave.sinX*t.step[0]
+				wave.sinY, wave.cosY = wave.sinY*t.step[3]+wave.cosY*t.step[2], wave.cosY*t.step[3]-wave.sinY*t.step[2]
+			}
+		}
 		index := float64(i)
 		cube.Rotate(
 			c.RotationStep.X*t.speed*(1+index*c.RotationIndexFactor.X),
@@ -132,6 +173,23 @@ func (t *SolidCubeTrain) position(index int) motion.Point {
 	phase := t.phases[index]
 	if t.config.Path != nil {
 		return t.config.Path(index, phase)
+	}
+	if t.waves != nil {
+		wave := t.waves[index]
+		x, y := wave.sinX, wave.sinY
+		if t.config.X.Cos {
+			x = wave.cosX
+		}
+		if t.config.Y.Cos {
+			y = wave.cosY
+		}
+		if t.config.X.Rectify {
+			x = math.Abs(x)
+		}
+		if t.config.Y.Rectify {
+			y = math.Abs(y)
+		}
+		return motion.Point{X: t.config.X.Offset + t.config.X.Amplitude*x, Y: t.config.Y.Offset + t.config.Y.Amplitude*y}
 	}
 	return motion.Point{X: t.config.X.At(0, phase), Y: t.config.Y.At(0, phase)}
 }

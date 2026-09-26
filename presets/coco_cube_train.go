@@ -1,6 +1,8 @@
 package presets
 
 import (
+	"math"
+
 	"github.com/olivierh59500/democonstructionkit/effects"
 	"github.com/olivierh59500/democonstructionkit/geometry"
 	"github.com/olivierh59500/democonstructionkit/motion"
@@ -19,4 +21,14 @@ func CocoCubeTrain(width, height, cubeSize float64, count int) effects.SolidCube
 		RotationStep:        geometry.Vec3{X: .02, Y: .03, Z: .01},
 		RotationIndexFactor: geometry.Vec3{X: .1, Y: .15, Z: .05},
 	}
+}
+
+// MultiscreenCocoCubeTrain keeps the same path with the embedded screen's
+// material and bounded sine/cosine recurrence for long-running playback.
+func MultiscreenCocoCubeTrain(width, height, cubeSize float64, count int) effects.SolidCubeTrainConfig {
+	c := CocoCubeTrain(width, height, cubeSize, count)
+	c.Cube = MultiscreenCocoCube(cubeSize)
+	c.RecurrenceInterval = 1024
+	c.RecurrencePeriod = 4 * math.Pi
+	return c
 }

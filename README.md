@@ -2201,7 +2201,7 @@ remain available for effects with different behavior.
 | `BitmapRecipe`, `BitmapText`, `BitmapParagraph` | Fractional atlas sampling, cached character lookup and paragraph alignment | Cuddly screens, Union screens/menu/loaders |
 | `effects.JellyCube` | Five-mode controller, entrance, deformation, continuous handoffs, projection and rendering | DMA Is Back; `examples/jellycubes` |
 | `effects.SolidCube` / `SolidCubeBatch` | Material, culling, face ordering, outlines and bounded batch submission | Bilizir, Multiscreen Coco |
-| `effects.SolidCubeTrain` | Independent cube phases, editable X/Y curves or a custom path, per-index rotation and one bounded batch | Coco cube procession |
+| `effects.SolidCubeTrain` | Independent cube phases, editable X/Y curves or a custom path, optional reanchored recurrence, per-index rotation and one bounded batch | Coco and Multiscreen Coco cube processions |
 | `effects.TexturedCube` | Live texture mapping, camera, rotation, face ordering and culling | TeamG1 |
 | `effects.PerspectiveCheckerboard` | Perspective stripe geometry, two-axis motion, XOR composition and bounded surfaces | 3D DOC and Cuddly 3D DOC |
 | `effects.ProjectedBallTrain` | Blended movement programs, projected sprites/shadows, phase and depth/palette ordering | 3D DOC and Cuddly 3D DOC |
@@ -2598,6 +2598,11 @@ different trajectory; the supplied X/Y waves then become optional. Each cube
 can also receive its own `SolidCubeConfig` through `CubeConfigs`. `Pose(index)`
 exposes the current screen position and XYZ rotation for transitions or an
 editor without advancing the animation. Zero live speed pauses the train.
+`presets.MultiscreenCocoCubeTrain` selects the embedded panel's material and
+reanchors its cached sine/cosine path every 1,024 ticks with a 4π phase wrap.
+This avoids per-cube trigonometric sampling on every draw during long camera
+tours. `RecurrenceInterval` and `RecurrencePeriod` remain editable; set the
+interval to zero for direct wave sampling or assign a custom `Path` instead.
 
 A textured cube accepts a live image, such as a plasma surface, scroller or logo:
 
