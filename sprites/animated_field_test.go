@@ -6,10 +6,12 @@ import (
 
 	"github.com/hajimehoshi/ebiten/v2"
 	kit "github.com/olivierh59500/democonstructionkit"
+	"github.com/olivierh59500/democonstructionkit/fidelity/ebiten/testutil"
 	"github.com/olivierh59500/democonstructionkit/motion"
 )
 
 func TestAnimatedFieldDrawsSelectedAtlasFrameAndRespawns(t *testing.T) {
+	testutil.RequireGPU(t)
 	red, blue := ebiten.NewImage(1, 1), ebiten.NewImage(1, 1)
 	defer red.Deallocate()
 	defer blue.Deallocate()
@@ -49,6 +51,7 @@ func TestAnimatedFieldDrawsSelectedAtlasFrameAndRespawns(t *testing.T) {
 }
 
 func TestAnimatedFieldSelectsStaticMaterialPerParticle(t *testing.T) {
+	testutil.RequireGPU(t)
 	red, blue := ebiten.NewImage(1, 1), ebiten.NewImage(1, 1)
 	defer red.Deallocate()
 	defer blue.Deallocate()

@@ -2,12 +2,11 @@
 
 This map covers every DCK production under `demos/` except FR-010 and Second
 Reality. The screen and workspace audits began on 2026-09-23; the wrap/train
-inventory was checked across all 20 DCK repositories on 2026-09-25. The
-module-wide build/vet check was refreshed on 2026-09-26. A complete component
-owns its transport,
-animation state, geometry and rendering resources. The production supplies
-assets, messages, presets, input and scene order. A shared draw helper alone is
-not counted as a complete effect.
+inventory was checked across all 20 DCK repositories on 2026-09-25. The DCK
+module-wide build, vet and test checks were refreshed on 2026-09-27. A complete
+component owns its transport, animation state, geometry and rendering resources.
+The production supplies assets, messages, presets, input and scene order. A
+shared draw helper alone is not counted as a complete effect.
 
 `Shared` names a complete component already used by that screen. The third
 column distinguishes intentional production composition from reusable logic
@@ -128,11 +127,16 @@ matches the previous implementation exactly.
 | Multi-Plane | Complete `effects.MultiPlaneScene` in native-stage mode, with Union's source-index phases, `composite.ProfileImage` row renderer and strict `sprites.AxisFlip` cycle | Artwork, text, soundtrack and door routing remain production data. |
 | Disk Copier | Bitmap recipes, `sprites.Atlas` LCD regions, `motion.GatedWrapBank` three LCD clocks, `composite.WindowedImageBank` six-strip raster with its shared phase, `timeline.CueRanges` stages and `timeline.SteppedEnvelope` palette | Input/state program and LED layer placement remain scene composition data. |
 
-## Verification ledger (2026-09-26)
+## Verification ledger (2026-09-27)
 
 - `GOWORK=off go build ./...` and `go vet ./...` passed in all 20 demo modules
   with their published dependency pins. FR-010 and Second Reality are included
   in these compatibility checks, not in the full-screen effect audit above.
+- DCK's complete `GOWORK=off go test ./...`, `go build ./...` and `go vet ./...`
+  pass. The explicit `dck_gpu_rendercheck` suite also passes for `composite`,
+  `scrolling` and `sprites`; these assertions read GPU pixels only after an
+  Ebitengine game loop starts. The separate `dck_composition_rendercheck` suite
+  preserves paired-background draw order and masked output pixels.
 - DCK's pure `motion`, `geometry`, `timeline`, `timeline/recipes`, `palette` and
   `modulation` test suites pass. Eleven opt-in GPU comparators ran successfully
   against DCK code `f9ebe64`: water reflection, staged materials, copper titles,

@@ -8,6 +8,7 @@ import (
 
 	"github.com/hajimehoshi/ebiten/v2"
 	kit "github.com/olivierh59500/democonstructionkit"
+	"github.com/olivierh59500/democonstructionkit/fidelity/ebiten/testutil"
 )
 
 func TestRasterOverlayWrapPolicies(t *testing.T) {
@@ -34,6 +35,7 @@ func TestRasterOverlayWrapPolicies(t *testing.T) {
 }
 
 func TestRasterOverlayDrawsIndependentAuthoredCopies(t *testing.T) {
+	testutil.RequireGPU(t)
 	texture := ebiten.NewImage(1, 1)
 	defer texture.Deallocate()
 	texture.Fill(color.RGBA{R: 255, A: 255})

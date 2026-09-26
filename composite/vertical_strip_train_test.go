@@ -6,9 +6,11 @@ import (
 	"testing"
 
 	"github.com/hajimehoshi/ebiten/v2"
+	"github.com/olivierh59500/democonstructionkit/fidelity/ebiten/testutil"
 )
 
 func TestVerticalStripTrainSamplesCachedRowsAndSkipsSourceOverflow(t *testing.T) {
+	testutil.RequireGPU(t)
 	source := ebiten.NewImage(1, 8)
 	defer source.Deallocate()
 	for y := 0; y < 8; y++ {

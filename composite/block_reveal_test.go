@@ -6,10 +6,12 @@ import (
 
 	"github.com/hajimehoshi/ebiten/v2"
 	kit "github.com/olivierh59500/democonstructionkit"
+	"github.com/olivierh59500/democonstructionkit/fidelity/ebiten/testutil"
 	"github.com/olivierh59500/democonstructionkit/motion"
 )
 
 func TestBlockRevealUsesEditableGridOrderAndTimedHold(t *testing.T) {
+	testutil.RequireGPU(t)
 	source := ebiten.NewImage(4, 4)
 	defer source.Deallocate()
 	source.Fill(color.RGBA{R: 255, A: 255})

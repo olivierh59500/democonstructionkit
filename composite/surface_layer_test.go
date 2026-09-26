@@ -7,9 +7,11 @@ import (
 
 	"github.com/hajimehoshi/ebiten/v2"
 	kit "github.com/olivierh59500/democonstructionkit"
+	"github.com/olivierh59500/democonstructionkit/fidelity/ebiten/testutil"
 )
 
 func TestSurfaceLayerComposesSourcesRasterAndOutputCopies(t *testing.T) {
+	testutil.RequireGPU(t)
 	red, blue := ebiten.NewImage(1, 1), ebiten.NewImage(1, 1)
 	defer red.Deallocate()
 	defer blue.Deallocate()

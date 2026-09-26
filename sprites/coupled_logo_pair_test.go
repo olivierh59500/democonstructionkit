@@ -6,10 +6,12 @@ import (
 	"testing"
 
 	"github.com/hajimehoshi/ebiten/v2"
+	"github.com/olivierh59500/democonstructionkit/fidelity/ebiten/testutil"
 	"github.com/olivierh59500/democonstructionkit/motion"
 )
 
 func TestCoupledLogoPairUsesQuantizedFramesAndDepthOrder(t *testing.T) {
+	testutil.RequireGPU(t)
 	red, blue := ebiten.NewImage(2, 2), ebiten.NewImage(2, 2)
 	defer red.Deallocate()
 	defer blue.Deallocate()

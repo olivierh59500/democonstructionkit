@@ -2418,6 +2418,18 @@ The two small `effects` image-readback checks run inside Ebitengine with
 `go test -tags dck_composition_rendercheck -run '^$' ./effects`; the regular
 `go test ./effects` suite keeps its mask update-order check and requires no
 graphics window.
+
+The regular `go test ./...` suite also runs without a graphics window.
+Pixel-readback assertions in the composite, scrolling and sprite packages use
+the shared main-thread test runner when explicitly requested:
+
+```sh
+go test -p 1 -tags dck_gpu_rendercheck -count=1 ./composite ./scrolling ./sprites
+```
+
+`-p 1` keeps their three short Ebitengine windows sequential. The runner
+starts each package's tests only after the graphics context is active; without
+the tag, those visual assertions are skipped while the other tests still run.
 Existing original packages remain available as references. The pure geometry
 comparison allows only 1e-11 float64 variation from compiler operation fusion;
 submitted cube images are still checked byte for byte. Comparison render targets

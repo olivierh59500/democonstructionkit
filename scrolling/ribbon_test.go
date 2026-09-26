@@ -7,11 +7,13 @@ import (
 
 	"github.com/hajimehoshi/ebiten/v2"
 	kit "github.com/olivierh59500/democonstructionkit"
+	"github.com/olivierh59500/democonstructionkit/fidelity/ebiten/testutil"
 	"github.com/olivierh59500/democonstructionkit/font"
 	"github.com/olivierh59500/democonstructionkit/motion"
 )
 
 func TestRibbonFacadeUsesAtlasAdvanceAndIndependentCullWidth(t *testing.T) {
+	testutil.RequireGPU(t)
 	atlasImage := ebiten.NewImage(2, 1)
 	defer atlasImage.Deallocate()
 	atlasImage.Set(0, 0, color.RGBA{R: 255, A: 255})

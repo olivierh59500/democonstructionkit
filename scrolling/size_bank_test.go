@@ -6,9 +6,11 @@ import (
 
 	"github.com/hajimehoshi/ebiten/v2"
 	kit "github.com/olivierh59500/democonstructionkit"
+	"github.com/olivierh59500/democonstructionkit/fidelity/ebiten/testutil"
 )
 
 func TestSizeBankFacadeDrawsActiveStripAtAuthoredRows(t *testing.T) {
+	testutil.RequireGPU(t)
 	font := ebiten.NewImage(1, 1)
 	defer font.Deallocate()
 	font.Fill(color.RGBA{R: 255, A: 255})
