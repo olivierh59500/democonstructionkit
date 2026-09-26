@@ -1214,6 +1214,27 @@ for a continuous ribbon where the next copy follows the tail directly. Font
 metrics determine the pen advance; `presets.NonamenoBottomWaves` returns the
 two sine terms for editing their amplitude, frequency or direction.
 
+`scrolling.Config.Ribbon` is a fixed-tick alternative for authored horizontal
+or vertical scrolls with strict return thresholds. It uses the normal
+`scrolling.New` constructor, cached atlas glyphs and a pure
+`motion.RibbonClock`. Font advance determines the message length, while
+`CullAdvance` may preserve a different historical width used only to choose
+the first visible glyph. Grodan uses four independent recipes:
+
+```go
+recipes := presets.GrodanRibbons(messages, bigAtlas, upAtlas, smallAtlas)
+recipes[1].Clock.Velocity = 4 // Change only the vertical lane.
+scroll, err := scrolling.New(scrolling.Config{Ribbon: &recipes[1]})
+if err != nil { return err }
+if err := scroll.Update(frame); err != nil { return err }
+scroll.Draw(verticalLayer)
+```
+
+Each ribbon independently configures direction, velocity, start and restart,
+wrap threshold, font, scale, baseline and culling. `RibbonController` exposes
+the live offset and speed for editor cues. Choose ordinary `Config.Repeat`
+for a seamless loop instead of a historical exit-and-restart interval.
+
 ### Control count, spacing, delay and music-driven properties
 
 ```go
@@ -2117,6 +2138,7 @@ remain available for effects with different behavior.
 | `scrolling.Config.SizeBank` | Shared transport, controlled font-size cues, synchronized scaled offsets and repeated cached text layers | DOM four-size scroll |
 | `motion.GlyphPageCycle` + `sprites.GlyphPages` | Font-independent staggered pages, editable delay grids, elastic depth motion, completion barriers and stable atlas rendering | Nonameno text pages |
 | `scrolling.HarmonicSine` / `HarmonicSineWith` | Independent sine banks over the common text pipeline, optionally resetting spatial phase per repeated copy | Nonameno bottom scroll |
+| `scrolling.Config.Ribbon` | Fixed-tick horizontal/vertical atlas transport, editable strict wraps, independent cull width and scale | Grodan four scroll lanes |
 | `scrolling.Config.Crawl` | Paragraph window, vertical transport and perspective projection | Cuddly Starwars |
 | `scrolling.Config.Feed` | Finite glyph insertion into a cached scrolling trail | DMA Is Back, Coco, TeamG1, MegaTwist intros |
 | `scrolling.Config.Scanline` | Proportional text transport, cumulative wave, cyclic bounce and bounded strip rendering | DMA Is Back, Coco, MegaTwist main screens |

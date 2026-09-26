@@ -168,6 +168,9 @@ func newTransport(c Config) (*Scrolling, error) {
 	if c.SizeBank != nil {
 		count++
 	}
+	if c.Ribbon != nil {
+		count++
+	}
 	if count != 1 || c.Page != nil || c.Text != "" || c.Tokens != nil || c.Glyphs != nil || c.Controls != nil || len(c.Fonts) > 0 || len(c.Modes) > 0 || c.Map != nil || len(c.Shapes) > 0 || len(c.Effects) > 0 || c.Sequence != nil {
 		return nil, fmt.Errorf("scrolling: choose one transport; configure glyph modes on the regular transport and image passes on any transport")
 	}
@@ -269,6 +272,15 @@ func newTransport(c Config) (*Scrolling, error) {
 			return nil, err
 		}
 		s.backend = bank
+	} else if c.Ribbon != nil {
+		if c.X != 0 || c.Y != 0 || c.Vertical {
+			return nil, fmt.Errorf("scrolling: ribbon placement belongs in RibbonConfig")
+		}
+		ribbon, err := NewRibbon(*c.Ribbon)
+		if err != nil {
+			return nil, err
+		}
+		s.backend = ribbon
 	} else if c.Bands != nil {
 		if c.X != 0 || c.Y != 0 || c.Vertical {
 			return nil, fmt.Errorf("scrolling: text-band placement belongs in BandsConfig")

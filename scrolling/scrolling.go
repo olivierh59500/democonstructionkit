@@ -66,6 +66,7 @@ type Config struct {
 	RowColumn        *RowColumnConfig   // Fixed-advance text, row-source lookup and column displacement.
 	RowBands         *RowBandsConfig    // Circular bitmap text with ordered destination-row passes.
 	SizeBank         *SizeBankConfig    // Synchronized font-scale layers with one transport and cue clock.
+	Ribbon           *RibbonConfig      // Fixed-tick horizontal or vertical atlas ribbon.
 	Output           *OutputConfig      // Ordered image operations over the common text renderer.
 	// RepeatBounds selects the visible pen coordinates before any mappers run.
 	// Empty uses the destination bounds. Enlarge it for paths or projections that
@@ -170,6 +171,15 @@ func (s *Scrolling) SizeBankController() *SizeBank {
 	return nil
 }
 
+// RibbonController exposes the current offset and editable speed of a
+// fixed-tick ribbon selected through scrolling.New.
+func (s *Scrolling) RibbonController() *Ribbon {
+	if ribbon, ok := s.backend.(*Ribbon); ok {
+		return ribbon
+	}
+	return nil
+}
+
 // CursorRune returns the current character for transports that expose a text
 // cursor. Other transport kinds return zero.
 func (s *Scrolling) CursorRune() rune {
@@ -192,7 +202,7 @@ func New(c Config) (*Scrolling, error) {
 	if c.MaxGlyphsPerDraw < 1 || c.MaxGlyphsPerDraw > 1<<24 {
 		return nil, fmt.Errorf("scrolling: invalid automatic draw budget")
 	}
-	if c.Recycled != nil || c.RingLanes != nil || c.Projected != nil || c.Pseudo3D != nil || c.Sliced != nil || c.Crawl != nil || c.Bands != nil || c.Slots != nil || c.Feed != nil || c.Scanline != nil || c.Profiled != nil || c.RowColumn != nil || c.RowBands != nil || c.SizeBank != nil {
+	if c.Recycled != nil || c.RingLanes != nil || c.Projected != nil || c.Pseudo3D != nil || c.Sliced != nil || c.Crawl != nil || c.Bands != nil || c.Slots != nil || c.Feed != nil || c.Scanline != nil || c.Profiled != nil || c.RowColumn != nil || c.RowBands != nil || c.SizeBank != nil || c.Ribbon != nil {
 		return newTransport(c)
 	}
 	if c.Page != nil {
