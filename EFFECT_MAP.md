@@ -28,7 +28,7 @@ production. Preserved original implementations remain unchanged.
 | `dma-is-back` | Cube, intro feed, CRT and scanline scroll use their dedicated components; timed cues are separate work. |
 | `go-cocoisthebest` | Sprite grid/translation already uses `sprites.Group`; scanline scroll and cube are separate families. |
 | `go-cuddlymenu` | Colorshock's orbit/table clock, Ehhh raster train, LED backdrop/gradient wraps and harmonic letters, Big Sprite front/back `sprites.AxisFlip`, Big Sprite/Fullscreen/Digi Weave groups, and Mega Scroller's directional entrance bounce now use shared controllers. |
-| `go-dom-intro` | Raster/background offsets use `WrapBank`; its font-size program uses `scrolling.Config.SizeBank`, and animated stars use `sprites.AnimatedField`. |
+| `go-dom-intro` | Its sampled background uses `VerticalStripTrain`, its font-size program uses `scrolling.Config.SizeBank`, and animated stars use `sprites.AnimatedField`. |
 | `go-fr010` | Software-rendered parts were searched; no direct GPU image-train or simple threshold-wrap equivalent was migrated. |
 | `go-multiscreen` | Embedded Viva title rasters and TCB mountain strips use the same DCK presets as their standalone versions. The camera tour is a separate director effect. |
 | `go-secondreality` | Indexed software effects were searched separately; their palette/VRAM clocks are not interchangeable with these Ebitengine image controllers. |
@@ -54,7 +54,7 @@ production. Preserved original implementations remain unchanged.
 | DMA Is Back, main | `Config.Scanline`, ImageGrid, NestedOrbit, JellyCube, shared fade/music cue | Other whole-scene timed layers can use the general cue director. |
 | Coco, intro | `Config.Feed`, configurable CRTOverlay, immediate `timeline.IntroHandoff` music cue | Scene materials stay production data. |
 | Coco, main | `Config.Scanline`, SolidCubeBatch, sprites.Group grid/translation, shared font metrics and `CopperBars` | Repeating rotozoom and remaining title-layer presentation. |
-| DOM intro | Atlas, `scrolling.Config.SizeBank`, `motion.ScaledTextClock`, `motion.WrapBank` background, `RasterOverlay` copies, `effects.Mask` and `sprites.AnimatedField` stars | Authored text and scene layer order. |
+| DOM intro | Atlas, `scrolling.Config.SizeBank`, `motion.ScaledTextClock`, `VerticalStripTrain` background, `RasterOverlay` copies, `effects.Mask` and `sprites.AnimatedField` stars | Authored text and scene layer order. |
 | Multiscreen, four embedded productions | SolidCube, sampled DNA and projected-plane engines, atlas recipes, `CopperBars` in Coco, Viva `RasterTitle`, `scrolling.Config.Pseudo3D` text banks and `sprites.RecurrentFormation` logos, complete TCB `effects.MultiPlaneScene` | Make the other three production scenes reusable constructors rather than copies of their standalone controllers. |
 | Multiscreen, camera tour | Layer/viewport helpers | Camera/zoom director with visibility culling, retained outputs and serialized handoffs. |
 | Vectorballs | Projected shape factories, reflection | Reusable point-morph/deformation/action sequence with explicit inherited vs cleared settings and smooth handoffs. |

@@ -935,6 +935,24 @@ The mask owns two bounded working surfaces and its input effects. A logo,
 scrolling surface or whole scene can supply the alpha image; the raster copies,
 phase and Porter-Duff blend remain editable independently.
 
+For a background assembled from vertically sampled source strips,
+`composite.VerticalStripTrain` caches the source views once and owns the moving
+source phase. Configure source stride and crop height separately from the
+sample offset and destination spacing. Out-of-range strips are omitted, as in
+DOM's background near its wrap boundary:
+
+```go
+background, err := composite.NewVerticalStripTrain(
+    presets.DOMBackgroundStrips(backgroundImage))
+if err != nil { return err }
+background.Step()
+background.Draw(screen)
+```
+
+The same component can sample scenery, raster images or a text surface. It
+borrows the image, draws no intermediate full-screen surface and lets the host
+place other effects above or below the sampled strips.
+
 ### Use one particle field for stars, incoming sprites and trails
 
 `sprites.ProjectedField` owns movement, projection and the bounded renderer.
@@ -2037,6 +2055,7 @@ remain available for effects with different behavior.
 | `composite.CopperBars` | Two-phase raster bank with editable table, clocks, source strips and quad/image materials | Bilizir, Coco, Multiscreen Coco |
 | `composite.RasterOverlay` | Moving raster material with source crop, blend, scale, independent copies and exact wrap policy | Cuddly Big Sprite/Starwars, Union Wow/Replicants, DOM |
 | `effects.Mask` / `NewMaskWith` | Two owned working surfaces, configurable alpha blend/offset, output placement and top crop | DOM raster-filled scrolling; reusable for logos and scene layers |
+| `composite.VerticalStripTrain` | Cached source bands, independent sample/destination steps, moving phase and exact edge skipping | DOM scrolling scenery |
 | `composite.RasterTitle` | Two-phase moving raster behind a title, optional small canvas or direct clipped draw | Viva TCB and Multiscreen Viva |
 
 `FeedConfig.ProgressiveEntry` keeps the active glyph at the viewport edge until
