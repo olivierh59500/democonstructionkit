@@ -3430,6 +3430,11 @@ if morph.Finished() { /* select the next authored action */ }
 ```
 
 The Vectorballs DCK production uses this source-compatible incremental mode.
+Its sprite projection now takes `geometry.RotateXYZScaled(angles, scale)`.
+The matrix applies uniform scale after each ordered Euler coefficient, so it
+can drive any `sprites.Projector` cloud while retaining Vectorballs' subpixel
+positions. A pure 5,000-frame comparison checks all nine coefficients within
+1e-12 of the source arithmetic, with no Go allocation per matrix.
 The pure geometry tests cover chained handoffs and zero allocations per tick
 with a reused pointer adapter. The authored shape table and action script stay
 with the production.
