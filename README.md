@@ -329,9 +329,10 @@ outer.Draw(screen)
 The center program uses the same constructor with
 `presets.CuddlyDNACenterLogoRows(logo)`. Change the program fields or supply
 `motion.SampledRowFunc` without altering the row renderer.
-All 168 row poses are cached without a message-sized texture or per-tick Go
-allocation. Pure tests compare the original coordinates at intro, middle and
-late ticks; graphical sampling still needs a rendered-frame comparison.
+All 168 row poses use fixed reusable buffers without a message-sized texture;
+the pure row programs sample without Go allocations. Tests compare source
+coordinates at intro, middle and late ticks; graphical sampling still needs a
+rendered-frame comparison.
 
 ### Stack whole-image effects after any scroll
 
