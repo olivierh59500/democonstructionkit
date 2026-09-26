@@ -3545,6 +3545,13 @@ reanchors its cached sine/cosine path every 1,024 ticks with a 4π phase wrap.
 This avoids per-cube trigonometric sampling on every draw during long camera
 tours. `RecurrenceInterval` and `RecurrencePeriod` remain editable; set the
 interval to zero for direct wave sampling or assign a custom `Path` instead.
+`presets.BilizirCubeTrain(800, 12)` uses the same effect with Bilizir's 20-pixel
+cube material, lower vertical path and original phase/rotation spacing. Its
+image-independent motion preset is editable separately; a pure 5,000-tick
+comparison covers all twelve positions, XYZ rotations and live speed changes
+without per-pose Go allocation. An opt-in GPU check compares the batch with
+the previous twelve separate cube draws at eight sampled ticks using
+`-tags dck_bilizir_cube_rendercheck` when a display is available.
 
 A textured cube accepts a live image, such as a plasma surface, scroller or logo:
 

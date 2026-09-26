@@ -51,7 +51,7 @@ production. Preserved original implementations remain unchanged.
 | Production / screen | Shared today | Remaining responsibility or extraction |
 | --- | --- | --- |
 | 3D DOC | Atlas, `Config.RowBands` using `composite.RowWarp`, `PerspectiveCheckerboard`, `ProjectedBallTrain`, `timeline.IntroHandoff` | Whole-scene transform remains scene composition data. |
-| Bilizir | Atlas, scrolling, independent StripWarp for text/logo, SolidCube, WaterReflection, `CopperBars` | Historical scroll timing stays a recipe; extra raster palettes and masks can use the shared bank. |
+| Bilizir | Atlas, scrolling, independent StripWarp for text/logo, batched `SolidCubeTrain`, WaterReflection and `CopperBars` | Historical scroll timing and authored art stay production data; extra raster palettes and masks can use the shared bank. |
 | DMA 3D | Atlas, `Config.RowColumn`, `sprites.BatchedSolidField` with timed wrap, and complete `effects.MorphingMesh` with ordered per-face materials | Artwork, text, soundtrack and scene layer order stay production data. |
 | DMA Is Back, intro | `Config.Feed`, configurable CRTOverlay, `timeline.IntroHandoff` | Message and scene materials stay production data. |
 | DMA Is Back, main | `Config.Scanline`, ImageGrid, NestedOrbit, JellyCube, shared fade/music cue | Other whole-scene timed layers can use the general cue director. |
