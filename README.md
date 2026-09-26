@@ -1420,6 +1420,9 @@ for _, event := range program.Step() {
 Enter/exit speeds, boundary comparisons, start position and hold ticks are
 editable. The pure test compares all emitted poses and modes through the
 double-draw boundaries and into the ongoing scroll, with no per-step allocation.
+The two text surfaces use the same live `RasterOverlay` configured by
+`presets.UnionDeltaGoldMaterial(goldStage)`; it applies source-atop gold without
+building another full-size masked image.
 
 For planar stars or tiny sprites that share a solid material, use
 `sprites.BatchedSolidField`. It retains one `motion.FrameField`, accepts any
