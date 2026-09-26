@@ -2615,6 +2615,28 @@ returns false when capacity is exceeded. The batch preserves object insertion
 order; it does not depth-sort faces across separate cubes. It owns its buffers
 and white texture, while the added cubes remain caller-owned.
 
+`geometry.PointMorph` changes model-space XYZ coordinates over a configured
+number of logical ticks. It captures the currently displayed source pose when
+constructed, so a new target can follow a previous effect without teleporting
+the points. `MorphHold` leaves unmatched source points in place;
+`MorphRepeat` cycles a shorter target, and `SnapFinal` optionally removes
+floating-point drift on the last tick. A `PointWriter` adapter changes only XYZ
+and keeps each sprite or ball image index:
+
+```go
+morph, err := geometry.NewPointMorph(current, target,
+    geometry.PointMorphConfig{Frames: 108, Tail: geometry.MorphHold})
+if err != nil { return err }
+// Once per logical tick; current implements Len, XYZ and SetXYZ.
+morph.Step(current)
+if morph.Finished() { /* select the next authored action */ }
+```
+
+The Vectorballs DCK production uses this source-compatible incremental mode.
+The pure geometry tests cover chained handoffs and zero allocations per tick
+with a reused pointer adapter. The authored shape table and action script stay
+with the production.
+
 `effects.SolidCubeTrain` owns the entire repeated-cube animation when each cube
 follows a path and rotates independently. It updates the phases and rotations
 once per tick and draws the cubes in one batch. A preset reproduces Coco's
