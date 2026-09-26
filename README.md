@@ -3644,6 +3644,31 @@ All compilation happens once at setup, and profile drawing samples a finite
 table without trigonometry or per-frame allocation. Thirty capture pairs
 through late profile wraps in the three Cuddly screens match their previous
 renderers pixel for pixel.
+
+Cuddly's opening logo uses the general `composite.WaveChain` with two editable
+passes from `presets.CuddlyIntroMainLogoWarp()`: rows first, then pixel-snapped
+columns. `CuddlyIntroUnionLogoProfile(offsets)` applies the compiled row table
+to a second borrowed image, and `CuddlyIntroSparkles` configures the star
+overlay with caller-supplied positions and images. The still-to-logo handoff is
+`timeline.StillThenMain`: 150 Calvin ticks, 100 blank ticks, then a one-shot
+music cue on the first main frame.
+
+```go
+chain, err := composite.NewWaveChain(presets.CuddlyIntroMainLogoWarp()...)
+if err != nil { return err }
+defer chain.Close()
+stills, err := timeline.NewStillThenMain(presets.CuddlyIntroStills())
+if err != nil { return err }
+frame := stills.Next()
+if frame.Cue { startMusic() }
+// Draw the still, blank interval or warped logos according to frame.Phase.
+```
+
+The handoff's 1,000-tick pure comparison preserves the original first music
+tick. Artwork placement and the layer order remain the scene's choice; the
+same passes can deform another image by changing their amplitudes, phases,
+thickness or filters.
+
 Union Multi-Plane also reuses `TCBLogoWaveSections`: setting `SampleStart` to
 40 and 844 on its two sine sections preserves Union's original global-index
 phases. Eight captures at the section joins and wrap match its previous image.
