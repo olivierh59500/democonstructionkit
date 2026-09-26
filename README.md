@@ -978,6 +978,41 @@ trail threshold are plain editable values. Compile it with
 Cuddly Big Sprite now use the same transport and renderer. Their 11, 16, 9
 and 12 sampled RGB frames respectively match the previous productions exactly.
 
+### Animate staggered text pages
+
+`motion.GlyphPageCycle` owns the per-character entrance, exit, page rotation,
+delay-pattern rotation and stable depth order. `sprites.GlyphPages` draws that
+state with any `scrolling.Atlas`; it can use literal characters or the font's
+aliases and fallback. Text, grid size, spacing, center, target depth, duration,
+easing and delay values are independent parameters. The three reusable delay
+generators produce serpentine rows, mirrored columns and an inward spiral.
+For Nonameno's exact dimensions and timing, use its editable preset:
+
+```go
+config, err := presets.NonamenoGlyphPages(pages, 0)
+if err != nil { return err }
+config.EnterDurationMS = 2400
+config.DelayPatterns[0], err = motion.SpiralGlyphDelays(20, 8)
+if err != nil { return err }
+cycle, err := motion.NewGlyphPageCycle(config)
+if err != nil { return err }
+letters, err := sprites.NewGlyphPages(sprites.GlyphPagesConfig{
+    Cycle: cycle, Font: fontAtlas, OffsetX: 12, OffsetY: 0,
+})
+if err != nil { return err }
+
+// In Update, use the same elapsed simulation clock as the other effects.
+if err := cycle.UpdateAt(elapsedMilliseconds); err != nil { return err }
+// In Draw, this layer may be placed before or after any other DCK layer.
+letters.Draw(screen)
+```
+
+`SetPageAt(page, pattern, nowMS)` is a timeline cue. Completion barriers start
+each outgoing or incoming wave only after all glyphs finish. Construction
+copies text and delay data; updates and stable depth sorting allocate nothing.
+The Nonameno preset retains its source spiral's repeated delay value and the
+original elastic equations. Its two page texts remain production data.
+
 ### Control count, spacing, delay and music-driven properties
 
 ```go
@@ -1875,6 +1910,7 @@ remain available for effects with different behavior.
 | `effects.PerspectiveCheckerboard` | Perspective stripe geometry, two-axis motion, XOR composition and bounded surfaces | 3D DOC and Cuddly 3D DOC |
 | `effects.ProjectedBallTrain` | Blended movement programs, projected sprites/shadows, phase and depth/palette ordering | 3D DOC and Cuddly 3D DOC |
 | `sprites.ProjectedField` | Bounded spawn/respawn, strict/wide wrap, projection, history and pixel/sprite/vector materials | Nonameno stars, Union Starballs, Cuddly Starwars and Big Sprite |
+| `motion.GlyphPageCycle` + `sprites.GlyphPages` | Font-independent staggered pages, editable delay grids, elastic depth motion, completion barriers and stable atlas rendering | Nonameno text pages |
 | `scrolling.Config.Crawl` | Paragraph window, vertical transport and perspective projection | Cuddly Starwars |
 | `scrolling.Config.Feed` | Finite glyph insertion into a cached scrolling trail | DMA Is Back, Coco, TeamG1, MegaTwist intros |
 | `scrolling.Config.Scanline` | Proportional text transport, cumulative wave, cyclic bounce and bounded strip rendering | DMA Is Back, Coco, MegaTwist main screens |
