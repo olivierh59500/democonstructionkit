@@ -117,7 +117,7 @@ matches the previous implementation exactly.
 | Delta Force | YM register snapshots, scrolling, WaveStrips | Register-change trigger and seven-tick sprite release; source-alpha raster fill. |
 | TNT Crew 3 | Mesh, geometry, bitmap recipes | Model-group draw material and camera recession handoff; authored shapes stay data. |
 | Wow Scroller | Scrolling, `RasterOverlay` source-atop fill, `motion.WrapBank` paired panel offsets | Cropped oversized-image repetition with explicit wrap periods. |
-| Hidden | PointHistory, sprite instances | Delayed pointer trail, palette cycle and source clip. |
+| Hidden | `sprites.DelayedTrail` over `PointHistory` and `timeline.PacedIndex` for the one-tick palette offset | Authored palette colors, crosshair and border clipping remain scene composition. |
 | Starballs | Camera, scrolling, `sprites.ProjectedField` with two materials, live count and depth opacity | Compose the two field materials and logo mask as an editable screen layer recipe. |
 | Replicants | Atlas, scrolling, `RasterOverlay` fill, `motion.CuedFormation` letter paths, `sprites.Train` rasters driven by `motion.BounceBank` | Historically reset scroll clock. |
 | TNT Crew 2 | Background sampler, BitmapText.DrawWindow, `motion.WrapBank` three-layer parallax and mutable speeds | Per-key control mapping remains scene data. |

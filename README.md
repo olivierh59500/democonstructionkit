@@ -2098,8 +2098,23 @@ Use the lower-level `CellWarp.Sample` for nonlinear or per-cell transforms.
 `motion.NewPointHistory(capacity, initial)` stores recent positions (or any Go
 value). `Push` belongs in Update, `At(delay)` in sampling/rendering. A 61-entry
 history provides delays 0, 20, 40, 60 for four sprites without frame allocations.
-Union's hidden screen uses this API. An analytic trajectory can instead be
-sampled at earlier times without a history buffer.
+`sprites.DelayedTrail` owns that history and a prepared sprite group, so images,
+delays, drawing order, anchor, filter and blend can be changed independently:
+
+```go
+trail, err := sprites.NewDelayedTrail(presets.UnionHiddenTrail(pointers))
+if err != nil { return err }
+if err := trail.SetPosition(pointer); err != nil { return err }
+if err := trail.Update(frame); err != nil { return err }
+trail.Draw(screen)
+```
+
+Union Hidden draws its oldest pointer first and its live pointer last. The
+same screen uses `timeline.PacedIndex` for the palette: read `Current()` for
+the upper bar, call `Step()`, then read `Current()` for the crosshair. This
+keeps the original one-color offset. Palette values, crosshair and border
+clipping remain screen data. An analytic trajectory can instead be sampled
+at earlier times without a history buffer.
 
 To color text with animated rasters, draw the text into a transparent surface,
 then draw the raster using `ebiten.BlendSourceAtop`; existing text alpha is

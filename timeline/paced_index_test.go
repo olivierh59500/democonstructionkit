@@ -41,3 +41,18 @@ func TestPacedIndexMatchesPaletteAndMovementCadence(t *testing.T) {
 		t.Fatalf("paced index step allocates %v times", allocs)
 	}
 }
+
+func TestPacedIndexKeepsBarAndCrosshairOneColorApart(t *testing.T) {
+	clock, err := NewPacedIndex(PacedIndexConfig{Count: 67, Every: 1, First: 1})
+	if err != nil {
+		t.Fatal(err)
+	}
+	for tick := 0; tick < 200; tick++ {
+		if bar := clock.Current(); bar != tick%67 {
+			t.Fatalf("tick %d bar palette index = %d", tick, bar)
+		}
+		if crosshair := clock.Step(); crosshair != (tick+1)%67 {
+			t.Fatalf("tick %d crosshair palette index = %d", tick, crosshair)
+		}
+	}
+}
