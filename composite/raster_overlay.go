@@ -17,6 +17,9 @@ type RasterWrap struct {
 	Inclusive         bool
 }
 
+// RasterCopy places one additional draw relative to the overlay phase.
+type RasterCopy struct{ X, Y float64 }
+
 // RasterOverlayConfig places a borrowed raster image over an existing layer.
 // Draw uses the destination's current alpha with BlendSourceAtop/SourceIn, or
 // ordinary source-over blending for unmasked rasters. Step advances in pixels
@@ -31,6 +34,7 @@ type RasterOverlayConfig struct {
 	AnchorX, AnchorY     float64
 	Alpha                float64
 	WrapX, WrapY         *RasterWrap
+	Copies               []RasterCopy // Empty draws one copy at the phase position.
 	Filter               ebiten.Filter
 	Blend                ebiten.Blend
 }
@@ -57,6 +61,14 @@ func NewRasterOverlay(c RasterOverlayConfig) (*RasterOverlay, error) {
 			return nil, fmt.Errorf("composite: nonfinite raster wrap")
 		}
 	}
+	if len(c.Copies) > 1<<16 {
+		return nil, fmt.Errorf("composite: too many raster copies")
+	}
+	for _, copy := range c.Copies {
+		if math.IsNaN(copy.X) || math.IsInf(copy.X, 0) || math.IsNaN(copy.Y) || math.IsInf(copy.Y, 0) {
+			return nil, fmt.Errorf("composite: nonfinite raster copy")
+		}
+	}
 	view := c.Image
 	if !c.Source.Empty() {
 		if !c.Source.In(c.Image.Bounds()) {
@@ -72,6 +84,7 @@ func NewRasterOverlay(c RasterOverlayConfig) (*RasterOverlay, error) {
 		copy := *c.WrapY
 		c.WrapY = &copy
 	}
+	c.Copies = append([]RasterCopy(nil), c.Copies...)
 	return &RasterOverlay{config: c, image: view, x: c.X, y: c.Y}, nil
 }
 
@@ -111,14 +124,24 @@ func (r *RasterOverlay) DrawAt(dst *ebiten.Image, x, y float64) {
 		return
 	}
 	c := r.config
-	var op ebiten.DrawImageOptions
-	op.Filter, op.Blend = c.Filter, c.Blend
-	op.GeoM.Translate(-c.AnchorX, -c.AnchorY)
-	op.GeoM.Scale(c.ScaleX, c.ScaleY)
-	op.GeoM.Rotate(c.AngleDegrees * math.Pi / 180)
-	op.GeoM.Translate(r.x+x, r.y+y)
-	op.ColorScale.ScaleAlpha(float32(c.Alpha))
-	dst.DrawImage(r.image, &op)
+	count := len(c.Copies)
+	if count == 0 {
+		count = 1
+	}
+	for i := 0; i < count; i++ {
+		copy := RasterCopy{}
+		if len(c.Copies) > 0 {
+			copy = c.Copies[i]
+		}
+		var op ebiten.DrawImageOptions
+		op.Filter, op.Blend = c.Filter, c.Blend
+		op.GeoM.Translate(-c.AnchorX, -c.AnchorY)
+		op.GeoM.Scale(c.ScaleX, c.ScaleY)
+		op.GeoM.Rotate(c.AngleDegrees * math.Pi / 180)
+		op.GeoM.Translate(r.x+x+copy.X, r.y+y+copy.Y)
+		op.ColorScale.ScaleAlpha(float32(c.Alpha))
+		dst.DrawImage(r.image, &op)
+	}
 }
 
 func (r *RasterOverlay) Phase() (float64, float64) { return r.x, r.y }

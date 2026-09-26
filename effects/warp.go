@@ -79,13 +79,42 @@ func (w *Warp) Close() error { w.canvas.Deallocate(); return kit.Close(w.Source)
 type Mask struct {
 	Content, Alpha kit.Effect
 	canvas, mask   *ebiten.Image
+	config         MaskConfig
+}
+
+// MaskConfig combines two complete effects with an editable Porter-Duff blend.
+// MaskX/Y place the alpha effect within the intermediate surface; OutputX/Y
+// place the result on the destination. ClearTop removes an authored top band.
+type MaskConfig struct {
+	Content, Alpha   kit.Effect
+	Width, Height    int
+	Blend            ebiten.Blend
+	MaskX, MaskY     float64
+	OutputX, OutputY float64
+	ClearTop         int
 }
 
 func NewMask(content, alpha kit.Effect, width, height int) (*Mask, error) {
-	if content == nil || alpha == nil || width <= 0 || height <= 0 {
+	return NewMaskWith(MaskConfig{Content: content, Alpha: alpha, Width: width, Height: height,
+		Blend: ebiten.BlendDestinationIn})
+}
+
+// NewMaskWith owns both input effects and its two reusable working surfaces.
+func NewMaskWith(c MaskConfig) (*Mask, error) {
+	if c.Content == nil || c.Alpha == nil || c.Width <= 0 || c.Height <= 0 ||
+		c.ClearTop < 0 || c.ClearTop > c.Height {
 		return nil, fmt.Errorf("effects: invalid mask")
 	}
-	return &Mask{Content: content, Alpha: alpha, canvas: render.NewSurface(width, height), mask: render.NewSurface(width, height)}, nil
+	for _, value := range [...]float64{c.MaskX, c.MaskY, c.OutputX, c.OutputY} {
+		if math.IsNaN(value) || math.IsInf(value, 0) {
+			return nil, fmt.Errorf("effects: nonfinite mask placement")
+		}
+	}
+	if c.Blend == (ebiten.Blend{}) {
+		c.Blend = ebiten.BlendDestinationIn
+	}
+	return &Mask{Content: c.Content, Alpha: c.Alpha, config: c,
+		canvas: render.NewSurface(c.Width, c.Height), mask: render.NewSurface(c.Width, c.Height)}, nil
 }
 func (m *Mask) Update(f kit.Frame) error {
 	if err := m.Content.Update(f); err != nil {
@@ -98,8 +127,15 @@ func (m *Mask) Draw(dst *ebiten.Image) {
 	m.mask.Clear()
 	m.Content.Draw(m.canvas)
 	m.Alpha.Draw(m.mask)
-	m.canvas.DrawImage(m.mask, &ebiten.DrawImageOptions{Blend: ebiten.BlendDestinationIn})
-	dst.DrawImage(m.canvas, nil)
+	maskOptions := ebiten.DrawImageOptions{Blend: m.config.Blend}
+	maskOptions.GeoM.Translate(m.config.MaskX, m.config.MaskY)
+	m.canvas.DrawImage(m.mask, &maskOptions)
+	if m.config.ClearTop > 0 {
+		m.canvas.SubImage(image.Rect(0, 0, m.config.Width, m.config.ClearTop)).(*ebiten.Image).Clear()
+	}
+	var output ebiten.DrawImageOptions
+	output.GeoM.Translate(m.config.OutputX, m.config.OutputY)
+	dst.DrawImage(m.canvas, &output)
 }
 func (m *Mask) Close() error {
 	m.canvas.Deallocate()

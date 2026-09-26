@@ -2,6 +2,7 @@ package composite
 
 import (
 	"image"
+	"image/color"
 	"math"
 	"testing"
 
@@ -29,6 +30,27 @@ func TestRasterOverlayWrapPolicies(t *testing.T) {
 				t.Fatalf("next phase = %v, want %v", got, tc.want)
 			}
 		})
+	}
+}
+
+func TestRasterOverlayDrawsIndependentAuthoredCopies(t *testing.T) {
+	texture := ebiten.NewImage(1, 1)
+	defer texture.Deallocate()
+	texture.Fill(color.RGBA{R: 255, A: 255})
+	copies := []RasterCopy{{Y: -2}, {Y: 0}, {Y: 2}}
+	overlay, err := NewRasterOverlay(RasterOverlayConfig{Image: texture,
+		X: 1, Y: 3, ScaleX: 1, ScaleY: 1, Alpha: 1, Copies: copies})
+	if err != nil {
+		t.Fatal(err)
+	}
+	copies[1].Y = 99 // Construction keeps a private placement recipe.
+	dst := ebiten.NewImage(4, 7)
+	defer dst.Deallocate()
+	overlay.Draw(dst)
+	for _, y := range []int{1, 3, 5} {
+		if got := color.RGBAModel.Convert(dst.At(1, y)).(color.RGBA); got != (color.RGBA{R: 255, A: 255}) {
+			t.Fatalf("copy at row %d has pixel %+v", y, got)
+		}
 	}
 }
 

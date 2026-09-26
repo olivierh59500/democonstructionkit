@@ -915,6 +915,26 @@ alpha are independent effects that need separate working surfaces. In a saved
 `authoring` project, a `raster_overlay` layer must draw directly after its
 alpha source, with no outer fade; its own `alpha` setting remains editable.
 
+`RasterOverlayConfig.Copies` draws several copies from the same phase without
+advancing it between draws. `effects.NewMaskWith` composes that material with
+any alpha effect using a chosen blend, alpha offset, output placement and an
+optional cleared top band. DOM uses the same reusable pieces for its three
+moving raster copies and four-size scrolling text:
+
+```go
+raster, err := composite.NewRasterOverlay(presets.DOMRasterCopies(colors))
+if err != nil { return err }
+masked, err := effects.NewMaskWith(presets.DOMScrollMask(raster, scroll))
+if err != nil { return err }
+if err := masked.Update(frame); err != nil { return err }
+masked.Draw(screen)
+defer masked.Close()
+```
+
+The mask owns two bounded working surfaces and its input effects. A logo,
+scrolling surface or whole scene can supply the alpha image; the raster copies,
+phase and Porter-Duff blend remain editable independently.
+
 ### Use one particle field for stars, incoming sprites and trails
 
 `sprites.ProjectedField` owns movement, projection and the bounded renderer.
@@ -2015,7 +2035,8 @@ remain available for effects with different behavior.
 | `indexed.Rotozoom256` | Allocation-free fixed-point rotozoom over indexed 256 × 256 textures | Second Reality Rotozoomer |
 | `composite.ScanlineBackground` | Bounded horizontal tile source, independent wave/bounce clocks and batched source rows | MegaTwist |
 | `composite.CopperBars` | Two-phase raster bank with editable table, clocks, source strips and quad/image materials | Bilizir, Coco, Multiscreen Coco |
-| `composite.RasterOverlay` | Moving raster material with source crop, blend, scale and exact wrap policy over a live image | Cuddly Big Sprite/Starwars, Union Wow/Replicants |
+| `composite.RasterOverlay` | Moving raster material with source crop, blend, scale, independent copies and exact wrap policy | Cuddly Big Sprite/Starwars, Union Wow/Replicants, DOM |
+| `effects.Mask` / `NewMaskWith` | Two owned working surfaces, configurable alpha blend/offset, output placement and top crop | DOM raster-filled scrolling; reusable for logos and scene layers |
 | `composite.RasterTitle` | Two-phase moving raster behind a title, optional small canvas or direct clipped draw | Viva TCB and Multiscreen Viva |
 
 `FeedConfig.ProgressiveEntry` keeps the active glyph at the viewport edge until
