@@ -2974,7 +2974,9 @@ go run ./cmd/pixelprobe \
 
 Launch the desired scene and wait for its transition before running the probe.
 Its interval coverage can include frames before the first sample; samples are
-not a continuous long-run trace. `-serial` selects one USB device and `-slow-ms`
+not a continuous long-run trace. If Android recreates the SurfaceView after a
+lock or rotation, the probe stops with the old and new layer names instead of
+combining incompatible windows. `-serial` selects one USB device and `-slow-ms`
 changes the default 20 ms threshold. The tool reads the second timestamp
 column, which Android's [FrameTracker source](https://android.googlesource.com/platform/frameworks/native/+/24257dda488651ad2c05875761b9e9ad110975c5/services/surfaceflinger/FrameTracker.cpp)
 identifies as the actual presentation time. This complements the CPU timers

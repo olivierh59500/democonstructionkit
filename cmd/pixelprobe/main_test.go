@@ -19,6 +19,12 @@ func TestSelectLayerUsesActiveBLASTSurface(t *testing.T) {
 	if _, err := selectLayer(listing, "missing.pkg"); err == nil {
 		t.Fatal("accepted a missing layer")
 	}
+	if err := changedLayer(listing, "demo.pkg", layer); err != nil {
+		t.Fatalf("stable layer was reported as changed: %v", err)
+	}
+	if err := changedLayer(strings.ReplaceAll(listing, "(BLAST)#4", "(BLAST)#9"), "demo.pkg", layer); err == nil || !strings.Contains(err.Error(), "recreated") {
+		t.Fatalf("surface recreation was not identified: %v", err)
+	}
 }
 
 func TestParseLatencyAndSummarizeUniqueIntervals(t *testing.T) {

@@ -60,6 +60,17 @@ func selectLayer(output, pkg string) (string, error) {
 	return layer, nil
 }
 
+func changedLayer(output, pkg, previous string) error {
+	current, err := selectLayer(output, pkg)
+	if err != nil {
+		return fmt.Errorf("SurfaceView for %s disappeared; check the app and screen state", pkg)
+	}
+	if current != previous {
+		return fmt.Errorf("SurfaceView was recreated (%s -> %s); repeat the sample after the screen is stable", previous, current)
+	}
+	return nil
+}
+
 // parseLatency reads SurfaceFlinger's refresh period followed by desired,
 // actual-present and frame-ready times in nanoseconds. Only the second column
 // measures when a frame became visible to the user.
@@ -148,7 +159,8 @@ func measure(ctx context.Context, adb, serial, pkg, layer string, samples int, i
 	if pkg == "" || samples < 1 || samples > 10000 || intervalTime < 0 || slowMS <= 0 {
 		return report{}, errors.New("invalid package, sample count, interval or slow threshold")
 	}
-	if layer == "" {
+	autoLayer := layer == ""
+	if autoLayer {
 		listing, err := adbCommand(ctx, adb, serial, "shell", "dumpsys SurfaceFlinger --list")
 		if err != nil {
 			return report{}, err
@@ -168,6 +180,14 @@ func measure(ctx context.Context, adb, serial, pkg, layer string, samples int, i
 		}
 		currentPeriod, intervals, err := parseLatency(output)
 		if err != nil {
+			if autoLayer {
+				listing, listErr := adbCommand(ctx, adb, serial, "shell", "dumpsys SurfaceFlinger --list")
+				if listErr == nil {
+					if changed := changedLayer(listing, pkg, layer); changed != nil {
+						return report{}, fmt.Errorf("sample %d: %w", sample+1, changed)
+					}
+				}
+			}
 			return report{}, fmt.Errorf("sample %d: %w", sample+1, err)
 		}
 		if period != 0 && currentPeriod != period {
