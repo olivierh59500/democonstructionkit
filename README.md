@@ -2637,6 +2637,32 @@ The pure geometry tests cover chained handoffs and zero allocations per tick
 with a reused pointer adapter. The authored shape table and action script stay
 with the production.
 
+The same `PointWriter` can drive four more configurable point-scene motions:
+`geometry.SinusGrid` replaces Z on a row-major point grid, `geometry.Rotors`
+moves X/Z pairs, `geometry.YOrbit` supplies a complete model position, and
+`geometry.BounceCurve` supplies an absolute Y position from a cached curve.
+Keep their order explicit when combining them with linear motion:
+
+```go
+grid, err := geometry.NewSinusGrid(presets.VectorballsSinusGrid())
+if err != nil { return err }
+rotors, err := geometry.NewRotors(presets.VectorballsRotors())
+if err != nil { return err }
+orbit, err := geometry.NewYOrbit(presets.VectorballsYOrbit())
+if err != nil { return err }
+bounce, err := geometry.NewBounceCurve(presets.VectorballsBounce())
+if err != nil { return err }
+grid.Step(points)          // Replace each grid point's Z.
+rotors.Step(points)        // Replace selected X/Z pairs, retain Y and image.
+position = orbit.Step()    // Replace the full model position.
+position.Y = bounce.Step() // Or replace only Y in a separate action.
+```
+
+The presets reproduce the authored first frames and clocks, while the grid
+dimensions, phase rates, rotor radii, orbit bounds and bounce curve samples
+remain editable. Pure tests compare the source equations and every cached
+bounce sample; stepping these controllers allocates no Go memory per frame.
+
 `effects.SolidCubeTrain` owns the entire repeated-cube animation when each cube
 follows a path and rotates independently. It updates the phases and rotations
 once per tick and draws the cubes in one batch. A preset reproduces Coco's
