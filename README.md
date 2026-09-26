@@ -783,6 +783,11 @@ angles. Draw it on any trajectory or into a mask; `Pose` exposes the selected
 image and transform for a custom renderer:
 
 ```go
+orbit := motion.DefaultNestedOrbit(motion.Point{X: 320, Y: 200}, motion.Point{X: 160, Y: 108})
+path, err := motion.NewTrajectoryClock(motion.TrajectoryClockConfig{
+    Sample: orbit.At, Start: 9, Step: .008,
+})
+if err != nil { return err }
 flip, err := sprites.NewAxisFlip(sprites.AxisFlipConfig{
     Front: front, Back: back, SwitchAt: .01, BackAngle: 180,
     Motion: motion.BounceBankConfig{
@@ -792,10 +797,20 @@ flip, err := sprites.NewAxisFlip(sprites.AxisFlipConfig{
     Filter: ebiten.FilterLinear, Blend: ebiten.BlendSourceOver,
 })
 if err != nil { return err }
-position := orbit.At(phase)
+if err := path.Step(); err != nil { return err }
+position := path.At()
 flip.DrawAt(canvas, position.X, position.Y)
 flip.Step() // Draw-before-step keeps the first fully visible front frame.
 ```
+
+`TrajectoryClock` owns the phase and caches one point per update. Supply any
+`func(phase float64) motion.Point`, including an authored curve, to move a
+sprite, logo or backdrop without a screen-local phase accumulator. `SetStep`
+changes pace and `SetSample` changes the path at the current phase; neither
+restarts its clock. Ehhh's backdrop, DMA Is Back's logo and Union Level 16's
+ball use the same controller with different centers, radii and steps. Pure
+5,000-tick comparisons cover all four original pre-draw advances, including
+Big Sprite's nonzero initial phase; steady updates allocate no memory.
 
 `Back` may be omitted to flip a single image. `DrawAt` centers whichever face
 is selected, so differently sized art stays centered. The effect reuses its
