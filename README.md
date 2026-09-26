@@ -847,6 +847,28 @@ clipped region and allocates no intermediate surface. Fourteen capture pairs
 per version, including both raster wraps and the title's departure cue, match
 the preceding renderers in every color and alpha channel.
 
+`composite.PairedRasterOrbit` handles repeated pairs that travel through a
+shared cosine Y path but require separate materials, phase windows and painter
+order. Its pure `motion.PairedPhaseProgram` prepares ordered samples before
+advancing the phases; no canvas is created by the effect. Cuddly Reset uses
+three configurable passes: translucent descending pairs, then rising pairs in
+forward and reverse index order.
+
+```go
+config := presets.CuddlyResetRasterOrbit(upLeft, upRight, downLeft, downRight)
+config.Motion.Step = .06 // Change phase speed without changing artwork.
+orbit, err := composite.NewPairedRasterOrbit(config)
+if err != nil { return err }
+// Advance only while this scene stage is active.
+orbit.Step()
+orbit.Draw(rasterLayer)
+```
+
+Edit `Motion.Passes` to choose other phase intervals, opacity, material and
+forward/reverse draw order. `Pairs`, X positions and scale are independent of
+that motion. A screen can place the resulting layer above or below its logos,
+sprites and scrolling text.
+
 ### Animate a repeated texture with a rotozoom
 
 `composite.RotozoomBackground` owns the update/draw boundary and renders one
@@ -2385,6 +2407,7 @@ remain available for effects with different behavior.
 | `effects.ProjectedBallTrain` | Blended movement programs, projected sprites/shadows, phase and depth/palette ordering | 3D DOC and Cuddly 3D DOC |
 | `composite.TwistingRibbon` | Two borrowed face images, exact strip crops, phase/occlusion clocks and ordered mirrored draw passes | Cuddly DNA |
 | `composite.SampledRows` | Arbitrary source row, placement and scale per copy and row, sampled from an absolute scene clock | Cuddly DNA logo |
+| `motion.PairedPhaseProgram` + `composite.PairedRasterOrbit` | Ordered phase-window raster pairs with per-pass materials, opacity and one bounded clock | Cuddly Reset |
 | `sprites.RotatingDiscCloud` | Y-axis rotation, depth projection, stable painter order and batched circular material | Cuddly DNA particle sphere |
 | `sprites.ProjectedField` | Bounded spawn/respawn, strict/wide wrap, projection, history and pixel/sprite/vector materials | Nonameno stars, Union Starballs, Cuddly Starwars and Big Sprite |
 | `sprites.MaskedProjectedField` | One projected population rendered with two materials, reusable alpha canvas, independent output transforms and live count controls | Union Starballs |

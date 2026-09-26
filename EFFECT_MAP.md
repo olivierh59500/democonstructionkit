@@ -104,7 +104,7 @@ matches the previous implementation exactly.
 | Knucklebuster | Scrolling and sprite images | Seeded hit trigger with hold/release envelope; optional music signal must be a distinct mode. |
 | DNA | FeedbackDNA, wave strips, complete `sprites.RotatingDiscCloud`, `composite.TwistingRibbon` with exact occlusion and two `composite.SampledRows` logo programs | Authored intro/music cue and layer order. |
 | Megaball | Scrolling, rectified `motion.WaveClock` text bounce and `sprites.Group` with an ordered `motion.CoupledOrbitFormation` for two interleaved ball trains | The nine-value input mapping and authored labels remain screen data. |
-| Reset | `Config.Slots`, scrolling, atlas, `timeline.StageSequence` with immediate events, cue windows and paired fades | Depth-ordered paired rasters and fill material. |
+| Reset | `Config.Slots`, scrolling, atlas, `timeline.StageSequence` with immediate events and cue windows, plus `composite.PairedRasterOrbit` for the ordered raster pairs | Raster source-atop fill and the authored backdrop trajectory remain screen composition. |
 
 ## Union presentation units
 
