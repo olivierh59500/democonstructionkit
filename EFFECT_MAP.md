@@ -118,7 +118,7 @@ matches the previous implementation exactly.
 | TNT Crew 3 | Mesh, geometry, bitmap recipes | Model-group draw material and camera recession handoff; authored shapes stay data. |
 | Wow Scroller | Scrolling, `RasterOverlay` source-atop fill, `motion.WrapBank` paired panel offsets | Cropped oversized-image repetition with explicit wrap periods. |
 | Hidden | `sprites.DelayedTrail` over `PointHistory` and `timeline.PacedIndex` for the one-tick palette offset | Authored palette colors, crosshair and border clipping remain scene composition. |
-| Starballs | Camera, scrolling, `sprites.ProjectedField` with two materials, live count and depth opacity | Compose the two field materials and logo mask as an editable screen layer recipe. |
+| Starballs | Camera, scrolling, `sprites.MaskedProjectedField` with one projected population, two borrowed materials, editable mask paint, live count and depth opacity | Authored logo, scroll message and input mapping remain screen data. |
 | Replicants | Atlas, scrolling, `RasterOverlay` fill, `motion.CuedFormation` letter paths, `sprites.Train` rasters driven by `motion.BounceBank` | Historically reset scroll clock. |
 | TNT Crew 2 | Background sampler, BitmapText.DrawWindow, `motion.WrapBank` three-layer parallax and mutable speeds | Per-key control mapping remains scene data. |
 | Level 16 | Vertical scrolling, background sampler, NestedOrbit, `motion.WrapBank` water and raster offsets | Raster/water material and authored layer occlusion. |

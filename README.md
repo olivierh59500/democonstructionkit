@@ -1088,6 +1088,35 @@ advances the configured velocity and projects all points. `DrawStyle` redraws
 the same samples with another material or blend, so Union Starballs can place
 one sprite image behind its logo and another through its mask.
 
+For the common case where the same population appears both in open space and
+through a painted logo or scroll mask, `sprites.MaskedProjectedField` owns the
+projected field and both bounded canvases. `BaseStyle` and `MaskStyle` select
+independent sprite materials and blend modes; `PaintMask` receives the cleared
+mask canvas before particles are drawn. Each output pass has its own image
+transform. Union Starballs supplies a complete editable recipe:
+
+```go
+config, err := presets.UnionStarballs(bob1, bob2, randomFloat, func(mask *ebiten.Image) {
+    drawLogo(mask)
+    drawScroll(mask)
+})
+if err != nil { return err }
+balls, err := sprites.NewMaskedProjectedField(config)
+if err != nil { return err }
+defer balls.Close()
+// Advance the scroll and balls once per tick, then draw the two passes.
+scroll.Step()
+if err := balls.Update(frame); err != nil { return err }
+balls.Draw(screen)
+if err := balls.Field().ResetCount(64); err != nil { return err }
+// A live input or timeline cue can change count.
+```
+
+The two canvases are 320 × 200 in that recipe, then scaled into the scene.
+`Unmanaged` is available when a production needs the same surface behavior as
+an existing renderer. A custom field and mask painter can reuse this component
+with different sprites, depth movement, palette and output placement.
+
 `FieldStyle.Sample` can change size, tint, rotation or visibility from depth,
 index or modulation. `Frames` are atlas rectangles selected by each point's
 `Image`. `Streak:true` draws between successive sampled positions; recycling
@@ -2358,6 +2387,7 @@ remain available for effects with different behavior.
 | `composite.SampledRows` | Arbitrary source row, placement and scale per copy and row, sampled from an absolute scene clock | Cuddly DNA logo |
 | `sprites.RotatingDiscCloud` | Y-axis rotation, depth projection, stable painter order and batched circular material | Cuddly DNA particle sphere |
 | `sprites.ProjectedField` | Bounded spawn/respawn, strict/wide wrap, projection, history and pixel/sprite/vector materials | Nonameno stars, Union Starballs, Cuddly Starwars and Big Sprite |
+| `sprites.MaskedProjectedField` | One projected population rendered with two materials, reusable alpha canvas, independent output transforms and live count controls | Union Starballs |
 | `motion.FrameField` + `sprites.AnimatedField` | Independent fractional atlas clocks or planar motion, single-edge wrap, ordered respawn and per-instance image selection | DOM animated stars, Replicants layered stars |
 | `motion.FrameField` + `sprites.BatchedSolidField` | Layered planar positions, tick-dependent wrap callbacks, origin mask, colored solid materials and bounded triangle batches | DMA 3D stars |
 | `motion.CoupledLogoMotion` + `sprites.CoupledLogoPair` | Two linked logo paths, cached quantized scale banks, depth-based frame selection and draw order | Replicants paired logos |
