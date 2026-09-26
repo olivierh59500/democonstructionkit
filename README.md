@@ -1111,6 +1111,23 @@ Cell dimensions, block order, initial visibility, cadence, blocks per step,
 background color and output position are independent parameters. The source
 image is borrowed; views are cached once and `Close` releases the cache.
 
+The foreground pair in Replicants uses the existing `sprites.Train` component
+with a rectified sine wave. A quarter-cycle index spacing makes the first
+sprite follow cosine and the second follow sine; horizontal spacing, baseline,
+amplitude and phase are independent values:
+
+```go
+config := presets.ReplicantsBouncingSprites(spriteImage)
+config.Spacing.X = 520
+pair, err := sprites.NewTrain(config)
+if err != nil { return err }
+if err := pair.Update(kit.Frame{Time: phase}); err != nil { return err }
+pair.Draw(screen)
+```
+
+The host may feed an absolute simulation phase, music-driven phase or a
+custom trajectory while keeping the same cached sprite images.
+
 `scrolling.Config.SizeBank` composes several differently scaled atlases over
 one message and one transport clock. Font controls select the active bank when
 they reach an editable right-edge lookahead; the other bank offsets stay
