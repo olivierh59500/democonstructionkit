@@ -387,6 +387,28 @@ with the previous interpolation, including its truncation. The materials are
 constructed at initialization and add no per-frame CPU work; their GPU images
 remain caller-owned.
 
+An intro can share its stage clock without imposing artwork or draw order.
+`timeline.ScalarStages` advances one editable scalar per stage, evaluates strict
+or inclusive threshold rules in authored order, and accepts external events on
+the current or next tick. A rule may replace the value, reverse its direction
+or move to another named stage. Phenomena uses it for its two text pages, logo,
+upper/lower rasters, photon handoff, main hold and exit:
+
+```go
+director, err := timeline.NewScalarStages(
+    presets.PhenomenaPresentation(presets.PhenomenaTextPage1))
+if err != nil { return err }
+if photon.Step() { director.Signal("photon-landed") }
+director.Step()
+pose := director.State() // Stage, Value, Direction and Tick.
+```
+
+Signal `"finish"` after one update to enter the exit path on the following
+update. The pure recipe test compares every stage, value and direction through
+the full introduction and exit against the previous source, with no per-step
+allocations. An embedded panel can start at `presets.PhenomenaMain` without
+playing the introduction.
+
 Cuddly's DNA screen uses a different effect family: two live text images twist
 as front and back faces of a twenty-strip ribbon. `composite.TwistingRibbon`
 owns the phase, source crops, vertical mirroring and ordered occlusion; any
