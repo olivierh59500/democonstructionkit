@@ -39,7 +39,7 @@ production. Preserved original implementations remain unchanged.
 | `nonameno-demo` | Its text pages use `motion.GlyphPageCycle` and `sprites.GlyphPages`; the bottom ribbon uses the common scrolling transport and harmonic mode. |
 | `phenomena-dna-scroll-intro` | Raster-bar thresholds trigger scene-state changes; treating them as a periodic wrap would change the sequence. |
 | `tcb-multi-plane-3d-scroller` | All 32 mountain strips now use the relative `WrapBank` preset also used by Multiscreen. |
-| `tcb-replicants-demo` | Layered stars use `sprites.AnimatedField` with planar wrap; stepped block reveal and zoom bank remain separate programs. |
+| `tcb-replicants-demo` | Layered stars, coupled quantized logos and stepped splash reveal now use complete DCK components. |
 | `teamg1-demo` | Circular sprite formation already uses `sprites.Group`; other timed presentation cues remain local. |
 | `viva_tcb` | Paired title rasters now use the shared `WrapBank` preset; harmonic logos remain a separate formation. |
 
@@ -65,7 +65,7 @@ production. Preserved original implementations remain unchanged.
 | Nonameno, text pages and bottom scroll | Atlas, `motion.GlyphPageCycle`, three delay generators, `sprites.GlyphPages`, `scrolling.Config` with `HarmonicSineWith` and editable presets | Page text and bottom message remain production data. |
 | Phenomena DNA intro | Atlas, DNAFrames, sliced transport | Whole screen's two-pixel insertion, loop-start and control events as a reusable configuration; separate intro/outro reveal and bounce cues. |
 | TCB multiplane | Complete `effects.MultiPlaneScene`: projected scrolling, font-independent forms, snapped `composite.Bands` mountains, per-row `composite.ProfileImage` logo, `sprites.AxisFlip` emblem | Text, artwork and music remain production parameters. |
-| Replicants | Atlas, `Config.RowColumn` with variable-speed controls, `sprites.AnimatedField` stars, `motion.CoupledLogoMotion` and quantized logo banks | Stepped block reveal. |
+| Replicants | Atlas, `Config.RowColumn` with variable-speed controls, `sprites.AnimatedField` stars, `CoupledLogoPair` and `BlockReveal` | Paired bouncing foreground sprites and scene order. |
 | TeamG1, intro | `Config.Feed` with progressive right-edge entry, atlas, flat TimedCRTOverlay, `timeline.IntroHandoff` | Message and materials remain production data. |
 | TeamG1, main | TexturedCube, HarmonicImage, ProfileImage, `Config.Profiled`, sprites.Group circular formation | Timed scene/audio cues and whole-scene presentation remain composition data. |
 | Viva TCB | Atlas, four editable `scrolling.Config.Pseudo3D` glyph banks, ten-logo `sprites.RecurrentFormation`, staged `RotozoomBackground`, two-mode `composite.RasterTitle` and held `motion.WaveClock` title path | Whole-scene layer schedule and host music cue. |

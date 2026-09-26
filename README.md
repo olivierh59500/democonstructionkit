@@ -1090,6 +1090,27 @@ The image sources are borrowed; `Close` releases only the cached scales.
 bitmap frames. Its 5,000-tick test checks both depth orders and changes of
 speed against the authored Replicants equations.
 
+`composite.BlockReveal` reveals cached image cells in row-major or caller-
+selected order. Its pure `motion.SteppedReveal` clock separates the reveal
+cadence from a later handoff tick, so an image may remain fully visible before
+the next scene begins. Replicants uses one 640×40 row every three ticks and
+hands off at tick 100:
+
+```go
+recipe := presets.ReplicantsSplash(splashImage)
+recipe.Timing.DoneTick = 120 // Hold the completed image longer.
+reveal, err := composite.NewBlockReveal(recipe)
+if err != nil { return err }
+if !reveal.Done() {
+    if err := reveal.Update(frame); err != nil { return err }
+}
+reveal.Draw(screen)
+```
+
+Cell dimensions, block order, initial visibility, cadence, blocks per step,
+background color and output position are independent parameters. The source
+image is borrowed; views are cached once and `Close` releases the cache.
+
 `scrolling.Config.SizeBank` composes several differently scaled atlases over
 one message and one transport clock. Font controls select the active bank when
 they reach an editable right-edge lookahead; the other bank offsets stay
@@ -2075,6 +2096,7 @@ remain available for effects with different behavior.
 | `sprites.ProjectedField` | Bounded spawn/respawn, strict/wide wrap, projection, history and pixel/sprite/vector materials | Nonameno stars, Union Starballs, Cuddly Starwars and Big Sprite |
 | `motion.FrameField` + `sprites.AnimatedField` | Independent fractional atlas clocks or planar motion, single-edge wrap, ordered respawn and per-instance image selection | DOM animated stars, Replicants layered stars |
 | `motion.CoupledLogoMotion` + `sprites.CoupledLogoPair` | Two linked logo paths, cached quantized scale banks, depth-based frame selection and draw order | Replicants paired logos |
+| `motion.SteppedReveal` + `composite.BlockReveal` | Grid-cell reveal order, fixed tick cadence and independent completion hold | Replicants splash screen |
 | `scrolling.Config.SizeBank` | Shared transport, controlled font-size cues, synchronized scaled offsets and repeated cached text layers | DOM four-size scroll |
 | `motion.GlyphPageCycle` + `sprites.GlyphPages` | Font-independent staggered pages, editable delay grids, elastic depth motion, completion barriers and stable atlas rendering | Nonameno text pages |
 | `scrolling.HarmonicSine` / `HarmonicSineWith` | Independent sine banks over the common text pipeline, optionally resetting spatial phase per repeated copy | Nonameno bottom scroll |
