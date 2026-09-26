@@ -3513,6 +3513,25 @@ nothing per frame. Keeping the sequence separate from the transform lets the
 same timeline drive a sprite formation, text layer or second logo with its own
 phase offset.
 
+The four tinted stills before Spreadpoint use `timeline.TintedCards`. Ramp
+durations, channel endpoints, interpolation order and black handoff ticks are
+data. `Next` emits the card index, RGBA tint and a cue only when the next card
+starts; the final cue enters the main effect. The host maps cue indices to its
+music filenames and draws its own cards:
+
+```go
+cards, err := timeline.NewTintedCards(presets.CuddlySpreadpointCards())
+if err != nil { return err }
+frame := cards.Next()
+if frame.Cue >= 0 { playTrack(frame.Cue) }
+if !frame.Completed { drawTintedCard(images[frame.Card], frame.Tint) }
+```
+
+The 724 intro ticks, including all four music handoffs and the last blank
+frame, match the previous screen logic exactly in a pure test. `Next` allocates
+nothing during playback; `Reset` restarts the card sequence for another scene
+entry.
+
 Megaball uses `GroupConfig.Coupled` when each sprite sample advances one shared
 orbital state. `motion.OrbitRange` preserves the two runs of indices 0–18 and
 40–58; the group prepares all 38 poses once per Update, then draws without
