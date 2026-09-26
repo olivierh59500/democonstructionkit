@@ -1361,6 +1361,30 @@ several wraps without step allocations. The source formerly duplicated both
 coordinate arrays; the shared controller stores each table once and wraps
 indices at lookup, giving the same positions with less memory.
 
+For two colored scrollings sharing a sampled vertical shape,
+`scrolling.DualProfiledRing` owns both bitmap transports and three small
+surfaces. The back text is copied through the profile and colored with a
+source-in raster before the front text is placed on top. Both fonts, messages,
+speeds, source-strip dimensions, profile, filters and raster are editable:
+
+```go
+config, err := presets.CuddlyStarwarsDualScroll(greenFont, redFont,
+    raster, message)
+if err != nil { return err }
+scroll, err := scrolling.NewDualProfiledRing(config)
+if err != nil { return err }
+defer scroll.Close()
+if err := scroll.Update(frame); err != nil { return err }
+scroll.Draw(scene)
+```
+
+The source screen used nearest sampling on the masked strips for its first
+frame and linear sampling thereafter; the two filters are independent options.
+`motion.SegmentedProfile` compiles twelve sine sections plus an unused tail
+value that extends the strict wrap tick. Its pure test matches all 733 profile
+values and several loops with no per-step allocation. The effect keeps only
+320×25, 320×25 and 320×200 working surfaces, matching the source budget.
+
 For a complete radial star recipe, start with `presets.DefaultNonamenoStarsConfig()`.
 Its count, speed, camera, spawn strides, pixel size, brightness, colors and
 trail threshold are plain editable values. Compile it with
@@ -2724,6 +2748,7 @@ remain available for effects with different behavior.
 | `composite.SurfaceLayer` | One bounded canvas with ordered source effects, editable image transforms/filter and repeated output placements | Grodan scrolls, Coco title, Cuddly Spreadpoint/Fullscreen logos |
 | `motion.GatedBackgroundPair` + `effects.GatedBackgroundPair` | Timed horizontal gate, coupled X/Y bounce and two repeated image layers | Grodan green and pink backgrounds |
 | `scrolling.Config.Crawl` | Paragraph window, vertical transport and perspective projection | Cuddly Starwars |
+| `motion.SegmentedProfile` + `scrolling.DualProfiledRing` | Two bitmap-font scrolls, strict profile cycle, source-in raster fill and bounded ordered surfaces | Cuddly Starwars |
 | `scrolling.Config.Feed` | Finite glyph insertion into a cached scrolling trail | DMA Is Back, Coco, TeamG1, MegaTwist intros |
 | `scrolling.Config.Scanline` | Proportional text transport, cumulative wave, cyclic bounce and bounded strip rendering | DMA Is Back, Coco, Multiscreen Coco, MegaTwist main screens |
 | `scrolling.Config.Profiled` | Independent proportional-text and floating-profile clocks with clipped strip sampling | TeamG1 main scrolling |
