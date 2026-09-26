@@ -3509,6 +3509,16 @@ when a scene owns the scroll clock. A destination subimage selects an interior
 viewport; text coordinates remain absolute. Union TNT2 uses this instead of
 creating substrings during drawing.
 
+Use `presets.WindowedTextWrap(contentWidth, viewportWidth, speed)` when the
+message begins one viewport width left of the stage and restarts as soon as
+its right edge passes the viewport's right edge. It returns a normal
+`motion.WrapBankConfig`, so `SetVelocity` can follow input or music without
+losing the current glyph position. Sample the clock before `Step` to preserve
+the strict boundary frame. TNT Crew 2 and Union Replicants use named presets
+with their authored 4- and 6-pixel initial speeds; the latter shares one
+position between two independently colored fonts. A 10,000-frame pure
+comparison covers live speed changes, strict wraps and zero-allocation steps.
+
 Keep assets alive for every borrowing atlas/effect. Close JellyCube, SolidCube,
 SolidCubeBatch, TexturedCube, Crawl and BitmapBands (or their owning group/layers)
 when finished. Atlas, BitmapText, BitmapSlots, Reveal, RowProjection and
