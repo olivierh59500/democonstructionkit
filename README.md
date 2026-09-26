@@ -978,6 +978,35 @@ trail threshold are plain editable values. Compile it with
 Cuddly Big Sprite now use the same transport and renderer. Their 11, 16, 9
 and 12 sampled RGB frames respectively match the previous productions exactly.
 
+For sprites whose atlas frame advances at an independent rate per instance,
+`sprites.AnimatedField` composes the pure `motion.FrameField` clock with a
+borrowed image sequence. Each spawn can set position, fractional starting
+frame and frame rate; a completed animation may respawn through the same
+callback. The frame selector, count, offsets, speed multiplier, blend and
+filter are independent options. DOM's eight animated stars are an editable
+recipe:
+
+```go
+atlas, err := sprites.NewAtlas(sprites.AtlasConfig{
+    Image: starSheet, TileW: 64, TileH: 46,
+})
+if err != nil { return err }
+options := presets.DefaultDOMStarOptions(random.Float64)
+options.Count = 12
+config, err := presets.DOMAnimatedStars(atlas.Tiles, options)
+if err != nil { return err }
+stars, err := sprites.NewAnimatedField(config)
+if err != nil { return err }
+// Update once per simulation tick, then draw at the chosen layer.
+if err := stars.Update(frame); err != nil { return err }
+stars.Draw(screen)
+```
+
+The source recipe's initial frame may exceed its nine-frame lifetime; the
+next update respawns that sprite, and out-of-range art is skipped until then.
+The DOM spawn callback and per-tick state updates allocate nothing after
+construction.
+
 ### Animate staggered text pages
 
 `motion.GlyphPageCycle` owns the per-character entrance, exit, page rotation,
@@ -1935,6 +1964,7 @@ remain available for effects with different behavior.
 | `effects.PerspectiveCheckerboard` | Perspective stripe geometry, two-axis motion, XOR composition and bounded surfaces | 3D DOC and Cuddly 3D DOC |
 | `effects.ProjectedBallTrain` | Blended movement programs, projected sprites/shadows, phase and depth/palette ordering | 3D DOC and Cuddly 3D DOC |
 | `sprites.ProjectedField` | Bounded spawn/respawn, strict/wide wrap, projection, history and pixel/sprite/vector materials | Nonameno stars, Union Starballs, Cuddly Starwars and Big Sprite |
+| `motion.FrameField` + `sprites.AnimatedField` | Independent fractional atlas clocks, ordered respawn, editable frame selection and placement | DOM animated stars |
 | `motion.GlyphPageCycle` + `sprites.GlyphPages` | Font-independent staggered pages, editable delay grids, elastic depth motion, completion barriers and stable atlas rendering | Nonameno text pages |
 | `scrolling.HarmonicSine` / `HarmonicSineWith` | Independent sine banks over the common text pipeline, optionally resetting spatial phase per repeated copy | Nonameno bottom scroll |
 | `scrolling.Config.Crawl` | Paragraph window, vertical transport and perspective projection | Cuddly Starwars |
