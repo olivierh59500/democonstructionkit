@@ -2737,6 +2737,24 @@ one `timeline.StageSequence`. Its `Window` is sampled before `StepWindow`,
 retaining the first zero-opacity frame. Fonts, rasters, draw order and event
 sources remain in the screen; stage names and fade durations are editable DCK
 preset data.
+`composite.ScalarStagePainter` can render ordered material passes from the
+current `ScalarStages` state without creating a scene-sized surface. Each pass
+has an inclusive stage range, optional scalar/direction gate, borrowed image,
+position expression and compiled RGB or premultiplied-alpha fade. The source
+images and the director can be replaced independently:
+
+```go
+materials := presets.PhenomenaStageMaterials(director, images)
+intro, err := composite.NewScalarStagePainter(materials)
+if err != nil { return err }
+intro.Draw(screen, photonY) // Director controls the state; Draw does not step it.
+```
+
+Phenomena uses it for the two opening pages, logo/raster reveal, falling photon
+and reverse outro. Its live DNA scroller remains a separate layer in the scene.
+Pure checks cover stage gates and exact color formulas; an opt-in GPU check
+compares the previous ordered renderer in 25 states with
+`-tags dck_scalar_stage_rendercheck` when a display is available.
 `timeline.HoldRamp` covers a finite splash or interstitial: its configured
 number of ticks reaches full progress, then the following Step reports exit.
 An optional interior offset changes partial-frame opacity without moving the
@@ -2937,6 +2955,7 @@ remain available for effects with different behavior.
 | `effects.JellyCube` | Five-mode controller, entrance, deformation, continuous handoffs, projection and rendering | DMA Is Back; `examples/jellycubes` |
 | `motion.ModelCarousel` + `effects.SolidMeshCarousel` | Selectable grouped meshes, per-face material, exact entry/recession/rotation handoffs and shared white source | Union TNT Crew 3 |
 | `motion.CaptionCycle` + `scrolling.CaptionCarousel` | Cached bitmap lines, small banner fill and exact slide/hold/page timing | Union TNT Crew 3 |
+| `composite.ScalarStagePainter` | Ordered stage-gated image passes with compiled position, RGB and premultiplied-alpha formulas | Phenomena intro and outro |
 | `motion.CameraTour` + `composite.SceneTour` | Held/eased camera poses, continuous scene updates, direct fixed views, visibility culling, retained canvases and shader/fallback composition | Multiscreen four-scene tour |
 | `geometry.MorphingMesh` + `effects.MorphingMesh` | Cyclic shape morph, sequential Euler rotation, sorted projected faces, culling and per-face tint/blend | DMA 3D |
 | `effects.SolidCube` / `SolidCubeBatch` | Material, culling, face ordering, outlines and bounded batch submission | Bilizir, Multiscreen Coco |
