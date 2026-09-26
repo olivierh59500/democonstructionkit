@@ -2200,7 +2200,8 @@ remain available for effects with different behavior.
 | `scrolling.Atlas` + `presets.FontAtlas` | Font metrics, cached glyph images, case/alias/fallback rules and ribbon layout | DMA Is Back, TeamG1, Megatwist, Coco, Multiscreen, Nonameno, Grodan |
 | `BitmapRecipe`, `BitmapText`, `BitmapParagraph` | Fractional atlas sampling, cached character lookup and paragraph alignment | Cuddly screens, Union screens/menu/loaders |
 | `effects.JellyCube` | Five-mode controller, entrance, deformation, continuous handoffs, projection and rendering | DMA Is Back; `examples/jellycubes` |
-| `effects.SolidCube` / `SolidCubeBatch` | Material, culling, face ordering, outlines and bounded batch submission | Bilizir, Coco, Multiscreen Coco |
+| `effects.SolidCube` / `SolidCubeBatch` | Material, culling, face ordering, outlines and bounded batch submission | Bilizir, Multiscreen Coco |
+| `effects.SolidCubeTrain` | Independent cube phases, editable X/Y curves or a custom path, per-index rotation and one bounded batch | Coco cube procession |
 | `effects.TexturedCube` | Live texture mapping, camera, rotation, face ordering and culling | TeamG1 |
 | `effects.PerspectiveCheckerboard` | Perspective stripe geometry, two-axis motion, XOR composition and bounded surfaces | 3D DOC and Cuddly 3D DOC |
 | `effects.ProjectedBallTrain` | Blended movement programs, projected sprites/shadows, phase and depth/palette ordering | 3D DOC and Cuddly 3D DOC |
@@ -2573,6 +2574,30 @@ For many cubes, construct `effects.NewSolidCubeBatch(capacity)` once, then
 returns false when capacity is exceeded. The batch preserves object insertion
 order; it does not depth-sort faces across separate cubes. It owns its buffers
 and white texture, while the added cubes remain caller-owned.
+
+`effects.SolidCubeTrain` owns the entire repeated-cube animation when each cube
+follows a path and rotates independently. It updates the phases and rotations
+once per tick and draws the cubes in one batch. A preset reproduces Coco's
+twelve orange cubes while leaving the count, material bank, starting phase,
+spacing, two axis curves and rotation rates editable:
+
+```go
+config := presets.CocoCubeTrain(800, 600, 40, 12)
+config.X.Amplitude = 300 // Narrower horizontal travel.
+config.PhaseSpacing = .22 // Wider delay between cubes.
+train, err := effects.NewSolidCubeTrain(config)
+if err != nil { return err }
+defer train.Close()
+if err := train.SetSpeed(1.5); err != nil { return err }
+if err := train.Update(frame); err != nil { return err }
+train.Draw(screen)
+```
+
+Assign `config.Path = func(index int, phase float64) motion.Point { ... }` for a
+different trajectory; the supplied X/Y waves then become optional. Each cube
+can also receive its own `SolidCubeConfig` through `CubeConfigs`. `Pose(index)`
+exposes the current screen position and XYZ rotation for transitions or an
+editor without advancing the animation. Zero live speed pauses the train.
 
 A textured cube accepts a live image, such as a plasma surface, scroller or logo:
 
