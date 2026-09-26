@@ -1,16 +1,19 @@
 # Effect map for the native demo catalog
 
 This map covers every DCK production under `demos/` except FR-010 and Second
-Reality. It was checked against the screen implementations and the detailed
-workspace audits on 2026-09-23; the wrap/train inventory was checked across
-all 20 DCK repositories on 2026-09-25. A complete component owns its transport,
+Reality. The screen and workspace audits began on 2026-09-23; the wrap/train
+inventory was checked across all 20 DCK repositories on 2026-09-25. The
+module-wide build/vet check was refreshed on 2026-09-26. A complete component
+owns its transport,
 animation state, geometry and rendering resources. The production supplies
 assets, messages, presets, input and scene order. A shared draw helper alone is
 not counted as a complete effect.
 
-`Shared` names a complete component already used by that screen. `Extract next`
-identifies remaining reusable logic and the parameters that must stay editable.
-The entries are acceptance work, not claims that all screens are already small.
+`Shared` names a complete component already used by that screen. The third
+column distinguishes intentional production composition from reusable logic
+still to extract. Authored artwork, input and layer order do not become DCK
+effects simply to shorten a source file. The entries are acceptance work, not
+claims of pixel-perfect or Pixel-device verification.
 
 ## Cross-catalog check: wrapped motion and image trains
 
@@ -45,7 +48,7 @@ production. Preserved original implementations remain unchanged.
 
 ## Individual demos and intro screens
 
-| Production / screen | Shared today | Extract next, with editable parameters |
+| Production / screen | Shared today | Remaining responsibility or extraction |
 | --- | --- | --- |
 | 3D DOC | Atlas, `Config.RowBands` using `composite.RowWarp`, `PerspectiveCheckerboard`, `ProjectedBallTrain`, `timeline.IntroHandoff` | Whole-scene transform remains scene composition data. |
 | Bilizir | Atlas, scrolling, independent StripWarp for text/logo, SolidCube, WaterReflection, `CopperBars` | Historical scroll timing stays a recipe; extra raster palettes and masks can use the shared bank. |
@@ -55,7 +58,7 @@ production. Preserved original implementations remain unchanged.
 | Coco, intro | `Config.Feed`, configurable CRTOverlay, immediate `timeline.IntroHandoff` music cue | Scene materials stay production data. |
 | Coco, main | `Config.Scanline`, `SolidCubeTrain`, sprites.Group grid/translation, shared font metrics, `RotozoomBackground` source quad and complete `CopperTitleBand` with a retained surface | Authored art and scene layer order. |
 | DOM intro | Atlas, `scrolling.Config.SizeBank`, `motion.ScaledTextClock`, `VerticalStripTrain` background, `RasterOverlay` copies, `effects.Mask` and `sprites.AnimatedField` stars | Authored text and scene layer order. |
-| Multiscreen, four embedded productions | `Config.Scanline`, recurrent `SolidCubeTrain`, `RotozoomBackground`, `sprites.Group` recurrent translation and direct `CopperTitleBand` in Coco, `RotozoomBackground` in Viva, Phenomena's main-only `scrolling.SliceProgram`, `motion.RecurrentRowWave`, `composite.ScalarStagePainter` HSL materials and reusable gradient/mask assets, projected-plane engines, atlas recipes, Viva `RasterTitle`, `scrolling.Config.Pseudo3D` text banks and `sprites.RecurrentFormation` logos, complete TCB `effects.MultiPlaneScene` | Make the remaining production scenes reusable constructors rather than copies of their standalone controllers; the embedded Phenomena panel omits its unreachable intro while the standalone version retains it. |
+| Multiscreen, four embedded productions | `Config.Scanline`, recurrent `SolidCubeTrain`, `RotozoomBackground`, `sprites.Group` recurrent translation and direct `CopperTitleBand` in Coco, `RotozoomBackground` in Viva, Phenomena's main-only `scrolling.SliceProgram`, `motion.RecurrentRowWave`, `composite.ScalarStagePainter` HSL materials and reusable gradient/mask assets, projected-plane engines, atlas recipes, Viva `RasterTitle`, `scrolling.Config.Pseudo3D` text banks and `sprites.RecurrentFormation` logos, complete TCB `effects.MultiPlaneScene` | Authored images, messages, panel sizes, placement and scene order remain in the host. No local trigonometric path, mesh submission or scrolling renderer remains in its DCK panels; the standalone Phenomena intro is preserved separately. |
 | Multiscreen, camera tour | Complete `composite.SceneTour` over `motion.CameraTour`: ten held/eased poses, direct fixed views, continuously updated sources, masked retained transition canvases, one-pass shader and fallback | Authored screen sources, world placement and music stay production configuration. |
 | Vectorballs | Projected shape factories, reflection and complete `geometry.PointSequence` with point morphing, sine grid, rotors, Y orbit and bounce | Artwork, authored shape/action data and layer placement stay production parameters. |
 | Grodan | Atlas, four `scrolling.Config.Ribbon` lanes, three `SurfaceLayer` raster compositions, `GatedBackgroundPair` and harmonic `sprites.Group` | Authored art and scene layer order. |
@@ -86,7 +89,7 @@ matches the previous implementation exactly.
 
 ## Cuddly presentation units
 
-| Screen | Shared today | Extract next, with editable parameters |
+| Screen | Shared today | Remaining responsibility or extraction |
 | --- | --- | --- |
 | Menu | TileAlphabet, `sprites.Atlas` image banks, `sprites.FrameSequence` character animation, `sprites.FormationCarousel` with seven compiled formula modes, `composite.CachedTileParallax`, `motion.CameraFollow`, scrolling | Door/input semantics and map content stay local. |
 | Loader | Bitmap font recipes, scrolling, `timeline.Countdown`, `timeline.CueClock` overlapping fade/hold windows and `timeline.CueRamp` gain applied by the playback host | Initial pre-render, text and layer placement remain authored. |
@@ -108,7 +111,7 @@ matches the previous implementation exactly.
 
 ## Union presentation units
 
-| Screen | Shared today | Extract next, with editable parameters |
+| Screen | Shared today | Remaining responsibility or extraction |
 | --- | --- | --- |
 | Introduction | Image repetition on `motion.WrapBank`, `HarmonicCellWarp` with two active editable row/column wave banks, `motion.HarmonicTransform` logo path and bitmap recipes | Authored artwork, text placement and layer order remain screen composition. |
 | Menu | Scrolling, background sampler, `sprites.Atlas` character frames, `motion.WrapBank` panorama, `motion.LinearTick` uncover wipe, `timeline.PacedIndex` palette/walk cycles, `motion.HoldBounce` logo and `motion.WalkParallax` hall/banner | Door navigation and authored layer order stay local. |
@@ -124,6 +127,24 @@ matches the previous implementation exactly.
 | Level 16 | Vertical scrolling, background sampler, NestedOrbit and two independent `composite.RasterOverlay` materials with exact water/raster wraps | Authored artwork and layer occlusion remain scene data. |
 | Multi-Plane | Complete `effects.MultiPlaneScene` in native-stage mode, with Union's source-index phases, `composite.ProfileImage` row renderer and strict `sprites.AxisFlip` cycle | Artwork, text, soundtrack and door routing remain production data. |
 | Disk Copier | Bitmap recipes, `sprites.Atlas` LCD regions, `motion.GatedWrapBank` three LCD clocks, `composite.WindowedImageBank` six-strip raster with its shared phase, `timeline.CueRanges` stages and `timeline.SteppedEnvelope` palette | Input/state program and LED layer placement remain scene composition data. |
+
+## Verification ledger (2026-09-26)
+
+- `GOWORK=off go build ./...` and `go vet ./...` passed in all 20 demo modules
+  with their published dependency pins. FR-010 and Second Reality are included
+  in these compatibility checks, not in the full-screen effect audit above.
+- DCK's pure `motion`, `geometry`, `timeline`, `timeline/recipes`, `palette` and
+  `modulation` test suites pass. Six opt-in GPU comparators for staged materials,
+  copper titles, tiled waves, windowed rasters, repeated backgrounds and bitmap
+  pages compile at the current DCK revision.
+- Those GPU comparators have not run at this revision. Ebitengine's macOS UI
+  receives a nil monitor; `system_profiler SPDisplaysDataType` currently lists
+  the M4 Max GPU but no attached display. `adb devices -l` lists no Pixel.
+  Recent migrations therefore still need complete-frame pixel comparisons at
+  startup, cue boundaries, wraps and late playback.
+- Pixel 10a CPU/frame and logical-surface measurements are still missing for
+  combined scanline, projected-field/mask and multi-layer scenes. Small pure
+  controller benchmarks do not establish whole-scene mobile performance.
 
 ## Extraction order and acceptance
 
