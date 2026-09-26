@@ -3827,6 +3827,29 @@ change row/column phases, gains and source padding for a logo without moving
 the text's own deformation. Pure 5,000-tick tests compare row and column
 offsets through speed changes and signed logo phases without allocations.
 
+The logo's horizontal journey is independent from the strip deformation.
+`motion.HarmonicTransform` provides the image position; one `motion.WaveClock`
+drives both the plain and warped placement, so changing materials keeps the
+same phase. The warped recipe narrows travel by the source padding:
+
+```go
+clock, err := motion.NewWaveClock(presets.BilizirLogoClock())
+if err != nil { return err }
+path, err := motion.NewHarmonicTransform(
+    presets.BilizirWarpedLogoMotion(800, float64(logo.Bounds().Dx()), 64),
+)
+if err != nil { return err }
+if err := clock.SetStep(presets.BilizirLogoPhaseStep() * speed); err != nil { return err }
+clock.Step()
+logoX := path.At(clock.Phase()).X
+```
+
+Use `BilizirPlainLogoMotion` for the undistorted source. Change `Phase` to
+offset another logo, or change `Sin.X` to alter its horizontal range. A new
+transform may read the existing clock phase, so changing its parameters need
+not restart the path. The 5,000-tick source-formula comparison covers both
+paths, speed changes and a changed padding value with no sampling allocations.
+
 For profiles with holds, gaps or later writes that overwrite earlier samples,
 use `motion.CompileWaveProgram`. `WaveAppend` appends a section; any nonnegative
 `At` writes at an absolute index. `SampleStart` keeps a continuous sine phase
