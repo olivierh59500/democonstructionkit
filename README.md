@@ -553,6 +553,11 @@ drawCompanionLogoAt(warped.Bounce() + 14)
 The curve, row count, source crop, X centering, Y offset and bounce are
 independent settings. The pure controller matches the source's 170 row poses
 over 1,000 ticks with no update allocations and uses no additional GPU surface.
+`presets.CuddlyEhhhLogoRows(logo)` uses the same component with a different
+compiled curve and a flat Y path. It retains the original 170 row samples even
+though the final two source rows are transparent. Ehhh also uses `WrapBank` for
+the small inner roller strip and `RasterOverlay` for its source-atop middle
+scrolling text.
 
 Ehhh drives its roller from `motion.CuedWaveClock`. Pass the next rune of its
 main ring after the current frame is drawn; named modes reveal the other text
@@ -2817,7 +2822,7 @@ remain available for effects with different behavior.
 | `effects.ProjectedBallTrain` | Blended movement programs, projected sprites/shadows, phase and depth/palette ordering | 3D DOC and Cuddly 3D DOC |
 | `composite.TwistingRibbon` | Two borrowed face images, exact strip crops, phase/occlusion clocks and ordered mirrored draw passes | Cuddly DNA |
 | `composite.SampledRows` | Arbitrary source row, placement and scale per copy and row, sampled from an absolute scene clock | Cuddly DNA logo |
-| `motion.TableWarpRows` + `composite.TableWarpLogo` | Compiled X-offset lookup, 170 row crops and a shared companion-logo bounce | Cuddly Digi logo |
+| `motion.TableWarpRows` + `composite.TableWarpLogo` | Compiled X-offset lookup and 170 row crops with optional shared companion-logo bounce | Cuddly Digi and Ehhh logos |
 | `motion.PairedPhaseProgram` + `composite.PairedRasterOrbit` | Ordered phase-window raster pairs with per-pass materials, opacity and one bounded clock | Cuddly Reset |
 | `sprites.RotatingDiscCloud` | Y-axis rotation, depth projection, stable painter order and batched circular material | Cuddly DNA particle sphere |
 | `sprites.ProjectedField` | Bounded spawn/respawn, strict/wide wrap, projection, history and pixel/sprite/vector materials | Nonameno stars, Union Starballs, Cuddly Starwars and Big Sprite |
