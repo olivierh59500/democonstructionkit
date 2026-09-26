@@ -222,9 +222,11 @@ regression test.
 3. Extract raster/mask materials and cue programs. Keep event clocks, draw order,
    alpha blend and handoff behavior explicit so the future editor can serialize
    common cases while Go callbacks remain available for special cases.
-4. Measure combined scene classes on Pixel. The current three-cube benchmark
-   measures that scene only; scanline, field/mask and multi-layer scenes need
-   their own CPU/frame and logical-surface reports.
+4. Continue measuring combined scene classes on Pixel. The ledger now samples
+   scanline/warp, projected field, masks and multi-layer compositions, with
+   Cuddly CPU timings and seven scene-level presentation traces. Long-running
+   tours, additional catalog screens, cue boundaries, memory peaks and battery
+   use still need device evidence.
 
 For any migration, compare deterministic complete-frame captures before and
 after at startup, state changes, text/texture wrap and late playback. Keep the
