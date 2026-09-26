@@ -1272,6 +1272,11 @@ func NewFlight(skin *ebiten.Image) (*sprites.ProjectedField, error) {
 Use `DepthFree`, `DepthWrap` or `DepthRespawn`; a respawn callback receives
 `reset=true`. `FieldView.Offset` also permits absolute-time travel, and `Angle`
 rotates the view axis. `SortDepth` selects stable far-to-near ordering.
+`ProjectedFieldConfig.ViewVelocity` and `AngleStep` optionally advance the
+camera before sampling each update; leaving them at zero preserves a static
+view. `presets.CuddlyStarwarsStars(randomFloat)` keeps its 400 seeded points,
+continuous camera depth, angular motion and three depth shades in one editable
+recipe, so the screen only calls `Update` and `Draw`.
 `ResetCount` changes population while reusing available storage. One `Update`
 advances the configured velocity and projects all points. `DrawStyle` redraws
 the same samples with another material or blend, so Union Starballs can place
