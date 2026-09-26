@@ -340,6 +340,17 @@ func captureRevision(source, revision, root, output string, p probe, frames []in
 			p.Imports = `"image/color"`
 		}
 	}
+	if filepath.Base(source) == "go-multiscreen" {
+		data, err := os.ReadFile(filepath.Join(packageDir, "main.go"))
+		if err != nil {
+			return err
+		}
+		if bytes.Contains(data, []byte("tourRenderer")) {
+			// The shared scene tour creates its own bounded canvases and shader.
+			// Keep older revisions on their original camera fixture.
+			p.Factory = `g:=&MegaDemoGame{demo1:NewPhenomenaDemo(),demo2:NewTCBDemo(),demo3:NewCocoDemo(),demo4:NewVivaDemo()};return g,nil`
+		}
+	}
 	frameValues := make([]string, len(frames))
 	for i, f := range frames {
 		frameValues[i] = fmt.Sprint(f)

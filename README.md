@@ -429,8 +429,35 @@ pose := tour.State() // CenterX, CenterY, Zoom, VisibleMask, Direct.
 
 The pure recipe test compares every pose and mask across multiple complete
 loops, including exact held-to-moving and moving-to-held boundaries. The
-controller advances without allocations; the retained canvases and shader
-composition are a separate renderer extraction.
+controller advances without allocations. `composite.SceneTour` owns the
+matching bounded renderer: it updates every scene each tick, draws fixed views
+directly, refreshes only visible transition canvases and combines them with one
+shader pass. A configurable DrawImage fallback handles another layout or a
+backend that rejects the shader:
+
+```go
+camera, err := motion.NewCameraTour(presets.MultiscreenCameraTour())
+if err != nil { return err }
+tour, err := composite.NewSceneTour(composite.SceneTourConfig{
+    Camera: camera,
+    Sources: []composite.TourSource{phenomena, tcb, coco, viva},
+    TileWidth: 800, TileHeight: 600,
+    ViewportWidth: 800, ViewportHeight: 600,
+    TileOrigins: []image.Point{
+        image.Pt(0, 0), image.Pt(800, 0),
+        image.Pt(800, 600), image.Pt(0, 600),
+    },
+    ShaderSource: []byte(presets.MultiscreenCompositeShaderSource),
+})
+if err != nil { return err }
+defer tour.Close()
+if err := tour.Update(); err != nil { return err }
+tour.Draw(screen)
+```
+
+The shader source is byte-identical to the previous Multiscreen source.
+`TileOrigins`, source order, durations, masks and camera path are independent
+configuration; caller-owned scenes continue to run even when offscreen.
 
 Cuddly's DNA screen uses a different effect family: two live text images twist
 as front and back faces of a twenty-strip ribbon. `composite.TwistingRibbon`
@@ -2539,6 +2566,7 @@ remain available for effects with different behavior.
 | `scrolling.Atlas` + `presets.FontAtlas` | Font metrics, cached glyph images, case/alias/fallback rules and ribbon layout | DMA Is Back, TeamG1, Megatwist, Coco, Multiscreen, Nonameno, Grodan |
 | `BitmapRecipe`, `BitmapText`, `BitmapParagraph` | Fractional atlas sampling, cached character lookup and paragraph alignment | Cuddly screens, Union screens/menu/loaders |
 | `effects.JellyCube` | Five-mode controller, entrance, deformation, continuous handoffs, projection and rendering | DMA Is Back; `examples/jellycubes` |
+| `motion.CameraTour` + `composite.SceneTour` | Held/eased camera poses, continuous scene updates, direct fixed views, visibility culling, retained canvases and shader/fallback composition | Multiscreen four-scene tour |
 | `geometry.MorphingMesh` + `effects.MorphingMesh` | Cyclic shape morph, sequential Euler rotation, sorted projected faces, culling and per-face tint/blend | DMA 3D |
 | `effects.SolidCube` / `SolidCubeBatch` | Material, culling, face ordering, outlines and bounded batch submission | Bilizir, Multiscreen Coco |
 | `effects.SolidCubeTrain` | Independent cube phases, editable X/Y curves or a custom path, optional reanchored recurrence, per-index rotation and one bounded batch | Coco and Multiscreen Coco cube processions |
