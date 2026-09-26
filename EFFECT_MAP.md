@@ -254,6 +254,10 @@ After the CRT migration, a separate 744-interval MegaTwist run reported p95
 16.764 ms, maximum 16.933 ms and zero intervals above 20 ms. Cuddly's menu
 run used its default CRT-off setting; the optional pass has desktop GPU
 comparisons but no Pixel presentation trace yet.
+After the spherical-cloud update, another Vectorballs authored-sequence run
+reported 744 intervals, p95 16.776 ms, maximum 16.961 ms and none above 20 ms.
+The new optional sphere was checked by desktop GPU capture, not selected in
+this Android run. Its foreground window still reports `KEEP_SCREEN_ON`.
 
 The common `scrolling.New` repeat renderer already has coverage for short
 horizontal and vertical messages, gap boundaries and mixed-font controls.
