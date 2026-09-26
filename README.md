@@ -1300,6 +1300,12 @@ alpha are independent effects that need separate working surfaces. In a saved
 `authoring` project, a `raster_overlay` layer must draw directly after its
 alpha source, with no outer fade; its own `alpha` setting remains editable.
 
+Union Level 16 uses two independent source-over overlays for its moving water
+and raster. The image, screen position, wrap threshold and cadence are editable
+through `presets.UnionLevel16Water` and `UnionLevel16Raster`. Their phases
+match the prior `WrapBank` positions for 5,000 ticks, including both wraps;
+the screen still chooses which image covers the other.
+
 `RasterOverlayConfig.Copies` draws several copies from the same phase without
 advancing it between draws. `effects.NewMaskWith` composes that material with
 any alpha effect using a chosen blend, alpha offset, output placement and an

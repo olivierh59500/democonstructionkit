@@ -9,14 +9,6 @@ import (
 	kit "github.com/olivierh59500/democonstructionkit"
 )
 
-// RasterWrap resets a moving image after it crosses Boundary. Inclusive
-// controls whether equality triggers the reset. Direction follows Velocity.
-// One authored reset is applied per logical step, preserving scene timing.
-type RasterWrap struct {
-	Boundary, Restart float64
-	Inclusive         bool
-}
-
 // RasterCopy places one additional draw relative to the overlay phase.
 type RasterCopy struct{ X, Y float64 }
 
@@ -108,18 +100,6 @@ func (r *RasterOverlay) Update(kit.Frame) error {
 	}
 	r.Step()
 	return nil
-}
-
-func rasterNext(position, velocity float64, wrap *RasterWrap) float64 {
-	position += velocity
-	if wrap == nil || velocity == 0 {
-		return position
-	}
-	if velocity < 0 && (position < wrap.Boundary || wrap.Inclusive && position == wrap.Boundary) ||
-		velocity > 0 && (position > wrap.Boundary || wrap.Inclusive && position == wrap.Boundary) {
-		return wrap.Restart
-	}
-	return position
 }
 
 func (r *RasterOverlay) Draw(dst *ebiten.Image) { r.DrawAt(dst, 0, 0) }
