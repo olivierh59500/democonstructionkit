@@ -2231,6 +2231,7 @@ remain available for effects with different behavior.
 | `plasma.HarmonicImage` | Harmonic kernel, reusable CPU pixels, live GPU surface and dirty-frame upload | TeamG1 plasma |
 | `sprites.Group` with `CircleFormation` | Indexed circular poses, secondary harmonic motion and independent sprite scales | TeamG1 twelve-logo formation |
 | `sprites.Group` with `HarmonicFormation` | Independent X/Y wave banks, two phase clocks, authored index phases, bounce envelope and optional bounds | Grodan sprite train, MegaTwist glowing logos, Union Beat Dis, Cuddly LED |
+| `sprites.Group` with `RecurrentTranslation` | One cached multi-harmonic offset shared by a sprite grid, with exact step deltas and bounded reanchoring | Multiscreen Coco sixteen-logo grid |
 | `sprites.GlowPainter` | Configurable outer-to-inner halo layers and final image over prepared group poses | MegaTwist glowing logos |
 | `effects.TimedCRTOverlay` | Adjustable time-varying scanlines, glow, color fringe and flicker | TeamG1 intro |
 | `scrolling.Config.Bands` | Cached repeated text, independent lanes and bounded viewport rendering | Cuddly Spreadpoint |
@@ -2349,6 +2350,24 @@ translation. Coco uses these parameters for sixteen logos and selects
 group owns the phase and prepared poses; a user speed control calls
 `group.Advance(delta)` once per update. The number of images, grid steps,
 harmonic terms, image bank, scale and material can be varied independently.
+For a constant-speed screen, `GroupConfig.RecurrentTranslation` caches each
+harmonic's sine/cosine pair and periodically reanchors it. Multiscreen Coco
+uses the same `sprites.Group` material and grid with four recurrent terms:
+
+```go
+config := presets.MultiscreenCocoLogoFormation(logo, 800, 600)
+group, err := sprites.NewGroup(config)
+if err != nil { return err }
+if err := group.Update(kit.Frame{}); err != nil { return err }
+group.Draw(screen)
+offset := group.RecurrentTranslationController().At()
+```
+
+The recurrence supports exact authored step deltas when ordinary floating-point
+multiplication rounds differently from the original constants. Its pure motion
+test matches all four source clocks for 10,000 ticks with zero per-step Go
+allocations. `ResetRecurrentTranslation` restarts the cached offset; use the
+ordinary `Translation` and `Advance` for variable-speed controls.
 
 On mobile, `plasma.HarmonicConfig.ColorLookupSize` may replace the standard
 four-wave kernel's per-pixel color trigonometry with a bounded RGB table. Zero

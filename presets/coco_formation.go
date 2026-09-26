@@ -27,3 +27,17 @@ func CocoLogoFormation(image *ebiten.Image, width, height float64) sprites.Group
 		Opacity: .6, AlphaOnly: true,
 	}
 }
+
+// MultiscreenCocoLogoFormation keeps Coco's editable grid and material while
+// advancing its four shared harmonics by recurrence with periodic reanchoring.
+func MultiscreenCocoLogoFormation(image *ebiten.Image, width, height float64) sprites.GroupConfig {
+	c := CocoLogoFormation(image, width, height)
+	harmonics := *c.Translation
+	c.Translation = nil
+	c.RecurrentTranslation = &motion.RecurrentTranslationConfig{
+		Harmonics: harmonics, PhaseStep: .02, ReanchorEvery: 1024,
+		XStepDeltas: []float64{.02 * 1.35, .02 * 1.86},
+		YStepDeltas: []float64{.02 * 1.72, .02 * 1.63},
+	}
+	return c
+}

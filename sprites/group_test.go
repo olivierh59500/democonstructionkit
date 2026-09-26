@@ -116,6 +116,47 @@ func TestGroupSamplesMusicOnceAndRetainsPreparedPoses(t *testing.T) {
 	}
 }
 
+func TestGroupAppliesOneRecurrentOffsetAcrossGrid(t *testing.T) {
+	image := ebiten.NewImage(4, 4)
+	defer image.Deallocate()
+	group, err := NewGroup(GroupConfig{
+		Frames: []*ebiten.Image{image}, Count: 4,
+		Origin: motion.Point{X: 100, Y: 50},
+		Grid:   &GridFormation{Columns: 2, Rows: 2, StepX: 20, StepY: 10},
+		RecurrentTranslation: &motion.RecurrentTranslationConfig{
+			Harmonics: motion.HarmonicTranslation{
+				X: []motion.HarmonicTerm{{Amplitude: 5, Rate: 1}},
+				Y: []motion.HarmonicTerm{{Amplitude: 3, Rate: 2, Cos: true}},
+			},
+			PhaseStep: .1, ReanchorEvery: 16,
+		},
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := group.Update(kit.Frame{}); err != nil {
+		t.Fatal(err)
+	}
+	translation := group.RecurrentTranslationController()
+	if translation == nil || translation.Tick() != 1 {
+		t.Fatal("recurrent translation was not advanced by the group")
+	}
+	for index, pose := range group.Poses() {
+		column, row := index%2, index/2
+		wantX := 100 + (float64(column)-.5)*20 + 5*math.Sin(.1)
+		wantY := 50 + (float64(row)-.5)*10 + 3*math.Cos(.2)
+		if math.Abs(pose.X-wantX) > 1e-12 || math.Abs(pose.Y-wantY) > 1e-12 {
+			t.Fatalf("sprite %d recurrent pose %+v", index, pose)
+		}
+	}
+	if err := group.Advance(.1); err == nil {
+		t.Fatal("Advance silently skipped the recurrent clock")
+	}
+	if err := group.ResetRecurrentTranslation(); err != nil || translation.Tick() != 0 {
+		t.Fatalf("recurrent reset failed: %v", err)
+	}
+}
+
 func TestGroupSamplesHarmonicFormationOncePerStateChange(t *testing.T) {
 	image := ebiten.NewImage(4, 4)
 	defer image.Deallocate()

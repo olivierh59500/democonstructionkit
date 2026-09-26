@@ -46,6 +46,7 @@ type GroupConfig struct {
 	Formation                               func(float64, int) motion.Point `json:"-"`
 	Grid                                    *GridFormation
 	Translation                             *motion.HarmonicTranslation
+	RecurrentTranslation                    *motion.RecurrentTranslationConfig // Shared offset advanced once per Update.
 	Origin, Velocity, Spacing               motion.Point
 	Speed, Phase, PhaseSpacing, Delay       float64
 	PhaseStep                               float64 // Optional cumulative phase per Update.
@@ -76,6 +77,7 @@ type Group struct {
 	harmonicClocks   [2]float64
 	harmonicEnvelope float64
 	harmonicBounce   *motion.BounceBank
+	recurrent        *motion.RecurrentTranslation
 }
 
 func NewGroup(c GroupConfig) (*Group, error) {
@@ -112,6 +114,9 @@ func NewGroup(c GroupConfig) (*Group, error) {
 	}
 	if c.Harmonic != nil && c.Harmonic.IndexOffsetCount() > 0 && c.Count > c.Harmonic.IndexOffsetCount() {
 		return nil, fmt.Errorf("sprites: harmonic index offsets are shorter than group count")
+	}
+	if c.Translation != nil && c.RecurrentTranslation != nil {
+		return nil, fmt.Errorf("sprites: choose direct or recurrent shared translation")
 	}
 	for _, value := range [...]float64{c.HarmonicClockStart[0], c.HarmonicClockStart[1], c.HarmonicClockStep[0], c.HarmonicClockStep[1]} {
 		if !finiteField(value) {
@@ -197,6 +202,14 @@ func NewGroup(c GroupConfig) (*Group, error) {
 		c.Circle = &copy
 	}
 	g := &Group{config: c, poses: make([]GroupPose, c.Count), phase: c.Phase, harmonicClocks: c.HarmonicClockStart, harmonicEnvelope: 1}
+	if c.RecurrentTranslation != nil {
+		var err error
+		g.recurrent, err = motion.NewRecurrentTranslation(*c.RecurrentTranslation)
+		if err != nil {
+			return nil, err
+		}
+		g.config.RecurrentTranslation = nil // The group owns an independent copy.
+	}
 	if c.HarmonicEnvelope != nil {
 		var err error
 		g.harmonicBounce, err = motion.NewBounceBank(*c.HarmonicEnvelope)
@@ -232,6 +245,9 @@ func (g *Group) Update(f kit.Frame) error {
 		return fmt.Errorf("sprites: group phase overflows")
 	}
 	g.phase = next
+	if g.recurrent != nil {
+		g.recurrent.Step()
+	}
 	return g.sample(f)
 }
 
@@ -240,6 +256,8 @@ func (g *Group) sample(f kit.Frame) error {
 	translation := motion.Point{}
 	if c.Translation != nil {
 		translation = c.Translation.At(g.phase + f.Time*c.Speed)
+	} else if g.recurrent != nil {
+		translation = g.recurrent.At()
 	}
 	context := modulation.Context{Seconds: f.Time}
 	if c.Context != nil {
@@ -388,6 +406,9 @@ func (g *Group) SetCount(count int) error {
 // SetPhase accepts an authored phase accumulator without converting it through
 // seconds. The new phase is sampled on the next Update, alongside all bindings.
 func (g *Group) SetPhase(phase float64) error {
+	if g.recurrent != nil {
+		return fmt.Errorf("sprites: use Update for recurrent translation")
+	}
 	if !finiteField(phase) {
 		return fmt.Errorf("sprites: nonfinite group phase")
 	}
@@ -430,9 +451,30 @@ func (g *Group) ResetHarmonics() error {
 // It is useful for variable-speed user controls without exposing a local
 // per-sprite controller. Do not also call Update for the same simulation tick.
 func (g *Group) Advance(delta float64) error {
+	if g.recurrent != nil {
+		return fmt.Errorf("sprites: use Update for recurrent translation")
+	}
 	if !finiteField(delta) || !finiteField(g.phase+delta) {
 		return fmt.Errorf("sprites: invalid group phase increment")
 	}
 	g.phase += delta
+	return g.sample(kit.Frame{})
+}
+
+// RecurrentTranslationController exposes the shared cached offset for cues or
+// inspection. Group.Update owns its Step call; do not step it separately.
+func (g *Group) RecurrentTranslationController() *motion.RecurrentTranslation {
+	if g == nil {
+		return nil
+	}
+	return g.recurrent
+}
+
+// ResetRecurrentTranslation restores the authored clocks and prepared poses.
+func (g *Group) ResetRecurrentTranslation() error {
+	if g == nil || g.recurrent == nil {
+		return fmt.Errorf("sprites: group has no recurrent translation")
+	}
+	g.recurrent.Reset()
 	return g.sample(kit.Frame{})
 }
