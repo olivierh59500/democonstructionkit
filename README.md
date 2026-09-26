@@ -1378,6 +1378,27 @@ The caller owns the three solid images. Count, speed, color, tile size, wrap
 width, height range and speed multiplier can be changed independently; a
 music or timeline cue may change the multiplier on the next update.
 
+`motion.BounceToggle` is useful when a logo or sprite should alternate its
+material only on one bound of a scale bounce. The selected material is separate
+from scale sign, so a one-frame negative overshoot does not switch it back.
+Delta Force uses a two-tile logo and the existing `WrapBank` for its gold fill:
+
+```go
+logo, err := motion.NewBounceToggle(presets.UnionDeltaLogoFlip())
+if err != nil { return err }
+gold, err := motion.NewWrapBank(presets.UnionDeltaGoldWrap())
+if err != nil { return err }
+pose := logo.Pose() // Value is Y scale; Material selects a logo tile.
+drawLogo(pose.Material, pose.Value)
+logo.Step()         // Advance after drawing this pose.
+drawGold(gold.At(0))
+gold.Step()
+```
+
+`Min`, `Max`, inclusive crossings, clamp policy and which bound changes the
+material are independently configurable. A pure test matches the source's
+scale, direction and tile over 2,000 ticks without per-step allocations.
+
 For planar stars or tiny sprites that share a solid material, use
 `sprites.BatchedSolidField`. It retains one `motion.FrameField`, accepts any
 number of colored rectangle materials and an optional origin mask, and draws
