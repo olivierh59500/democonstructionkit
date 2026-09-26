@@ -2663,6 +2663,37 @@ dimensions, phase rates, rotor radii, orbit bounds and bounce curve samples
 remain editable. Pure tests compare the source equations and every cached
 bounce sample; stepping these controllers allocates no Go memory per frame.
 
+`geometry.PointSequence` owns a complete ordered point-scene program: stage
+durations, inherited position and rotation velocities, shape cloning, caption
+cues, the active animation list and each program's update order. Supply a
+`PointShapeBank` and authored actions; a missing field inherits its preceding
+value, while `SetAnimations: true` with an empty list clears the effects.
+Appending or dropping an animation is also a stage parameter:
+
+```go
+actions := []geometry.PointAction{
+    {Frames: 45, Shape: "square", SetShape: true,
+        Position: &geometry.Vec3{Y: 320, Z: 850}, SetAnimations: true},
+    {Frames: 45, SetAnimations: true, Animations: []geometry.PointAnimationSpec{
+        {Kind: geometry.PointAnimMorph, Target: "sphere"},
+    }},
+    {Frames: 60, SetAnimations: true}, // Clear the morph; retain the pose.
+}
+sequence, err := geometry.NewPointSequence(geometry.PointSequenceConfig{
+    Shapes: shapes, Actions: actions, DurationScale: 2.4, Loop: true,
+})
+if err != nil { return err }
+if err := sequence.Step(); err != nil { return err }
+state := sequence.State() // Current points, XYZ pose and caption cue.
+```
+
+The boundary tick selects the next stage without also advancing motion.
+Ordinary ticks apply rotation, then translation, then animations in their
+listed order: a bounce can replace Y and an orbit can replace the whole model
+position. A morph captures the current points at entry, keeping the handoff
+continuous. Vectorballs keeps its shape strings and stage data in a separate
+pure-Go production package; its complete stage cycle is tested without a GPU.
+
 `effects.SolidCubeTrain` owns the entire repeated-cube animation when each cube
 follows a path and rotates independently. It updates the phases and rotations
 once per tick and draws the cubes in one batch. A preset reproduces Coco's

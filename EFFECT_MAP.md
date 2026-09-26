@@ -57,7 +57,7 @@ production. Preserved original implementations remain unchanged.
 | DOM intro | Atlas, `scrolling.Config.SizeBank`, `motion.ScaledTextClock`, `VerticalStripTrain` background, `RasterOverlay` copies, `effects.Mask` and `sprites.AnimatedField` stars | Authored text and scene layer order. |
 | Multiscreen, four embedded productions | `Config.Scanline`, recurrent `SolidCubeTrain`, `RotozoomBackground`, `sprites.Group` recurrent translation and `motion.WaveClock` title in Coco, `RotozoomBackground` in Viva, sampled DNA and projected-plane engines, atlas recipes, `CopperBars` in Coco, Viva `RasterTitle`, `scrolling.Config.Pseudo3D` text banks and `sprites.RecurrentFormation` logos, complete TCB `effects.MultiPlaneScene` | Make the remaining production scenes reusable constructors rather than copies of their standalone controllers. |
 | Multiscreen, camera tour | Layer/viewport helpers | Camera/zoom director with visibility culling, retained outputs and serialized handoffs. |
-| Vectorballs | Projected shape factories, reflection, `geometry.PointMorph`, `SinusGrid`, `Rotors`, `YOrbit` and `BounceCurve` | Extract the complete action sequence with explicit inherited vs cleared settings and ordered positional overrides. |
+| Vectorballs | Projected shape factories, reflection and complete `geometry.PointSequence` with point morphing, sine grid, rotors, Y orbit and bounce | Artwork, authored shape/action data and layer placement stay production parameters. |
 | Grodan | Atlas, four `scrolling.Config.Ribbon` lanes, three `SurfaceLayer` raster compositions, `GatedBackgroundPair` and harmonic `sprites.Group` | Authored art and scene layer order. |
 | MegaTwist, intro | `Config.Feed`, atlas, `timeline.HoldRamp` 90-tick splash | Authored intro image and CRT material remain scene data. |
 | MegaTwist, main | `Config.Scanline`, independent `ScanlineBackground` and DisplacementPrograms, harmonic `sprites.Group` and `sprites.GlowPainter` | Transition overlay material and scene composition. |
@@ -70,13 +70,13 @@ production. Preserved original implementations remain unchanged.
 | TeamG1, main | TexturedCube, HarmonicImage, ProfileImage, `Config.Profiled`, sprites.Group circular formation | Timed scene/audio cues and whole-scene presentation remain composition data. |
 | Viva TCB | Atlas, four editable `scrolling.Config.Pseudo3D` glyph banks, ten-logo `sprites.RecurrentFormation`, staged `RotozoomBackground`, two-mode `composite.RasterTitle` and held `motion.WaveClock` title path | Whole-scene layer schedule and host music cue. |
 
-Vectorballs' remaining sequence must distinguish absent action fields from
-explicit zero values, and an omitted animation list from an explicit empty
-list. Rotation and translation advance before the ordered point animations;
-bounce replaces Y while Y rotation replaces the full position. Stage-boundary
-ticks enter the next action without also advancing motion. Its authored shape
-replacements are explicit resets; the new `PointMorph` starts from the current
-point coordinates and must keep each ball's image index through a handoff.
+Vectorballs' shared sequence distinguishes absent fields from explicit zero
+values, and an omitted animation list from an explicit empty list. Rotation and
+translation advance before ordered point animations; bounce replaces Y while
+Y rotation replaces the full position. Stage-boundary ticks select the next
+action without also advancing motion. Shape replacement remains an explicit
+reset, while `PointMorph` starts from the current coordinates and keeps each
+ball's image index through a handoff.
 
 Second Reality remains outside this full-screen inventory, but its Rotozoomer
 now uses the `indexed.Rotozoom256` backend. The live RGBA tile used by Viva and
