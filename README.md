@@ -1274,6 +1274,28 @@ advances the phases or allocates a message-sized texture. A saved project can
 store the table and every clock/geometry setting as a `copper_bars` layer;
 the host still chooses the image asset and layer order.
 
+`composite.CopperTitleBand` composes a copper bank, a moving title and a
+configurable background as one effect. Its surface mode keeps Coco's bounded
+800 × 72 intermediate image; direct mode keeps Multiscreen's drawing straight
+onto the panel with no extra full-width surface. Both modes own their copper
+clock and editable title `WaveClock`, and `Advance(speed)` changes their pace
+without resetting phases:
+
+```go
+config := presets.CocoTitleBand(title, bars, 800, composite.CopperTitleDirect)
+band, err := composite.NewCopperTitleBand(config)
+if err != nil { return err }
+defer band.Close()
+if err := band.Advance(1.5); err != nil { return err }
+band.Draw(screen)
+```
+
+Change the copper material, clock policy, title waveform, scale, filter or
+background through the config. The embedded panel uses a masked integer copper
+clock; standalone Coco uses a fractional single-wrap clock. An opt-in GPU
+comparison for both compositions is available with
+`-tags dck_copper_title_rendercheck` when an Ebitengine display is accessible.
+
 ### Animate a raster over live text or a logo
 
 `composite.RasterOverlay` draws a borrowed image onto an existing surface with
@@ -2936,6 +2958,7 @@ remain available for effects with different behavior.
 | `indexed.Rotozoom256` | Allocation-free fixed-point rotozoom over indexed 256 × 256 textures | Second Reality Rotozoomer |
 | `composite.ScanlineBackground` | Bounded horizontal tile source, independent wave/bounce clocks and batched source rows | MegaTwist |
 | `composite.CopperBars` | Two-phase raster bank with editable table, clocks, source strips and quad/image materials | Bilizir, Coco, Multiscreen Coco |
+| `composite.CopperTitleBand` | Copper bank, timed logo and background with retained-surface or direct output | Coco and Multiscreen Coco titles |
 | `composite.RasterOverlay` | Moving raster material with source crop, blend, scale, independent copies and exact wrap policy | Cuddly Big Sprite/Starwars, Union Wow/Replicants, DOM |
 | `composite.WindowedImageBank` | Ordered cropped views of one image, per-window offsets, independent X/Y wrap clocks and retained window surfaces | Union Disk Copier raster |
 | `effects.Mask` / `NewMaskWith` | Two owned working surfaces, configurable alpha blend/offset, output placement and top crop | DOM raster-filled scrolling; reusable for logos and scene layers |
