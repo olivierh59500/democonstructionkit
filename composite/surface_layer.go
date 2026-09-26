@@ -35,6 +35,7 @@ type SurfaceOutput struct {
 // SurfaceLayerConfig composes live effects and ordered image passes into one
 // bounded surface, then places any number of output copies. OwnSources closes
 // the input effects with the layer; borrowed artwork remains caller-owned.
+// A layer may contain only image passes when no live background is needed.
 type SurfaceLayerConfig struct {
 	Width, Height int
 	Sources       []kit.Effect
@@ -60,9 +61,9 @@ type SurfaceLayer struct {
 
 func NewSurfaceLayer(c SurfaceLayerConfig) (*SurfaceLayer, error) {
 	if c.Width < 1 || c.Height < 1 || c.Width > 8192 || c.Height > 8192 ||
-		len(c.Sources) == 0 || len(c.Sources) > 256 || len(c.Passes) > 256 ||
+		len(c.Sources) == 0 && len(c.Passes) == 0 || len(c.Sources) > 256 || len(c.Passes) > 256 ||
 		len(c.Outputs) == 0 || len(c.Outputs) > 256 {
-		return nil, fmt.Errorf("composite: invalid surface layer dimensions or sources")
+		return nil, fmt.Errorf("composite: invalid surface layer dimensions or content")
 	}
 	for _, source := range c.Sources {
 		if source == nil {
@@ -115,6 +116,18 @@ func NewSurfaceLayer(c SurfaceLayerConfig) (*SurfaceLayer, error) {
 	c.Outputs = outputs
 	return &SurfaceLayer{config: c, passes: passes,
 		canvas: render.NewSurface(c.Width, c.Height)}, nil
+}
+
+// SetPassPosition moves one image pass without rebuilding the layer or its
+// working surface. Motion clocks can call this once per logical update.
+func (l *SurfaceLayer) SetPassPosition(index int, x, y float64) error {
+	if l == nil || l.canvas == nil || index < 0 || index >= len(l.passes) ||
+		math.IsNaN(x) || math.IsInf(x, 0) || math.IsNaN(y) || math.IsInf(y, 0) {
+		return fmt.Errorf("composite: invalid surface layer pass position")
+	}
+	l.passes[index].config.X = x
+	l.passes[index].config.Y = y
+	return nil
 }
 
 func (l *SurfaceLayer) Update(frame kit.Frame) error {

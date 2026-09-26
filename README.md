@@ -532,6 +532,10 @@ drives the same horizontal cosine title path with a 970-tick hold in standalone
 Viva and zero hold in Multiscreen. The title image is supplied separately to
 `RasterTitle.DrawAt`; fourteen captures per version around the hold and raster
 wrap boundaries remain identical in every channel.
+`presets.CocoTitleMotion` starts that cosine path at Coco's original phase and
+uses it to position a title image pass above animated copper bars in a
+`SurfaceLayer`. Call `SetPassPosition` after stepping the clock; the layer keeps
+its cached image views and working surface across frames.
 Set `Directional` when an axis should reverse only while moving outward. With
 `AllowOutsideStart`, an image can enter from beyond its normal bounds before
 settling into a bounce. Cuddly Mega Scroller uses this pair for its masked text
@@ -1258,7 +1262,7 @@ wrap threshold, font, scale, baseline and culling. `RibbonController` exposes
 the live offset and speed for editor cues. Choose ordinary `Config.Repeat`
 for a seamless loop instead of a historical exit-and-restart interval.
 
-`composite.SurfaceLayer` composes one or more scrolling/image effects into a
+`composite.SurfaceLayer` composes scrolling/image effects or image-only passes into a
 single persistent surface, applies ordered raster passes and draws output
 copies at editable positions and scales. It uses one surface per configured
 layer, so Grodan's two small ribbons still share the same 320×32 target:
@@ -1279,6 +1283,11 @@ layers[2].Draw(screen)
 Source effects, raster crops/transforms/blends, destination copies, clear or
 feedback mode and ownership are independent choices. The host chooses when
 each layer updates and where it sits among backgrounds, logos and sprites.
+`SetPassPosition(index, x, y)` changes a logo, sprite or text image path in
+place. Coco uses one 800×72 layer: `CopperBars` draws first, then a scaled
+title pass follows `CocoTitleMotion`, and a black fill preserves the banner's
+opaque background. The layer keeps one surface and never recreates image views
+as the title moves.
 
 `effects.GatedBackgroundPair` shares two `composite.Background` renderers with
 one image-free `motion.GatedBackgroundPair` controller. The first background
@@ -2203,7 +2212,7 @@ remain available for effects with different behavior.
 | `motion.GlyphPageCycle` + `sprites.GlyphPages` | Font-independent staggered pages, editable delay grids, elastic depth motion, completion barriers and stable atlas rendering | Nonameno text pages |
 | `scrolling.HarmonicSine` / `HarmonicSineWith` | Independent sine banks over the common text pipeline, optionally resetting spatial phase per repeated copy | Nonameno bottom scroll |
 | `scrolling.Config.Ribbon` | Fixed-tick horizontal/vertical atlas transport, editable strict wraps, independent cull width and scale | Grodan four scroll lanes |
-| `composite.SurfaceLayer` | One bounded canvas with ordered source effects, raster passes and repeated output placements | Grodan big, vertical and paired small scrolls |
+| `composite.SurfaceLayer` | One bounded canvas with ordered source effects, editable image-pass positions and repeated output placements | Grodan scrolls, Coco title band |
 | `motion.GatedBackgroundPair` + `effects.GatedBackgroundPair` | Timed horizontal gate, coupled X/Y bounce and two repeated image layers | Grodan green and pink backgrounds |
 | `scrolling.Config.Crawl` | Paragraph window, vertical transport and perspective projection | Cuddly Starwars |
 | `scrolling.Config.Feed` | Finite glyph insertion into a cached scrolling trail | DMA Is Back, Coco, TeamG1, MegaTwist intros |

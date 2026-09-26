@@ -2,6 +2,7 @@ package composite
 
 import (
 	"image/color"
+	"math"
 	"testing"
 
 	"github.com/hajimehoshi/ebiten/v2"
@@ -41,5 +42,32 @@ func TestSurfaceLayerComposesSourcesRasterAndOutputCopies(t *testing.T) {
 	}
 	if got := color.RGBAModel.Convert(dst.At(2, 2)).(color.RGBA); got.A != 0 {
 		t.Fatalf("gap between copies is opaque: %+v", got)
+	}
+}
+
+func TestSurfaceLayerMovesImagePassWithoutRebuilding(t *testing.T) {
+	image := ebiten.NewImage(1, 1)
+	defer image.Deallocate()
+	layer, err := NewSurfaceLayer(SurfaceLayerConfig{
+		Width: 16, Height: 8, Background: color.Black,
+		Passes:  []SurfaceImagePass{{Image: image, X: 2, Y: 3}},
+		Outputs: []SurfaceOutput{{}},
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer layer.Close()
+	canvas := layer.Canvas()
+	if err := layer.SetPassPosition(0, 7.5, -1); err != nil {
+		t.Fatal(err)
+	}
+	if layer.Canvas() != canvas || layer.passes[0].config.X != 7.5 || layer.passes[0].config.Y != -1 {
+		t.Fatal("moving a pass rebuilt the surface or lost its position")
+	}
+	if err := layer.SetPassPosition(1, 0, 0); err == nil {
+		t.Fatal("accepted a missing pass")
+	}
+	if err := layer.SetPassPosition(0, math.NaN(), 0); err == nil {
+		t.Fatal("accepted a nonfinite pass position")
 	}
 }
