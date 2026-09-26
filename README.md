@@ -554,6 +554,21 @@ The curve, row count, source crop, X centering, Y offset and bounce are
 independent settings. The pure controller matches the source's 170 row poses
 over 1,000 ticks with no update allocations and uses no additional GPU surface.
 
+Ehhh drives its roller from `motion.CuedWaveClock`. Pass the next rune of its
+main ring after the current frame is drawn; named modes reveal the other text
+lanes, change phase speed and optionally stop only at the 3.1-radian landing:
+
+```go
+roller, err := motion.NewCuedWaveClock(presets.CuddlyEhhhRoller())
+if err != nil { return err }
+drawRollerAt(roller.At())
+if err := roller.Step(mainRing.NextRune()); err != nil { return err }
+```
+
+The control characters, modes, speeds, visibility flags and landing threshold
+are editable. A pure test compares phase, roll pose and lane visibility over
+1,400 ticks with no per-step allocation.
+
 The screen's orange particle sphere uses `sprites.RotatingDiscCloud`, which
 combines a pure Y-axis projection controller with the existing batched `Discs`
 renderer. Point count and model coordinates, angle step, perspective, center,
