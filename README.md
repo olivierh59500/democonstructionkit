@@ -390,6 +390,23 @@ with the previous interpolation, including its truncation. The materials are
 constructed at initialization and add no per-frame CPU work; their GPU images
 remain caller-owned.
 
+For evenly spaced color banks, `palette.NewUniformGradient` also supports
+center-of-pixel sampling and nearest-byte rounding. LED Scroller uses eleven
+editable colors over a 384×2,000 raster; the helper fills each repeated row
+directly before one GPU upload:
+
+```go
+config := presets.CuddlyLEDGradient()
+config.Colors[2] = color.RGBA{R: 64, B: 255, A: 255}
+raster, err := composite.NewUniformGradientImage(config)
+if err != nil { return err }
+defer raster.Deallocate()
+```
+
+A pure test compares every byte with the previous renderer's 768,000 pixels.
+`Axis`, color count and sampling/rounding policy can be changed independently;
+the one-time constructor adds no per-frame CPU work.
+
 An intro can share its stage clock without imposing artwork or draw order.
 `timeline.ScalarStages` advances one editable scalar per stage, evaluates strict
 or inclusive threshold rules in authored order, and accepts external events on
