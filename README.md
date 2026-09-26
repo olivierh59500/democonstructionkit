@@ -291,6 +291,11 @@ continues. `RotationAt(frame)` can retain an existing phase accumulator exactly;
 `Offsets` adds one phase per visible slot. The low-level `SliceStream` remains
 available for direct `Step`, `SetFrames`, `Cursor`, `Reset`, `Slices` and `Head`
 access. Phenomena and its Multiscreen variant share that implementation.
+The Multiscreen panel enters Phenomena at its main scroller and never signals
+the standalone presentation to exit that stage. Its DCK scene therefore keeps
+the shared main transport and materials without copying the unreachable intro
+states or allocating their temporary photon image. The standalone intro keeps
+its complete `timeline.ScalarStages` program.
 
 Those two screens also share `motion.RecurrentRowWave` for the DNA strips'
 staggered transition from a flat baseline into a cosine wave. The component
