@@ -50,6 +50,9 @@ func TestScanlineCursorContinuesThroughThreeMessages(t *testing.T) {
 	if scroll.letter != 9 || scroll.decal != 90 {
 		t.Fatalf("third message cursor = (%d, %d), want (9, 90)", scroll.letter, scroll.decal)
 	}
+	if state := scroll.State(); state.Letter != 9 || state.Decal != 90 || state.WaveStart != 95 {
+		t.Fatalf("public cursor state = %+v", state)
+	}
 	dst := ebiten.NewImage(12, 6)
 	scroll.Draw(dst)
 	if scroll.text.Window(scroll.letter, 12).End <= scroll.letter {

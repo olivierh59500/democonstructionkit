@@ -69,6 +69,21 @@ type ScanlineScroll struct {
 	letter, decal   int
 	displayedLetter int
 	bounce          int
+	waveStart       int
+}
+
+// ScanlineState exposes the visible cursor and row bounce for timed cues or
+// editor inspection without advancing or redrawing the scrolling surface.
+type ScanlineState struct {
+	Letter, Decal, Bounce, WaveStart int
+}
+
+// State returns the last validated update state without advancing the scroll.
+func (s *ScanlineScroll) State() ScanlineState {
+	if s == nil {
+		return ScanlineState{}
+	}
+	return ScanlineState{Letter: s.letter, Decal: s.decal, Bounce: s.bounce, WaveStart: s.waveStart}
 }
 
 func NewScanlineScroll(c ScanlineConfig) (*ScanlineScroll, error) {
@@ -156,6 +171,7 @@ func (s *ScanlineScroll) Update(frame kit.Frame) error {
 		return fmt.Errorf("scrolling: scanline clock exceeds exact range")
 	}
 	start := int(clock * float64(s.config.WaveStep))
+	s.waveStart = start
 	if s.config.Program != nil {
 		s.config.Program.Fill(s.waves, start)
 	} else {

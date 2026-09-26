@@ -60,6 +60,21 @@ func CocoScanlineScroll(font *scrolling.Atlas, text string) (scrolling.ScanlineC
 	return c, nil
 }
 
+// MultiscreenCocoScanlineScroll preserves the embedded Coco panel's three-pixel
+// source/destination strips and explicit source-wrap split. The common
+// displacement, glyph layout and bounce remain editable through the result.
+func MultiscreenCocoScanlineScroll(font *scrolling.Atlas, text string) (scrolling.ScanlineConfig, error) {
+	c, err := CocoScanlineScroll(font, text)
+	if err != nil {
+		return c, err
+	}
+	c.StripHeight = 3
+	c.Wrap = scrolling.ScanlineSplit
+	c.UseTime = false
+	c.SurfaceUnmanaged = false
+	return c, nil
+}
+
 // CocoIntroFeed uses the same persistent-glyph transport at a wider viewport.
 func CocoIntroFeed(font *scrolling.Atlas, text string) scrolling.FeedConfig {
 	return scrolling.FeedConfig{Font: font, Text: text, Width: 800, Height: 72, Margin: 96, Scale: 2, Speed: 8}

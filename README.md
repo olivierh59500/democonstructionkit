@@ -2222,7 +2222,7 @@ remain available for effects with different behavior.
 | `motion.GatedBackgroundPair` + `effects.GatedBackgroundPair` | Timed horizontal gate, coupled X/Y bounce and two repeated image layers | Grodan green and pink backgrounds |
 | `scrolling.Config.Crawl` | Paragraph window, vertical transport and perspective projection | Cuddly Starwars |
 | `scrolling.Config.Feed` | Finite glyph insertion into a cached scrolling trail | DMA Is Back, Coco, TeamG1, MegaTwist intros |
-| `scrolling.Config.Scanline` | Proportional text transport, cumulative wave, cyclic bounce and bounded strip rendering | DMA Is Back, Coco, MegaTwist main screens |
+| `scrolling.Config.Scanline` | Proportional text transport, cumulative wave, cyclic bounce and bounded strip rendering | DMA Is Back, Coco, Multiscreen Coco, MegaTwist main screens |
 | `scrolling.Config.Profiled` | Independent proportional-text and floating-profile clocks with clipped strip sampling | TeamG1 main scrolling |
 | `scrolling.Config.RowColumn` | Fixed-cell bitmap text, sampled source rows and independent destination columns | DMA 3D and Replicants |
 | `scrolling.Config.RowBands` | Circular bitmap text, ordered row displacement passes and a final crop | 3D DOC intro and main screen |
@@ -2306,6 +2306,22 @@ sampling rules independently. `ScanlineSplit` draws explicit wrapped quads;
 All modes reuse bounded surfaces and triangle arrays. DMA and Coco use the same
 wave recipe but different strip sizes, image formats, clocks and wrap rules;
 MegaTwist adds the introductory wave and strict source-window rejection.
+The embedded Coco panel in Multiscreen uses the same transport with explicit
+three-pixel strips and split wrapping, preserving its 1,600 × 108 text surface
+and one batched draw:
+
+```go
+config, err := presets.MultiscreenCocoScanlineScroll(atlas, message)
+if err != nil { return err }
+scroll, err := scrolling.New(scrolling.Config{Scanline: &config})
+if err != nil { return err }
+if err := scroll.Update(kit.Frame{Tick: tick}); err != nil { return err }
+scroll.Draw(screen)
+cursor := scroll.ScanlineController().State() // Letter, decal, bounce, wave start.
+```
+
+`ScanlineController().State()` exposes the current cursor without changing the
+image or advancing the clock. It is useful for timed overlays and an editor.
 
 The shared `effects.CRTOverlay` accepts curvature, scanline, chromatic and
 vignette parameters. `composite.ImageGrid` draws finite, independently spaced

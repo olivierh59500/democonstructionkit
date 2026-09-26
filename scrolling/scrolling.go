@@ -180,6 +180,15 @@ func (s *Scrolling) RibbonController() *Ribbon {
 	return nil
 }
 
+// ScanlineController exposes the text cursor and bounce of a proportional
+// scanline transport selected through scrolling.New.
+func (s *Scrolling) ScanlineController() *ScanlineScroll {
+	if scanline, ok := s.backend.(*ScanlineScroll); ok {
+		return scanline
+	}
+	return nil
+}
+
 // CursorRune returns the current character for transports that expose a text
 // cursor. Other transport kinds return zero.
 func (s *Scrolling) CursorRune() rune {
