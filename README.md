@@ -292,6 +292,26 @@ continues. `RotationAt(frame)` can retain an existing phase accumulator exactly;
 available for direct `Step`, `SetFrames`, `Cursor`, `Reset`, `Slices` and `Head`
 access. Phenomena and its Multiscreen variant share that implementation.
 
+Those two screens also share `motion.RecurrentRowWave` for the DNA strips'
+staggered transition from a flat baseline into a cosine wave. The component
+resets its sine/cosine recurrence at each draw and advances it only when
+`DNAFrames.DrawSlices` calls `Y` for a valid source strip. That distinction
+keeps startup, missing-glyph and loop frames aligned:
+
+```go
+rows, err := motion.NewRecurrentRowWave(presets.PhenomenaDNARows())
+if err != nil { return err }
+draw := scrolling.DNADrawConfig{SliceWidth: 2, ScaleX: 2, ScaleY: 1.5,
+    OriginY: 156, Y: rows.At}
+if err := rows.Begin(sceneTime); err != nil { return err }
+film.DrawSlices(screen, stream.Slices(), stream.Head(), draw)
+```
+
+`ScaleX`, `ScaleY` and `OriginY` may differ between scenes. The wave's reveal
+threshold, per-strip delay, baseline, amplitude, angle and phase step are data;
+the pure controller matched the preceding recurrence at flat, boundary and late
+times while skipping invalid source strips, without drawing-time allocations.
+
 Cuddly's DNA screen uses a different effect family: two live text images twist
 as front and back faces of a twenty-strip ribbon. `composite.TwistingRibbon`
 owns the phase, source crops, vertical mirroring and ordered occlusion; any
