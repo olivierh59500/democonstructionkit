@@ -832,6 +832,11 @@ roto.Draw(screen)
 Omit `SourceQuad` for viewport inverse sampling. Set it when a large, source-
 sized rotating quad is part of the intended rasterization; DCK caches its
 vertices and submits one repeat-addressed draw call per frame.
+Multiscreen's Coco and Viva panels use viewport sampling with
+`presets.MultiscreenCocoRotozoom` and `MultiscreenVivaRotozoom`. Both start all
+three harmonic clocks immediately, while their texture phases and tints stay
+independent. Each panel uses one repeated draw call without building a large
+pre-tiled image.
 
 Simple rotozoom layers can also be saved for a future editor. This layer moves
 its center and rotates the texture without any Go callback:
@@ -2232,7 +2237,7 @@ remain available for effects with different behavior.
 | `scrolling.Config.Slots` | Glyph recycling, wave motion, tangent orientation and custom poses | Cuddly Reset |
 | `scrolling.Reveal` | Cached text layout and ordered per-character entrance | Union loader |
 | `composite.Bands` | Independently moving/repeated background strips and batched drawing | Union Multiplane |
-| `composite.RotozoomBackground` | One tiled GPU quad with independent pose, phase, velocity, source-sized geometry or a staged motion program | Viva TCB, Coco |
+| `composite.RotozoomBackground` | One tiled GPU quad with independent pose, phase, velocity, source-sized geometry or a staged motion program | Viva TCB, Coco, Multiscreen Coco/Viva |
 | `indexed.Rotozoom256` | Allocation-free fixed-point rotozoom over indexed 256 × 256 textures | Second Reality Rotozoomer |
 | `composite.ScanlineBackground` | Bounded horizontal tile source, independent wave/bounce clocks and batched source rows | MegaTwist |
 | `composite.CopperBars` | Two-phase raster bank with editable table, clocks, source strips and quad/image materials | Bilizir, Coco, Multiscreen Coco |
