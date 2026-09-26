@@ -192,12 +192,13 @@ matches the previous implementation exactly.
   for each of Union Multi-Plane and Starballs, Multiscreen's four-demo tour,
   Bilizir, DMA Is Back, Phenomena DNA, standalone TCB Replicants, Vectorballs'
   authored sequence, 3D DOC, DMA 3D, Coco, MegaTwist, TeamG1, Nonameno,
-  Viva TCB, TCB Multi-Plane, DOM and Grodan. All eighteen measured scenes had
-  zero intervals above 20 ms; detailed p95/max values appear below. Union intro
+  Viva TCB, TCB Multi-Plane, DOM, Grodan and Cuddly's standalone menu. All
+  nineteen measured scenes had zero intervals above 20 ms; detailed p95/max
+  values appear below. Union intro
   and its Replicants screen also had 63-frame spot checks with zero intervals
-  above 20 ms. Screenshots confirmed
-  the effects, and thermal status remained 0 during the earlier eight-scene
-  run. The newer ten scenes were each inspected at a visible stage frame.
+  above 20 ms. Screenshots confirmed the effects, and thermal status remained
+  0 during the earlier eight-scene run. The newer eleven scenes were each
+  inspected at a visible stage frame.
 - The remaining catalog screens, longer playback, varying device refresh rates
   and battery consumption still need device checks. The sampled windows do not
   prove that every cue boundary or full megademo tour stays at 60 FPS.
@@ -222,6 +223,7 @@ matches the previous implementation exactly.
 | TCB Multi-Plane | 744 | 16.762 ms | 16.989 ms | 0 |
 | DOM Intro | 744 | 16.758 ms | 16.904 ms | 0 |
 | Grodan | 744 | 16.755 ms | 18.022 ms | 0 |
+| Cuddly menu, CRT off | 744 | 16.762 ms | 16.926 ms | 0 |
 
 The Pixel's physical landscape display was 2,424×1,080. The main logical
 surfaces measured here include 768×540 for Cuddly, 768×536 for Union and
@@ -233,6 +235,10 @@ thermal status 0 after the sampled runs.
 The Vectorballs authored sequence additionally used 198,956 KiB process PSS
 and 101,156 KiB graphics memory in one snapshot. Its optional new object modes
 have not yet been selected on Pixel, despite their exact desktop GPU captures.
+After the CRT migration, a separate 744-interval MegaTwist run reported p95
+16.764 ms, maximum 16.933 ms and zero intervals above 20 ms. Cuddly's menu
+run used its default CRT-off setting; the optional pass has desktop GPU
+comparisons but no Pixel presentation trace yet.
 
 The common `scrolling.New` repeat renderer already has coverage for short
 horizontal and vertical messages, gap boundaries and mixed-font controls.
@@ -255,7 +261,7 @@ regression test.
    common cases while Go callbacks remain available for special cases.
 4. Continue measuring combined scene classes on Pixel. The ledger now samples
    scanline/warp, projected field, masks and multi-layer compositions, with
-   Cuddly CPU timings and eighteen scene-level presentation traces. Long-running
+   Cuddly CPU timings and nineteen scene-level presentation traces. Long-running
    tours, additional catalog screens, cue boundaries, memory peaks and battery
    use still need device evidence.
 
