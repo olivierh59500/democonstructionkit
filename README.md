@@ -1067,6 +1067,29 @@ The caller owns the three solid images. Count, speed, color, tile size, wrap
 width, height range and speed multiplier can be changed independently; a
 music or timeline cue may change the multiplier on the next update.
 
+For logo art that must grow through discrete bitmap sizes, `sprites.NewScaleFrames`
+pre-renders an editable size sequence once. `sprites.CoupledLogoPair` combines
+two such banks with linked depth and Y motion; it chooses each frame from
+depth and paints the farther image first. All phase steps, amplitudes, frame
+counts, frame-selection bias/gain and visibility of frame zero are parameters:
+
+```go
+config := presets.ReplicantsLogoPair(repLogo, tcbLogo)
+config.Motion.SecondaryYSin = 90
+config.Secondary.Gain = 28
+logos, err := sprites.NewCoupledLogoPair(config)
+if err != nil { return err }
+if err := logos.SetSpeedMultiplier(1.2); err != nil { return err }
+if err := logos.Update(frame); err != nil { return err }
+logos.Draw(screen)
+defer logos.Close()
+```
+
+The image sources are borrowed; `Close` releases only the cached scales.
+`motion.CoupledLogoMotion` can also drive another renderer without creating
+bitmap frames. Its 5,000-tick test checks both depth orders and changes of
+speed against the authored Replicants equations.
+
 `scrolling.Config.SizeBank` composes several differently scaled atlases over
 one message and one transport clock. Font controls select the active bank when
 they reach an editable right-edge lookahead; the other bank offsets stay
@@ -2051,6 +2074,7 @@ remain available for effects with different behavior.
 | `effects.ProjectedBallTrain` | Blended movement programs, projected sprites/shadows, phase and depth/palette ordering | 3D DOC and Cuddly 3D DOC |
 | `sprites.ProjectedField` | Bounded spawn/respawn, strict/wide wrap, projection, history and pixel/sprite/vector materials | Nonameno stars, Union Starballs, Cuddly Starwars and Big Sprite |
 | `motion.FrameField` + `sprites.AnimatedField` | Independent fractional atlas clocks or planar motion, single-edge wrap, ordered respawn and per-instance image selection | DOM animated stars, Replicants layered stars |
+| `motion.CoupledLogoMotion` + `sprites.CoupledLogoPair` | Two linked logo paths, cached quantized scale banks, depth-based frame selection and draw order | Replicants paired logos |
 | `scrolling.Config.SizeBank` | Shared transport, controlled font-size cues, synchronized scaled offsets and repeated cached text layers | DOM four-size scroll |
 | `motion.GlyphPageCycle` + `sprites.GlyphPages` | Font-independent staggered pages, editable delay grids, elastic depth motion, completion barriers and stable atlas rendering | Nonameno text pages |
 | `scrolling.HarmonicSine` / `HarmonicSineWith` | Independent sine banks over the common text pipeline, optionally resetting spatial phase per repeated copy | Nonameno bottom scroll |
