@@ -518,6 +518,23 @@ the pure row programs sample without Go allocations. Tests compare source
 coordinates at intro, middle and late ticks; graphical sampling still needs a
 rendered-frame comparison.
 
+`RasterOverlay.ColorScale` optionally tints a source before its alpha and blend
+are applied. Mega Scroller colors its live text with a borrowed bar mask through
+one source-atop overlay. Cuddly 3D DOC uses two ordered overlays on the warped
+inner text: a black-tinted white pixel expanded to its text region, followed
+by the borrowed raster image. Both recipes reuse the current text alpha without
+creating another full-screen surface:
+
+```go
+black, stripes := presets.CuddlyDOCInnerMaterials(whitePixel, raster)
+first, err := composite.NewRasterOverlay(black)
+if err != nil { return err }
+second, err := composite.NewRasterOverlay(stripes)
+if err != nil { return err }
+first.Draw(innerText)
+second.Draw(innerText)
+```
+
 The Digi screen uses the same `composite.SampledRows` backend through
 `composite.TableWarpLogo`. It compiles an editable X-offset curve once, samples
 170 source rows and shares one rectified bounce with a separate logo. Both the

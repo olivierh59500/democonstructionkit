@@ -37,6 +37,7 @@ type RasterOverlayConfig struct {
 	Copies               []RasterCopy // Empty draws one copy at the phase position.
 	Filter               ebiten.Filter
 	Blend                ebiten.Blend
+	ColorScale           ebiten.ColorScale // Zero value keeps the source colors unchanged.
 }
 
 // RasterOverlay owns its phase and source view but borrows its image and target.
@@ -54,6 +55,11 @@ func NewRasterOverlay(c RasterOverlayConfig) (*RasterOverlay, error) {
 	for _, v := range [...]float64{c.X, c.Y, c.VelocityX, c.VelocityY, c.ScaleX, c.ScaleY, c.AngleDegrees, c.AnchorX, c.AnchorY, c.Alpha} {
 		if math.IsNaN(v) || math.IsInf(v, 0) {
 			return nil, fmt.Errorf("composite: nonfinite raster setting")
+		}
+	}
+	for _, value := range [...]float32{c.ColorScale.R(), c.ColorScale.G(), c.ColorScale.B(), c.ColorScale.A()} {
+		if math.IsNaN(float64(value)) || math.IsInf(float64(value), 0) {
+			return nil, fmt.Errorf("composite: nonfinite raster color scale")
 		}
 	}
 	for _, wrap := range [...]*RasterWrap{c.WrapX, c.WrapY} {
@@ -135,6 +141,7 @@ func (r *RasterOverlay) DrawAt(dst *ebiten.Image, x, y float64) {
 		}
 		var op ebiten.DrawImageOptions
 		op.Filter, op.Blend = c.Filter, c.Blend
+		op.ColorScale = c.ColorScale
 		op.GeoM.Translate(-c.AnchorX, -c.AnchorY)
 		op.GeoM.Scale(c.ScaleX, c.ScaleY)
 		op.GeoM.Rotate(c.AngleDegrees * math.Pi / 180)
