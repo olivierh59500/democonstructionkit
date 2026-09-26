@@ -11,6 +11,7 @@ import (
 	"testing"
 
 	"github.com/hajimehoshi/ebiten/v2"
+	"github.com/hajimehoshi/ebiten/v2/vector"
 	"github.com/olivierh59500/democonstructionkit/composite"
 	"github.com/olivierh59500/democonstructionkit/palette"
 	"github.com/olivierh59500/democonstructionkit/presets"
@@ -52,6 +53,9 @@ func (game *scalarStageRenderCheck) Draw(*ebiten.Image) {
 	}
 	game.done = true
 	game.err = compareScalarStagePixels()
+	if game.err == nil {
+		game.err = compareMultiscreenMainPixels()
+	}
 }
 
 func stageTestImage(width, height, seed int) *ebiten.Image {
@@ -215,4 +219,55 @@ func drawOriginalStage(dst *ebiten.Image, images presets.PhenomenaStageImages, s
 	case presets.PhenomenaHideUpperRaster:
 		fade(images.Raster, 0, 129, value/100)
 	}
+}
+
+func compareMultiscreenMainPixels() error {
+	logo := stageTestImage(640, 300, 10)
+	raster := stageTestImage(800, 12, 11)
+	photon := stageTestImage(70, 15, 12)
+	defer logo.Deallocate()
+	defer raster.Deallocate()
+	defer photon.Deallocate()
+	painter, err := composite.NewScalarStagePainter(presets.MultiscreenPhenomenaMainMaterials(logo, raster, photon))
+	if err != nil {
+		return err
+	}
+	actual := ebiten.NewImageWithOptions(image.Rect(0, 0, 800, 600), &ebiten.NewImageOptions{Unmanaged: true})
+	expected := ebiten.NewImageWithOptions(image.Rect(0, 0, 800, 600), &ebiten.NewImageOptions{Unmanaged: true})
+	defer actual.Deallocate()
+	defer expected.Deallocate()
+	got, want := make([]byte, 800*600*4), make([]byte, 800*600*4)
+	for _, hue := range []float64{0, .3, .9} {
+		actual.Clear()
+		expected.Clear()
+		painter.DrawAt(actual, 0, 0, 1, hue)
+		expected.Fill(color.Black)
+		vector.DrawFilledRect(expected, 0, 162, 800, 375, color.RGBA{R: 0, G: 1, B: 17, A: 255}, false)
+		var op ebiten.DrawImageOptions
+		op.GeoM.Translate(80, 0)
+		expected.DrawImage(logo, &op)
+		op.GeoM.Reset()
+		op.GeoM.Translate(0, 129)
+		expected.DrawImage(raster, &op)
+		op.GeoM.Reset()
+		op.GeoM.Translate(0, 537)
+		expected.DrawImage(raster, &op)
+		op = ebiten.DrawImageOptions{}
+		r, g, b := palette.HSLToRGB(hue, 1, .5)
+		op.ColorScale.Scale(float32(r), float32(g), float32(b), 1)
+		op.GeoM.Translate(365, 555)
+		expected.DrawImage(photon, &op)
+		actual.ReadPixels(got)
+		expected.ReadPixels(want)
+		if !bytes.Equal(got, want) {
+			pixel := 0
+			for got[pixel] == want[pixel] {
+				pixel++
+			}
+			return fmt.Errorf("Multiscreen main materials differ at hue %g pixel (%d,%d): got %v want %v",
+				hue, (pixel/4)%800, pixel/(4*800),
+				got[pixel/4*4:pixel/4*4+4], want[pixel/4*4:pixel/4*4+4])
+		}
+	}
+	return nil
 }

@@ -6,6 +6,7 @@ import (
 	"math"
 
 	"github.com/hajimehoshi/ebiten/v2"
+	"github.com/hajimehoshi/ebiten/v2/vector"
 	"github.com/olivierh59500/democonstructionkit/motion"
 	"github.com/olivierh59500/democonstructionkit/palette"
 	"github.com/olivierh59500/democonstructionkit/timeline"
@@ -32,12 +33,20 @@ type ScalarTintConfig struct {
 	Saturation, Lightness float64
 }
 
-// ScalarImagePass draws one borrowed image in declaration order. YFormula, if
-// supplied, adds a scalar-derived offset to Y. ExprTime is the director value;
+// ScalarStageRect draws a filled rectangle in declaration order without a GPU
+// image. The background and foreground color can be configured independently.
+type ScalarStageRect struct {
+	Width, Height float64
+	Color         color.Color
+}
+
+// ScalarImagePass draws one borrowed image or rectangle in declaration order.
+// YFormula adds a scalar-derived offset to Y. ExprTime is the director value;
 // ExprSecondaryTime is an independent caller-supplied position or cue.
 type ScalarImagePass struct {
 	Rule     ScalarStageRule
 	Image    *ebiten.Image
+	Rect     *ScalarStageRect
 	X, Y     float64
 	YFormula *motion.FormulaExpr
 	Tint     ScalarTintConfig
@@ -47,6 +56,7 @@ type ScalarImagePass struct {
 
 // ScalarStagePainterConfig binds a scalar stage director to ordered image
 // materials. Backgrounds are selected by stage; nil clears to transparent.
+// A nil Director permits explicit DrawAt sampling of an embedded panel.
 type ScalarStagePainterConfig struct {
 	Director    *timeline.ScalarStages
 	Backgrounds []color.Color
@@ -68,7 +78,7 @@ type ScalarStagePainter struct {
 }
 
 func NewScalarStagePainter(config ScalarStagePainterConfig) (*ScalarStagePainter, error) {
-	if config.Director == nil || len(config.Backgrounds) == 0 || len(config.Backgrounds) > 1024 || len(config.Passes) > 16384 {
+	if len(config.Backgrounds) == 0 || len(config.Backgrounds) > 1024 || len(config.Passes) > 16384 {
 		return nil, fmt.Errorf("composite: invalid scalar stage painter dimensions")
 	}
 	painter := &ScalarStagePainter{
@@ -77,12 +87,22 @@ func NewScalarStagePainter(config ScalarStagePainterConfig) (*ScalarStagePainter
 		passes:      make([][]*scalarCompiledPass, len(config.Backgrounds)),
 	}
 	for index, pass := range config.Passes {
-		if pass.Image == nil || pass.Rule.From < 0 || pass.Rule.To < pass.Rule.From || pass.Rule.To >= len(painter.passes) ||
+		if (pass.Image == nil) == (pass.Rect == nil) || pass.Rule.From < 0 || pass.Rule.To < pass.Rule.From || pass.Rule.To >= len(painter.passes) ||
 			pass.Rule.Compare > timeline.ScalarLessEqual || pass.Rule.DirectionSign < -1 || pass.Rule.DirectionSign > 1 ||
 			math.IsNaN(pass.Rule.Threshold) || math.IsInf(pass.Rule.Threshold, 0) ||
 			math.IsNaN(pass.X) || math.IsInf(pass.X, 0) || math.IsNaN(pass.Y) || math.IsInf(pass.Y, 0) ||
 			pass.Tint.Mode > ScalarTintHSL {
 			return nil, fmt.Errorf("composite: invalid scalar image pass %d", index)
+		}
+		if pass.Rect != nil {
+			if pass.Rect.Color == nil || pass.Tint.Mode != ScalarTintIdentity ||
+				math.IsNaN(pass.Rect.Width) || math.IsInf(pass.Rect.Width, 0) ||
+				math.IsNaN(pass.Rect.Height) || math.IsInf(pass.Rect.Height, 0) ||
+				pass.Rect.Width <= 0 || pass.Rect.Height <= 0 {
+				return nil, fmt.Errorf("composite: invalid scalar rectangle pass %d", index)
+			}
+			copy := *pass.Rect
+			pass.Rect = &copy
 		}
 		compiled := &scalarCompiledPass{config: pass}
 		var err error
@@ -131,25 +151,35 @@ func NewScalarStagePainter(config ScalarStagePainterConfig) (*ScalarStagePainter
 // Draw reads current stage/value/direction and an optional second scalar such
 // as a bouncing sprite's Y. Repeated calls do not advance the presentation.
 func (painter *ScalarStagePainter) Draw(dst *ebiten.Image, secondary float64) {
-	if painter == nil || dst == nil {
+	if painter == nil || painter.director == nil {
 		return
 	}
 	state := painter.director.State()
-	if state.Stage < 0 || state.Stage >= len(painter.backgrounds) {
+	painter.DrawAt(dst, state.Stage, state.Value, state.Direction, secondary)
+}
+
+// DrawAt samples a caller-selected stage without changing an attached
+// director. This is useful for an embedded main-only panel or editor scrub.
+func (painter *ScalarStagePainter) DrawAt(dst *ebiten.Image, stage int, value, direction, secondary float64) {
+	if painter == nil || dst == nil || stage < 0 || stage >= len(painter.backgrounds) {
 		return
 	}
-	if background := painter.backgrounds[state.Stage]; background != nil {
+	if background := painter.backgrounds[stage]; background != nil {
 		dst.Fill(background)
 	} else {
 		dst.Clear()
 	}
-	for _, pass := range painter.passes[state.Stage] {
-		if !pass.config.Rule.Matches(state.Stage, state.Value, state.Direction) {
+	for _, pass := range painter.passes[stage] {
+		if !pass.config.Rule.Matches(stage, value, direction) {
 			continue
 		}
 		x, y := pass.config.X, pass.config.Y
 		if pass.y != nil {
-			y += scalarStageValue(pass.y, state.Value, secondary)
+			y += scalarStageValue(pass.y, value, secondary)
+		}
+		if rect := pass.config.Rect; rect != nil {
+			vector.DrawFilledRect(dst, float32(x), float32(y), float32(rect.Width), float32(rect.Height), rect.Color, false)
+			continue
 		}
 		if pass.config.Tint.Mode == ScalarTintIdentity && x == 0 && y == 0 && pass.config.Filter == 0 && pass.config.Blend == (ebiten.Blend{}) {
 			dst.DrawImage(pass.config.Image, nil)
@@ -161,13 +191,13 @@ func (painter *ScalarStagePainter) Draw(dst *ebiten.Image, secondary float64) {
 		switch pass.config.Tint.Mode {
 		case ScalarTintRGB:
 			options.ColorScale.Scale(
-				float32(scalarStageValue(pass.colors[0], state.Value, secondary)),
-				float32(scalarStageValue(pass.colors[1], state.Value, secondary)),
-				float32(scalarStageValue(pass.colors[2], state.Value, secondary)), 1)
+				float32(scalarStageValue(pass.colors[0], value, secondary)),
+				float32(scalarStageValue(pass.colors[1], value, secondary)),
+				float32(scalarStageValue(pass.colors[2], value, secondary)), 1)
 		case ScalarTintAlpha:
-			options.ColorScale.ScaleAlpha(float32(scalarStageValue(pass.colors[3], state.Value, secondary)))
+			options.ColorScale.ScaleAlpha(float32(scalarStageValue(pass.colors[3], value, secondary)))
 		case ScalarTintHSL:
-			hue := scalarStageValue(pass.colors[0], state.Value, secondary)
+			hue := scalarStageValue(pass.colors[0], value, secondary)
 			r, g, b := palette.HSLToRGB(hue, pass.config.Tint.Saturation, pass.config.Tint.Lightness)
 			options.ColorScale.Scale(float32(r), float32(g), float32(b), 1)
 		}
