@@ -208,7 +208,7 @@ func NewRecycledScroll(grid scrolling.BitmapGrid) (*scrolling.Scrolling, error) 
 }
 ```
 
-For a recycled-slot scroller whose message is shorter than its visible slot
+For a recycled-slot scroller whose plain message is shorter than its visible slot
 bank, set `RingConfig.SeamlessSeed`. It repeats the message while preparing the
 initial slots, so the first traversal and later loops contain no empty slot.
 The option works through the same `scrolling.New` facade or `RingLanes`:
@@ -226,6 +226,9 @@ scroll, err := scrolling.New(scrolling.Config{
 The default remains the authored legacy seeding used by existing demos. The
 option changes only initial glyph selection and the first cursor position;
 slot spacing, wave motion and the source's later wrap rule remain the same.
+For in-band font, speed and shape controls, use the regular `Text`/`Controls`
+mode of `scrolling.New`, whose automatic repeat already keeps short messages
+continuous across whole-message boundaries.
 
 For several simultaneous bitmap scrollers, configure independent `RingConfig`
 values in `RingLanesConfig` and still enter through `scrolling.New`. Fullscreen

@@ -83,7 +83,7 @@ type RingConfig struct {
 	Waves           []RingWave
 	Controls        bool
 	Commands        map[string]func()
-	SeamlessSeed    bool // Repeat a short message across all initial slots.
+	SeamlessSeed    bool // Repeat a short plain message across initial slots.
 }
 type RingLetter struct {
 	X, Y float64
