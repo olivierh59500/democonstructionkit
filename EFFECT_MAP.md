@@ -60,7 +60,7 @@ production. Preserved original implementations remain unchanged.
 | DOM intro | Atlas, `scrolling.Config.SizeBank`, `motion.ScaledTextClock`, `VerticalStripTrain` background, `RasterOverlay` copies, `effects.Mask` and `sprites.AnimatedField` stars | Authored text and scene layer order. |
 | Multiscreen, four embedded productions | `Config.Scanline`, recurrent `SolidCubeTrain`, `RotozoomBackground`, `sprites.Group` recurrent translation and direct `CopperTitleBand` in Coco, `RotozoomBackground` in Viva, Phenomena's main-only `scrolling.SliceProgram`, `motion.RecurrentRowWave` with its owned scene clock, `composite.ScalarStagePainter` HSL materials and reusable gradient/mask assets, projected-plane engines, atlas recipes, Viva `RasterTitle`, `scrolling.Config.Pseudo3D` text banks and `sprites.RecurrentFormation` logos, complete TCB `effects.MultiPlaneScene` | Authored images, messages, panel sizes, placement and scene order remain in the host. No local trigonometric path, mesh submission or scrolling renderer remains in its DCK panels; the standalone Phenomena intro is preserved separately. |
 | Multiscreen, camera tour | Complete `composite.SceneTour` over `motion.CameraTour`: ten held/eased poses, direct fixed views, continuously updated sources, masked retained transition canvases, one-pass shader and fallback | Authored screen sources, world placement and music stay production configuration. |
-| Vectorballs | Projected shape factories, `sprites.Projector`, source-order `geometry.RotateXYZScaled` model matrix, reflection and complete `geometry.PointSequence` with point morphing, sine grid, rotors, Y orbit and bounce | Artwork, authored shape/action data and layer placement stay production parameters. |
+| Vectorballs | `sprites.ProjectedObject` for independent cube, pyramid, plane, flag or custom clouds with owned rotation, deformation and projection; WaterReflection; and complete `geometry.PointSequence` for the authored point morphs, sine grid, rotors, Y orbit and bounce | Artwork, authored shape/action data and layer placement stay production parameters. |
 | Grodan | Atlas, four `scrolling.Config.Ribbon` lanes, three `SurfaceLayer` raster compositions, `GatedBackgroundPair` and harmonic `sprites.Group` | Authored art and scene layer order. |
 | MegaTwist, intro | `Config.Feed`, atlas, `timeline.HoldRamp` 90-tick splash | Authored intro image and CRT material remain scene data. |
 | MegaTwist, main | `Config.Scanline`, independent `ScanlineBackground` and DisplacementPrograms, harmonic `sprites.Group` and `sprites.GlowPainter` | Authored artwork and layer order remain scene composition. The former black transition overlay was visually inert after the splash reset and has been removed from the DCK version. |
@@ -167,6 +167,12 @@ matches the previous implementation exactly.
   zero differing RGBA pixels at frames 0, 1, 99, 100, 101, 240, 600, 1,200
   and 2,400. A separate 5,000-tick controller test includes live speed changes
   and allocation-free sampling.
+- Vectorballs' four alternate object families now use one complete
+  `sprites.ProjectedObject` instead of a screen-local point/flag/rotation loop.
+  Thirty-six complete before/after GPU captures, including shape-switch ticks
+  and the water reflection, had zero differing RGBA pixels. Pure tests compare
+  5,000 updates for every shape, independent instances and no steady-update
+  allocations. The original authored `PointSequence` remains unchanged.
 - Pixel 10a (Android 17/API 37) was reconnected and sampled at 60 Hz with
   current DCK APKs. Cuddly's Big Sprite, DNA main stage, Mega Scroller, Reset,
   Starwars, Fullscreen and introduction reported 59.81–60.25 observed FPS in

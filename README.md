@@ -3541,6 +3541,33 @@ The pure geometry tests cover chained handoffs and zero allocations per tick
 with a reused pointer adapter. The authored shape table and action script stay
 with the production.
 
+For a standalone vectorball object, `sprites.ProjectedObject` now owns the
+selected cube, pyramid, plane or flag points, the unchanged rest shape, optional
+flag deformation, XYZ rotation, cached model matrix and depth-sorted sprite
+projection. The built-in shapes and custom `[]sprites.Point` use the same
+component. Its ball images and destination surface are borrowed:
+
+```go
+recipe, err := presets.VectorballsProjectedObject("flag", sprites.Surface, 12, 640, 120)
+if err != nil { return err }
+recipe.RotationStep.Y = .025 // Edit one rotation axis independently.
+flag, err := sprites.NewProjectedObject(recipe)
+if err != nil { return err }
+if err := flag.Update(kit.Frame{Time: seconds}); err != nil { return err }
+flag.Draw(screen, ballImages)
+```
+
+Create a second object with another recipe and draw both in the chosen order.
+`SetPosition`, `SetScale` and `SetRotationStep` change one live object without
+resetting its current rotation; `Reset` restores its rest shape and initial
+rotation while retaining live placement, scale and speed edits. Static
+shapes retain their point buffers, while a flag samples its wave from the
+unchanged plane on each update. The original Vectorballs action script still
+uses `geometry.PointSequence` for morphs and timed changes. Thirty-six complete
+before/after GPU frames cover every predefined object and its handoff, with
+zero differing pixels; pure object tests cover 5,000 rotations without update
+allocations.
+
 The same `PointWriter` can drive four more configurable point-scene motions:
 `geometry.SinusGrid` replaces Z on a row-major point grid, `geometry.Rotors`
 moves X/Z pairs, `geometry.YOrbit` supplies a complete model position, and
