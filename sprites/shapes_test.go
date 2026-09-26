@@ -68,6 +68,21 @@ func TestPyramidAndFlag(t *testing.T) {
 	}
 }
 
+func TestSphereProducesIndependentBallMaterialsOnOneRadius(t *testing.T) {
+	points, err := Sphere(SphereConfig{Radius: 12, Count: 144, Image: 7})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(points) != 144 {
+		t.Fatalf("sphere has %d balls, want 144", len(points))
+	}
+	for index, point := range points {
+		if point.Image != 7 || math.Abs(math.Sqrt(point.X*point.X+point.Y*point.Y+point.Z*point.Z)-12) > 1e-10 {
+			t.Fatalf("ball %d left the configured sphere or material: %+v", index, point)
+		}
+	}
+}
+
 func TestRejectInvalidShapes(t *testing.T) {
 	if _, err := Cube(CubeConfig{Size: math.NaN(), Segments: 3}); err == nil {
 		t.Fatal("NaN accepted")
@@ -77,5 +92,8 @@ func TestRejectInvalidShapes(t *testing.T) {
 	}
 	if _, err := Plane(PlaneConfig{Width: 2, Height: 3, Rows: 2, Columns: 1000000}); err == nil {
 		t.Fatal("unbounded allocation accepted")
+	}
+	if _, err := Sphere(SphereConfig{Radius: 20, Count: 4097}); err == nil {
+		t.Fatal("unbounded sphere population accepted")
 	}
 }

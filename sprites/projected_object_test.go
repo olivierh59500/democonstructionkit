@@ -9,7 +9,7 @@ import (
 	"github.com/olivierh59500/democonstructionkit/motion"
 )
 
-func TestProjectedObjectMatchesFourVectorballShapesAndFlag(t *testing.T) {
+func TestProjectedObjectMatchesFiveVectorballShapesAndFlag(t *testing.T) {
 	const size = 640.0
 	flag := &Flag{Width: size, PinLeft: true,
 		Wave: motion.Wave{Amplitude: size * .15, Spatial: 7 / size, Speed: 3}, RowPhase: 2 / size}
@@ -22,6 +22,7 @@ func TestProjectedObjectMatchesFourVectorballShapesAndFlag(t *testing.T) {
 		{name: "pyramid", cfg: ProjectedObjectConfig{Pyramid: &PyramidConfig{Width: size, Height: size, Segments: 6, Fill: Solid, Image: 120}}},
 		{name: "plane", cfg: ProjectedObjectConfig{Plane: &PlaneConfig{Width: size, Height: size * .65, Columns: 8, Rows: 8, Image: 120}}},
 		{name: "flag", cfg: ProjectedObjectConfig{Plane: &PlaneConfig{Width: size, Height: size * .65, Columns: 12, Rows: 12, Image: 120}, Flag: flag}},
+		{name: "sphere", cfg: ProjectedObjectConfig{Sphere: &SphereConfig{Radius: size / 2, Count: 144, Image: 120}}},
 	}
 	for _, test := range cases {
 		t.Run(test.name, func(t *testing.T) {
@@ -37,6 +38,8 @@ func TestProjectedObjectMatchesFourVectorballShapesAndFlag(t *testing.T) {
 				test.rest, err = Pyramid(*c.Pyramid)
 			case c.Plane != nil:
 				test.rest, err = Plane(*c.Plane)
+			case c.Sphere != nil:
+				test.rest, err = Sphere(*c.Sphere)
 			}
 			if err != nil {
 				t.Fatal(err)

@@ -16,6 +16,7 @@ type ProjectedObjectConfig struct {
 	Cube           *CubeConfig
 	Pyramid        *PyramidConfig
 	Plane          *PlaneConfig
+	Sphere         *SphereConfig
 	Points         []Point
 	Flag           *Flag
 	Rotation       geometry.Vec3
@@ -64,10 +65,13 @@ func NewProjectedObject(config ProjectedObjectConfig) (*ProjectedObject, error) 
 	if config.Plane != nil {
 		sources++
 	}
+	if config.Sphere != nil {
+		sources++
+	}
 	if len(config.Points) > 0 {
 		sources++
 	}
-	if sources != 1 || config.Flag != nil && (config.Cube != nil || config.Pyramid != nil) ||
+	if sources != 1 || config.Flag != nil && (config.Cube != nil || config.Pyramid != nil || config.Sphere != nil) ||
 		config.Scale <= 0 || config.Focal <= 0 ||
 		!projectedObjectFinite(config.Scale, config.Focal, config.CenterX, config.CenterY, config.TimeStart,
 			config.Rotation.X, config.Rotation.Y, config.Rotation.Z,
@@ -92,6 +96,8 @@ func NewProjectedObject(config ProjectedObjectConfig) (*ProjectedObject, error) 
 		points, err = Pyramid(*config.Pyramid)
 	case config.Plane != nil:
 		points, err = Plane(*config.Plane)
+	case config.Sphere != nil:
+		points, err = Sphere(*config.Sphere)
 	default:
 		points = append([]Point(nil), config.Points...)
 	}
@@ -103,7 +109,7 @@ func NewProjectedObject(config ProjectedObjectConfig) (*ProjectedObject, error) 
 			return nil, fmt.Errorf("sprites: invalid projected object point")
 		}
 	}
-	config.Cube, config.Pyramid, config.Plane, config.Points = nil, nil, nil, nil
+	config.Cube, config.Pyramid, config.Plane, config.Sphere, config.Points = nil, nil, nil, nil, nil
 	object := &ProjectedObject{config: config, rest: points, points: make([]Point, len(points)), rotation: config.Rotation}
 	copy(object.points, object.rest)
 	if object.config.Flag != nil {

@@ -640,12 +640,24 @@ renderer. Point count and model coordinates, angle step, perspective, center,
 depth, Y offset, radius scale, tint and antialiasing are independent:
 
 ```go
+points, err := geometry.SphereCloud(geometry.SphereCloudConfig{
+    Count: 125, Radius: 100, Sampling: geometry.SphereRandomAngles,
+    NextFloat: seededRandom, // Exactly two samples per point.
+})
+if err != nil { return err }
 cloud, err := sprites.NewRotatingDiscCloud(presets.CuddlyDNADiscCloud(points))
 if err != nil { return err }
 defer cloud.Close()
 if err := cloud.Update(frame); err != nil { return err }
 cloud.Draw(screen)
 ```
+
+`SphereRandomAngles` preserves Cuddly's original polar-angle distribution and
+seeded call order. `SphereEqualArea` spreads random samples evenly across the
+surface; `SphereFibonacci` needs no random source and gives a regular static
+point bank. Each mode accepts an independent count, radius and center, with a
+4,096-point limit to bound mobile geometry and sorting work. Six complete DNA
+captures remain pixel-identical after moving its point setup into DCK.
 
 The projection controller copies its source points and sorts 125 prepared disc
 poses by depth without per-step Go allocations in the pure test. That test
@@ -3112,6 +3124,7 @@ remain available for effects with different behavior.
 | `motion.PairedPhaseProgram` + `composite.PairedRasterOrbit` | Ordered phase-window raster pairs with per-pass materials, opacity and one bounded clock | Cuddly Reset |
 | `motion.FormulaTrajectory` | Compiled X/Y formulas with two independently stepped phases, optional wraps and stage-controlled pauses | Cuddly Reset backdrop |
 | `sprites.RotatingDiscCloud` | Y-axis rotation, depth projection, stable painter order and batched circular material | Cuddly DNA particle sphere |
+| `geometry.SphereCloud` + `sprites.Sphere` | Seedable random-angle or equal-area clouds and evenly spaced bounded vectorball spheres | Cuddly DNA and Vectorballs optional sphere |
 | `sprites.ProjectedField` | Bounded spawn/respawn, strict/wide wrap, projection, history and pixel/sprite/vector materials | Nonameno stars, Union Starballs, Cuddly Starwars and Big Sprite |
 | `sprites.MaskedProjectedField` | One projected population rendered with two materials, reusable alpha canvas, independent output transforms and live count controls | Union Starballs |
 | `motion.LatchedTriggers` + `sprites.LatchedOverlay` | Configurable sampled hits, held visibility and ordered multi-image channels | Cuddly Knucklebuster |
@@ -3593,7 +3606,7 @@ with a reused pointer adapter. The authored shape table and action script stay
 with the production.
 
 For a standalone vectorball object, `sprites.ProjectedObject` now owns the
-selected cube, pyramid, plane or flag points, the unchanged rest shape, optional
+selected cube, pyramid, plane, flag or sphere points, the unchanged rest shape, optional
 flag deformation, XYZ rotation, cached model matrix and depth-sorted sprite
 projection. The built-in shapes and custom `[]sprites.Point` use the same
 component. Its ball images and destination surface are borrowed:
@@ -3609,15 +3622,18 @@ flag.Draw(screen, ballImages)
 ```
 
 Create a second object with another recipe and draw both in the chosen order.
+Use `VectorballsProjectedObject("sphere", ..., 6, 640, 120)` for a regular
+144-ball sphere; its segment argument is bounded to 32, or 4,096 balls.
 `SetPosition`, `SetScale` and `SetRotationStep` change one live object without
 resetting its current rotation; `Reset` restores its rest shape and initial
 rotation while retaining live placement, scale and speed edits. Static
 shapes retain their point buffers, while a flag samples its wave from the
 unchanged plane on each update. The original Vectorballs action script still
-uses `geometry.PointSequence` for morphs and timed changes. Thirty-six complete
-before/after GPU frames cover every predefined object and its handoff, with
-zero differing pixels; pure object tests cover 5,000 rotations without update
-allocations.
+uses `geometry.PointSequence` for morphs and timed changes. Thirty-six earlier
+before/after GPU frames cover cube, pyramid, plane and flag handoffs with zero
+differences. Five captures from its switch tick through a reflected mid-stage
+pose cover the new sphere. Pure object tests cover 5,000 rotations without
+update allocations.
 
 The same `PointWriter` can drive four more configurable point-scene motions:
 `geometry.SinusGrid` replaces Z on a row-major point grid, `geometry.Rotors`

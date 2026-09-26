@@ -9,7 +9,7 @@ import (
 )
 
 // VectorballsProjectedObject supplies the demonstration's camera and angular
-// steps to any of the four editable point-object families. All dimensions,
+// steps to any of the five editable point-object families. All dimensions,
 // fill, ball index, wave and projection fields may be changed before creation.
 func VectorballsProjectedObject(name string, fill sprites.Fill, segments int, size float64, image int) (sprites.ProjectedObjectConfig, error) {
 	if image < 0 || image > 120 {
@@ -32,6 +32,11 @@ func VectorballsProjectedObject(name string, fill sprites.Fill, segments int, si
 			c.Flag = &sprites.Flag{Width: size, PinLeft: true,
 				Wave: motion.Wave{Amplitude: size * .15, Spatial: 7 / size, Speed: 3}, RowPhase: 2 / size}
 		}
+	case "sphere":
+		if segments < 1 || segments > 32 {
+			return sprites.ProjectedObjectConfig{}, fmt.Errorf("presets: sphere density must be within [1,32]")
+		}
+		c.Sphere = &sprites.SphereConfig{Radius: size / 2, Count: segments * segments * 4, Image: image}
 	default:
 		return sprites.ProjectedObjectConfig{}, fmt.Errorf("presets: unknown vectorball object %q", name)
 	}
