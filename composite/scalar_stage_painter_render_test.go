@@ -12,6 +12,7 @@ import (
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/olivierh59500/democonstructionkit/composite"
+	"github.com/olivierh59500/democonstructionkit/palette"
 	"github.com/olivierh59500/democonstructionkit/presets"
 	"github.com/olivierh59500/democonstructionkit/timeline"
 )
@@ -73,9 +74,10 @@ func compareScalarStagePixels() error {
 		Page2: stageTestImage(640, 480, 3), Logo: stageTestImage(640, 300, 4),
 		LogoMask: stageTestImage(640, 300, 5), Middle: stageTestImage(640, 300, 6),
 		Raster: stageTestImage(640, 12, 7), Photon: stageTestImage(70, 15, 8),
+		PhotonMask: stageTestImage(70, 15, 9),
 	}
 	for _, img := range []*ebiten.Image{images.RasterBar, images.Page1, images.Page2, images.Logo,
-		images.LogoMask, images.Middle, images.Raster, images.Photon} {
+		images.LogoMask, images.Middle, images.Raster, images.Photon, images.PhotonMask} {
 		defer img.Deallocate()
 	}
 	actual := ebiten.NewImageWithOptions(image.Rect(0, 0, 640, 480), &ebiten.NewImageOptions{Unmanaged: true})
@@ -94,6 +96,7 @@ func compareScalarStagePixels() error {
 		{4, 0, 1, 184}, {4, 100, 1, 184},
 		{5, 0, 1, 184}, {5, 0, 1, 445},
 		{6, 100, 1, 445}, {6, 50, 1, 445},
+		{7, 0, 1, 0}, {7, 0, 1, .3}, {7, 0, 1, .9},
 		{8, 50, 1, 445}, {8, 50, -1, 445},
 		{9, 100, -1, 445}, {9, 0, -1, 445},
 		{10, 100, -1, 445}, {10, 0, -1, 445},
@@ -195,6 +198,13 @@ func drawOriginalStage(dst *ebiten.Image, images presets.PhenomenaStageImages, s
 			lightness := value / 100
 			brightness(images.Photon, 285, 445, lightness, lightness*.5, lightness*.5)
 		}
+	case presets.PhenomenaMain:
+		place(images.Middle, 0, 130)
+		dst.DrawImage(images.Logo, nil)
+		place(images.Raster, 0, 129)
+		place(images.Raster, 0, 430)
+		r, g, b := palette.HSLToRGB(secondary, 1, .5)
+		brightness(images.PhotonMask, 285, 445, r, g, b)
 	case presets.PhenomenaHideLogo:
 		if direction > 0 {
 			dst.DrawImage(images.Logo, nil)

@@ -12,7 +12,7 @@ import (
 // PhenomenaStageImages are borrowed; page images may come from BitmapPage.
 type PhenomenaStageImages struct {
 	RasterBar, Page1, Page2, Logo, LogoMask *ebiten.Image
-	Middle, Raster, Photon                  *ebiten.Image
+	Middle, Raster, Photon, PhotonMask      *ebiten.Image
 }
 
 // PhenomenaStageMaterials describes the exact ordered image passes of the
@@ -68,6 +68,12 @@ func PhenomenaStageMaterials(director *timeline.ScalarStages, images PhenomenaSt
 			{Rule: stage(PhenomenaDropPhoton), Image: images.Photon, X: 285, YFormula: &secondary},
 			{Rule: stage(PhenomenaPhotonFade), Image: images.Photon, X: 285, Y: 445,
 				Tint: composite.ScalarTintConfig{Mode: composite.ScalarTintRGB, R: &red, G: &green, B: &green}},
+			{Rule: stage(PhenomenaMain), Image: images.Middle, Y: 130},
+			{Rule: stage(PhenomenaMain), Image: images.Logo},
+			{Rule: stage(PhenomenaMain), Image: images.Raster, Y: 129},
+			{Rule: stage(PhenomenaMain), Image: images.Raster, Y: 430},
+			{Rule: stage(PhenomenaMain), Image: images.PhotonMask, X: 285, Y: 445,
+				Tint: composite.ScalarTintConfig{Mode: composite.ScalarTintHSL, H: &secondary, Saturation: 1, Lightness: .5}},
 			{Rule: composite.ScalarStageRule{From: PhenomenaHideLogo, To: PhenomenaHideLogo, DirectionSign: 1}, Image: images.Logo},
 			{Rule: stage(PhenomenaHideLogo), Image: images.LogoMask, Tint: alpha(&percent)},
 			{Rule: stage(PhenomenaHideLowerRaster), Image: images.Raster, Y: 430, Tint: alpha(&percent)},

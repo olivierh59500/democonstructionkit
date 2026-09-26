@@ -7,6 +7,7 @@ import (
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/olivierh59500/democonstructionkit/motion"
+	"github.com/olivierh59500/democonstructionkit/palette"
 	"github.com/olivierh59500/democonstructionkit/timeline"
 )
 
@@ -16,15 +17,19 @@ const (
 	ScalarTintIdentity ScalarTintMode = iota
 	ScalarTintRGB
 	ScalarTintAlpha
+	ScalarTintHSL
 )
 
 // ScalarTintConfig holds serializable formulas over the director's scalar
-// value. RGB preserves the source alpha; Alpha uses ColorScale.ScaleAlpha so
-// premultiplied RGB fades together with alpha.
+// value. RGB/HSL preserve source alpha; Alpha uses ColorScale.ScaleAlpha so
+// premultiplied RGB fades together with alpha. HSL's H formula may read the
+// secondary clock while Saturation and Lightness remain editable constants.
 type ScalarTintConfig struct {
-	Mode    ScalarTintMode
-	R, G, B *motion.FormulaExpr
-	A       *motion.FormulaExpr
+	Mode                  ScalarTintMode
+	R, G, B               *motion.FormulaExpr
+	A                     *motion.FormulaExpr
+	H                     *motion.FormulaExpr
+	Saturation, Lightness float64
 }
 
 // ScalarImagePass draws one borrowed image in declaration order. YFormula, if
@@ -76,7 +81,7 @@ func NewScalarStagePainter(config ScalarStagePainterConfig) (*ScalarStagePainter
 			pass.Rule.Compare > timeline.ScalarLessEqual || pass.Rule.DirectionSign < -1 || pass.Rule.DirectionSign > 1 ||
 			math.IsNaN(pass.Rule.Threshold) || math.IsInf(pass.Rule.Threshold, 0) ||
 			math.IsNaN(pass.X) || math.IsInf(pass.X, 0) || math.IsNaN(pass.Y) || math.IsInf(pass.Y, 0) ||
-			pass.Tint.Mode > ScalarTintAlpha {
+			pass.Tint.Mode > ScalarTintHSL {
 			return nil, fmt.Errorf("composite: invalid scalar image pass %d", index)
 		}
 		compiled := &scalarCompiledPass{config: pass}
@@ -104,6 +109,16 @@ func NewScalarStagePainter(config ScalarStagePainterConfig) (*ScalarStagePainter
 			compiled.colors[3], err = motion.CompileFormula(*pass.Tint.A)
 			if err != nil {
 				return nil, fmt.Errorf("composite: pass %d alpha formula: %w", index, err)
+			}
+		} else if pass.Tint.Mode == ScalarTintHSL {
+			if pass.Tint.H == nil || math.IsNaN(pass.Tint.Saturation) || math.IsInf(pass.Tint.Saturation, 0) ||
+				math.IsNaN(pass.Tint.Lightness) || math.IsInf(pass.Tint.Lightness, 0) ||
+				pass.Tint.Saturation < 0 || pass.Tint.Saturation > 1 || pass.Tint.Lightness < 0 || pass.Tint.Lightness > 1 {
+				return nil, fmt.Errorf("composite: invalid HSL material in pass %d", index)
+			}
+			compiled.colors[0], err = motion.CompileFormula(*pass.Tint.H)
+			if err != nil {
+				return nil, fmt.Errorf("composite: pass %d hue formula: %w", index, err)
 			}
 		}
 		for stage := pass.Rule.From; stage <= pass.Rule.To; stage++ {
@@ -151,6 +166,10 @@ func (painter *ScalarStagePainter) Draw(dst *ebiten.Image, secondary float64) {
 				float32(scalarStageValue(pass.colors[2], state.Value, secondary)), 1)
 		case ScalarTintAlpha:
 			options.ColorScale.ScaleAlpha(float32(scalarStageValue(pass.colors[3], state.Value, secondary)))
+		case ScalarTintHSL:
+			hue := scalarStageValue(pass.colors[0], state.Value, secondary)
+			r, g, b := palette.HSLToRGB(hue, pass.config.Tint.Saturation, pass.config.Tint.Lightness)
+			options.ColorScale.Scale(float32(r), float32(g), float32(b), 1)
 		}
 		dst.DrawImage(pass.config.Image, &options)
 	}
