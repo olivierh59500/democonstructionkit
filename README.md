@@ -1782,6 +1782,23 @@ Pure tests match the object pose through multiple handoffs and every sampled
 point rotation across 1,000 angle steps; both controllers advance without Go
 allocations.
 
+The small TNT Crew 3 heading uses `scrolling.CaptionCarousel`: a bounded banner
+painted from cached font regions and a pure `motion.CaptionCycle`. Lines and font
+metrics are replaceable. Initial delay, top/bottom positions, speed, repeated
+hold and banner material are configuration, including different initial and
+subsequent waits:
+
+```go
+caption, err := scrolling.NewCaptionCarousel(presets.UnionTNTCaption(lines, font))
+if err != nil { return err }
+caption.Draw(stage) // Paint the current pose first.
+caption.Step()      // Advance to the next pose afterward.
+```
+
+The pure clock was compared through several line changes and loop crossings;
+it allocates nothing per step. Glyph regions are resolved once, so drawing does
+not decode the caption string every frame.
+
 ```go
 func NewRibbonProgram() (*composite.DisplacementProgram, error) {
     curves, err := presets.RibbonCurves(1)
@@ -2592,6 +2609,7 @@ remain available for effects with different behavior.
 | `BitmapRecipe`, `BitmapText`, `BitmapParagraph` | Fractional atlas sampling, cached character lookup and paragraph alignment | Cuddly screens, Union screens/menu/loaders |
 | `effects.JellyCube` | Five-mode controller, entrance, deformation, continuous handoffs, projection and rendering | DMA Is Back; `examples/jellycubes` |
 | `motion.ModelCarousel` + `effects.SolidMeshCarousel` | Selectable grouped meshes, per-face material, exact entry/recession/rotation handoffs and shared white source | Union TNT Crew 3 |
+| `motion.CaptionCycle` + `scrolling.CaptionCarousel` | Cached bitmap lines, small banner fill and exact slide/hold/page timing | Union TNT Crew 3 |
 | `motion.CameraTour` + `composite.SceneTour` | Held/eased camera poses, continuous scene updates, direct fixed views, visibility culling, retained canvases and shader/fallback composition | Multiscreen four-scene tour |
 | `geometry.MorphingMesh` + `effects.MorphingMesh` | Cyclic shape morph, sequential Euler rotation, sorted projected faces, culling and per-face tint/blend | DMA 3D |
 | `effects.SolidCube` / `SolidCubeBatch` | Material, culling, face ordering, outlines and bounded batch submission | Bilizir, Multiscreen Coco |
