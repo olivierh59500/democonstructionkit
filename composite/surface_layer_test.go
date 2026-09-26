@@ -70,4 +70,17 @@ func TestSurfaceLayerMovesImagePassWithoutRebuilding(t *testing.T) {
 	if err := layer.SetPassPosition(0, math.NaN(), 0); err == nil {
 		t.Fatal("accepted a nonfinite pass position")
 	}
+	if err := layer.SetPassTransform(0, 4, 5, .75, 2, .2); err != nil {
+		t.Fatal(err)
+	}
+	if err := layer.SetPassFilter(0, ebiten.FilterLinear); err != nil {
+		t.Fatal(err)
+	}
+	if got := layer.passes[0].config; layer.Canvas() != canvas || got.X != 4 || got.Y != 5 ||
+		got.ScaleX != .75 || got.ScaleY != 2 || got.Angle != .2 || got.Filter != ebiten.FilterLinear {
+		t.Fatalf("dynamic pass transform changed the surface or lost its pose: %+v", got)
+	}
+	if err := layer.SetPassTransform(0, 0, 0, math.NaN(), 1, 0); err == nil {
+		t.Fatal("accepted a nonfinite pass scale")
+	}
 }

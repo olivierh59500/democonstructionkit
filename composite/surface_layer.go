@@ -130,6 +130,32 @@ func (l *SurfaceLayer) SetPassPosition(index int, x, y float64) error {
 	return nil
 }
 
+// SetPassTransform changes one pass's placement, scale and rotation without
+// rebuilding its image view or the layer surface. Zero scale intentionally
+// hides the pass for cue-driven transitions.
+func (l *SurfaceLayer) SetPassTransform(index int, x, y, scaleX, scaleY, angle float64) error {
+	if l == nil || l.canvas == nil || index < 0 || index >= len(l.passes) {
+		return fmt.Errorf("composite: invalid surface layer pass")
+	}
+	for _, value := range [...]float64{x, y, scaleX, scaleY, angle} {
+		if math.IsNaN(value) || math.IsInf(value, 0) {
+			return fmt.Errorf("composite: nonfinite surface layer transform")
+		}
+	}
+	c := &l.passes[index].config
+	c.X, c.Y, c.ScaleX, c.ScaleY, c.Angle = x, y, scaleX, scaleY, angle
+	return nil
+}
+
+// SetPassFilter edits source sampling for a single image pass at a visual cue.
+func (l *SurfaceLayer) SetPassFilter(index int, filter ebiten.Filter) error {
+	if l == nil || l.canvas == nil || index < 0 || index >= len(l.passes) {
+		return fmt.Errorf("composite: invalid surface layer pass filter")
+	}
+	l.passes[index].config.Filter = filter
+	return nil
+}
+
 func (l *SurfaceLayer) Update(frame kit.Frame) error {
 	for _, source := range l.config.Sources {
 		if err := source.Update(frame); err != nil {

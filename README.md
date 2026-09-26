@@ -1293,6 +1293,22 @@ place. Coco uses one 800×72 layer: `CopperBars` draws first, then a scaled
 title pass follows `CocoTitleMotion`, and a black fill preserves the banner's
 opaque background. The layer keeps one surface and never recreates image views
 as the title moves.
+`SetPassTransform` also changes a pass's X/Y placement, independent scale and
+rotation; `SetPassFilter` changes its texture sampling at a cue. Spreadpoint
+uses three passes in one 128×128 layer: moving inner logo, source-in raster and
+moving outer logo. Fullscreen uses the same component for a static logo with a
+source-atop raster in its existing 768×52 band. Neither screen needs another
+GPU surface after this migration:
+
+```go
+config := presets.CuddlySpreadpointLogoLayer(inner, raster, outer)
+layer, err := composite.NewSurfaceLayer(config)
+if err != nil { return err }
+defer layer.Close()
+if err := layer.SetPassTransform(0, x, y, zoom, zoom, 0); err != nil { return err }
+if err := layer.SetPassTransform(2, x, y, zoom, zoom, 0); err != nil { return err }
+layer.Draw(screen)
+```
 
 `effects.GatedBackgroundPair` shares two `composite.Background` renderers with
 one image-free `motion.GatedBackgroundPair` controller. The first background
@@ -2233,7 +2249,7 @@ remain available for effects with different behavior.
 | `motion.GlyphPageCycle` + `sprites.GlyphPages` | Font-independent staggered pages, editable delay grids, elastic depth motion, completion barriers and stable atlas rendering | Nonameno text pages |
 | `scrolling.HarmonicSine` / `HarmonicSineWith` | Independent sine banks over the common text pipeline, optionally resetting spatial phase per repeated copy | Nonameno bottom scroll |
 | `scrolling.Config.Ribbon` | Fixed-tick horizontal/vertical atlas transport, editable strict wraps, independent cull width and scale | Grodan four scroll lanes |
-| `composite.SurfaceLayer` | One bounded canvas with ordered source effects, editable image-pass positions and repeated output placements | Grodan scrolls, Coco title band |
+| `composite.SurfaceLayer` | One bounded canvas with ordered source effects, editable image transforms/filter and repeated output placements | Grodan scrolls, Coco title, Cuddly Spreadpoint/Fullscreen logos |
 | `motion.GatedBackgroundPair` + `effects.GatedBackgroundPair` | Timed horizontal gate, coupled X/Y bounce and two repeated image layers | Grodan green and pink backgrounds |
 | `scrolling.Config.Crawl` | Paragraph window, vertical transport and perspective projection | Cuddly Starwars |
 | `scrolling.Config.Feed` | Finite glyph insertion into a cached scrolling trail | DMA Is Back, Coco, TeamG1, MegaTwist intros |
