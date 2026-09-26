@@ -3203,7 +3203,23 @@ cursor := scroll.ScanlineController().State() // Letter, decal, bounce, wave sta
 image or advancing the clock. It is useful for timed overlays and an editor.
 
 The shared `effects.CRTOverlay` accepts curvature, scanline, chromatic and
-vignette parameters. `composite.ImageGrid` draws finite, independently spaced
+vignette parameters. It also accepts an Ebitengine blend mode. The zero value
+keeps normal source-over blending; `ebiten.BlendCopy` replaces every pixel,
+including transparent edges, as required by the Cuddly menu and MegaTwist
+intro. For example:
+
+```go
+config := presets.ClassicCRTOverlay()
+config.Blend = ebiten.BlendCopy
+crt, err := effects.NewCRTOverlay(config)
+if err != nil { return err }
+crt.DrawAt(destination, source, 0, 0)
+```
+
+The same shader and classic recipe now serve DMA, Coco, Cuddly and MegaTwist.
+Six complete GPU captures of the newly migrated scenes differ from their
+previous local shaders by at most two pixels each, solely at chromatic sample
+boundaries. `composite.ImageGrid` draws finite, independently spaced
 copies of any borrowed image, including overlapping logo tiles. DMA positions
 that grid with `motion.NestedOrbit`; changing the atlas or orbit does not
 change the scroll or cube component.

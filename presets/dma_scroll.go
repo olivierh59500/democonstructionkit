@@ -142,10 +142,15 @@ func DMALogoGrid() composite.ImageGrid {
 	return composite.ImageGrid{Columns: 2, Rows: 4, StepX: 640, StepY: 200}
 }
 
-// DMACRTOverlay is the editable normalized CRT recipe for the intro ribbon.
-func DMACRTOverlay() effects.CRTOverlayConfig {
+// ClassicCRTOverlay is the editable barrel, scanline, RGB shift and vignette
+// recipe shared by several native demos. Callers may choose BlendCopy when the
+// processed image must replace the destination, including transparent edges.
+func ClassicCRTOverlay() effects.CRTOverlayConfig {
 	return effects.CRTOverlayConfig{
 		Curvature: .15, ScanlineFrequency: 800, ScanlineAmplitude: .04,
 		ChromaticShift: .002, Vignette: .5,
 	}
 }
+
+// DMACRTOverlay preserves the original preset name for existing projects.
+func DMACRTOverlay() effects.CRTOverlayConfig { return ClassicCRTOverlay() }

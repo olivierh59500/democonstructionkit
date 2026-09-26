@@ -62,7 +62,7 @@ production. Preserved original implementations remain unchanged.
 | Multiscreen, camera tour | Complete `composite.SceneTour` over `motion.CameraTour`: ten held/eased poses, direct fixed views, continuously updated sources, masked retained transition canvases, one-pass shader and fallback | Authored screen sources, world placement and music stay production configuration. |
 | Vectorballs | `sprites.ProjectedObject` for independent cube, pyramid, plane, flag or custom clouds with owned rotation, deformation and projection; WaterReflection; and complete `geometry.PointSequence` for the authored point morphs, sine grid, rotors, Y orbit and bounce | Artwork, authored shape/action data and layer placement stay production parameters. |
 | Grodan | Atlas, four `scrolling.Config.Ribbon` lanes, three `SurfaceLayer` raster compositions, `GatedBackgroundPair` and harmonic `sprites.Group` | Authored art and scene layer order. |
-| MegaTwist, intro | `Config.Feed`, atlas, `timeline.HoldRamp` 90-tick splash | Authored intro image and CRT material remain scene data. |
+| MegaTwist, intro | `Config.Feed`, atlas, `timeline.HoldRamp` 90-tick splash, shared `CRTOverlay` with copy blending | Authored intro image and CRT parameters remain scene data. |
 | MegaTwist, main | `Config.Scanline`, independent `ScanlineBackground` and DisplacementPrograms, harmonic `sprites.Group` and `sprites.GlowPainter` | Authored artwork and layer order remain scene composition. The former black transition overlay was visually inert after the splash reset and has been removed from the DCK version. |
 | Nonameno, stars | `sprites.ProjectedField`, editable radial pattern and vector pixel/trail material | The star field is complete. |
 | Nonameno, text pages and bottom scroll | Atlas, `motion.GlyphPageCycle`, three delay generators, `sprites.GlyphPages`, `scrolling.Config` with `HarmonicSineWith` and editable presets | Page text and bottom message remain production data. |
@@ -91,7 +91,7 @@ matches the previous implementation exactly.
 
 | Screen | Shared today | Remaining responsibility or extraction |
 | --- | --- | --- |
-| Menu | TileAlphabet, `sprites.Atlas` image banks, `sprites.FrameSequence` character animation, `sprites.FormationCarousel` with seven compiled formula modes, `composite.CachedTileParallax`, `motion.CameraFollow`, scrolling | Door/input semantics and map content stay local. |
+| Menu | TileAlphabet, `sprites.Atlas` image banks, `sprites.FrameSequence` character animation, `sprites.FormationCarousel` with seven compiled formula modes, `composite.CachedTileParallax`, `motion.CameraFollow`, scrolling, shared `CRTOverlay` with copy blending | Door/input semantics and map content stay local. |
 | Loader | Bitmap font recipes, scrolling, `timeline.Countdown`, `timeline.CueClock` overlapping fade/hold windows and `timeline.CueRamp` gain applied by the playback host | Initial pre-render, text and layer placement remain authored. |
 | Introduction | `composite.WaveChain` with an editable row-then-column logo preset, `ProfileStrips` with compiled `motion.WaveWrite` table, configurable sparkles and `timeline.StillThenMain` for the still/blank/music handoff | Authored artwork, star positions, music filename and layer order remain scene data. |
 | Big Sprite | `sprites.ProjectedField` with strict-wrap vector lines, `scrolling.RingLanes` dual-font transport, `sprites.Group` Weave formation, `RasterOverlay` fill, `sprites.AxisFlip` front/back material on a `motion.TrajectoryClock` orbit | Authored layer placement and image order stay scene data. |
@@ -173,6 +173,14 @@ matches the previous implementation exactly.
   and the water reflection, had zero differing RGBA pixels. Pure tests compare
   5,000 updates for every shape, independent instances and no steady-update
   allocations. The original authored `PointSequence` remains unchanged.
+- Cuddly's menu and MegaTwist's intro now use the same parameterized CRT pass
+  already used by DMA and Coco. A configurable copy blend reproduces their
+  transparent-edge handling. Three complete before/after GPU captures per
+  production, at frames 0, 60 and 240, differ by one Cuddly pixel per capture
+  and by 0, 2 and 2 MegaTwist pixels. The remaining differences are chromatic
+  sampling at boundaries where the former literal and new uniform shader
+  constants round differently. A dedicated GPU check verifies default
+  source-over and explicit copy blending on transparent and opaque source areas.
 - Pixel 10a (Android 17/API 37) was reconnected and sampled at 60 Hz with
   current DCK APKs. Cuddly's Big Sprite, DNA main stage, Mega Scroller, Reset,
   Starwars, Fullscreen and introduction reported 59.81–60.25 observed FPS in

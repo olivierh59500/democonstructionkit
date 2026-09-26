@@ -13,6 +13,9 @@ import (
 type CRTOverlayConfig struct {
 	Curvature, ScanlineFrequency, ScanlineAmplitude float32
 	ChromaticShift, Vignette                        float32
+	// Blend selects how the processed image covers the destination. The zero
+	// value uses regular alpha blending; BlendCopy replaces the full pass.
+	Blend ebiten.Blend
 }
 
 // CRTOverlay borrows the source on each DrawAt and owns only its shader.
@@ -37,7 +40,10 @@ func NewCRTOverlay(c CRTOverlayConfig) (*CRTOverlay, error) {
 		"ScanlineAmplitude": c.ScanlineAmplitude, "ChromaticShift": c.ChromaticShift,
 		"Vignette": c.Vignette,
 	}
-	return &CRTOverlay{shader: shader, uniforms: u}, nil
+	return &CRTOverlay{
+		shader: shader, uniforms: u,
+		op: ebiten.DrawRectShaderOptions{Blend: c.Blend},
+	}, nil
 }
 
 func (c *CRTOverlay) DrawAt(dst, source *ebiten.Image, x, y float64) {
