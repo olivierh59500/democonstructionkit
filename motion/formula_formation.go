@@ -10,19 +10,20 @@ import (
 type FormulaOp string
 
 const (
-	FormulaConstant FormulaOp = "constant"
-	FormulaTime     FormulaOp = "time"
-	FormulaIndex    FormulaOp = "index"
-	FormulaWidth    FormulaOp = "width"
-	FormulaHeight   FormulaOp = "height"
-	FormulaCount    FormulaOp = "count"
-	FormulaAdd      FormulaOp = "add"
-	FormulaSub      FormulaOp = "subtract"
-	FormulaMul      FormulaOp = "multiply"
-	FormulaDiv      FormulaOp = "divide"
-	FormulaSin      FormulaOp = "sine"
-	FormulaCos      FormulaOp = "cosine"
-	FormulaFloor    FormulaOp = "floor"
+	FormulaConstant      FormulaOp = "constant"
+	FormulaTime          FormulaOp = "time"
+	FormulaSecondaryTime FormulaOp = "secondary_time"
+	FormulaIndex         FormulaOp = "index"
+	FormulaWidth         FormulaOp = "width"
+	FormulaHeight        FormulaOp = "height"
+	FormulaCount         FormulaOp = "count"
+	FormulaAdd           FormulaOp = "add"
+	FormulaSub           FormulaOp = "subtract"
+	FormulaMul           FormulaOp = "multiply"
+	FormulaDiv           FormulaOp = "divide"
+	FormulaSin           FormulaOp = "sine"
+	FormulaCos           FormulaOp = "cosine"
+	FormulaFloor         FormulaOp = "floor"
 )
 
 // FormulaExpr is data, suitable for an editor or a Go preset. Args are kept
@@ -35,6 +36,7 @@ type FormulaExpr struct {
 
 func ExprConst(v float64) FormulaExpr { return FormulaExpr{Op: FormulaConstant, Value: v} }
 func ExprTime() FormulaExpr           { return FormulaExpr{Op: FormulaTime} }
+func ExprSecondaryTime() FormulaExpr  { return FormulaExpr{Op: FormulaSecondaryTime} }
 func ExprIndex() FormulaExpr          { return FormulaExpr{Op: FormulaIndex} }
 func ExprWidth() FormulaExpr          { return FormulaExpr{Op: FormulaWidth} }
 func ExprHeight() FormulaExpr         { return FormulaExpr{Op: FormulaHeight} }
@@ -62,6 +64,7 @@ type formulaOpcode uint8
 const (
 	formulaConstant formulaOpcode = iota
 	formulaTime
+	formulaSecondaryTime
 	formulaIndex
 	formulaWidth
 	formulaHeight
@@ -153,6 +156,8 @@ func CompileFormula(expr FormulaExpr) (*FormulaProgram, error) {
 			opcode = formulaConstant
 		case FormulaTime:
 			opcode = formulaTime
+		case FormulaSecondaryTime:
+			opcode = formulaSecondaryTime
 		case FormulaIndex:
 			opcode = formulaIndex
 		case FormulaWidth:
@@ -213,7 +218,13 @@ func CompileFormula(expr FormulaExpr) (*FormulaProgram, error) {
 // At evaluates a compiled formula in authored operation order. Nonfinite
 // inputs and division by zero return zero rather than entering the renderer.
 func (program *FormulaProgram) At(time, index, width, height, count float64) float64 {
-	if math.IsNaN(time) || math.IsInf(time, 0) || math.IsNaN(index) || math.IsInf(index, 0) ||
+	return program.AtWithSecondaryTime(time, 0, index, width, height, count)
+}
+
+// AtWithSecondaryTime supplies a second independent clock for coupled motion.
+// Formulas without secondary_time behave exactly like At.
+func (program *FormulaProgram) AtWithSecondaryTime(time, secondaryTime, index, width, height, count float64) float64 {
+	if math.IsNaN(time) || math.IsInf(time, 0) || math.IsNaN(secondaryTime) || math.IsInf(secondaryTime, 0) || math.IsNaN(index) || math.IsInf(index, 0) ||
 		math.IsNaN(width) || math.IsInf(width, 0) || math.IsNaN(height) || math.IsInf(height, 0) ||
 		math.IsNaN(count) || math.IsInf(count, 0) {
 		return 0
@@ -227,6 +238,9 @@ func (program *FormulaProgram) At(time, index, width, height, count float64) flo
 			sp++
 		case formulaTime:
 			stack[sp] = time
+			sp++
+		case formulaSecondaryTime:
+			stack[sp] = secondaryTime
 			sp++
 		case formulaIndex:
 			stack[sp] = index

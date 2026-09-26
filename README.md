@@ -893,6 +893,28 @@ On an M4 Max, evaluating all 84 poses from the seven menu modes takes about
 one menu frame evaluates one mode of 12 poses. This kernel measurement does not
 include drawing or establish Pixel 10a performance.
 
+For a logo, backdrop or sprite whose two phase clocks move at different speeds,
+use the same formulas with `motion.FormulaTrajectory`. Its `time` and
+`secondary_time` inputs are independent; `index`, `width`, `height` and `count`
+remain available for a formation. Each phase has an editable start, step and
+optional modulo period. Sample before `Step` when the first visible frame must
+use the authored starting position:
+
+```go
+path, err := motion.NewFormulaTrajectory(presets.CuddlyResetBackdropTrajectory())
+if err != nil { return err }
+position := path.Position()
+drawLogo(position.X, position.Y)
+path.Step()
+```
+
+Calling `Step` only while a stage is active pauses the path naturally. A music
+cue can call `SetStep` without resetting its phases; `Reset` returns to the
+authored starts. The Cuddly Reset preset multiplies its horizontal sine by an
+independent wrapping sine and uses a separate vertical wave. Its 5,000-frame
+source-formula comparison stays within 1e-10 pixels on both axes, with no
+per-frame Go allocation. The same path can position any borrowed image.
+
 For repeated decor that should cost one draw rather than hundreds of tiles
 per frame, `composite.CachedTileParallax` builds a bounded viewport-plus-overscan
 surface once. Camera divisors, wrap periods, integer quantization, negative
@@ -2824,6 +2846,7 @@ remain available for effects with different behavior.
 | `composite.SampledRows` | Arbitrary source row, placement and scale per copy and row, sampled from an absolute scene clock | Cuddly DNA logo |
 | `motion.TableWarpRows` + `composite.TableWarpLogo` | Compiled X-offset lookup and 170 row crops with optional shared companion-logo bounce | Cuddly Digi and Ehhh logos |
 | `motion.PairedPhaseProgram` + `composite.PairedRasterOrbit` | Ordered phase-window raster pairs with per-pass materials, opacity and one bounded clock | Cuddly Reset |
+| `motion.FormulaTrajectory` | Compiled X/Y formulas with two independently stepped phases, optional wraps and stage-controlled pauses | Cuddly Reset backdrop |
 | `sprites.RotatingDiscCloud` | Y-axis rotation, depth projection, stable painter order and batched circular material | Cuddly DNA particle sphere |
 | `sprites.ProjectedField` | Bounded spawn/respawn, strict/wide wrap, projection, history and pixel/sprite/vector materials | Nonameno stars, Union Starballs, Cuddly Starwars and Big Sprite |
 | `sprites.MaskedProjectedField` | One projected population rendered with two materials, reusable alpha canvas, independent output transforms and live count controls | Union Starballs |
