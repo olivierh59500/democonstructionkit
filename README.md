@@ -334,6 +334,25 @@ the pure row programs sample without Go allocations. Tests compare source
 coordinates at intro, middle and late ticks; graphical sampling still needs a
 rendered-frame comparison.
 
+The screen's orange particle sphere uses `sprites.RotatingDiscCloud`, which
+combines a pure Y-axis projection controller with the existing batched `Discs`
+renderer. Point count and model coordinates, angle step, perspective, center,
+depth, Y offset, radius scale, tint and antialiasing are independent:
+
+```go
+cloud, err := sprites.NewRotatingDiscCloud(presets.CuddlyDNADiscCloud(points))
+if err != nil { return err }
+defer cloud.Close()
+if err := cloud.Update(frame); err != nil { return err }
+cloud.Draw(screen)
+```
+
+The projection controller copies its source points and sorts 125 prepared disc
+poses by depth without per-step Go allocations in the pure test. That test
+matches the source equations for 1,000 ticks; rendered pixels still require a
+graphics capture. `cloud.Motion().SetAngleStep(step)` changes speed at a cue
+without resetting the current rotation.
+
 ### Stack whole-image effects after any scroll
 
 Regular glyph modes run first. A mode has one painter and optional depth sorter;
@@ -2285,6 +2304,7 @@ remain available for effects with different behavior.
 | `effects.ProjectedBallTrain` | Blended movement programs, projected sprites/shadows, phase and depth/palette ordering | 3D DOC and Cuddly 3D DOC |
 | `composite.TwistingRibbon` | Two borrowed face images, exact strip crops, phase/occlusion clocks and ordered mirrored draw passes | Cuddly DNA |
 | `composite.SampledRows` | Arbitrary source row, placement and scale per copy and row, sampled from an absolute scene clock | Cuddly DNA logo |
+| `sprites.RotatingDiscCloud` | Y-axis rotation, depth projection, stable painter order and batched circular material | Cuddly DNA particle sphere |
 | `sprites.ProjectedField` | Bounded spawn/respawn, strict/wide wrap, projection, history and pixel/sprite/vector materials | Nonameno stars, Union Starballs, Cuddly Starwars and Big Sprite |
 | `motion.FrameField` + `sprites.AnimatedField` | Independent fractional atlas clocks or planar motion, single-edge wrap, ordered respawn and per-instance image selection | DOM animated stars, Replicants layered stars |
 | `motion.CoupledLogoMotion` + `sprites.CoupledLogoPair` | Two linked logo paths, cached quantized scale banks, depth-based frame selection and draw order | Replicants paired logos |
