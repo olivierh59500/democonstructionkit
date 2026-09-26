@@ -2933,6 +2933,7 @@ remain available for effects with different behavior.
 | --- | --- | --- |
 | `scrolling.Atlas` + `presets.FontAtlas` | Font metrics, cached glyph images, case/alias/fallback rules and ribbon layout | DMA Is Back, TeamG1, Megatwist, Coco, Multiscreen, Nonameno, Grodan |
 | `BitmapRecipe`, `BitmapText`, `BitmapParagraph` | Fractional atlas sampling, cached character lookup and paragraph alignment | Cuddly screens, Union screens/menu/loaders |
+| `scrolling.BitmapPage` | One retained still from ordered glyphs, independent lines, optional background and alternate material banks | Phenomena intro text pages |
 | `effects.JellyCube` | Five-mode controller, entrance, deformation, continuous handoffs, projection and rendering | DMA Is Back; `examples/jellycubes` |
 | `motion.ModelCarousel` + `effects.SolidMeshCarousel` | Selectable grouped meshes, per-face material, exact entry/recession/rotation handoffs and shared white source | Union TNT Crew 3 |
 | `motion.CaptionCycle` + `scrolling.CaptionCarousel` | Cached bitmap lines, small banner fill and exact slide/hold/page timing | Union TNT Crew 3 |
@@ -3265,6 +3266,29 @@ fractional scrolling cells. `grid.Scrolling(text)` also creates the common scrol
 renderer when its cells have integer dimensions. `presets.CuddlyChromeAlphabet()`
 provides an editable variable-width tile alphabet; `CuddlyChromeTiles(text)`
 compiles its established menu recipe.
+
+`scrolling.NewBitmapPage` builds a retained still from ordered glyph images and
+editable lines. Each line controls its text, X/Y, pen advance and scale;
+unmapped characters still occupy their authored space. The page may have an
+opaque or transparent background, and a second glyph bank can supply inverted
+or colored material without changing placement. Phenomena's two intro pages
+use `presets.PhenomenaIntroLine` for their common 32-pixel pen and 2× font, then
+pass normal or inverted glyph images to `presets.PhenomenaIntroPage`. A pure
+layout test compares every glyph index and position with the earlier screen
+loop; an opt-in GPU check is available to compare the completed pages pixel
+for pixel:
+
+```go
+lines := []scrolling.BitmapPageLine{
+    presets.PhenomenaIntroLine(18, "   FOR HOT VHS"),
+    presets.PhenomenaIntroLine(75, "  AND SOFTWARE"),
+}
+page, err := scrolling.NewBitmapPage(
+    presets.PhenomenaIntroPage(invertedGlyphs, lines, color.Black))
+if err != nil { return err }
+defer page.Close()
+screen.DrawImage(page.Image(), nil)
+```
 
 Font regressions cover all entries of ten original metric maps and the complete
 byte-range lookups of seven original character mappers. `cmd/checkfontpixels`
