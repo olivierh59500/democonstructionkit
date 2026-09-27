@@ -529,6 +529,7 @@ tour, err := composite.NewSceneTour(composite.SceneTourConfig{
         image.Pt(0, 0), image.Pt(800, 0),
         image.Pt(800, 600), image.Pt(0, 600),
     },
+    UnmanagedMask: 1 << 1, // Give only the TCB tile independent GPU storage.
     ShaderSource: []byte(presets.MultiscreenCompositeShaderSource),
 })
 if err != nil { return err }
@@ -540,6 +541,11 @@ tour.Draw(screen)
 The shader source is byte-identical to the previous Multiscreen source.
 `TileOrigins`, source order, durations, masks and camera path are independent
 configuration; caller-owned scenes continue to run even when offscreen.
+`UnmanagedMask` selects owned canvases that need independent GPU textures;
+zero keeps the normal atlas-backed allocation. Bit `i` corresponds to source
+`i`, and supplied canvases retain their caller-selected storage. Multiscreen
+uses this only for its TCB tile: doing so removes almost every residual letter
+edge difference without expanding the other three render targets.
 
 Cuddly's DNA screen uses a different effect family: two live text images twist
 as front and back faces of a twenty-strip ribbon. `composite.TwistingRibbon`

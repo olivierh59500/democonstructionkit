@@ -30,9 +30,12 @@ type SceneTourConfig struct {
 	TileWidth, TileHeight         int
 	ViewportWidth, ViewportHeight int
 	Canvases                      []*ebiten.Image
-	Shader                        *ebiten.Shader
-	ShaderSource                  []byte
-	OnShaderError                 func(error)
+	// UnmanagedMask gives owned canvas i an independent GPU texture when bit i
+	// is set. Borrowed canvases keep their caller-selected storage.
+	UnmanagedMask uint64
+	Shader        *ebiten.Shader
+	ShaderSource  []byte
+	OnShaderError func(error)
 }
 
 // SceneTour keeps scenes synchronized, culls transition canvases by the camera
@@ -53,7 +56,7 @@ func NewSceneTour(c SceneTourConfig) (*SceneTour, error) {
 	if c.Camera == nil || n < 1 || n > 4 || c.TileWidth < 1 || c.TileHeight < 1 ||
 		c.ViewportWidth < 1 || c.ViewportHeight < 1 || len(c.TileOrigins) != n ||
 		len(c.Names) != 0 && len(c.Names) != n ||
-		len(c.Canvases) != 0 && len(c.Canvases) != n {
+		len(c.Canvases) != 0 && len(c.Canvases) != n || c.UnmanagedMask>>n != 0 {
 		return nil, fmt.Errorf("composite: invalid scene tour dimensions or sources")
 	}
 	for i, source := range c.Sources {
@@ -75,7 +78,14 @@ func NewSceneTour(c SceneTourConfig) (*SceneTour, error) {
 			t.canvases[i] = c.Canvases[i]
 			continue
 		}
-		t.canvases[i] = ebiten.NewImage(c.TileWidth, c.TileHeight)
+		if c.UnmanagedMask&(uint64(1)<<i) != 0 {
+			t.canvases[i] = ebiten.NewImageWithOptions(
+				image.Rect(0, 0, c.TileWidth, c.TileHeight),
+				&ebiten.NewImageOptions{Unmanaged: true},
+			)
+		} else {
+			t.canvases[i] = ebiten.NewImage(c.TileWidth, c.TileHeight)
+		}
 		t.owned[i] = true
 	}
 	t.shader = c.Shader
