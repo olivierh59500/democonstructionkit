@@ -329,6 +329,9 @@ maximum 17.015 ms and zero intervals above 20 ms.
 TeamG1's updated DCK APK showed its intro and main stage on Pixel. A focused
 744-interval presentation run had p95 16.736 ms, maximum 16.930 ms and zero
 intervals above 20 ms.
+Coco's updated DCK APK was inspected on Pixel after isolating its CRT source
+surface. A 744-interval main-stage run had p95 16.731 ms, maximum 16.898 ms
+and zero intervals above 20 ms; it does not measure intro-only GPU cost.
 
 The common `scrolling.New` repeat renderer already has coverage for short
 horizontal and vertical messages, gap boundaries and mixed-font controls.
@@ -354,7 +357,7 @@ remain outside the full-screen audit.
 | Bilizir | `4720c97` → `94852f4` | Exact with original-logo and original-scroll-reset options; the default DCK variations remain available. |
 | DMA 3D | `e161039` → `37b6f46` | One pixel differs by one channel level at tick 600; all other ticks exact. |
 | DMA Is Back | `b47c293` → `25b9fdd` | Exact with historical cube transitions selected. |
-| Coco is the best | `0a9b678` → `ad9dbe9` | Intro CRT output differs at ticks 0, 1, 60 and 240 (13,827–22,379 pixels); main scene exact at 600 and later sampled ticks. |
+| Coco is the best | `0a9b678` → `e447607` | Intro CRT output differs at ticks 0, 1, 60 and 240 (6,269–11,396 pixels after isolating its GPU source); main scene exact at 600 and later sampled ticks. |
 | Cuddly menu | `556d023` → `3cb4f30` | Exact for the standalone menu. |
 | DOM intro | `a02358c` → `f7d89e8` | Exact. |
 | Multiscreen | `2cd2bc1` → `c7387d7` | 182 and 146 pixels differ at ticks 600 and 1,200; six other ticks exact. |
@@ -370,7 +373,11 @@ remain outside the full-screen audit.
 
 Coco's raw intro surface is byte-identical before CRT at ticks 0, 1, 60, 240
 and 241. Specializing shader parameters as literals did not improve the final
-pixels, so that experiment was removed; its output difference remains open.
+pixels, so that experiment was removed. A same-source GPU check proves the
+preserved and shared CRT shaders produce identical pixels when fed one texture.
+An unmanaged DCK intro surface reduces the remaining full-frame error by about
+threefold, suggesting texture preparation or sampling contributes; exact output
+parity remains open.
 TeamG1's raw intro source also matches at ticks 0, 1, 60, 240 and 600. Its
 authored 640-pixel insertion edge fixes the previously delayed scene handoff,
 while the flat CRT intentionally prevents clipping the font's outer rows.
