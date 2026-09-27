@@ -241,7 +241,7 @@ matches the previous implementation exactly.
 | DOM Intro | 744 | 16.758 ms | 16.904 ms | 0 |
 | Grodan | 744 | 16.755 ms | 18.022 ms | 0 |
 | Cuddly menu, CRT off | 744 | 16.762 ms | 16.926 ms | 0 |
-| Vectorballs sphere, 144 balls | 744 | 16.771 ms | 16.972 ms | 0 |
+| Vectorballs sphere, 144 balls, published APK | 744 | 16.776 ms | 17.594 ms | 0 |
 | Vectorballs sphere, 4,096 points, batched | 744 | 16.745 ms | 16.961 ms | 0 |
 
 The Pixel's physical landscape display was 2,424×1,080. The main logical
@@ -264,8 +264,11 @@ Its 144-ball sphere had another zero-slow-interval trace with the recommended
 20-pixel sprite. Before batching and perspective/rear-half options, 217 of 744
 intervals in the 4,096-point variant exceeded 20 ms and p95 was 33.411 ms;
 after the change, zero exceeded 20 ms. At that density the output reads as a
-point surface rather than distinct vectorballs. The foreground window still
-reports `KEEP_SCREEN_ON`.
+point surface rather than distinct vectorballs. A further 372-interval sample
+from the published APK had p95 16.769 ms, maximum 16.903 ms and zero intervals
+above 20 ms at that density. The recommended 144-ball published APK retained
+zero slow intervals over 744 samples. Its foreground window still reports
+`KEEP_SCREEN_ON` and Android remained awake with a 30-second screen timeout.
 
 The common `scrolling.New` repeat renderer already has coverage for short
 horizontal and vertical messages, gap boundaries and mixed-font controls.
