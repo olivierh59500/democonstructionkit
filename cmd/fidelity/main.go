@@ -314,6 +314,11 @@ func captureRevision(source, revision, root, output string, p probe, frames []in
 			}
 			// Freeze wall-clock animation and random seeding in both snapshots.
 			text := strings.ReplaceAll(string(data), "time.Now()", "time.Unix(0, dckFidelityTick*int64(time.Second)/60)")
+			if filepath.Base(source) == "nonameno-demo" {
+				// The DCK host reads the same wall clock through its audio
+				// output package. Both presentations need one simulation time.
+				text = strings.ReplaceAll(text, "audio.Now()", "time.Unix(0, dckFidelityTick*int64(time.Second)/60)")
+			}
 			text = strings.ReplaceAll(text, "time.Since(", "dckFidelitySince(")
 			if err = os.WriteFile(path, []byte(text), 0644); err != nil {
 				return err
@@ -333,7 +338,12 @@ func captureRevision(source, revision, root, output string, p probe, frames []in
 		if err != nil {
 			return err
 		}
-		if bytes.Contains(data, []byte("func (g *Game) initReflection()")) {
+		if _, sequenceErr := os.Stat(filepath.Join(packageDir, "sequence_adapter.go")); sequenceErr == nil {
+			// Current DCK versions own the authored action state through one
+			// PointSequence and no longer keep the old transformed buffer.
+			p.Factory = `g:=&Game{shapeManager:NewShapeManager(),zoomFactor:.35,fov:1450,centerX:320,centerY:193,position:Vector3{Z:850},dirty:true};g.loadImages();g.playgroundCanvas=ebiten.NewImage(640,386);g.initReflection();g.whiteImage=ebiten.NewImage(1,1);g.whiteImage.Fill(color.White);g.initActions();if err:=g.bindSequence();err!=nil{return nil,err};return g,nil`
+			p.Imports = `"image/color"`
+		} else if bytes.Contains(data, []byte("func (g *Game) initReflection()")) {
 			// New snapshots construct the shared pass; older snapshots retain
 			// their original subimage field and must keep the original probe.
 			p.Factory = strings.ReplaceAll(p.Factory, "g.reflectionSource=g.playgroundCanvas.SubImage(image.Rect(0,288,640,368)).(*ebiten.Image);", "g.initReflection();")
