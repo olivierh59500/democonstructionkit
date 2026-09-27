@@ -13,24 +13,26 @@ import (
 // camera and sprite material. Images passed to Draw are borrowed. Flag may
 // deform a plane or custom XY points while the unchanged rest shape is retained.
 type ProjectedObjectConfig struct {
-	Cube           *CubeConfig
-	Pyramid        *PyramidConfig
-	Plane          *PlaneConfig
-	Sphere         *SphereConfig
-	Points         []Point
-	Flag           *Flag
-	Rotation       geometry.Vec3
-	RotationStep   geometry.Vec3
-	Position       geometry.Vec3
-	Scale          float64
-	Focal          float64
-	CenterX        float64
-	CenterY        float64
-	TimeStart      float64
-	YUp            bool
-	AscendingDepth bool
-	ScaleImages    bool
-	Options        ebiten.DrawImageOptions
+	Cube               *CubeConfig
+	Pyramid            *PyramidConfig
+	Plane              *PlaneConfig
+	Sphere             *SphereConfig
+	Points             []Point
+	Flag               *Flag
+	Rotation           geometry.Vec3
+	RotationStep       geometry.Vec3
+	Position           geometry.Vec3
+	Scale              float64
+	Focal              float64
+	CenterX            float64
+	CenterY            float64
+	TimeStart          float64
+	YUp                bool
+	AscendingDepth     bool
+	ScaleImages        bool
+	Batch              bool
+	CullPositiveModelZ bool
+	Options            ebiten.DrawImageOptions
 }
 
 // ProjectedObject owns one animated point shape, rotation clock, model matrix
@@ -158,7 +160,9 @@ func (object *ProjectedObject) Draw(dst *ebiten.Image, images []*ebiten.Image) {
 		Translate: Point{X: c.Position.X, Y: c.Position.Y, Z: c.Position.Z},
 		Focal:     c.Focal, CenterX: c.CenterX, CenterY: c.CenterY,
 		YUp: c.YUp, AscendingDepth: c.AscendingDepth, ScaleImages: c.ScaleImages,
-		Options: c.Options,
+		Batch:              c.Batch,
+		CullPositiveModelZ: c.CullPositiveModelZ,
+		Options:            c.Options,
 	})
 }
 

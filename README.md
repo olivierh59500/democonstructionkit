@@ -3624,6 +3624,14 @@ flag.Draw(screen, ballImages)
 Create a second object with another recipe and draw both in the chosen order.
 Use `VectorballsProjectedObject("sphere", ..., 6, 640, 120)` for a regular
 144-ball sphere; its segment argument is bounded to 32, or 4,096 balls.
+Pass sprite index `-1` for the density-aware material: the default six-segment
+sphere uses a 20-pixel cyan ball, and densities above sixteen segments use a
+12-pixel ball. `Batch` groups equal-image, depth-ordered sprites into bounded
+triangle submissions. `CullPositiveModelZ` and `ScaleImages` are independent
+options for an opaque front shell and perspective-sized balls; the dense sphere
+preset enables both from twelve segments. Explicit sprite indices and all
+other object presets remain editable. The 4,096-point mode is an experimental
+point-surface appearance; six segments keep the individual vectorballs legible.
 `SetPosition`, `SetScale` and `SetRotationStep` change one live object without
 resetting its current rotation; `Reset` restores its rest shape and initial
 rotation while retaining live placement, scale and speed edits. Static
@@ -3632,8 +3640,12 @@ unchanged plane on each update. The original Vectorballs action script still
 uses `geometry.PointSequence` for morphs and timed changes. Thirty-six earlier
 before/after GPU frames cover cube, pyramid, plane and flag handoffs with zero
 differences. Five captures from its switch tick through a reflected mid-stage
-pose cover the new sphere. Pure object tests cover 5,000 rotations without
-update allocations.
+pose cover the new sphere. Additional captures cover the density-aware sphere
+at 144, 576 and 4,096 points, including its reflection. All legacy object
+captures remain pixel-identical. Pure object tests cover 5,000 rotations
+without update allocations. On a Pixel 10a, the dense mode fell from 217 of
+744 intervals above 20 ms to zero after batching and front-half culling;
+the recommended 144-ball mode also had none above 20 ms.
 
 The same `PointWriter` can drive four more configurable point-scene motions:
 `geometry.SinusGrid` replaces Z on a row-major point grid, `geometry.Rotors`

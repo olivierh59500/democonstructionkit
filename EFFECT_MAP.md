@@ -59,7 +59,7 @@ production. Preserved original implementations remain unchanged.
 | DOM intro | Atlas, `scrolling.Config.SizeBank`, `motion.ScaledTextClock`, `VerticalStripTrain` background, `RasterOverlay` copies, `effects.Mask` and `sprites.AnimatedField` stars | Authored text and scene layer order. |
 | Multiscreen, four embedded productions | `Config.Scanline`, recurrent `SolidCubeTrain`, `RotozoomBackground`, `sprites.Group` recurrent translation and direct `CopperTitleBand` in Coco, `RotozoomBackground` in Viva, Phenomena's main-only `scrolling.SliceProgram`, `motion.RecurrentRowWave` with its owned scene clock, `composite.ScalarStagePainter` HSL materials and reusable gradient/mask assets, projected-plane engines, atlas recipes, Viva `RasterTitle`, `scrolling.Config.Pseudo3D` text banks and `sprites.RecurrentFormation` logos, complete TCB `effects.MultiPlaneScene` | Authored images, messages, panel sizes, placement and scene order remain in the host. No local trigonometric path, mesh submission or scrolling renderer remains in its DCK panels; the standalone Phenomena intro is preserved separately. |
 | Multiscreen, camera tour | Complete `composite.SceneTour` over `motion.CameraTour`: ten held/eased poses, direct fixed views, continuously updated sources, masked retained transition canvases, one-pass shader and fallback | Authored screen sources, world placement and music stay production configuration. |
-| Vectorballs | `sprites.ProjectedObject` for independent cube, pyramid, plane, flag, sphere or custom clouds with owned rotation, deformation and projection; WaterReflection; and complete `geometry.PointSequence` for the authored point morphs, sine grid, rotors, Y orbit and bounce | Artwork, authored shape/action data and layer placement stay production parameters. |
+| Vectorballs | `sprites.ProjectedObject` for independent cube, pyramid, plane, flag, sphere or custom clouds with owned rotation, deformation and projection; optional batched sprites, rear-hemisphere culling and perspective sizing; WaterReflection; and complete `geometry.PointSequence` for the authored point morphs, sine grid, rotors, Y orbit and bounce | Artwork, authored shape/action data and layer placement stay production parameters. |
 | Grodan | Atlas, four `scrolling.Config.Ribbon` lanes, three `SurfaceLayer` raster compositions, `GatedBackgroundPair` and harmonic `sprites.Group` | Authored art and scene layer order. |
 | MegaTwist, intro | `Config.Feed`, atlas, `timeline.HoldRamp` 90-tick splash, shared `CRTOverlay` with copy blending | Authored intro image and CRT parameters remain scene data. |
 | MegaTwist, main | `Config.Scanline`, independent `ScanlineBackground` and DisplacementPrograms, harmonic `sprites.Group` and `sprites.GlowPainter` | Authored artwork and layer order remain scene composition. The former black transition overlay was visually inert after the splash reset and has been removed from the DCK version. |
@@ -195,7 +195,8 @@ matches the previous implementation exactly.
   captures, including main-scene ticks 1,200 and 2,400, are pixel-identical.
   Vectorballs additionally gains an evenly spaced sphere through the same
   point-bank family; its optional-object GPU check includes the new mode and
-  its reflection. This optional mode has not yet been selected on Pixel.
+  its reflection. The recommended 144-ball mode and the dense 4,096-point mode
+  have now both been selected and sampled on Pixel.
 - Pixel 10a (Android 17/API 37) was reconnected and sampled at 60 Hz with
   current DCK APKs. Cuddly's Big Sprite, DNA main stage, Mega Scroller, Reset,
   Starwars, Fullscreen and introduction reported 59.81–60.25 observed FPS in
@@ -207,13 +208,14 @@ matches the previous implementation exactly.
   for each of Union Multi-Plane and Starballs, Multiscreen's four-demo tour,
   Bilizir, DMA Is Back, Phenomena DNA, standalone TCB Replicants, Vectorballs'
   authored sequence, 3D DOC, DMA 3D, Coco, MegaTwist, TeamG1, Nonameno,
-  Viva TCB, TCB Multi-Plane, DOM, Grodan and Cuddly's standalone menu. All
-  nineteen measured scenes had zero intervals above 20 ms; detailed p95/max
+  Viva TCB, TCB Multi-Plane, DOM, Grodan and Cuddly's standalone menu. The two
+  Vectorballs sphere variants were sampled separately. All twenty-one traces
+  had zero intervals above 20 ms; detailed p95/max
   values appear below. Union intro
   and its Replicants screen also had 63-frame spot checks with zero intervals
   above 20 ms. Screenshots confirmed the effects, and thermal status remained
-  0 during the earlier eight-scene run. The newer eleven scenes were each
-  inspected at a visible stage frame.
+  0 during the earlier eight-scene run. The newer eleven scenes and both sphere
+  variants were each inspected at a visible stage frame.
 - The remaining catalog screens, longer playback, varying device refresh rates
   and battery consumption still need device checks. The sampled windows do not
   prove that every cue boundary or full megademo tour stays at 60 FPS.
@@ -239,6 +241,8 @@ matches the previous implementation exactly.
 | DOM Intro | 744 | 16.758 ms | 16.904 ms | 0 |
 | Grodan | 744 | 16.755 ms | 18.022 ms | 0 |
 | Cuddly menu, CRT off | 744 | 16.762 ms | 16.926 ms | 0 |
+| Vectorballs sphere, 144 balls | 744 | 16.771 ms | 16.972 ms | 0 |
+| Vectorballs sphere, 4,096 points, batched | 744 | 16.745 ms | 16.961 ms | 0 |
 
 The Pixel's physical landscape display was 2,424×1,080. The main logical
 surfaces measured here include 768×540 for Cuddly, 768×536 for Union and
@@ -248,16 +252,20 @@ PSS / graphics memory of 249,775 / 121,068 KiB for Cuddly's intro,
 Multiscreen. These snapshots are not peak-memory measurements. Android reported
 thermal status 0 after the sampled runs.
 The Vectorballs authored sequence additionally used 198,956 KiB process PSS
-and 101,156 KiB graphics memory in one snapshot. Its optional new object modes
-have not yet been selected on Pixel, despite their exact desktop GPU captures.
+and 101,156 KiB graphics memory in one snapshot. Cube, pyramid, plane and
+flag variants have desktop GPU captures but have not yet been selected on Pixel.
 After the CRT migration, a separate 744-interval MegaTwist run reported p95
 16.764 ms, maximum 16.933 ms and zero intervals above 20 ms. Cuddly's menu
 run used its default CRT-off setting; the optional pass has desktop GPU
 comparisons but no Pixel presentation trace yet.
 After the spherical-cloud update, another Vectorballs authored-sequence run
 reported 744 intervals, p95 16.776 ms, maximum 16.961 ms and none above 20 ms.
-The new optional sphere was checked by desktop GPU capture, not selected in
-this Android run. Its foreground window still reports `KEEP_SCREEN_ON`.
+Its 144-ball sphere had another zero-slow-interval trace with the recommended
+20-pixel sprite. Before batching and perspective/rear-half options, 217 of 744
+intervals in the 4,096-point variant exceeded 20 ms and p95 was 33.411 ms;
+after the change, zero exceeded 20 ms. At that density the output reads as a
+point surface rather than distinct vectorballs. The foreground window still
+reports `KEEP_SCREEN_ON`.
 
 The common `scrolling.New` repeat renderer already has coverage for short
 horizontal and vertical messages, gap boundaries and mixed-font controls.
@@ -280,7 +288,8 @@ regression test.
    common cases while Go callbacks remain available for special cases.
 4. Continue measuring combined scene classes on Pixel. The ledger now samples
    scanline/warp, projected field, masks and multi-layer compositions, with
-   Cuddly CPU timings and nineteen scene-level presentation traces. Long-running
+   Cuddly CPU timings and twenty-one presentation traces across nineteen catalog
+   scenes and two optional sphere variants. Long-running
    tours, additional catalog screens, cue boundaries, memory peaks and battery
    use still need device evidence.
 
