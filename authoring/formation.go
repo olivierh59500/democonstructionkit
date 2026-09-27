@@ -84,3 +84,23 @@ func compileFormation(spec CuedFormation, count int) (*motion.CuedFormation, err
 	}
 	return motion.NewCuedFormation(config)
 }
+
+func compileSampledFormation(spec SampledFormation, count int) (*motion.KeyframedFormation, error) {
+	if len(spec.Frames) > 4096 || count < 1 || count > 10000 ||
+		len(spec.Frames) > 0 && count > 1_048_576/len(spec.Frames) {
+		return nil, fmt.Errorf("too many sampled formation points")
+	}
+	config := motion.KeyframedFormationConfig{Count: count, Loop: spec.Loop}
+	for i, frame := range spec.Frames {
+		ease, err := formationEase(frame.Ease)
+		if err != nil {
+			return nil, fmt.Errorf("sampled formation frame %d: %w", i, err)
+		}
+		points := make([]motion.Point, len(frame.Points))
+		for j, v := range frame.Points {
+			points[j] = point(v)
+		}
+		config.Frames = append(config.Frames, motion.FormationFrame{Time: frame.Time, Points: points, Ease: ease})
+	}
+	return motion.NewKeyframedFormation(config)
+}

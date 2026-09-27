@@ -34,7 +34,7 @@ production. Preserved original implementations remain unchanged.
 | `go-fr010` | Software-rendered parts were searched; no direct GPU image-train or simple threshold-wrap equivalent was migrated. |
 | `go-multiscreen` | Embedded Viva title rasters and TCB mountain strips use the same DCK presets as their standalone versions. The camera tour is a separate director effect. |
 | `go-secondreality` | Indexed software effects were searched separately; their palette/VRAM clocks are not interchangeable with these Ebitengine image controllers. |
-| `go-uniondemo` | Intro harmonic cell waves, Replicants raster trains, Beat Dis/Wow/TNT2/Level 16 wraps and Disk Copier's six-strip raster are shared. Beat Dis letters use the harmonic formation with a common wobble and individual phases. |
+| `go-uniondemo` | Intro harmonic cell waves, Replicants raster trains and per-letter `motion.KeyframedFormation`, Beat Dis/Wow/TNT2/Level 16 wraps and Disk Copier's six-strip raster are shared. Beat Dis letters use the harmonic formation with a common wobble and individual phases. |
 | `go-vectorballs` | Ball projection, morphing and reflection are different shared families; no direct image train/wrap candidate found. |
 | `grodan-kvack-kvack-demo` | Four scroll lanes use `Config.Ribbon`, three `SurfaceLayer` compositions, `GatedBackgroundPair` owns the scenery, and the sprite chain uses `motion.HarmonicFormation`. |
 | `megatwist` | Its multi-frequency, clamped sprite motion now uses the same formation family; `sprites.GlowPainter` owns the configurable halo passes. |
@@ -121,7 +121,7 @@ matches the previous implementation exactly.
 | Wow Scroller | Scrolling, `RasterOverlay` source-atop fill and `motion.WrapBank` paired panel offsets | The two 640×1235 images are single oversized draws naturally clipped by the 640×400 stage; no additional repeated-image transport is present. |
 | Hidden | `sprites.DelayedTrail` over `PointHistory` and `timeline.PacedIndex` for the one-tick palette offset | Authored palette colors, crosshair and border clipping remain scene composition. |
 | Starballs | Camera, scrolling, `sprites.MaskedProjectedField` with one projected population, two borrowed materials, editable mask paint, live count and depth opacity | Authored logo, scroll message and input mapping remain screen data. |
-| Replicants | Atlas, two synchronized bitmap text windows on a strict `motion.WrapBank` clock, `RasterOverlay` fill, `motion.CuedFormation` with keyframed origin, signed spacing, tilt and arch for the letter paths, `sprites.Train` rasters driven by `motion.BounceBank` | Measured pose keys from the Atari recording, authored text, key mapping and layer order remain scene data. |
+| Replicants | Atlas, two synchronized bitmap text windows on a strict `motion.WrapBank` clock, `RasterOverlay` fill, `motion.KeyframedFormation` with independent per-letter paths and a seamless 25-second loop, `sprites.Train` rasters driven by `motion.BounceBank` | The authored position table, text, key mapping and layer order remain scene data. |
 | TNT Crew 2 | Background sampler, BitmapText.DrawWindow on a strict `motion.WrapBank` text clock, `motion.WrapBank` three-layer parallax and mutable speeds | Per-key control mapping remains scene data. |
 | Level 16 | Vertical scrolling, background sampler, `motion.TrajectoryClock` with a `NestedOrbit` ball path and two independent `composite.RasterOverlay` materials with exact water/raster wraps | Authored artwork and layer occlusion remain scene data. |
 | Multi-Plane | Complete `effects.MultiPlaneScene` in native-stage mode, with Union's source-index phases, `composite.ProfileImage` row renderer and strict `sprites.AxisFlip` cycle | Artwork, text, soundtrack and door routing remain production data. |
@@ -151,6 +151,11 @@ data.
   tests compare its poses at four times, reject invalid cues and loops, and
   cover independent property clocks. The standalone JSON example rendered at
   frame 120 with a moving backdrop, text layers and a bent sprite phrase.
+- Union Replicants now uses 126 ordered, per-letter position banks over a
+  25-second loop. Sixteen aligned Atari-video/DCK capture pairs cover the
+  opening stacks, wave section, fast two-way arcs and loop join. The point
+  data is authored from five-frame-per-second observations, so overlapped
+  letters remain approximate rather than claimed pixel-identical.
 - DCK's pure `motion`, `geometry`, `timeline`, `timeline/recipes`, `palette` and
   `modulation` test suites pass. Eleven opt-in GPU comparators ran successfully
   against DCK code `f9ebe64`: water reflection, staged materials, copper titles,
@@ -422,9 +427,10 @@ reports rather than being hidden by a tolerance.
 3. Extract raster/mask materials and cue programs. Keep event clocks, draw order,
    alpha blend and handoff behavior explicit so the future editor can serialize
    common cases while Go callbacks remain available for special cases.
-   The `authoring` sprite layer now serializes `CuedFormation` pose, independent
-   origin/spacing/arc tracks and overlapping harmonic cues. The saved formation
-   example renders through the ordinary desktop host without scene-specific Go.
+   The `authoring` sprite layer serializes `CuedFormation` pose, independent
+   origin/spacing/arc tracks and overlapping harmonic cues, or absolute
+   per-sprite `KeyframedFormation` paths. The saved formation example renders
+   through the ordinary desktop host without scene-specific Go.
 4. Continue measuring combined scene classes on Pixel. The ledger now samples
    scanline/warp, projected field, masks and multi-layer compositions, with
    Cuddly CPU timings and twenty-two baseline presentation traces across twenty

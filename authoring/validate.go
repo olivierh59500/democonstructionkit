@@ -499,6 +499,12 @@ func (p Project) validateSprites(c SpriteGroup) error {
 			return fmt.Errorf("invalid sprite formation: %w", err)
 		}
 	}
+	if c.Sampled != nil {
+		kinds++
+		if _, err := compileSampledFormation(*c.Sampled, c.Count); err != nil {
+			return fmt.Errorf("invalid sampled sprite formation: %w", err)
+		}
+	}
 	if kinds > 1 {
 		return fmt.Errorf("choose one sprite trajectory")
 	}

@@ -798,6 +798,28 @@ formation, err := motion.NewCuedFormation(motion.CuedFormationConfig{
 The formation copies and validates these keys once. Sampling a sprite's pose
 does not allocate, including when several groups share the same formation.
 
+When every sprite follows its own authored path, use a
+`motion.KeyframedFormation` with one absolute point per image at each key. DCK
+interpolates every point independently and checks that the final bank joins the
+first bank at `Loop`. The same `sprites.Group` can draw it with
+`Formation: paths.At`; a saved `authoring` sprite layer calls this
+`sampledFormation`:
+
+```go
+paths, err := motion.NewKeyframedFormation(motion.KeyframedFormationConfig{
+    Count: 2, Loop: 2,
+    Frames: []motion.FormationFrame{
+        {Time: 0, Points: []motion.Point{{X: 20, Y: 60}, {X: 200, Y: 60}}},
+        {Time: 1, Points: []motion.Point{{X: 200, Y: 20}, {X: 20, Y: 100}}},
+        {Time: 2, Points: []motion.Point{{X: 20, Y: 60}, {X: 200, Y: 60}}},
+    },
+})
+```
+
+This is useful for captured or hand-authored paths whose individual crossings
+cannot be described by one row, arch or harmonic cue. Keys are copied once;
+steady pose sampling allocates nothing.
+
 For a chain of independently phased sprites, use a data-only
 `motion.HarmonicFormationConfig`. Each X/Y term selects sine or cosine, either
 of two phase clocks, an index phase and an optional shared amplitude envelope.
@@ -2512,7 +2534,7 @@ The serialized subset is deliberately explicit:
 | Version 1 layer | Supported saved parameters |
 | --- | --- |
 | `scroll` | Font bank, text/braces controls, horizontal/vertical/page layout, repeat bounds/gap, normal/sine/bounce/zoom/perspective/path modes, timed mode sequence |
-| `sprites` | Image animation, count, linear/path/orbit/weave or cued formation, signed spacing, keyframed arch/tilt, staggered harmonic cues, transform, blend/filter, common and per-instance signal bindings |
+| `sprites` | Image animation, count, linear/path/orbit/weave, cued or per-sprite sampled formation, signed spacing, keyframed arch/tilt, staggered harmonic cues, transform, blend/filter, common and per-instance signal bindings |
 | `background` | Source crop, repeat period, scale, parallax, camera/movement velocities, blend/filter |
 | `jelly_cube` | Editable default/DMA preset, center, half-edge, camera, six colors, mode order/durations, phase, speed, entrance, transition and five deformation gains |
 | All layers | ID, order, start/duration/fades, local clock and final layer blend |
@@ -2545,6 +2567,9 @@ Use `originKeys`, `spacingKeys` or `arcKeys` instead of `poseKeys` when those
 properties need separate clocks. Multiple cues may overlap. The compiler
 checks time order, finite values, loop continuity and cue bounds before a
 rendering surface is allocated.
+For individual paths, replace `formation` with `sampledFormation`; each entry
+in `frames` then has a `time` and a `points` array with exactly `count` `{x,y}`
+coordinates. This is the data-only version of `motion.KeyframedFormation`.
 
 Signals store keys, oscillators and named inputs. `Options.Context` can supply
 music time and live values; otherwise project BPM and layer time define the beat

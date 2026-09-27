@@ -342,6 +342,13 @@ func (b *compiler) sprites(c SpriteGroup) (kit.Effect, error) {
 		}
 		config.Formation = formation.At
 	}
+	if c.Sampled != nil {
+		formation, err := compileSampledFormation(*c.Sampled, c.Count)
+		if err != nil {
+			return nil, err
+		}
+		config.Formation = formation.At
+	}
 	return sprites.NewGroup(config)
 }
 func (b *compiler) bindings(values Bindings) sprites.GroupSignals {

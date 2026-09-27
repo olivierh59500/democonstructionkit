@@ -116,3 +116,50 @@ func TestSerializableFormationIndependentPropertyClocks(t *testing.T) {
 		t.Fatalf("independent property loop jumped: %+v", got)
 	}
 }
+
+func TestSerializableSampledFormationPreservesIndependentSpriteTracks(t *testing.T) {
+	p := formationProject()
+	group := p.Layers[0].Sprites
+	group.Count = 2
+	group.Formation = nil
+	group.Sampled = &SampledFormation{Loop: 2, Frames: []SampledFormationFrame{
+		{Time: 0, Points: []Point{{X: 10, Y: 20}, {X: 100, Y: 40}}, Ease: "smooth"},
+		{Time: 1, Points: []Point{{X: 30, Y: 60}, {X: 60, Y: 0}}},
+		{Time: 2, Points: []Point{{X: 10, Y: 20}, {X: 100, Y: 40}}},
+	}}
+	var encoded bytes.Buffer
+	if err := Encode(&encoded, p); err != nil {
+		t.Fatal(err)
+	}
+	decoded, err := Decode(&encoded)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !reflect.DeepEqual(*decoded, p) {
+		t.Fatal("sampled formation changed during JSON round trip")
+	}
+	assets := testAssets(t)
+	b := compiler{resolver: assets, images: map[string]*ebiten.Image{}}
+	effect, err := b.sprites(*decoded.Layers[0].Sprites)
+	if err != nil {
+		t.Fatal(err)
+	}
+	gotGroup := effect.(*sprites.Group)
+	if err := gotGroup.Update(kit.Frame{Time: .25}); err != nil {
+		t.Fatal(err)
+	}
+	poses := gotGroup.Poses()
+	if poses[0].X != 13.125 || poses[0].Y != 26.25 ||
+		poses[1].X != 93.75 || poses[1].Y != 33.75 {
+		t.Fatalf("sampled sprite paths changed: %+v", poses)
+	}
+	group.Sampled.Frames[2].Points[1].X = 101
+	if err := p.Validate(); err == nil {
+		t.Fatal("accepted a sampled formation that jumps at its loop")
+	}
+	group.Sampled.Frames[2].Points[1].X = 100
+	group.Formation = &CuedFormation{}
+	if err := p.Validate(); err == nil {
+		t.Fatal("accepted two sprite trajectories")
+	}
+}

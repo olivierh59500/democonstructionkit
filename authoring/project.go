@@ -210,6 +210,18 @@ type CuedFormation struct {
 	Cues        []FormationCue      `json:"cues,omitempty"`
 }
 
+// SampledFormation records a separate editable trajectory for every sprite.
+// Each frame must contain SpriteGroup.Count points in the same image order.
+type SampledFormationFrame struct {
+	Time   float64 `json:"time"`
+	Points []Point `json:"points"`
+	Ease   string  `json:"ease,omitempty"`
+}
+type SampledFormation struct {
+	Loop   float64                 `json:"loop,omitempty"`
+	Frames []SampledFormationFrame `json:"frames"`
+}
+
 // Bindings maps x, y, scaleX, scaleY, angle or opacity to a Project.Signals ID.
 // Offsets/angle are additive; scale and opacity multiply the base sprite pose.
 type Bindings map[string]string
@@ -241,7 +253,8 @@ type SpriteGroup struct {
 	Signals       Bindings   `json:"signals,omitempty"`
 	PerInstance   []Bindings `json:"perInstance,omitempty"`
 
-	Formation *CuedFormation `json:"formation,omitempty"`
+	Formation *CuedFormation    `json:"formation,omitempty"`
+	Sampled   *SampledFormation `json:"sampledFormation,omitempty"`
 }
 
 type Background struct {
