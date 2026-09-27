@@ -52,3 +52,95 @@ func TestCuedFormationCopiesCuesAndRejectsOverflow(t *testing.T) {
 		t.Fatal("cue spilling across loop boundary was accepted")
 	}
 }
+
+func TestCuedFormationComposesKeyframedOriginSpacingAndHarmonics(t *testing.T) {
+	origin := []Key[Point]{{Time: 0, Value: Point{10, 20}}, {Time: 1, Value: Point{50, 30}}, {Time: 2, Value: Point{10, 20}}}
+	spacing := []Key[Point]{{Time: 0, Value: Point{30, 0}}, {Time: 1, Value: Point{5, 0}}, {Time: 2, Value: Point{30, 0}}}
+	formation, err := NewCuedFormation(CuedFormationConfig{
+		Count: 3, Loop: 4, OriginKeys: origin, SpacingKeys: spacing,
+		Cues: []FormationCue{{Start: .25, Duration: .5, LeadIndex: 0,
+			X: []FormationHarmonic{{FirstAmplitude: 20, LastAmplitude: 20, Cycles: .5}}}},
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, sample := range []struct {
+		seconds float64
+		index   int
+		want    Point
+	}{
+		{0, 2, Point{70, 20}},
+		{.5, 0, Point{50, 25}},
+		{.5, 2, Point{85, 25}},
+		{1, 2, Point{60, 30}},
+		{2, 2, Point{70, 20}},
+		{4, 2, Point{70, 20}},
+	} {
+		if got := formation.At(sample.seconds, sample.index); got != sample.want {
+			t.Fatalf("pose at %.1fs for item %d = %+v, want %+v", sample.seconds, sample.index, got, sample.want)
+		}
+	}
+	origin[1].Value.X, spacing[1].Value.X = 999, 999
+	if got := formation.At(1, 2); got != (Point{60, 30}) {
+		t.Fatalf("caller changed compiled keyframes: %+v", got)
+	}
+	if allocations := testing.AllocsPerRun(100, func() { _ = formation.At(1.5, 1) }); allocations != 0 {
+		t.Fatalf("keyframed formation allocated %g times per pose", allocations)
+	}
+}
+
+func TestCuedFormationRejectsInvalidKeyframedTracks(t *testing.T) {
+	for _, keys := range [][]Key[Point]{
+		{{Time: -1, Value: Point{1, 0}}},
+		{{Time: 0, Value: Point{math.NaN(), 0}}},
+		{{Time: 0, Value: Point{1, 0}}, {Time: 0, Value: Point{1, 0}}},
+		{{Time: 0, Value: Point{1, 0}}, {Time: 5, Value: Point{1, 0}}},
+		{{Time: 0, Value: Point{1, 0}}, {Time: 2, Value: Point{2, 0}}},
+	} {
+		if _, err := NewCuedFormation(CuedFormationConfig{Count: 2, Loop: 4, OriginKeys: keys}); err == nil {
+			t.Fatalf("accepted invalid formation keys %+v", keys)
+		}
+	}
+}
+
+func TestCuedFormationPoseKeysComposeAndCopy(t *testing.T) {
+	keys := []FormationPoseKey{
+		{Time: 0, Origin: Point{10, 20}, Spacing: Point{30, 0}},
+		{Time: 1, Origin: Point{50, 30}, Spacing: Point{5, 0}, Arc: Point{Y: -10}},
+		{Time: 2, Origin: Point{10, 20}, Spacing: Point{30, 0}},
+	}
+	formation, err := NewCuedFormation(CuedFormationConfig{
+		Count: 3, Loop: 4, PoseKeys: keys,
+		Cues: []FormationCue{{Start: .25, Duration: .5, LeadIndex: 0,
+			X: []FormationHarmonic{{FirstAmplitude: 20, LastAmplitude: 20, Cycles: .5}}}},
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if got := formation.At(.5, 2); got != (Point{85, 25}) {
+		t.Fatalf("unexpected combined pose and cue: %+v", got)
+	}
+	if got := formation.At(.5, 1); got != (Point{67.5, 20}) {
+		t.Fatalf("arch did not compose with spacing and cue: %+v", got)
+	}
+	keys[1].Origin.X, keys[1].Spacing.X = 999, 999
+	if got := formation.At(1, 2); got != (Point{60, 30}) {
+		t.Fatalf("caller changed compiled pose: %+v", got)
+	}
+	if allocations := testing.AllocsPerRun(100, func() { _ = formation.At(1.5, 1) }); allocations != 0 {
+		t.Fatalf("pose-key formation allocated %g times per pose", allocations)
+	}
+}
+
+func TestCuedFormationPoseKeysRejectInvalidInput(t *testing.T) {
+	for _, config := range []CuedFormationConfig{
+		{Count: 2, PoseKeys: []FormationPoseKey{{Time: 0, Origin: Point{math.NaN(), 0}}}},
+		{Count: 2, PoseKeys: []FormationPoseKey{{Time: 0, Arc: Point{0, math.Inf(1)}}}},
+		{Count: 2, Loop: 2, PoseKeys: []FormationPoseKey{{Time: 0, Spacing: Point{1, 0}}, {Time: 2, Spacing: Point{2, 0}}}},
+		{Count: 2, PoseKeys: []FormationPoseKey{{Time: 0}}, OriginKeys: []Key[Point]{{Time: 0}}},
+	} {
+		if _, err := NewCuedFormation(config); err == nil {
+			t.Fatalf("accepted invalid pose-key configuration: %+v", config)
+		}
+	}
+}

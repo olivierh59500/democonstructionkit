@@ -773,6 +773,31 @@ group.Update(kit.Frame{Time: seconds})
 group.Draw(screen)
 ```
 
+For a phrase that expands, compresses, crosses the screen or bends into an
+arch, add `PoseKeys` to the same formation. Each key sets the whole row's
+origin, inter-letter spacing and optional `Arc` offset. A negative `Spacing.X`
+reverses the letter order; `Spacing.Y` tilts the row, and `Arc.Y` moves the
+middle letters without moving its ends. Harmonic cues may still move individual
+letters on top. Use `OriginKeys`, `SpacingKeys` and `ArcKeys` instead when their
+clocks differ. The first
+and final poses must match when `Loop` is set, so the animation joins without
+a position jump:
+
+```go
+formation, err := motion.NewCuedFormation(motion.CuedFormationConfig{
+    Count: len(letters), Loop: 4,
+    PoseKeys: []motion.FormationPoseKey{
+        {Time: 0, Origin: motion.Point{X: 120, Y: 220}, Spacing: motion.Point{X: 12}, Ease: motion.Smooth},
+        {Time: 1, Origin: motion.Point{X: 280, Y: 240}, Spacing: motion.Point{X: 32}, Arc: motion.Point{Y: -45}, Ease: motion.Smooth},
+        {Time: 2, Origin: motion.Point{X: 480, Y: 220}, Spacing: motion.Point{X: -12}, Ease: motion.Smooth},
+        {Time: 4, Origin: motion.Point{X: 120, Y: 220}, Spacing: motion.Point{X: 12}},
+    },
+})
+```
+
+The formation copies and validates these keys once. Sampling a sprite's pose
+does not allocate, including when several groups share the same formation.
+
 For a chain of independently phased sprites, use a data-only
 `motion.HarmonicFormationConfig`. Each X/Y term selects sine or cosine, either
 of two phase clocks, an index phase and an optional shared amplitude envelope.
