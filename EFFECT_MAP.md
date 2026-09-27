@@ -194,6 +194,12 @@ data.
   PNG captures from frames 0 through 9,600 are byte-identical, including the
   two logo wave-section joins, its strict phase reset, mountain wrap and later
   scrolling forms. This does not establish parity with Atari ST hardware.
+- TeamG1's corrected `Config.Feed` now inserts letters at the authored
+  640-pixel stage edge and uses the source's glyph-change rule. Its pre-CRT
+  intro surface is byte-identical to the preserved Go original at frames 0,
+  1, 60, 240 and 600; complete main-scene frames at 1,200, 2,400 and 4,800
+  also match. The flat CRT intentionally changes the final intro pixels to
+  prevent the original curved pass from clipping the outer font rows.
 - Vectorballs' four alternate object families now use one complete
   `sprites.ProjectedObject` instead of a screen-local point/flag/rotation loop.
   Thirty-six complete before/after GPU captures, including shape-switch ticks
@@ -320,6 +326,9 @@ authored sequence (p95 16.765 ms, maximum 17.022 ms) and 744 for the inspected
 The updated Bilizir DCK APK was also reinstalled and visually inspected. Its
 default logo-warp/seamless-scroll mode yielded 744 intervals, p95 16.763 ms,
 maximum 17.015 ms and zero intervals above 20 ms.
+TeamG1's updated DCK APK showed its intro and main stage on Pixel. A focused
+744-interval presentation run had p95 16.736 ms, maximum 16.930 ms and zero
+intervals above 20 ms.
 
 The common `scrolling.New` repeat renderer already has coverage for short
 horizontal and vertical messages, gap boundaries and mixed-font controls.
