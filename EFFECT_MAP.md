@@ -299,9 +299,17 @@ data.
   24–68 ms. No sampled slow interval occurred inside an already running
   screen. Thermal status remained 0. The highest mean CPU Update and Draw
   submission times among 71 logged windows were 4.474 and 3.044 ms.
-- One-minute-per-screen playback, optional effect variants, varying device
-  refresh rates, memory peaks and battery consumption still need checks. The
-  sparse sampled windows do not prove every cue boundary stays at 60 FPS.
+- A second Cuddly tour stayed one minute on each screen and reached Reset and
+  the final menu in 905.59 seconds. Its 407 PixelProbe windows retained 25,234
+  distinct intervals covering 421.22 seconds of frame history: p95 16.733 ms,
+  three above 20 ms, maximum 83.465 ms. All three slow timestamps occurred
+  near loader/menu handoffs. Twenty-one memory snapshots over its last ten
+  minutes reached at most 595,053 KiB process PSS and 317,992 KiB graphics
+  memory; thermal status stayed 0. These are sampled maxima, not peaks.
+- A comparable one-minute Union tour, unmeasured optional combinations,
+  varying device refresh rates, true memory peaks and battery consumption
+  still need checks. Sparse presentation windows do not prove every cue
+  boundary stays at 60 FPS.
 
 | Pixel 10a DCK scene | Distinct intervals | p95 present interval | Maximum | Above 20 ms |
 | --- | ---: | ---: | ---: | ---: |
@@ -469,10 +477,11 @@ different TCB animation or camera trajectory.
    through the ordinary desktop host without scene-specific Go.
 4. Continue measuring combined scene classes on Pixel. The ledger now samples
    scanline/warp, projected field, masks and multi-layer compositions, with
-   Cuddly CPU timings and twenty-two baseline presentation traces across twenty
-   catalog scenes and two optional sphere variants, plus later focused runs. Long-running
-   tours, additional catalog screens, cue boundaries, memory peaks and battery
-   use still need device evidence.
+   Cuddly CPU timings, twenty-two baseline presentation traces across twenty
+   catalog scenes and two optional sphere variants, a one-minute-per-screen
+   Cuddly tour and focused cube/pyramid/plane/flag runs. A similarly long Union
+   tour, unmeasured optional combinations, varying refresh rates, true memory
+   peaks and battery consumption still need device evidence.
 
 The 2026-09-27 host-source pass found no further active screen-local sine/cosine,
 triangle/shader submission or pixel recoloring loop in the audited DCK versions
