@@ -337,6 +337,7 @@ data.
 | 3D DOC main | 744 | 16.764 ms | 16.897 ms | 0 |
 | DMA 3D | 744 | 16.783 ms | 16.944 ms | 0 |
 | Coco main | 744 | 16.772 ms | 17.654 ms | 0 |
+| Coco exact CRT intro and handoff | 744 | 16.741 ms | 16.941 ms | 0 |
 | MegaTwist main | 744 | 16.761 ms | 16.923 ms | 0 |
 | TeamG1 main | 744 | 16.736 ms | 16.935 ms | 0 |
 | Nonameno main | 744 | 16.748 ms | 16.970 ms | 0 |
@@ -403,6 +404,10 @@ intervals above 20 ms.
 Coco's updated DCK APK was inspected on Pixel after isolating its CRT source
 surface. A 744-interval main-stage run had p95 16.731 ms, maximum 16.898 ms
 and zero intervals above 20 ms; it does not measure intro-only GPU cost.
+With the authored source origin restored, another 744-interval run across the
+intro and main handoff had p95 16.741 ms, maximum 16.941 ms and zero above
+20 ms. One process snapshot showed 215,793 KiB PSS and 116,028 KiB graphics
+memory; thermal status was 0. The sample is not a peak-memory measurement.
 
 The common `scrolling.New` repeat renderer already has coverage for short
 horizontal and vertical messages, gap boundaries and mixed-font controls.
@@ -411,11 +416,11 @@ recycled message. It is opt-in so existing Cuddly and Union seed timing stays
 unchanged; its cursor/slot policy has a pure test and a compiled image-backed
 regression test.
 
-## Direct source-to-DCK frame sweep (2026-09-27)
+## Direct source-to-DCK frame sweep (2026-09-27 to 2026-09-28)
 
 `cmd/fidelity` compared preserved Go revisions with published DCK revisions
 at ticks 0, 1, 60, 240, 600, 1,200, 2,400 and 4,800. Audio was disabled and
-both captures used one deterministic 60 Hz clock. Twelve of the seventeen
+both captures used one deterministic 60 Hz clock. Thirteen of the seventeen
 paired productions were exact at all eight sampled ticks. This is complete
 RGBA-canvas evidence at those ticks, not proof for intermediate frames or
 Atari ST hardware. Cuddly's row covers its standalone Go menu only; Union
@@ -428,10 +433,10 @@ remain outside the full-screen audit.
 | Bilizir | `4720c97` → `94852f4` | Exact with original-logo and original-scroll-reset options; the default DCK variations remain available. |
 | DMA 3D | `e161039` → `37b6f46` | One pixel differs by one channel level at tick 600; all other ticks exact. |
 | DMA Is Back | `b47c293` → `25b9fdd` | Exact with historical cube transitions selected. |
-| Coco is the best | `0a9b678` → `e447607` | Intro CRT output differs at ticks 0, 1, 60 and 240 (6,269–11,396 pixels after isolating its GPU source); main scene exact at 600 and later sampled ticks. |
+| Coco is the best | `0a9b678` → `7ab225b` | Exact at the eight shared checkpoints and the additional intro tick 241. |
 | Cuddly menu | `556d023` → `3cb4f30` | Exact for the standalone menu. |
 | DOM intro | `a02358c` → `f7d89e8` | Exact. |
-| Multiscreen | `2cd2bc1` → `c7387d7` | 182 and 146 pixels differ at ticks 600 and 1,200; six other ticks exact. |
+| Multiscreen | `2cd2bc1` → `0cdca5a` | One and seven pixels differ at ticks 600 and 1,200; six other shared checkpoints exact. A later tick 9,600 differs by ten pixels. |
 | Vectorballs | `22ccd09` → `cd9a23c` | Exact for the authored sequence; optional objects have separate before/after checks. |
 | Grodan | `5338712` → `522432b` | Exact. |
 | MegaTwist | `df3ebf3` → `6d065d9` | Two or three pixels differ at ticks 60, 240, 600 and 1,200; four other ticks exact. |
@@ -443,29 +448,19 @@ remain outside the full-screen audit.
 | Viva TCB | `f4b985e` → `a2aa151` | Exact, including tick 0 after preparing the logo formation's initial pose. |
 
 Coco's raw intro surface is byte-identical before CRT at ticks 0, 1, 60, 240
-and 241. Specializing shader parameters as literals did not improve the final
-pixels, so that experiment was removed. A same-source GPU check proves the
-preserved and shared CRT shaders produce identical pixels when fed one texture.
-An unmanaged DCK intro surface reduces the remaining full-frame error by about
-threefold, suggesting texture preparation or sampling contributes; exact output
-parity remains open.
-The reusable CRT now has an opt-in normalized source-coordinate policy. Its
-native GPU check produces exactly the same pixels from managed and unmanaged
-textures for transparent, partly transparent and opaque materials. Coco keeps
-the historical policy by default: the normalized variant increases the
-original-versus-port intro difference to 18,107 pixels before glyphs and
-35,538 pixels at tick 240, whereas the current historical default differs at
-6,269 and 11,396 pixels respectively.
-After Coco pinned the published normalized-policy revision, its default DCK
-complete-frame captures at ticks 0, 1, 60, 240 and 241 remained byte-identical
-to the preceding DCK revision. The alternative is explicit in the desktop
-command and does not change the installed default on mobile.
+and 241. A GPU coordinate probe found that its original CRT source begins at
+texture X=4, while the previous DCK copy began at X=0. The historical shader
+uses that coordinate directly. `CRTOverlayConfig.SourceOrigin` now prepares a
+bounded independent source at any specified pixel origin, with no extra copy
+for the default zero value. `presets.CocoCRTOverlay()` sets X=4; Coco no longer
+owns a separate intro-strip surface. All nine full 800×600 source-to-DCK
+captures through tick 4,800 now match pixel for pixel. The opt-in normalized
+CRT variant still produces its previous five sampled outputs unchanged.
 TeamG1's raw intro source also matches at ticks 0, 1, 60, 240 and 600. Its
 authored 640-pixel insertion edge fixes the previously delayed scene handoff,
 while the flat CRT intentionally prevents clipping the font's outer rows.
-Further review is needed at Coco's CRT output and the two Multiscreen
-transition checkpoints. Small differences remain visible in the
-reports rather than being hidden by a tolerance.
+The remaining sampled full-frame differences in DMA 3D, MegaTwist and
+Multiscreen stay visible in reports rather than being hidden by a tolerance.
 The former Multiscreen captures differed by 182 and 146 pixels at ticks 600
 and 1,200. The `-inspect-multiscreen-tcb` option captures the retained TCB tile
 and glyph positions inside the actual tour. All 30 glyph positions match, and
