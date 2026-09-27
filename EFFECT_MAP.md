@@ -341,7 +341,7 @@ regression test.
 
 `cmd/fidelity` compared preserved Go revisions with published DCK revisions
 at ticks 0, 1, 60, 240, 600, 1,200, 2,400 and 4,800. Audio was disabled and
-both captures used one deterministic 60 Hz clock. Eleven of the seventeen
+both captures used one deterministic 60 Hz clock. Twelve of the seventeen
 paired productions were exact at all eight sampled ticks. This is complete
 RGBA-canvas evidence at those ticks, not proof for intermediate frames or
 Atari ST hardware. Cuddly's row covers its standalone Go menu only; Union
@@ -366,7 +366,7 @@ remain outside the full-screen audit.
 | TCB Multi-Plane | `2fa1b3f` → `a6de271` | Exact; a separate 21-frame check covers wave joins and reset through tick 9,600. |
 | TCB Replicants | `1e5e55e` → `554080d` | Exact. |
 | TeamG1 | `83e6452` → `91e598c` | Raw intro glyph surface exact at five ticks; the final intro differs because the DCK CRT is deliberately flat. Main scene exact at 1,200 and later sampled ticks. |
-| Viva TCB | `f4b985e` → `816e6db` | Tick 0 differs (18,639 pixels); ticks 1–4,800 exact. |
+| Viva TCB | `f4b985e` → `a2aa151` | Exact, including tick 0 after preparing the logo formation's initial pose. |
 
 Coco's raw intro surface is byte-identical before CRT at ticks 0, 1, 60, 240
 and 241. Specializing shader parameters as literals did not improve the final
@@ -374,8 +374,8 @@ pixels, so that experiment was removed; its output difference remains open.
 TeamG1's raw intro source also matches at ticks 0, 1, 60, 240 and 600. Its
 authored 640-pixel insertion edge fixes the previously delayed scene handoff,
 while the flat CRT intentionally prevents clipping the font's outer rows.
-Further review is needed at Coco's CRT output, Viva's first draw and the two
-Multiscreen transition checkpoints. Small differences remain visible in the
+Further review is needed at Coco's CRT output and the two Multiscreen
+transition checkpoints. Small differences remain visible in the
 reports rather than being hidden by a tolerance.
 
 ## Extraction order and acceptance
