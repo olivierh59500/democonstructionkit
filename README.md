@@ -2116,6 +2116,29 @@ per Update through `modulation.Context`. Decoder read-ahead is not the audible
 playhead. `modulation.Change[T]` and `Decay` provide reusable event-triggered
 peaks/decays for voice changes, beats or user actions.
 
+For an entire bank of music-reactive sprites, `sprites.SignalFrameBank` owns
+the change detectors, independent decay envelopes, atlas frame selection and
+ordered draw passes. The host supplies live values once per update; it may
+move any slot on another DCK trajectory without resetting its audio response:
+
+```go
+config, err := presets.UnionDeltaVoiceBalls(ballAtlasImage)
+if err != nil { return err }
+balls, err := sprites.NewSignalFrameBank(config)
+if err != nil { return err }
+if err := balls.StepYM(ymVoiceLevels[:]); err != nil { return err }
+if err := balls.SetPosition(0, logoX, logoY); err != nil { return err }
+balls.Draw(stage)
+```
+
+The same bank accepts module/PCM envelopes or user inputs through
+`StepSignals(values, delta)`. Each slot selects a channel, exact-change or
+rising-threshold trigger, atlas offset, position, scale, angle, opacity and
+optional envelope override; the shared filter and blend are configurable.
+`StepYM` consumes byte-sized chip levels
+without allocating or importing a decoder into the demo. The original Delta
+Force recipe retains its three YM voices and eight-frame decay.
+
 ## Deform arbitrary meshes and drive authored scanline programs
 
 ```go
@@ -3149,6 +3172,7 @@ remain available for effects with different behavior.
 | `sprites.ProjectedField` | Bounded spawn/respawn, strict/wide wrap, projection, history and pixel/sprite/vector materials | Nonameno stars, Union Starballs, Cuddly Starwars and Big Sprite |
 | `sprites.MaskedProjectedField` | One projected population rendered with two materials, reusable alpha canvas, independent output transforms and live count controls | Union Starballs |
 | `motion.LatchedTriggers` + `sprites.LatchedOverlay` | Configurable sampled hits, held visibility and ordered multi-image channels | Cuddly Knucklebuster |
+| `sprites.SignalFrameBank` | Channel-change triggers, independent decay/frame clocks, live positions and borrowed atlas passes for YM or numeric music inputs | Union Delta Force |
 | `motion.FrameField` + `sprites.AnimatedField` | Independent fractional atlas clocks or planar motion, single-edge wrap, ordered respawn and per-instance image selection | DOM animated stars, Replicants layered stars |
 | `motion.FrameField` + `sprites.BatchedSolidField` | Layered planar positions, tick-dependent wrap callbacks, origin mask, colored solid materials and bounded triangle batches | DMA 3D stars |
 | `motion.SampledSpriteTrain` + `sprites.SampledSpriteTrain` | Authored XY path, indexed train spacing, extra delays, harmonics and cached sprite crops | Cuddly Starwars |

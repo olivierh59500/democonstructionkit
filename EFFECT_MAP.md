@@ -116,7 +116,7 @@ matches the previous implementation exactly.
 | Menu | Scrolling, background sampler, `sprites.Atlas` character frames, `motion.WrapBank` panorama, `motion.LinearTick` uncover wipe, `timeline.PacedIndex` palette/walk cycles, `motion.HoldBounce` logo and `motion.WalkParallax` hall/banner | Door navigation and authored layer order stay local. |
 | Loader | Reveal, bitmap recipes and `timeline.CueClock` exact-duration transition | Playback cue and layer placement remain host composition data; retain column-major reverse-row glyph order. |
 | Beat Dis | Background sampler with independent single-copy entrance, scrolling, `motion.WrapBank` wallpaper and pattern offsets, harmonic `sprites.Group` letters with global wobble | Layer order stays authored scene data. |
-| Delta Force | YM register snapshots, `modulation.Change` and `Decay` for the three voice-triggered ball frames, scrolling, WaveStrips, `motion.BounceToggle` logo, `motion.WrapBank` gold fill, `motion.EnterHoldExit` handoff and one reusable `RasterOverlay` source-atop material for both texts | Authored text, images and layer order remain screen composition. |
+| Delta Force | YM register snapshots and complete `sprites.SignalFrameBank` for the three voice-triggered ball frames, scrolling, WaveStrips, `motion.BounceToggle` logo, `motion.WrapBank` gold fill, `motion.EnterHoldExit` handoff and one reusable `RasterOverlay` source-atop material for both texts | Authored text, images and layer order remain screen composition. |
 | TNT Crew 3 | Complete `effects.SolidMeshCarousel` over `motion.ModelCarousel` and `geometry.OrderedEuler`, reusable `SolidSphereModel` with editable checker and pole materials, plus `scrolling.CaptionCarousel` for ordered slide/hold/exit text | Other authored vertices, face groups, messages and input mapping stay production data. |
 | Wow Scroller | Scrolling, `RasterOverlay` source-atop fill and `motion.WrapBank` paired panel offsets | The two 640×1235 images are single oversized draws naturally clipped by the 640×400 stage; no additional repeated-image transport is present. |
 | Hidden | `sprites.DelayedTrail` over `PointHistory` and `timeline.PacedIndex` for the one-tick palette offset | Authored palette colors, crosshair and border clipping remain scene composition. |
@@ -200,6 +200,12 @@ data.
   exactly against the previous builder. Complete GPU captures at frames 1, 60,
   240 and 600 are byte-identical; the remaining four object models retain their
   authored point and face data.
+- Union Delta Force now passes its three live YM levels to one configurable
+  `sprites.SignalFrameBank` instead of keeping a screen-local change/decay/frame
+  loop. Eight complete music-driven GPU captures at frames 0, 1, 2, 3, 30, 60,
+  240 and 600 are byte-identical to the previous renderer. Pure tests also
+  cover independent channels, rising-threshold module/PCM inputs, palette offsets,
+  invalid frames and allocation-free YM updates.
 - Cuddly DNA's 125-disc sphere now uses a configurable `geometry.SphereCloud`
   distribution with its seeded random source. Six complete before/after GPU
   captures, including main-scene ticks 1,200 and 2,400, are pixel-identical.
