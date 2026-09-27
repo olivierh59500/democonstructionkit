@@ -291,6 +291,9 @@ from the published APK had p95 16.769 ms, maximum 16.903 ms and zero intervals
 above 20 ms at that density. The recommended 144-ball published APK retained
 zero slow intervals over 744 samples. Its foreground window still reports
 `KEEP_SCREEN_ON` and Android remained awake with a 30-second screen timeout.
+After the palette-atlas migration, the published DCK APK was reinstalled and
+its recommended 144-ball sphere inspected on Pixel. A fresh 744-interval trace
+reported p95 16.773 ms, maximum 16.897 ms and none above 20 ms.
 
 The common `scrolling.New` repeat renderer already has coverage for short
 horizontal and vertical messages, gap boundaries and mixed-font controls.
