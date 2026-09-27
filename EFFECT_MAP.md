@@ -221,23 +221,23 @@ data.
   timings exclude asynchronous GPU work.
 - The Go `cmd/pixelprobe` samples SurfaceFlinger's actual-present timestamps.
   Twelve history windows at two-second spacing yielded 744 distinct intervals
-  for each of Union Multi-Plane and Starballs, Multiscreen's four-demo tour,
+  for each of Union Delta Force, Multi-Plane and Starballs, Multiscreen's four-demo tour,
   Bilizir, DMA Is Back, Phenomena DNA, standalone TCB Replicants, Vectorballs'
   authored sequence, 3D DOC, DMA 3D, Coco, MegaTwist, TeamG1, Nonameno,
   Viva TCB, TCB Multi-Plane, DOM, Grodan and Cuddly's standalone menu. The two
-  Vectorballs sphere variants were sampled separately. All twenty-one traces
-  had zero intervals above 20 ms; detailed p95/max
-  values appear below. Union intro
+  Vectorballs sphere variants were sampled separately. All twenty-two traces
+  had zero intervals above 20 ms; detailed p95/max values appear below. Union intro
   and its Replicants screen also had 63-frame spot checks with zero intervals
   above 20 ms. Screenshots confirmed the effects, and thermal status remained
   0 during the earlier eight-scene run. The newer eleven scenes and both sphere
-  variants were each inspected at a visible stage frame.
+  variants and Union Delta Force were each inspected at a visible stage frame.
 - The remaining catalog screens, longer playback, varying device refresh rates
   and battery consumption still need device checks. The sampled windows do not
   prove that every cue boundary or full megademo tour stays at 60 FPS.
 
 | Pixel 10a DCK scene | Distinct intervals | p95 present interval | Maximum | Above 20 ms |
 | --- | ---: | ---: | ---: | ---: |
+| Union Delta Force | 744 | 16.720 ms | 17.699 ms | 0 |
 | Union Multi-Plane | 744 | 16.717 ms | 16.831 ms | 0 |
 | Union Starballs | 744 | 16.718 ms | 16.895 ms | 0 |
 | Multiscreen tour | 744 | 16.736 ms | 17.267 ms | 0 |
