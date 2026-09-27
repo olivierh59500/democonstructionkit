@@ -80,10 +80,10 @@ func CocoIntroFeed(font *scrolling.Atlas, text string) scrolling.FeedConfig {
 	return scrolling.FeedConfig{Font: font, Text: text, Width: 800, Height: 72, Margin: 96, Scale: 2, Speed: 8}
 }
 
-// TeamG1IntroFeed enters from the visible right edge and resolves lowercase
-// ASCII through the authored uppercase atlas without changing text speed.
+// TeamG1IntroFeed enters from the authored 640-pixel stage edge, inside the
+// wider 768-pixel output, and resolves lowercase through the uppercase atlas.
 func TeamG1IntroFeed(font *scrolling.Atlas, text string) scrolling.FeedConfig {
-	return scrolling.FeedConfig{Font: font, Text: text, Width: 768, Height: 72, InsertX: 768, Scale: 2, Speed: 6, UppercaseASCII: true, ProgressiveEntry: true}
+	return scrolling.FeedConfig{Font: font, Text: text, Width: 768, Height: 72, InsertX: 640, Scale: 2, Speed: 6, UppercaseASCII: true}
 }
 
 // MegaTwistIntroFeed keeps its unscaled 36-pixel ribbon and 48-pixel tail.

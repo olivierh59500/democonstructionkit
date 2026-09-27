@@ -3255,9 +3255,10 @@ remain available for effects with different behavior.
 `FeedConfig.ProgressiveEntry` keeps the active glyph at the viewport edge until
 its full advance has entered, revealing its bitmap over successive updates.
 The default retains the earlier one-frame glyph insertion used by other intros.
-TeamG1 selects progressive entry at the 768-pixel right edge and a flat CRT
-projection, keeping the shader's scanlines, chromatic fringe, glow and flicker
-without clipping the top or bottom strokes of its 72-pixel-high font.
+TeamG1 uses that default glyph-change rule with a six-pixel shift per tick and
+an insertion edge at x=640 within its 768-pixel output. This matches the
+preserved Go text transport; a flat CRT keeps its scanlines, chromatic fringe,
+glow and flicker without clipping the 72-pixel-high font's outer strokes.
 
 For concrete integration, see the constructors in `demos/dma-is-back/dck/game.go`,
 `demos/teamg1-demo/dck/game.go`, `demos/go-cocoisthebest/dck/main.go`,
