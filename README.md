@@ -3105,7 +3105,10 @@ changes the default 20 ms threshold. Intervals over that threshold include
 their presentation timestamp and an approximate UTC time, calibrated from the
 device's latest presented frame in each sample; correlate it with logcat
 screen-transition lines rather than treating it as an exact clock sync. The
-tool reads the second timestamp
+opt-in `-allow-end` retains collected samples when a finite production closes
+its SurfaceView. Its JSON marks `ended_early`, completed/requested sample counts
+and the stop reason; a recreated layer still fails validation. The tool reads
+the second timestamp
 column, which Android's [FrameTracker source](https://android.googlesource.com/platform/frameworks/native/+/24257dda488651ad2c05875761b9e9ad110975c5/services/surfaceflinger/FrameTracker.cpp)
 identifies as the actual presentation time. This complements the CPU timers
 inside `examples/effectslab` and Cuddly's optional mobile metrics.

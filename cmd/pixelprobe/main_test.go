@@ -1,6 +1,9 @@
 package main
 
 import (
+	"context"
+	"os"
+	"path/filepath"
 	"strings"
 	"testing"
 	"time"
@@ -24,6 +27,45 @@ func TestSelectLayerUsesActiveBLASTSurface(t *testing.T) {
 	}
 	if err := changedLayer(strings.ReplaceAll(listing, "(BLAST)#4", "(BLAST)#9"), "demo.pkg", layer); err == nil || !strings.Contains(err.Error(), "recreated") {
 		t.Fatalf("surface recreation was not identified: %v", err)
+	}
+}
+
+func TestFiniteSurfaceCanReturnExplicitPartialReport(t *testing.T) {
+	directory := t.TempDir()
+	state := filepath.Join(directory, "calls")
+	t.Setenv("PIXELPROBE_TEST_STATE", state)
+	adb := filepath.Join(directory, "adb")
+	script := `#!/bin/sh
+count=$(cat "$PIXELPROBE_TEST_STATE" 2>/dev/null || echo 0)
+case "$2" in
+  *--list*)
+    if [ "$count" -lt 2 ]; then
+      echo 'RequestedLayerState{aa SurfaceView[demo.pkg/demo.pkg.MainActivity](BLAST)#4 parentId=3}'
+    fi ;;
+  *--latency*)
+    count=$((count + 1))
+    echo "$count" > "$PIXELPROBE_TEST_STATE"
+    if [ "$count" -eq 1 ]; then
+      printf '16666667\n100 100000000 90\n110 133333334 95\n'
+    else
+      echo invalid
+    fi ;;
+esac
+`
+	if err := os.WriteFile(adb, []byte(script), 0755); err != nil {
+		t.Fatal(err)
+	}
+	r, err := measure(context.Background(), adb, "", "demo.pkg", "", 3, 0, 20, true)
+	if err != nil || !r.EndedEarly || r.Samples != 1 || r.RequestedSamples != 3 ||
+		r.StopReason == "" || r.OverSlowThreshold != 1 || len(r.SlowIntervals) != 1 ||
+		r.SlowIntervals[0].AtUTC == "" {
+		t.Fatalf("finite surface report = %+v, error = %v", r, err)
+	}
+	if err := os.Remove(state); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := measure(context.Background(), adb, "", "demo.pkg", "", 3, 0, 20, false); err == nil || !strings.Contains(err.Error(), "disappeared") {
+		t.Fatalf("ordinary probe accepted a missing surface: %v", err)
 	}
 }
 

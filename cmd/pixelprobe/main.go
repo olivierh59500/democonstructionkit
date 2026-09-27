@@ -41,6 +41,9 @@ type report struct {
 	SlowThresholdMS         float64        `json:"slow_threshold_ms"`
 	OverSlowThreshold       int            `json:"over_slow_threshold"`
 	SlowIntervals           []slowInterval `json:"slow_intervals,omitempty"`
+	RequestedSamples        int            `json:"requested_samples,omitempty"`
+	EndedEarly              bool           `json:"ended_early,omitempty"`
+	StopReason              string         `json:"stop_reason,omitempty"`
 }
 
 func selectLayer(output, pkg string) (string, error) {
@@ -162,7 +165,7 @@ func adbCommand(ctx context.Context, executable, serial string, args ...string) 
 	return string(output), nil
 }
 
-func measure(ctx context.Context, adb, serial, pkg, layer string, samples int, intervalTime time.Duration, slowMS float64) (report, error) {
+func measure(ctx context.Context, adb, serial, pkg, layer string, samples int, intervalTime time.Duration, slowMS float64, allowEnd bool) (report, error) {
 	if pkg == "" || samples < 1 || samples > 10000 || intervalTime < 0 || slowMS <= 0 {
 		return report{}, errors.New("invalid package, sample count, interval or slow threshold")
 	}
@@ -181,10 +184,36 @@ func measure(ctx context.Context, adb, serial, pkg, layer string, samples int, i
 	unique := make(map[interval]struct{}, samples*64)
 	wallOffsets := make([]int64, 0, samples)
 	var period int64
+	finish := func(collected int, endedEarly bool) (report, error) {
+		r, err := summarize(pkg, serial, layer, period, unique, collected, time.Since(started), slowMS)
+		if err != nil {
+			return report{}, err
+		}
+		sort.Slice(wallOffsets, func(i, j int) bool { return wallOffsets[i] < wallOffsets[j] })
+		wallOffset := wallOffsets[len(wallOffsets)/2]
+		for index := range r.SlowIntervals {
+			at := time.Unix(0, r.SlowIntervals[index].PresentNS+wallOffset).UTC()
+			r.SlowIntervals[index].AtUTC = at.Format(time.RFC3339Nano)
+		}
+		if endedEarly {
+			r.RequestedSamples = samples
+			r.EndedEarly = true
+			r.StopReason = "SurfaceView disappeared"
+		}
+		return r, nil
+	}
 	for sample := 0; sample < samples; sample++ {
 		output, err := adbCommand(ctx, adb, serial, "shell", "dumpsys SurfaceFlinger --latency "+shellQuote(layer))
 		sampledAt := time.Now()
 		if err != nil {
+			if allowEnd && autoLayer && sample > 0 {
+				listing, listErr := adbCommand(ctx, adb, serial, "shell", "dumpsys SurfaceFlinger --list")
+				if listErr == nil {
+					if _, missing := selectLayer(listing, pkg); missing != nil {
+						return finish(sample, true)
+					}
+				}
+			}
 			return report{}, err
 		}
 		currentPeriod, intervals, err := parseLatency(output)
@@ -192,6 +221,11 @@ func measure(ctx context.Context, adb, serial, pkg, layer string, samples int, i
 			if autoLayer {
 				listing, listErr := adbCommand(ctx, adb, serial, "shell", "dumpsys SurfaceFlinger --list")
 				if listErr == nil {
+					if allowEnd && sample > 0 {
+						if _, missing := selectLayer(listing, pkg); missing != nil {
+							return finish(sample, true)
+						}
+					}
 					if changed := changedLayer(listing, pkg, layer); changed != nil {
 						return report{}, fmt.Errorf("sample %d: %w", sample+1, changed)
 					}
@@ -216,17 +250,7 @@ func measure(ctx context.Context, adb, serial, pkg, layer string, samples int, i
 			}
 		}
 	}
-	r, err := summarize(pkg, serial, layer, period, unique, samples, time.Since(started), slowMS)
-	if err != nil {
-		return report{}, err
-	}
-	sort.Slice(wallOffsets, func(i, j int) bool { return wallOffsets[i] < wallOffsets[j] })
-	wallOffset := wallOffsets[len(wallOffsets)/2]
-	for index := range r.SlowIntervals {
-		at := time.Unix(0, r.SlowIntervals[index].PresentNS+wallOffset).UTC()
-		r.SlowIntervals[index].AtUTC = at.Format(time.RFC3339Nano)
-	}
-	return r, nil
+	return finish(samples, false)
 }
 
 func main() {
@@ -237,9 +261,10 @@ func main() {
 	samples := flag.Int("samples", 12, "number of recent-frame samples")
 	intervalTime := flag.Duration("interval", 2*time.Second, "time between samples")
 	slowMS := flag.Float64("slow-ms", 20, "presented-frame interval reported as slow")
+	allowEnd := flag.Bool("allow-end", false, "report collected samples if the app's SurfaceView disappears")
 	outputPath := flag.String("out", "", "optional JSON report path")
 	flag.Parse()
-	r, err := measure(context.Background(), *adb, *serial, *pkg, *layer, *samples, *intervalTime, *slowMS)
+	r, err := measure(context.Background(), *adb, *serial, *pkg, *layer, *samples, *intervalTime, *slowMS, *allowEnd)
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		os.Exit(1)
