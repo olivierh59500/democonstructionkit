@@ -59,7 +59,7 @@ production. Preserved original implementations remain unchanged.
 | DOM intro | Atlas, `scrolling.Config.SizeBank`, `motion.ScaledTextClock`, `VerticalStripTrain` background, `RasterOverlay` copies, `effects.Mask` and `sprites.AnimatedField` stars | Authored text and scene layer order. |
 | Multiscreen, four embedded productions | `Config.Scanline`, recurrent `SolidCubeTrain`, `RotozoomBackground`, `sprites.Group` recurrent translation and direct `CopperTitleBand` in Coco, `RotozoomBackground` in Viva, Phenomena's main-only `scrolling.SliceProgram`, `motion.RecurrentRowWave` with its owned scene clock, `composite.ScalarStagePainter` HSL materials and reusable gradient/mask assets, projected-plane engines, atlas recipes, Viva `RasterTitle`, `scrolling.Config.Pseudo3D` text banks and `sprites.RecurrentFormation` logos, complete TCB `effects.MultiPlaneScene` | Authored images, messages, panel sizes, placement and scene order remain in the host. No local trigonometric path, mesh submission or scrolling renderer remains in its DCK panels; the standalone Phenomena intro is preserved separately. |
 | Multiscreen, camera tour | Complete `composite.SceneTour` over `motion.CameraTour`: ten held/eased poses, direct fixed views, continuously updated sources, masked retained transition canvases, one-pass shader and fallback | Authored screen sources, world placement and music stay production configuration. |
-| Vectorballs | `sprites.ProjectedObject` for independent cube, pyramid, plane, flag, sphere or custom clouds with owned rotation, deformation and projection; optional batched sprites, rear-hemisphere culling and perspective sizing; WaterReflection; and complete `geometry.PointSequence` for the authored point morphs, sine grid, rotors, Y orbit and bounce | Artwork, authored shape/action data and layer placement stay production parameters. |
+| Vectorballs | `sprites.PaletteAtlas` CPU recoloring and irregular-frame packing, `sprites.ProjectedObject` for independent cube, pyramid, plane, flag, sphere or custom clouds with owned rotation, deformation and projection; optional batched sprites, rear-hemisphere culling and perspective sizing; WaterReflection; and complete `geometry.PointSequence` for the authored point morphs, sine grid, rotors, Y orbit and bounce | Palette values, artwork, authored shape/action data and layer placement stay production parameters. |
 | Grodan | Atlas, four `scrolling.Config.Ribbon` lanes, three `SurfaceLayer` raster compositions, `GatedBackgroundPair` and harmonic `sprites.Group` | Authored art and scene layer order. |
 | MegaTwist, intro | `Config.Feed`, atlas, `timeline.HoldRamp` 90-tick splash, shared `CRTOverlay` with copy blending | Authored intro image and CRT parameters remain scene data. |
 | MegaTwist, main | `Config.Scanline`, independent `ScanlineBackground` and DisplacementPrograms, harmonic `sprites.Group` and `sprites.GlowPainter` | Authored artwork and layer order remain scene composition. The former black transition overlay was visually inert after the splash reset and has been removed from the DCK version. |
@@ -187,6 +187,12 @@ data.
   and the water reflection, had zero differing RGBA pixels. Pure tests compare
   5,000 updates for every shape, independent instances and no steady-update
   allocations. The original authored `PointSequence` remains unchanged.
+- Vectorballs' fifteen color variants now use `sprites.BuildPaletteAtlas`
+  instead of a local per-pixel recoloring and irregular-sheet assembly loop.
+  Fifty-five complete before/after GPU captures through frame 659, including
+  every optional-object switch and the water reflection, are byte-identical.
+  Pure DCK tests cover irregular crops, copied source colors, transparent
+  pixels, palette changes and invalid geometry.
 - Cuddly's menu and MegaTwist's intro now use the same parameterized CRT pass
   already used by DMA and Coco. A configurable copy blend reproduces their
   transparent-edge handling. Three complete before/after GPU captures per

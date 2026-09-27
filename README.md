@@ -978,6 +978,31 @@ screen.DrawImage(atlas.Tile(walk.Current(seconds)), nil)
 Cuddly Menu shares one atlas component among its map, character and logo
 tiles. Disk Copier requests LCD regions from the same component while keeping
 its original region-sampling renderer and independent operation clocks.
+For irregular sprite sizes and several color banks, build a palette atlas on
+the CPU before uploading once. `Index` chooses a palette entry from each
+opaque source pixel; an unmatched index preserves its original color. Source
+frames can have different dimensions, and `OriginalFrames` append unmodified
+artwork after the recolored rows:
+
+```go
+bank, err := sprites.BuildPaletteAtlas(sprites.PaletteAtlasConfig{
+    Source: source, Frames: ballRects, Palettes: colors,
+    Index: func(pixel color.Color) int {
+        red, _, _, _ := pixel.RGBA()
+        return int(uint8(red>>8)>>5) - 3
+    },
+    RowHeight: 54, RepeatLast: true,
+    OriginalFrames: []image.Rectangle{image.Rect(0, 186, 54, 240)},
+})
+if err != nil { return err }
+image, balls := bank.Upload() // Deallocate image when the scene closes.
+```
+
+Vectorballs uses this configuration for fifteen palettes, seven irregular
+sizes and one unchanged sprite. `RepeatLast` reuses a crop without duplicating
+its pixels; construction performs no GPU readbacks and rejects sheets above a
+16-million-pixel budget. A before/after comparison
+of 55 complete object frames, including transitions and reflection, is exact.
 For independently timed sprite or atlas lanes, `motion.GatedWrapBank` adds one
 activation threshold per lane to the existing wrapped transport. A strict or
 inclusive gate, velocity, initial phase and boundary are editable; `Frame(i)`
