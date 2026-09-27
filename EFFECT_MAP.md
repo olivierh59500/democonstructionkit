@@ -165,7 +165,9 @@ data.
   complete PNG captures from frames 0 through 4,800 byte for byte. With the
   default seamless loop, the scrolling region still matches through frame
   2,400; after the first wrap it intentionally differs from the old blank reset.
-  The optional warped logo remains an independent DCK variation.
+  The optional warped logo remains an independent DCK variation. The published
+  revision `94852f4` also passed `cmd/fidelity` against pinned original
+  `4720c97`: zero different pixels out of 480,000 at every sampled frame.
 - Before/after full-frame GPU captures of the trajectory-clock migrations have
   zero differing RGBA pixels: Cuddly Big Sprite and Ehhh at frames 0, 600,
   1,200, 2,400 and 4,800 each; Union Level 16 at 0, 600, 1,200 and 2,400;
@@ -315,6 +317,9 @@ After direct indexed projection, the next APK yielded 744 intervals for the
 authored sequence (p95 16.765 ms, maximum 17.022 ms) and 744 for the inspected
 144-ball sphere (p95 16.795 ms, maximum 17.051 ms). Neither trace exceeded
 20 ms.
+The updated Bilizir DCK APK was also reinstalled and visually inspected. Its
+default logo-warp/seamless-scroll mode yielded 744 intervals, p95 16.763 ms,
+maximum 17.015 ms and zero intervals above 20 ms.
 
 The common `scrolling.New` repeat renderer already has coverage for short
 horizontal and vertical messages, gap boundaries and mixed-font controls.

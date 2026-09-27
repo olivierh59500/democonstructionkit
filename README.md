@@ -47,7 +47,7 @@ published DCK version pinned in its `go.mod`; Go downloads the module automatica
 
 Bilizir's requested logo variation is enabled by default in `bilizir-demo`: the
 logo and scrolling text share the same two-pass deformation. Press **L** to switch
-to the original logo. Fidelity comparisons explicitly use original-logo mode.
+to the original logo. Fidelity comparisons explicitly use both historical modes.
 Pass `-logo-warp=false -original-scroll-reset=true` to run the complete
 preserved Go presentation, including its historical blank scroll restart;
 the DCK defaults keep the requested logo variation and seamless text loop.
