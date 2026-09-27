@@ -328,6 +328,7 @@ data.
 | Union Multi-Plane | 744 | 16.717 ms | 16.831 ms | 0 |
 | Union Starballs | 744 | 16.718 ms | 16.895 ms | 0 |
 | Multiscreen tour | 744 | 16.736 ms | 17.267 ms | 0 |
+| Multiscreen TCB canvas isolated | 744 | 16.740 ms | 16.879 ms | 0 |
 | Bilizir | 744 | 16.719 ms | 17.168 ms | 0 |
 | DMA Is Back | 744 | 16.728 ms | 16.901 ms | 0 |
 | Phenomena DNA | 744 | 16.712 ms | 16.919 ms | 0 |
@@ -465,14 +466,20 @@ while the flat CRT intentionally prevents clipping the font's outer rows.
 Further review is needed at Coco's CRT output and the two Multiscreen
 transition checkpoints. Small differences remain visible in the
 reports rather than being hidden by a tolerance.
-At Multiscreen ticks 600 and 1,200, full frames still differ by 182 and 146
-pixels. The `-inspect-multiscreen-tcb` fidelity option now captures the retained
-TCB tile and projected glyph positions at requested transition frames. Inside
-the actual tour, those tiles differ by 182 and 203 pixels respectively while
-all 30 glyph positions match exactly. Suppressing only the projected text in
-both temporary captures makes both full frames pixel-identical. The camera
-matches the preserved state through 12,000 ticks; the residual edge pixels
-belong to the glyph material rather than the transition compositor or motion.
+The former Multiscreen captures differed by 182 and 146 pixels at ticks 600
+and 1,200. The `-inspect-multiscreen-tcb` option captures the retained TCB tile
+and glyph positions inside the actual tour. All 30 glyph positions match, and
+removing only that text makes both transitions exact. The difference follows
+the tile's GPU storage: giving just the TCB tile an independent texture through
+`SceneTourConfig.UnmanagedMask` leaves one and seven differing full-frame pixels
+at those ticks. Eleven checkpoints from 0 through 9,600 are exact at eight
+ticks; tick 9,600 keeps the same ten-pixel difference as before. Applying the
+storage change to all four tiles instead introduced 399 differences at 9,600,
+so the other three retain their default allocation. Pixel 10a presentation
+over 744 intervals through the TCB transition had p95 16.740 ms, maximum
+16.879 ms and none above 20 ms; one memory snapshot showed 273,005 KiB PSS
+and 153,808 KiB graphics memory, with thermal status 0. This short sample
+does not establish long-run battery or peak-memory behavior.
 The shared projected transport exposes its borrowed, depth-sorted positions
 through `ProjectedController` for inspectors and future authoring controls.
 From this module, reproduce the tile captures and position files with:
