@@ -3452,6 +3452,16 @@ existing demos retain their historical atlas-dependent CRT pixels. A native
 GPU check compares transparent, partly transparent and opaque sources in both
 storage classes and gets identical output in the normalized mode.
 
+For a production whose historical CRT pass depended on a texture offset, set
+`SourceOrigin` to the intended pixel coordinate. The pass then copies any
+source image—scrolling text, a logo or a composed layer—into one reusable,
+independent surface at that origin before sampling it. Zero keeps the direct
+path and allocates no source copy; `Close` releases an allocated surface.
+`presets.CocoCRTOverlay()` supplies Coco's four-pixel X origin. Its nine sampled
+complete frames through tick 4,800 now match the preserved Go production in
+every channel. For atlas-independent new material, use `NormalizeSource`
+without a source offset.
+
 The same shader and classic recipe now serve DMA, Coco, Cuddly and MegaTwist.
 Six complete GPU captures of the newly migrated scenes differ from their
 previous local shaders by at most two pixels each, solely at chromatic sample

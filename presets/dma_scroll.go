@@ -1,6 +1,7 @@
 package presets
 
 import (
+	"image"
 	"image/color"
 
 	"github.com/olivierh59500/democonstructionkit/composite"
@@ -154,3 +155,12 @@ func ClassicCRTOverlay() effects.CRTOverlayConfig {
 
 // DMACRTOverlay preserves the original preset name for existing projects.
 func DMACRTOverlay() effects.CRTOverlayConfig { return ClassicCRTOverlay() }
+
+// CocoCRTOverlay preserves the intro's four-pixel atlas origin through an
+// independent bounded source texture. Any bitmap text or logo can use the same
+// recipe, and callers may edit SourceOrigin before construction.
+func CocoCRTOverlay() effects.CRTOverlayConfig {
+	c := ClassicCRTOverlay()
+	c.SourceOrigin = image.Pt(4, 0)
+	return c
+}

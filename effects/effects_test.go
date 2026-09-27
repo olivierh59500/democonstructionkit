@@ -20,6 +20,14 @@ func TestCRTCompiles(t *testing.T) {
 		t.Fatal(err)
 	}
 }
+
+func TestCRTOverlayRejectsInvalidSourceOrigin(t *testing.T) {
+	for _, origin := range []image.Point{{X: -1}, {Y: -1}, {X: 8193}, {Y: 8193}} {
+		if _, err := NewCRTOverlay(CRTOverlayConfig{SourceOrigin: origin}); err == nil {
+			t.Fatalf("accepted CRT source origin %v", origin)
+		}
+	}
+}
 func TestMeshClippingAndStableAbsoluteSampling(t *testing.T) {
 	m, err := NewMesh(Cube(2, geometry.Vec2{X: 1, Y: 1}, color.NRGBA{255, 255, 255, 255}), nil, geometry.Camera{Focal: 100, Near: 1})
 	if err != nil {

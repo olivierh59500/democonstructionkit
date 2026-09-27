@@ -2,6 +2,7 @@ package effects
 
 import (
 	"fmt"
+	"image"
 	"math"
 
 	"github.com/hajimehoshi/ebiten/v2"
@@ -17,16 +18,27 @@ type CRTOverlayConfig struct {
 	// placement and clamps the output to valid premultiplied alpha. The default
 	// retains the original shader's coordinates for existing productions.
 	NormalizeSource bool
+	// SourceOrigin copies the input into an independent texture with this
+	// pixel-space origin before the CRT pass. It reproduces authored atlas
+	// offsets without depending on Ebitengine's automatic texture packing.
+	// Zero samples the supplied image directly and allocates no copy surface.
+	SourceOrigin image.Point
 	// Blend selects how the processed image covers the destination. The zero
 	// value uses regular alpha blending; BlendCopy replaces the full pass.
 	Blend ebiten.Blend
 }
 
-// CRTOverlay borrows the source on each DrawAt and owns only its shader.
+// CRTOverlay borrows the input on each DrawAt. It owns its shader and, when a
+// source origin is configured, one bounded reusable copy surface.
 type CRTOverlay struct {
-	shader   *ebiten.Shader
-	uniforms map[string]any
-	op       ebiten.DrawRectShaderOptions
+	shader        *ebiten.Shader
+	uniforms      map[string]any
+	op            ebiten.DrawRectShaderOptions
+	sourceOrigin  image.Point
+	sourceSize    image.Point
+	sourceBacking *ebiten.Image
+	sourceView    *ebiten.Image
+	copyOptions   ebiten.DrawImageOptions
 }
 
 func NewCRTOverlay(c CRTOverlayConfig) (*CRTOverlay, error) {
@@ -34,6 +46,9 @@ func NewCRTOverlay(c CRTOverlayConfig) (*CRTOverlay, error) {
 		if math.IsNaN(float64(v)) || math.IsInf(float64(v), 0) {
 			return nil, fmt.Errorf("effects: nonfinite CRT overlay parameter")
 		}
+	}
+	if c.SourceOrigin.X < 0 || c.SourceOrigin.Y < 0 || c.SourceOrigin.X > 8192 || c.SourceOrigin.Y > 8192 {
+		return nil, fmt.Errorf("effects: invalid CRT source origin")
 	}
 	source := crtOverlayShader
 	if c.NormalizeSource {
@@ -49,7 +64,7 @@ func NewCRTOverlay(c CRTOverlayConfig) (*CRTOverlay, error) {
 		"Vignette": c.Vignette,
 	}
 	return &CRTOverlay{
-		shader: shader, uniforms: u,
+		shader: shader, uniforms: u, sourceOrigin: c.SourceOrigin,
 		op: ebiten.DrawRectShaderOptions{Blend: c.Blend},
 	}, nil
 }
@@ -57,6 +72,28 @@ func NewCRTOverlay(c CRTOverlayConfig) (*CRTOverlay, error) {
 func (c *CRTOverlay) DrawAt(dst, source *ebiten.Image, x, y float64) {
 	if c == nil || c.shader == nil || dst == nil || source == nil {
 		return
+	}
+	if c.sourceOrigin != (image.Point{}) {
+		b := source.Bounds()
+		size := b.Size()
+		if c.sourceBacking == nil || c.sourceSize != size {
+			if c.sourceBacking != nil {
+				c.sourceBacking.Deallocate()
+			}
+			c.sourceBacking = ebiten.NewImageWithOptions(
+				image.Rect(0, 0, size.X+c.sourceOrigin.X, size.Y+c.sourceOrigin.Y),
+				&ebiten.NewImageOptions{Unmanaged: true},
+			)
+			c.sourceView = c.sourceBacking.SubImage(image.Rectangle{
+				Min: c.sourceOrigin, Max: c.sourceOrigin.Add(size),
+			}).(*ebiten.Image)
+			c.sourceSize = size
+		}
+		c.sourceView.Clear()
+		c.copyOptions.GeoM.Reset()
+		c.copyOptions.GeoM.Translate(float64(c.sourceOrigin.X-b.Min.X), float64(c.sourceOrigin.Y-b.Min.Y))
+		c.sourceView.DrawImage(source, &c.copyOptions)
+		source = c.sourceView
 	}
 	c.op.Images[0] = source
 	c.op.Uniforms = c.uniforms
@@ -67,9 +104,15 @@ func (c *CRTOverlay) DrawAt(dst, source *ebiten.Image, x, y float64) {
 }
 
 func (c *CRTOverlay) Close() error {
-	if c != nil && c.shader != nil {
-		c.shader.Deallocate()
-		c.shader = nil
+	if c != nil {
+		if c.sourceBacking != nil {
+			c.sourceBacking.Deallocate()
+			c.sourceBacking, c.sourceView = nil, nil
+		}
+		if c.shader != nil {
+			c.shader.Deallocate()
+			c.shader = nil
+		}
 	}
 	return nil
 }
