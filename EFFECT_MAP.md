@@ -337,6 +337,47 @@ recycled message. It is opt-in so existing Cuddly and Union seed timing stays
 unchanged; its cursor/slot policy has a pure test and a compiled image-backed
 regression test.
 
+## Direct source-to-DCK frame sweep (2026-09-27)
+
+`cmd/fidelity` compared preserved Go revisions with published DCK revisions
+at ticks 0, 1, 60, 240, 600, 1,200, 2,400 and 4,800. Audio was disabled and
+both captures used one deterministic 60 Hz clock. Eleven of the seventeen
+paired productions were exact at all eight sampled ticks. This is complete
+RGBA-canvas evidence at those ticks, not proof for intermediate frames or
+Atari ST hardware. Cuddly's row covers its standalone Go menu only; Union
+has no preserved Go production for this comparison. FR-010 and Second Reality
+remain outside the full-screen audit.
+
+| Production | Original → DCK revision | Sampled result |
+| --- | --- | --- |
+| 3D DOC | `914a84a` → `9cfae0e` | Exact. |
+| Bilizir | `4720c97` → `94852f4` | Exact with original-logo and original-scroll-reset options; the default DCK variations remain available. |
+| DMA 3D | `e161039` → `37b6f46` | One pixel differs by one channel level at tick 600; all other ticks exact. |
+| DMA Is Back | `b47c293` → `25b9fdd` | Exact with historical cube transitions selected. |
+| Coco is the best | `0a9b678` → `ad9dbe9` | Intro CRT output differs at ticks 0, 1, 60 and 240 (13,827–22,379 pixels); main scene exact at 600 and later sampled ticks. |
+| Cuddly menu | `556d023` → `3cb4f30` | Exact for the standalone menu. |
+| DOM intro | `a02358c` → `f7d89e8` | Exact. |
+| Multiscreen | `2cd2bc1` → `c7387d7` | 182 and 146 pixels differ at ticks 600 and 1,200; six other ticks exact. |
+| Vectorballs | `22ccd09` → `cd9a23c` | Exact for the authored sequence; optional objects have separate before/after checks. |
+| Grodan | `5338712` → `522432b` | Exact. |
+| MegaTwist | `df3ebf3` → `6d065d9` | Two or three pixels differ at ticks 60, 240, 600 and 1,200; four other ticks exact. |
+| Nonameno | `e755a34` → `0865717` | Exact after the probe freezes `audio.Now()` as well as `time.Now()`. |
+| Phenomena DNA | `8759087` → `0666ad7` | Exact. |
+| TCB Multi-Plane | `2fa1b3f` → `a6de271` | Exact; a separate 21-frame check covers wave joins and reset through tick 9,600. |
+| TCB Replicants | `1e5e55e` → `554080d` | Exact. |
+| TeamG1 | `83e6452` → `91e598c` | Raw intro glyph surface exact at five ticks; the final intro differs because the DCK CRT is deliberately flat. Main scene exact at 1,200 and later sampled ticks. |
+| Viva TCB | `f4b985e` → `816e6db` | Tick 0 differs (18,639 pixels); ticks 1–4,800 exact. |
+
+Coco's raw intro surface is byte-identical before CRT at ticks 0, 1, 60, 240
+and 241. Specializing shader parameters as literals did not improve the final
+pixels, so that experiment was removed; its output difference remains open.
+TeamG1's raw intro source also matches at ticks 0, 1, 60, 240 and 600. Its
+authored 640-pixel insertion edge fixes the previously delayed scene handoff,
+while the flat CRT intentionally prevents clipping the font's outer rows.
+Further review is needed at Coco's CRT output, Viva's first draw and the two
+Multiscreen transition checkpoints. Small differences remain visible in the
+reports rather than being hidden by a tolerance.
+
 ## Extraction order and acceptance
 
 1. Keep the scrolling facade cohesive: DMA, Coco and MegaTwist share the
