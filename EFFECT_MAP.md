@@ -244,6 +244,9 @@ data.
   sampling at boundaries where the former literal and new uniform shader
   constants round differently. A dedicated GPU check verifies default
   source-over and explicit copy blending on transparent and opaque source areas.
+  Cuddly's Android menu now exposes this optional pass through a CRT OFF / CRT
+  ON touch button beside its other controls. Both Cuddly Android apps use the
+  same control, while desktop retains the C key.
 - Union TNT Crew 3's faceted ball now comes from `effects.SolidSphereModel`.
   A pure comparison matched all 512 coordinates and 112 ordered colored faces
   exactly against the previous builder. Complete GPU captures at frames 1, 60,
@@ -341,6 +344,7 @@ data.
 | DOM Intro | 744 | 16.758 ms | 16.904 ms | 0 |
 | Grodan | 744 | 16.755 ms | 18.022 ms | 0 |
 | Cuddly menu, CRT off | 744 | 16.762 ms | 16.926 ms | 0 |
+| Cuddly menu, CRT on | 744 | 16.726 ms | 16.874 ms | 0 |
 | Vectorballs sphere, 144 balls, published APK | 744 | 16.776 ms | 17.594 ms | 0 |
 | Vectorballs sphere, 4,096 points, batched | 744 | 16.745 ms | 16.961 ms | 0 |
 
@@ -367,9 +371,10 @@ or battery measurements. Thermal status was 0 after the four previews. Both
 six- and twelve-segment flags were inspected; six leaves individual balls more
 legible while twelve reads as a denser waving surface.
 After the CRT migration, a separate 744-interval MegaTwist run reported p95
-16.764 ms, maximum 16.933 ms and zero intervals above 20 ms. Cuddly's menu
-run used its default CRT-off setting; the optional pass has desktop GPU
-comparisons but no Pixel presentation trace yet.
+16.764 ms, maximum 16.933 ms and zero intervals above 20 ms. Cuddly's CRT-on
+run above was launched with the opt-in Android extra and sampled for 12.4
+seconds. The menu's button was also toggled on both Android app variants on
+the Pixel; the touch controls remained outside the CRT material.
 After the spherical-cloud update, another Vectorballs authored-sequence run
 reported 744 intervals, p95 16.776 ms, maximum 16.961 ms and none above 20 ms.
 Its 144-ball sphere had another zero-slow-interval trace with the recommended
