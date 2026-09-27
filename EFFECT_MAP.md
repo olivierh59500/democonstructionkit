@@ -326,10 +326,18 @@ regression test.
    common cases while Go callbacks remain available for special cases.
 4. Continue measuring combined scene classes on Pixel. The ledger now samples
    scanline/warp, projected field, masks and multi-layer compositions, with
-   Cuddly CPU timings and twenty-one presentation traces across nineteen catalog
-   scenes and two optional sphere variants. Long-running
+   Cuddly CPU timings and twenty-two baseline presentation traces across twenty
+   catalog scenes and two optional sphere variants, plus later focused runs. Long-running
    tours, additional catalog screens, cue boundaries, memory peaks and battery
    use still need device evidence.
+
+The 2026-09-27 host-source pass found no further active screen-local sine/cosine,
+triangle/shader submission or pixel recoloring loop in the audited DCK versions
+and Cuddly/Union screens. Remaining loops prepare authored assets, compose
+ordered layers, process menu/input state or project points through the shared
+components. DOM's one-time repeated raster image and TeamG1's missing-asset
+checkerboard remain asset preparation, not animated effects. This source pass
+does not replace complete original-versus-port visual review.
 
 For any migration, compare deterministic complete-frame captures before and
 after at startup, state changes, text/texture wrap and late playback. Keep the
