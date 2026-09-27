@@ -1,0 +1,59 @@
+{
+  "version": 1,
+  "units": {"distance": "pixels", "time": "seconds", "angle": "radians"},
+  "canvas": {"width": 640, "height": 360, "tps": 60, "background": [5, 8, 20, 255]},
+  "assets": {"checker": "image", "orb-cyan": "image", "orb-pink": "image", "small": "font"},
+  "layers": [
+    {
+      "id": "moving-wallpaper",
+      "kind": "background",
+      "background": {
+        "image": "checker", "period": {"x": 32, "y": 32},
+        "scale": {"x": 2, "y": 2}, "velocity": {"x": -12, "y": 6}
+      }
+    },
+    {
+      "id": "keyframed-orbs",
+      "kind": "sprites",
+      "sprites": {
+        "images": ["orb-cyan", "orb-pink"], "count": 14,
+        "fps": 2, "frameStride": 1, "speed": 1,
+        "anchor": {"x": 0.5, "y": 0.5},
+        "formation": {
+          "loop": 4,
+          "poseKeys": [
+            {"time": 0, "origin": {"x": 90, "y": 170}, "spacing": {"x": 34, "y": 0}, "ease": "smooth"},
+            {"time": 1, "origin": {"x": 500, "y": 180}, "spacing": {"x": -28, "y": 0}, "arc": {"x": 0, "y": -40}, "ease": "smooth"},
+            {"time": 2, "origin": {"x": 170, "y": 185}, "spacing": {"x": 22, "y": 0}, "arc": {"x": 0, "y": 45}, "ease": "smooth"},
+            {"time": 3, "origin": {"x": 160, "y": 150}, "spacing": {"x": 32, "y": 0}, "arc": {"x": 0, "y": -50}, "ease": "smooth"},
+            {"time": 4, "origin": {"x": 90, "y": 170}, "spacing": {"x": 34, "y": 0}}
+          ],
+          "cues": [{
+            "start": 0.5, "duration": 3, "stagger": 0.02,
+            "fade": 0.2, "leadIndex": 0,
+            "y": [{"firstAmplitude": 20, "lastAmplitude": -20, "cycles": 2}]
+          }]
+        }
+      }
+    },
+    {
+      "id": "heading",
+      "kind": "scroll",
+      "scroll": {
+        "text": "KEYFRAMED SPRITE FORMATION",
+        "fonts": {"main": "small"}, "font": "main",
+        "origin": {"x": 86, "y": 40}, "speed": 0
+      }
+    },
+    {
+      "id": "message",
+      "kind": "scroll",
+      "scroll": {
+        "text": "SIGNED SPACING, ARCH, STAGGERED WAVE; ALL FROM ONE SAVED DCK PROJECT.   ",
+        "fonts": {"main": "small"}, "font": "main",
+        "origin": {"x": 640, "y": 300}, "speed": 100,
+        "gap": 100, "repeat": true
+      }
+    }
+  ]
+}

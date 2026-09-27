@@ -2461,6 +2461,10 @@ go run ./examples/authoring -project /tmp/dck-project.json
 # Render a bounded preview; capture happens outside ordinary animation work.
 go run ./examples/authoring -frames 600 -capture /tmp/dck-project.png
 
+# Render the saved sprite-formation example at its second pose.
+go run ./examples/authoring -project examples/authoring/formation.json \
+  -frames 120 -capture /tmp/dck-formation.png
+
 # Use the shared desktop/mobile laboratory host for profiling this composition.
 go run ./examples/effectslab -authoring -frames 900 -profile /tmp/dck-authoring.json
 ```
@@ -2508,10 +2512,39 @@ The serialized subset is deliberately explicit:
 | Version 1 layer | Supported saved parameters |
 | --- | --- |
 | `scroll` | Font bank, text/braces controls, horizontal/vertical/page layout, repeat bounds/gap, normal/sine/bounce/zoom/perspective/path modes, timed mode sequence |
-| `sprites` | Image animation, count, linear/path/orbit/weave formation, spacing/delay, transform, blend/filter, common and per-instance signal bindings |
+| `sprites` | Image animation, count, linear/path/orbit/weave or cued formation, signed spacing, keyframed arch/tilt, staggered harmonic cues, transform, blend/filter, common and per-instance signal bindings |
 | `background` | Source crop, repeat period, scale, parallax, camera/movement velocities, blend/filter |
 | `jelly_cube` | Editable default/DMA preset, center, half-edge, camera, six colors, mode order/durations, phase, speed, entrance, transition and five deformation gains |
 | All layers | ID, order, start/duration/fades, local clock and final layer blend |
+
+A sprite layer can save the same expanding, inverting and bending phrase used
+by Go scenes. `speed: 1` advances the formation clock in seconds. `smooth`
+selects eased interpolation to the next key; omitted easing is linear. This
+example's end pose equals its start pose, so its four-second loop has no jump:
+
+```json
+{
+  "id": "letters", "kind": "sprites",
+  "sprites": {
+    "images": ["orb-cyan"], "count": 3, "frameStride": 1, "speed": 1,
+    "formation": {
+      "loop": 4,
+      "poseKeys": [
+        {"time": 0, "origin": {"x": 120, "y": 180}, "spacing": {"x": 42, "y": 0}, "ease": "smooth"},
+        {"time": 1, "origin": {"x": 300, "y": 220}, "spacing": {"x": -12, "y": 0}, "arc": {"x": 0, "y": -45}},
+        {"time": 4, "origin": {"x": 120, "y": 180}, "spacing": {"x": 42, "y": 0}}
+      ],
+      "cues": [{"start": 1, "duration": 1, "stagger": 0.08, "leadIndex": 0,
+        "y": [{"firstAmplitude": 20, "lastAmplitude": -20, "cycles": 1}]}]
+    }
+  }
+}
+```
+
+Use `originKeys`, `spacingKeys` or `arcKeys` instead of `poseKeys` when those
+properties need separate clocks. Multiple cues may overlap. The compiler
+checks time order, finite values, loop continuity and cue bounds before a
+rendering surface is allocated.
 
 Signals store keys, oscillators and named inputs. `Options.Context` can supply
 music time and live values; otherwise project BPM and layer time define the beat

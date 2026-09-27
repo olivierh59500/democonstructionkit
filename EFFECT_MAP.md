@@ -147,6 +147,10 @@ data.
   `scrolling` and `sprites`; these assertions read GPU pixels only after an
   Ebitengine game loop starts. The separate `dck_composition_rendercheck` suite
   preserves paired-background draw order and masked output pixels.
+- The saved `authoring` formation compiles through the normal sprite group;
+  tests compare its poses at four times, reject invalid cues and loops, and
+  cover independent property clocks. The standalone JSON example rendered at
+  frame 120 with a moving backdrop, text layers and a bent sprite phrase.
 - DCK's pure `motion`, `geometry`, `timeline`, `timeline/recipes`, `palette` and
   `modulation` test suites pass. Eleven opt-in GPU comparators ran successfully
   against DCK code `f9ebe64`: water reflection, staged materials, copper titles,
@@ -418,6 +422,9 @@ reports rather than being hidden by a tolerance.
 3. Extract raster/mask materials and cue programs. Keep event clocks, draw order,
    alpha blend and handoff behavior explicit so the future editor can serialize
    common cases while Go callbacks remain available for special cases.
+   The `authoring` sprite layer now serializes `CuedFormation` pose, independent
+   origin/spacing/arc tracks and overlapping harmonic cues. The saved formation
+   example renders through the ordinary desktop host without scene-specific Go.
 4. Continue measuring combined scene classes on Pixel. The ledger now samples
    scanline/warp, projected field, masks and multi-layer compositions, with
    Cuddly CPU timings and twenty-two baseline presentation traces across twenty

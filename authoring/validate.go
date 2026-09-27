@@ -493,6 +493,12 @@ func (p Project) validateSprites(c SpriteGroup) error {
 	if c.Weave != nil {
 		kinds++
 	}
+	if c.Formation != nil {
+		kinds++
+		if _, err := compileFormation(*c.Formation, c.Count); err != nil {
+			return fmt.Errorf("invalid sprite formation: %w", err)
+		}
+	}
 	if kinds > 1 {
 		return fmt.Errorf("choose one sprite trajectory")
 	}

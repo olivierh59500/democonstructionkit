@@ -167,6 +167,49 @@ type Weave struct {
 	Spacing                 float64 `json:"spacing"`
 }
 
+// Formation keys and cues are serializable inputs to motion.CuedFormation.
+// SpriteGroup.Speed selects formation seconds per project second; use 1 for
+// ordinary playback. Negative spacing reverses the sprite order.
+type FormationPoseKey struct {
+	Time    float64 `json:"time"`
+	Origin  Point   `json:"origin"`
+	Spacing Point   `json:"spacing"`
+	Arc     Point   `json:"arc,omitempty"`
+	Ease    string  `json:"ease,omitempty"`
+}
+type FormationPointKey struct {
+	Time  float64 `json:"time"`
+	Value Point   `json:"value"`
+	Ease  string  `json:"ease,omitempty"`
+}
+type FormationHarmonic struct {
+	FirstAmplitude float64 `json:"firstAmplitude"`
+	LastAmplitude  float64 `json:"lastAmplitude"`
+	Cycles         float64 `json:"cycles"`
+	Phase          float64 `json:"phase,omitempty"`
+	IndexPhase     float64 `json:"indexPhase,omitempty"`
+}
+type FormationCue struct {
+	Start     float64             `json:"start"`
+	Duration  float64             `json:"duration"`
+	Stagger   float64             `json:"stagger,omitempty"`
+	Fade      float64             `json:"fade,omitempty"`
+	LeadIndex int                 `json:"leadIndex"`
+	X         []FormationHarmonic `json:"x,omitempty"`
+	Y         []FormationHarmonic `json:"y,omitempty"`
+}
+type CuedFormation struct {
+	Origin      Point               `json:"origin,omitempty"`
+	Spacing     Point               `json:"spacing,omitempty"`
+	Arc         Point               `json:"arc,omitempty"`
+	Loop        float64             `json:"loop,omitempty"`
+	PoseKeys    []FormationPoseKey  `json:"poseKeys,omitempty"`
+	OriginKeys  []FormationPointKey `json:"originKeys,omitempty"`
+	SpacingKeys []FormationPointKey `json:"spacingKeys,omitempty"`
+	ArcKeys     []FormationPointKey `json:"arcKeys,omitempty"`
+	Cues        []FormationCue      `json:"cues,omitempty"`
+}
+
 // Bindings maps x, y, scaleX, scaleY, angle or opacity to a Project.Signals ID.
 // Offsets/angle are additive; scale and opacity multiply the base sprite pose.
 type Bindings map[string]string
@@ -197,6 +240,8 @@ type SpriteGroup struct {
 	Reverse       bool       `json:"reverse,omitempty"`
 	Signals       Bindings   `json:"signals,omitempty"`
 	PerInstance   []Bindings `json:"perInstance,omitempty"`
+
+	Formation *CuedFormation `json:"formation,omitempty"`
 }
 
 type Background struct {

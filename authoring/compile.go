@@ -335,6 +335,13 @@ func (b *compiler) sprites(c SpriteGroup) (kit.Effect, error) {
 		v := c.Weave
 		config.Weave = &motion.Weave{Center: point(v.Center), HorizontalAmplitude: v.HorizontalAmplitude, VerticalAmplitude: v.VerticalAmplitude, VerticalSecondAmplitude: v.VerticalSecondAmplitude, HorizontalPeriod: v.HorizontalPeriod, EnvelopePeriod: v.EnvelopePeriod, VerticalPeriod: v.VerticalPeriod, VerticalSecondPeriod: v.VerticalSecondPeriod, Spacing: v.Spacing}
 	}
+	if c.Formation != nil {
+		formation, err := compileFormation(*c.Formation, c.Count)
+		if err != nil {
+			return nil, err
+		}
+		config.Formation = formation.At
+	}
 	return sprites.NewGroup(config)
 }
 func (b *compiler) bindings(values Bindings) sprites.GroupSignals {
