@@ -4319,12 +4319,16 @@ config := presets.TCBProjectedScroll(message, 32, face, raster)
 config.Projected.PixelsPerUpdate = 4
 config.Projected.Draw = scrolling.PlaneDraw{ScaleX: 2, ScaleY: 2}
 scroll, err := scrolling.New(config)
+if err != nil { return err }
+poses := scroll.ProjectedController().Points() // Borrowed, depth-sorted glyph poses.
 ```
 
 Its returned projection, visible-slot count, eight forms, font, raster, placement
 and output passes can all be changed. This preset retains the authored `^0` to
 `^7` command timing and two control slots. For ordinary text with no historical
-slots, use `Controls` and `Modes` on the regular scrolling configuration.
+slots, use `Controls` and `Modes` on the regular scrolling configuration. The
+controller is nil for other transports; its `Points` slice is read-only and
+changes on the next update.
 
 `effects.SolidCube` provides a reusable flat-colored, outlined cube. It caches its
 geometry buffers, depth-sorts whole faces, and renders their outlines in the same

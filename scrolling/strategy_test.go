@@ -43,6 +43,9 @@ func TestCommonRecycledTransportRetainsCommandAndWaveTiming(t *testing.T) {
 		t.Fatal(err)
 	}
 	defer s.Close()
+	if s.ProjectedController() != nil {
+		t.Fatal("recycled transport exposed a projected controller")
+	}
 	for tick := 0; tick < 900; tick++ {
 		original.Step()
 		if err := s.Update(kit.Frame{Tick: uint64(tick)}); err != nil {
@@ -67,10 +70,13 @@ func TestCommonProjectedTransportRetainsVisibleSlotTiming(t *testing.T) {
 		t.Fatal(err)
 	}
 	defer s.Close()
+	if s.ProjectedController() == nil {
+		t.Fatal("projected transport has no inspectable controller")
+	}
 	for tick := 0; tick < 300; tick++ {
 		original.Step(2)
 		s.Update(kit.Frame{Tick: uint64(tick)})
-		if !reflect.DeepEqual(original.Points(), s.backend.(*projectedTransport).planes.Points()) {
+		if !reflect.DeepEqual(original.Points(), s.ProjectedController().Points()) {
 			t.Fatalf("projected transport diverged at %d", tick)
 		}
 	}

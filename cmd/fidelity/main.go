@@ -72,10 +72,14 @@ func run() error {
 	referenceOnly := flag.Bool("reference-only", false, "capture the pinned original only")
 	reference := flag.String("reference", "", "optional Git revision to compare instead of the pinned original")
 	frameList := flag.String("frames", "0,1,60,240,600,1200,2400,4800", "comma-separated capture ticks")
+	inspectTCB := flag.Bool("inspect-multiscreen-tcb", false, "capture the embedded TCB tile and projected glyph positions at each requested frame")
 	flag.Parse()
 	p, ok := probes[*demo]
 	if !ok {
 		return fmt.Errorf("no fidelity probe for %s", *demo)
+	}
+	if *inspectTCB && *demo != "go-multiscreen" {
+		return fmt.Errorf("the TCB inspector requires go-multiscreen")
 	}
 	root, err := filepath.Abs(*kitRoot)
 	if err != nil {
@@ -120,7 +124,7 @@ func run() error {
 		}
 		frames = append(frames, frame)
 	}
-	if err = captureRevision(source, revision, root, filepath.Join(output, "reference"), p, frames); err != nil {
+	if err = captureRevision(source, revision, root, filepath.Join(output, "reference"), p, frames, *inspectTCB); err != nil {
 		return err
 	}
 	if *referenceOnly {
@@ -131,7 +135,7 @@ func run() error {
 		return err
 	}
 	head := strings.TrimSpace(string(headBytes))
-	if err = captureRevision(source, head, root, filepath.Join(output, "candidate"), p, frames); err != nil {
+	if err = captureRevision(source, head, root, filepath.Join(output, "candidate"), p, frames, *inspectTCB); err != nil {
 		return err
 	}
 	r := report{Demo: *demo, Reference: revision, Candidate: head, Scope: "complete production frames; device audio disabled; deterministic clock"}
@@ -242,7 +246,7 @@ func command(dir, name string, args ...string) ([]byte, error) {
 	}
 	return out, nil
 }
-func captureRevision(source, revision, root, output string, p probe, frames []int) error {
+func captureRevision(source, revision, root, output string, p probe, frames []int, inspectTCB bool) error {
 	tmp, err := os.MkdirTemp("", "dck-fidelity-")
 	if err != nil {
 		return err
@@ -365,14 +369,48 @@ func captureRevision(source, revision, root, output string, p probe, frames []in
 	for i, f := range frames {
 		frameValues[i] = fmt.Sprint(f)
 	}
+	extraImports, drawHook := "", ""
+	if inspectTCB {
+		data, err := os.ReadFile(filepath.Join(packageDir, "main.go"))
+		if err != nil {
+			return err
+		}
+		layer := "g.Game.(*MegaDemoGame).demoCanvases[1]"
+		active := "g.Game.(*MegaDemoGame).cameraState!=StateDemo2 && visibleDemoMask(g.Game.(*MegaDemoGame).cameraState)&2!=0"
+		positionHook := `for _,p:=range g.Game.(*MegaDemoGame).demo2.printPos {positions=append(positions,slot{p.x,p.y,p.z,rune(p.letter)})}`
+		if bytes.Contains(data, []byte("tourRenderer")) {
+			layer = "g.Game.(*MegaDemoGame).tourRenderer.Canvases()[1]"
+			active = "g.Game.(*MegaDemoGame).tourRenderer.Camera().State().Direct<0 && g.Game.(*MegaDemoGame).tourRenderer.Camera().State().VisibleMask&2!=0"
+			positionHook = `for _,p:=range g.Game.(*MegaDemoGame).demo2.part.Scrolling().ProjectedController().Points() {positions=append(positions,slot{p.X,p.Y,p.Scale,p.Rune})}`
+		}
+		extraImports = `"image";"image/png";"path/filepath";"encoding/json";`
+		drawHook = fmt.Sprintf(`switch dckFidelityTick {case %s:
+		if !(%s) {break}
+		layer:=%s
+		if layer==nil {break}
+		pixels:=image.NewRGBA(image.Rect(0,0,800,600))
+		layer.ReadPixels(pixels.Pix)
+		file,err:=os.Create(filepath.Join(%q,fmt.Sprintf("tcb-layer-%%06d.png",dckFidelityTick)))
+		if err!=nil{panic(err)}
+		if err:=png.Encode(file,pixels);err!=nil{panic(err)}
+		if err:=file.Close();err!=nil{panic(err)}
+		type slot struct{X,Y,Z float64;Letter rune}
+		var positions []slot
+		%s
+		data,err:=json.Marshal(positions)
+		if err!=nil{panic(err)}
+		if err:=os.WriteFile(filepath.Join(%q,fmt.Sprintf("tcb-positions-%%06d.json",dckFidelityTick)),data,0644);err!=nil{panic(err)}
+	}`, strings.Join(frameValues, ","), active, layer, output, positionHook, output)
+	}
 	code := fmt.Sprintf(`package %s
-import("os";"testing";"fmt";"time";"github.com/hajimehoshi/ebiten/v2";capture "github.com/olivierh59500/democonstructionkit/fidelity/ebiten";%s)
+import("os";"testing";"fmt";"time";"github.com/hajimehoshi/ebiten/v2";capture "github.com/olivierh59500/democonstructionkit/fidelity/ebiten";%s%s)
 var dckFidelityTick int64
 func dckFidelitySince(start time.Time)time.Duration{return time.Unix(0,dckFidelityTick*int64(time.Second)/60).Sub(start)}
 type dckClockGame struct{ebiten.Game}
 func(g dckClockGame)Update()error{dckFidelityTick++;return g.Game.Update()}
+func(g dckClockGame)Draw(dst *ebiten.Image){g.Game.Draw(dst);%s}
 func TestMain(m *testing.M){err:=capture.Run(capture.Config{Directory:%q,Width:%d,Height:%d,Frames:[]int{%s}},func()(ebiten.Game,error){makeGame:=func()(ebiten.Game,error){%s};g,err:=makeGame();return dckClockGame{g},err});if err!=nil{fmt.Fprintln(os.Stderr,err);os.Exit(1)}}
-`, pkg, p.Imports, output, p.Width, p.Height, strings.Join(frameValues, ","), p.Factory)
+`, pkg, p.Imports, extraImports, drawHook, output, p.Width, p.Height, strings.Join(frameValues, ","), p.Factory)
 	if filepath.Base(source) == "go-secondreality" {
 		code += `
 type dckIndexedFixture struct{renderer *Renderer;vram []byte;palette [256][4]byte;frame int}

@@ -162,6 +162,15 @@ func (s *Scrolling) Pseudo3DController() *Pseudo3D {
 	return nil
 }
 
+// ProjectedController exposes the plane transport for inspecting its sampled,
+// depth-sorted glyph poses. Scrolling owns its clock; do not step it separately.
+func (s *Scrolling) ProjectedController() *Planes {
+	if p, ok := s.backend.(*projectedTransport); ok {
+		return p.planes
+	}
+	return nil
+}
+
 // SizeBankController exposes the active scale and speed controls of a
 // synchronized font bank selected through scrolling.New.
 func (s *Scrolling) SizeBankController() *SizeBank {

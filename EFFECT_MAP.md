@@ -465,12 +465,24 @@ while the flat CRT intentionally prevents clipping the font's outer rows.
 Further review is needed at Coco's CRT output and the two Multiscreen
 transition checkpoints. Small differences remain visible in the
 reports rather than being hidden by a tolerance.
-At Multiscreen ticks 600 and 1,200, separate 800×600 captures of its original
-and DCK TCB panel are byte-identical. `motion.CameraTour` also matches the
-preserved camera state exactly through 12,000 ticks. The remaining 182 and 146
-full-frame differences are confined to thin letter-edge columns after the
-retained transition compositor samples that panel; they do not indicate a
-different TCB animation or camera trajectory.
+At Multiscreen ticks 600 and 1,200, full frames still differ by 182 and 146
+pixels. The `-inspect-multiscreen-tcb` fidelity option now captures the retained
+TCB tile and projected glyph positions at requested transition frames. Inside
+the actual tour, those tiles differ by 182 and 203 pixels respectively while
+all 30 glyph positions match exactly. Suppressing only the projected text in
+both temporary captures makes both full frames pixel-identical. The camera
+matches the preserved state through 12,000 ticks; the residual edge pixels
+belong to the glyph material rather than the transition compositor or motion.
+The shared projected transport exposes its borrowed, depth-sorted positions
+through `ProjectedController` for inspectors and future authoring controls.
+From this module, reproduce the tile captures and position files with:
+
+```sh
+go run ./cmd/fidelity -demo go-multiscreen -frames 600,1200 \
+  -inspect-multiscreen-tcb -out /tmp/dck-fidelity
+```
+
+The command exits nonzero while the documented pixel differences remain.
 
 ## Extraction order and acceptance
 
