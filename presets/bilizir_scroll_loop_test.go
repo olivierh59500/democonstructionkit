@@ -58,3 +58,38 @@ func TestBilizirLoopPreservesFirstPassAndBridgesLaterCopies(t *testing.T) {
 		t.Fatalf("relative scroll transport allocated %v times", allocations)
 	}
 }
+
+func TestBilizirOriginalLoopMatchesStrictViewportReset(t *testing.T) {
+	const messageWidth, viewportWidth = 17152.0, 800.0
+	config, err := BilizirOriginalScrollLoop(messageWidth, viewportWidth)
+	if err != nil {
+		t.Fatal(err)
+	}
+	clock, err := motion.NewWrapBank(config)
+	if err != nil {
+		t.Fatal(err)
+	}
+	x := 0.0
+	for tick := 0; tick < 12000; tick++ {
+		if got := clock.At(0); got != x {
+			t.Fatalf("tick %d X = %g, want %g", tick, got, x)
+		}
+		velocity := -4.0
+		if tick >= 6000 {
+			velocity = -6
+		}
+		if err := clock.SetVelocity(0, velocity); err != nil {
+			t.Fatal(err)
+		}
+		x += velocity
+		if x < -messageWidth {
+			x = viewportWidth
+		}
+		clock.Step()
+	}
+	for _, widths := range [][2]float64{{0, 800}, {17152, 0}, {math.NaN(), 800}} {
+		if _, err := BilizirOriginalScrollLoop(widths[0], widths[1]); err == nil {
+			t.Fatalf("accepted invalid original scroll widths %v", widths)
+		}
+	}
+}

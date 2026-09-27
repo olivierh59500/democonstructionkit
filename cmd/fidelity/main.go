@@ -29,7 +29,7 @@ type probe struct {
 var probes = map[string]probe{
 	"go-multiscreen":              {800, 600, `g:=&MegaDemoGame{demo1:NewPhenomenaDemo(),demo2:NewTCBDemo(),demo3:NewCocoDemo(),demo4:NewVivaDemo(),cameraState:StateDemo1,needsRedraw:true};for i:=range g.demoCanvases{g.demoCanvases[i]=ebiten.NewImage(demoWidth,demoHeight)};var err error;g.compositeShader,err=ebiten.NewShader([]byte(compositeShaderSource));if err!=nil{return nil,err};g.compositeUniforms=map[string]any{"CameraCenter":g.compositeCenter[:],"CameraZoom":float32(1)};return g,nil`, ""},
 	"go-secondreality":            {640, 400, `g:=&dckIndexedFixture{renderer:NewRenderer(),vram:make([]byte,640*400)};g.prepare();return g,nil`, ""},
-	"bilizir-demo":                {800, 600, `g:=NewGame();if mode,ok:=any(g).(interface{SetLogoDeformation(bool)});ok{mode.SetLogoDeformation(false)};if err:=g.loadAssets();err!=nil{return nil,err};g.initScrollText();g.initialized=true;return g,nil`, ""},
+	"bilizir-demo":                {800, 600, `g:=NewGame();if mode,ok:=any(g).(interface{SetLogoDeformation(bool)});ok{mode.SetLogoDeformation(false)};if mode,ok:=any(g).(interface{SetOriginalScrollReset(bool)error});ok{if err:=mode.SetOriginalScrollReset(true);err!=nil{return nil,err}};if err:=g.loadAssets();err!=nil{return nil,err};g.initScrollText();g.initialized=true;return g,nil`, ""},
 	"viva_tcb":                    {768, 540, `g:=NewGame();if err:=g.Init();err!=nil{return nil,err};g.audioReady=true;return g,nil`, ""},
 	"grodan-kvack-kvack-demo":     {640, 400, `g:=NewGame();g.audioInitialized=true;return g,nil`, ""},
 	"dma-3d":                      {640, 480, `g,err:=NewGame();if err!=nil{return nil,err};g.audioInitAttempted=true;return g,nil`, ""},
@@ -136,7 +136,7 @@ func run() error {
 	}
 	r := report{Demo: *demo, Reference: revision, Candidate: head, Scope: "complete production frames; device audio disabled; deterministic clock"}
 	if *demo == "bilizir-demo" {
-		r.Scope += "; original logo mode (intentional logo deformation disabled)"
+		r.Scope += "; original logo and text reset modes (intentional DCK variations disabled)"
 	}
 	if *demo == "dma-is-back" {
 		r.Scope += "; historical cube transitions (intentional continuity fix disabled)"

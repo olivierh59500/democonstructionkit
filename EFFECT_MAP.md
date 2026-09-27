@@ -50,7 +50,7 @@ production. Preserved original implementations remain unchanged.
 | Production / screen | Shared today | Remaining responsibility or extraction |
 | --- | --- | --- |
 | 3D DOC | Atlas, `Config.RowBands` using `composite.RowWarp`, `PerspectiveCheckerboard`, `ProjectedBallTrain`, `timeline.IntroHandoff` | Whole-scene transform remains scene composition data. |
-| Bilizir | Atlas, scrolling with a relative `motion.WrapBank` and `scrolling.CyclicWindow` over two bounded virtual text copies, two `StripWarp` instances on one `motion.WarpTableClock` with independent phase/gain variations, `motion.HarmonicTransform` logo paths on one `motion.WaveClock`, batched `SolidCubeTrain`, WaterReflection and `CopperBars` | Authored text and artwork stay production data; the DCK text loop bridges its former blank reset while the original source remains intact. |
+| Bilizir | Atlas, scrolling with a relative `motion.WrapBank` and `scrolling.CyclicWindow` over two bounded virtual text copies or an opt-in strict single-copy reset, two `StripWarp` instances on one `motion.WarpTableClock` with independent phase/gain variations, `motion.HarmonicTransform` logo paths on one `motion.WaveClock`, batched `SolidCubeTrain`, WaterReflection and `CopperBars` | Authored text and artwork stay production data; the default DCK loop bridges its former blank reset while the original source remains intact. |
 | DMA 3D | Atlas, `Config.RowColumn`, `sprites.BatchedSolidField` with timed wrap, and complete `effects.MorphingMesh` with ordered per-face materials | Artwork, text, soundtrack and scene layer order stay production data. |
 | DMA Is Back, intro | `Config.Feed`, configurable CRTOverlay, `timeline.IntroHandoff` | Message and scene materials stay production data. |
 | DMA Is Back, main | `Config.Scanline`, ImageGrid, `motion.TrajectoryClock` with a `NestedOrbit` logo path, JellyCube, shared fade/music cue | Other whole-scene timed layers can use the general cue director. |
@@ -160,6 +160,12 @@ data.
   comparators passed for Coco's cube train (10 captures), Multiscreen's cube
   train (10) and DNA scroller (11), Phenomena's DNA scroller (11), and the
   Vectorballs shape presets. These sample specific effects, not whole demos.
+- Bilizir now has a direct full-frame comparison with the preserved Go original.
+  The original-logo and strict-scroll-reset options reproduce all eight
+  complete PNG captures from frames 0 through 4,800 byte for byte. With the
+  default seamless loop, the scrolling region still matches through frame
+  2,400; after the first wrap it intentionally differs from the old blank reset.
+  The optional warped logo remains an independent DCK variation.
 - Before/after full-frame GPU captures of the trajectory-clock migrations have
   zero differing RGBA pixels: Cuddly Big Sprite and Ehhh at frames 0, 600,
   1,200, 2,400 and 4,800 each; Union Level 16 at 0, 600, 1,200 and 2,400;

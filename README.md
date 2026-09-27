@@ -48,6 +48,9 @@ published DCK version pinned in its `go.mod`; Go downloads the module automatica
 Bilizir's requested logo variation is enabled by default in `bilizir-demo`: the
 logo and scrolling text share the same two-pass deformation. Press **L** to switch
 to the original logo. Fidelity comparisons explicitly use original-logo mode.
+Pass `-logo-warp=false -original-scroll-reset=true` to run the complete
+preserved Go presentation, including its historical blank scroll restart;
+the DCK defaults keep the requested logo variation and seamless text loop.
 DMA Is Back similarly enables continuous cube transitions in its DCK version;
 baseline comparisons can select the historical transition behavior.
 
@@ -237,7 +240,9 @@ the completed message leaves the screen. `presets.BilizirScrollLoop(width)`
 provides its editable four-pixel step and message-width boundary. This keeps
 the first traversal's positions and removes the viewport-width blank interval
 from the DCK version's later loops; the preserved original implementation is
-unchanged. `scrolling.NewCyclicWindow` now narrows those two copies to glyphs
+unchanged. `presets.BilizirOriginalScrollLoop(width, viewport)` instead selects
+the original strict reset with one virtual copy when exact source parity is
+needed. `scrolling.NewCyclicWindow` now narrows the selected copies to glyphs
 whose proportional pen and optional bearing can intersect an editable viewport.
 It searches the immutable layout and caches the final pen clip once instead of
 visiting every glyph each frame:
