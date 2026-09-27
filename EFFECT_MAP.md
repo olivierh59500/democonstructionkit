@@ -300,6 +300,10 @@ zero slow intervals over 744 samples. Its foreground window still reports
 After the palette-atlas migration, the published DCK APK was reinstalled and
 its recommended 144-ball sphere inspected on Pixel. A fresh 744-interval trace
 reported p95 16.773 ms, maximum 16.897 ms and none above 20 ms.
+After direct indexed projection, the next APK yielded 744 intervals for the
+authored sequence (p95 16.765 ms, maximum 17.022 ms) and 744 for the inspected
+144-ball sphere (p95 16.795 ms, maximum 17.051 ms). Neither trace exceeded
+20 ms.
 
 The common `scrolling.New` repeat renderer already has coverage for short
 horizontal and vertical messages, gap boundaries and mixed-font controls.
