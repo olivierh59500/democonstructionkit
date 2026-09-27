@@ -127,11 +127,21 @@ matches the previous implementation exactly.
 | Multi-Plane | Complete `effects.MultiPlaneScene` in native-stage mode, with Union's source-index phases, `composite.ProfileImage` row renderer and strict `sprites.AxisFlip` cycle | Artwork, text, soundtrack and door routing remain production data. |
 | Disk Copier | Bitmap recipes, `sprites.Atlas` LCD regions, `motion.GatedWrapBank` three LCD clocks, `composite.WindowedImageBank` six-strip raster with its shared phase, `timeline.CueRanges` stages and `timeline.SteppedEnvelope` palette | Input/state program and LED layer placement remain scene composition data. |
 
+Union's recording tour additionally uses `motion.RampedWavePath` for its
+hidden-screen pointer route. Its independent X/Y frequencies and two-second
+entrance ramp are configuration; door order and screen durations remain tour
+data.
+
 ## Verification ledger (2026-09-27)
 
 - `GOWORK=off go build ./...` and `go vet ./...` passed in all 20 demo modules
   with their published dependency pins. FR-010 and Second Reality are included
   in these compatibility checks, not in the full-screen effect audit above.
+- `cmd/checkeffects` rendered 336 combinations of catalog bitmap fonts and
+  shared scroll modes with mixed glyph sizes. Every cell had visible glyph
+  pixels and matched a second Draw without stepping. Union's ramped tour path
+  also matched the former hidden-pointer position within 1e-12 and the same
+  raster pixel at every tick from 0 through 3,600 at both 50 and 60 Hz.
 - DCK's complete `GOWORK=off go test ./...`, `go build ./...` and `go vet ./...`
   pass. The explicit `dck_gpu_rendercheck` suite also passes for `composite`,
   `scrolling` and `sprites`; these assertions read GPU pixels only after an

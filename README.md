@@ -835,6 +835,27 @@ Cuddly Colorshock II supplies a compiled `FormulaFormation` through `Sample`
 and draws before stepping, showing the same clock can drive a user-defined
 trajectory without changing the renderer.
 
+For a path that enters gradually, `motion.RampedWavePath` combines independent
+X/Y waves, a base point, optional spatial sample positions and a rise duration.
+Sample it at absolute time or give its `At` method to `TrajectoryClock`:
+
+```go
+route, err := motion.NewRampedWavePath(motion.RampedWavePathConfig{
+    Base: motion.Point{X: 384, Y: 268},
+    X: motion.Wave{Amplitude: 220, Speed: .8},
+    Y: motion.Wave{Amplitude: 140, Speed: 1.1},
+    Rise: 2,
+})
+if err != nil { return err }
+position := route.At(seconds)
+// The same route can drive a logo or scroll: Sample: route.At.
+```
+
+Union's hidden-screen tour uses this route at 50 or 60 Hz; the shared path
+matches its old coordinates within 1e-12 and keeps the same raster pixel for
+every tested tick. Another demo can change amplitudes, frequencies, phases,
+wave shapes, center or rise without changing its input or renderer.
+
 `Back` may be omitted to flip a single image. `DrawAt` centers whichever face
 is selected, so differently sized art stays centered. The effect reuses its
 images and creates no intermediate surface. Cuddly Big Sprite uses this
