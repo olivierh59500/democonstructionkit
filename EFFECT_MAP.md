@@ -27,7 +27,7 @@ production. Preserved original implementations remain unchanged.
 | `3d_doc` | Projected balls and checkerboard use their own shared components; no equivalent local wrap/train controller found. |
 | `bilizir-demo` | Water reflection, warped logo, raster and cube already use their shared components; text transport is a different scrolling mode. |
 | `dma-3d` | The masked three-speed starfield uses `motion.FrameField` and `sprites.BatchedSolidField`; its cyclic three-form mesh uses `geometry.MorphingMesh` and `effects.MorphingMesh`. |
-| `dma-is-back` | Cube, intro feed, CRT and scanline scroll use their dedicated components; timed cues are separate work. |
+| `dma-is-back` | Cube, intro feed, CRT, scanline scroll and the only intro/music handoff use dedicated shared components; no further local timed effect remains. |
 | `go-cocoisthebest` | Sprite grid/translation already uses `sprites.Group`; scanline scroll and cube are separate families. |
 | `go-cuddlymenu` | Colorshock's orbit/table clock, Ehhh raster train, LED backdrop/gradient wraps and harmonic letters, Big Sprite front/back `sprites.AxisFlip`, Big Sprite/Fullscreen/Digi Weave groups, and Mega Scroller's directional entrance bounce now use shared controllers. |
 | `go-dom-intro` | Its sampled background uses `VerticalStripTrain`, its font-size program uses `scrolling.Config.SizeBank`, and animated stars use `sprites.AnimatedField`. |
@@ -42,7 +42,7 @@ production. Preserved original implementations remain unchanged.
 | `phenomena-dna-scroll-intro` | Raster-bar thresholds trigger scene-state changes; treating them as a periodic wrap would change the sequence. |
 | `tcb-multi-plane-3d-scroller` | All 32 mountain strips now use the relative `WrapBank` preset also used by Multiscreen. |
 | `tcb-replicants-demo` | Layered stars, coupled logos, stepped splash and the foreground sprite pair use complete DCK components. |
-| `teamg1-demo` | Circular sprite formation already uses `sprites.Group`; other timed presentation cues remain local. |
+| `teamg1-demo` | Circular sprite formation, intro handoff, timed CRT, plasma, cube and scroll use shared components. Remaining checks only compose their order and start music. |
 | `viva_tcb` | Paired title rasters now use the shared `WrapBank` preset; harmonic logos remain a separate formation. |
 
 ## Individual demos and intro screens
@@ -53,7 +53,7 @@ production. Preserved original implementations remain unchanged.
 | Bilizir | Atlas, scrolling with a relative `motion.WrapBank` and `scrolling.CyclicWindow` over two bounded virtual text copies or an opt-in strict single-copy reset, two `StripWarp` instances on one `motion.WarpTableClock` with independent phase/gain variations, `motion.HarmonicTransform` logo paths on one `motion.WaveClock`, batched `SolidCubeTrain`, WaterReflection and `CopperBars` | Authored text and artwork stay production data; the default DCK loop bridges its former blank reset while the original source remains intact. |
 | DMA 3D | Atlas, `Config.RowColumn`, `sprites.BatchedSolidField` with timed wrap, and complete `effects.MorphingMesh` with ordered per-face materials | Artwork, text, soundtrack and scene layer order stay production data. |
 | DMA Is Back, intro | `Config.Feed`, configurable CRTOverlay, `timeline.IntroHandoff` | Message and scene materials stay production data. |
-| DMA Is Back, main | `Config.Scanline`, ImageGrid, `motion.TrajectoryClock` with a `NestedOrbit` logo path, JellyCube, shared fade/music cue | Other whole-scene timed layers can use the general cue director. |
+| DMA Is Back, main | `Config.Scanline`, ImageGrid, `motion.TrajectoryClock` with a `NestedOrbit` logo path, JellyCube, shared fade/music cue | Authored text, artwork, resource lifetime and layer order remain production composition. |
 | Coco, intro | `Config.Feed`, configurable CRTOverlay, immediate `timeline.IntroHandoff` music cue | Scene materials stay production data. |
 | Coco, main | `Config.Scanline`, `SolidCubeTrain`, sprites.Group grid/translation, shared font metrics, `RotozoomBackground` source quad and complete `CopperTitleBand` with a retained surface | Authored art and scene layer order. |
 | DOM intro | Atlas, `scrolling.Config.SizeBank`, `motion.ScaledTextClock`, `VerticalStripTrain` background, `RasterOverlay` copies, `effects.Mask` and `sprites.AnimatedField` stars | Authored text and scene layer order. |
@@ -134,9 +134,13 @@ data.
 
 ## Verification ledger (2026-09-27)
 
-- `GOWORK=off go build ./...` and `go vet ./...` passed in all 20 demo modules
-  with their published dependency pins. FR-010 and Second Reality are included
-  in these compatibility checks, not in the full-screen effect audit above.
+- All 20 demo modules pass `go build ./...`, `go vet ./...` and `go test ./...`
+  against DCK `e2819d1` through temporary Go workspaces; their committed
+  dependency pins were unchanged. The earlier build/vet pass with published
+  pins also passed. FR-010 and Second Reality are included in compatibility
+  checks, not in the full-screen effect audit above. Nonameno's wave test had
+  a pre-existing 1.26e-12 tick-to-second rounding failure even on its pinned
+  DCK version; its corrected tolerance now passes with both dependencies.
 - `cmd/checkeffects` rendered 336 combinations of catalog bitmap fonts and
   shared scroll modes with mixed glyph sizes. Every cell had visible glyph
   pixels and matched a second Draw without stepping. Union's ramped tour path
@@ -465,6 +469,10 @@ ordered layers, process menu/input state or project points through the shared
 components. DOM's one-time repeated raster image and TeamG1's missing-asset
 checkerboard remain asset preparation, not animated effects. This source pass
 does not replace complete original-versus-port visual review.
+The follow-up check of DMA Is Back and TeamG1 confirms that their intro/music
+handoffs already use `timeline.IntroHandoff`; the remaining conditionals only
+select the active scene, own resources or place layers. No extra local cue
+controller was found in either DCK version.
 
 For any migration, compare deterministic complete-frame captures before and
 after at startup, state changes, text/texture wrap and late playback. Keep the
