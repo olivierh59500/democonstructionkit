@@ -428,6 +428,12 @@ while the flat CRT intentionally prevents clipping the font's outer rows.
 Further review is needed at Coco's CRT output and the two Multiscreen
 transition checkpoints. Small differences remain visible in the
 reports rather than being hidden by a tolerance.
+At Multiscreen ticks 600 and 1,200, separate 800×600 captures of its original
+and DCK TCB panel are byte-identical. `motion.CameraTour` also matches the
+preserved camera state exactly through 12,000 ticks. The remaining 182 and 146
+full-frame differences are confined to thin letter-edge columns after the
+retained transition compositor samples that panel; they do not indicate a
+different TCB animation or camera trajectory.
 
 ## Extraction order and acceptance
 
