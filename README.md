@@ -738,6 +738,12 @@ caller-owned. Resources used by custom mode painters also remain with their owne
 The full [composer example](examples/composer/main.go) demonstrates these choices.
 The original demo applications contain the production-specific schedules and data.
 Shared code handles rendering; artistic parameters are not replaced with defaults.
+When a `geometry.PointSequence` already owns changing model coordinates, expose
+`Len`, `XYZ` and `ImageIndex` on its shape and pass it directly to
+`Projector.DrawIndexed(canvas, shape, images, projection)`. This keeps the
+shape's artwork indices while removing a per-frame `[]sprites.Point` copy.
+The same projection options and depth order apply to `Draw` and `DrawIndexed`;
+steady indexed draws allocate nothing.
 
 For a sprite phrase, put the glyph images in text order and use `FrameStride: 1`.
 `Origin` and `Spacing` define the resting row. Each cue can choose which item

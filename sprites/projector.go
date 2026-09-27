@@ -8,12 +8,20 @@ import (
 	"slices"
 
 	"github.com/hajimehoshi/ebiten/v2"
+	"github.com/olivierh59500/democonstructionkit/geometry"
 	"github.com/olivierh59500/democonstructionkit/render"
 )
 
 type Point struct {
 	X, Y, Z float64
 	Image   int
+}
+
+// IndexedPointReader lets a mutable geometry.PointSequence render directly
+// without copying its coordinates and sprite indices into a second point bank.
+type IndexedPointReader interface {
+	geometry.PointReader
+	ImageIndex(index int) int
 }
 
 // Projection keeps every camera/sign/depth convention explicit. Matrix includes
@@ -46,32 +54,60 @@ func (p *Projector) Draw(dst *ebiten.Image, points []Point, images []*ebiten.Ima
 	if c.Focal <= 0 {
 		return
 	}
-	m := c.Matrix
-	if m == ([9]float64{}) {
-		m = [9]float64{1, 0, 0, 0, 1, 0, 0, 0, 1}
+	m := p.prepare(len(points), c.Matrix)
+	for _, v := range points {
+		p.project(v, m, c)
 	}
-	if cap(p.points) < len(points) {
-		p.points = make([]projected, 0, len(points))
+	p.drawProjected(dst, images, c)
+}
+
+// DrawIndexed projects authored point collections directly. A point sequence
+// may mutate XYZ while keeping its original image indices, and several
+// projectors can draw the same borrowed collection with different cameras.
+func (p *Projector) DrawIndexed(dst *ebiten.Image, points IndexedPointReader, images []*ebiten.Image, c Projection) {
+	if points == nil || c.Focal <= 0 {
+		return
+	}
+	count := points.Len()
+	m := p.prepare(count, c.Matrix)
+	for index := 0; index < count; index++ {
+		point := points.XYZ(index)
+		p.project(Point{X: point.X, Y: point.Y, Z: point.Z, Image: points.ImageIndex(index)}, m, c)
+	}
+	p.drawProjected(dst, images, c)
+}
+
+func (p *Projector) prepare(count int, matrix [9]float64) [9]float64 {
+	if matrix == ([9]float64{}) {
+		matrix = [9]float64{1, 0, 0, 0, 1, 0, 0, 0, 1}
+	}
+	if cap(p.points) < count {
+		p.points = make([]projected, 0, count)
 	} else {
 		p.points = p.points[:0]
 	}
-	for _, v := range points {
-		x := v.X*m[0] + v.Y*m[1] + v.Z*m[2]
-		y := v.X*m[3] + v.Y*m[4] + v.Z*m[5]
-		z := v.X*m[6] + v.Y*m[7] + v.Z*m[8]
-		if c.CullPositiveModelZ && z > 0 {
-			continue
-		}
-		x += c.Translate.X
-		y += c.Translate.Y
-		z += c.Translate.Z
-		scale := c.Focal / (c.Focal + z)
-		screenY := c.CenterY + y*scale
-		if c.YUp {
-			screenY = c.CenterY - y*scale
-		}
-		p.points = append(p.points, projected{x: c.CenterX + x*scale, y: screenY, depth: z, scale: scale, image: v.Image})
+	return matrix
+}
+
+func (p *Projector) project(v Point, m [9]float64, c Projection) {
+	x := v.X*m[0] + v.Y*m[1] + v.Z*m[2]
+	y := v.X*m[3] + v.Y*m[4] + v.Z*m[5]
+	z := v.X*m[6] + v.Y*m[7] + v.Z*m[8]
+	if c.CullPositiveModelZ && z > 0 {
+		return
 	}
+	x += c.Translate.X
+	y += c.Translate.Y
+	z += c.Translate.Z
+	scale := c.Focal / (c.Focal + z)
+	screenY := c.CenterY + y*scale
+	if c.YUp {
+		screenY = c.CenterY - y*scale
+	}
+	p.points = append(p.points, projected{x: c.CenterX + x*scale, y: screenY, depth: z, scale: scale, image: v.Image})
+}
+
+func (p *Projector) drawProjected(dst *ebiten.Image, images []*ebiten.Image, c Projection) {
 	slices.SortFunc(p.points, func(a, b projected) int {
 		order := cmp.Compare(a.depth, b.depth)
 		if !c.AscendingDepth {
