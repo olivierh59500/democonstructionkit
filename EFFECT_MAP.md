@@ -155,7 +155,10 @@ data.
   25-second loop. Sixteen aligned Atari-video/DCK capture pairs cover the
   opening stacks, wave section, fast two-way arcs and loop join. The point
   data is authored from five-frame-per-second observations, so overlapped
-  letters remain approximate rather than claimed pixel-identical.
+  letters remain approximate rather than claimed pixel-identical. Its updated
+  Pixel 10a APK yielded 1,986 distinct presentation intervals across 33.15
+  seconds of frame history: p95 16.734 ms, maximum 17.091 ms, none above
+  20 ms and thermal status 0.
 - DCK's pure `motion`, `geometry`, `timeline`, `timeline/recipes`, `palette` and
   `modulation` test suites pass. Eleven opt-in GPU comparators ran successfully
   against DCK code `f9ebe64`: water reflection, staged materials, copper titles,
