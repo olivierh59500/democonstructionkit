@@ -4320,6 +4320,7 @@ config.Projected.PixelsPerUpdate = 4
 config.Projected.Draw = scrolling.PlaneDraw{ScaleX: 2, ScaleY: 2}
 scroll, err := scrolling.New(config)
 if err != nil { return err }
+if err := scroll.Update(frame); err != nil { return err }
 poses := scroll.ProjectedController().Points() // Borrowed, depth-sorted glyph poses.
 ```
 
