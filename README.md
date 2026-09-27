@@ -2487,6 +2487,10 @@ go run ./examples/authoring -frames 600 -capture /tmp/dck-project.png
 go run ./examples/authoring -project examples/authoring/formation.json \
   -frames 120 -capture /tmp/dck-formation.png
 
+# Render four independent sprite paths with a backdrop and two text layers.
+go run ./examples/authoring -project examples/authoring/individual-paths.json \
+  -frames 90 -capture /tmp/dck-individual-paths.png
+
 # Use the shared desktop/mobile laboratory host for profiling this composition.
 go run ./examples/effectslab -authoring -frames 900 -profile /tmp/dck-authoring.json
 ```

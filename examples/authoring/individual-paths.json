@@ -1,0 +1,65 @@
+{
+  "version": 1,
+  "units": {"distance": "pixels", "time": "seconds", "angle": "radians"},
+  "canvas": {"width": 640, "height": 360, "tps": 60, "background": [5, 8, 20, 255]},
+  "assets": {"checker": "image", "orb-cyan": "image", "orb-pink": "image", "small": "font"},
+  "layers": [
+    {
+      "id": "wallpaper", "kind": "background",
+      "background": {
+        "image": "checker", "period": {"x": 32, "y": 32},
+        "scale": {"x": 2, "y": 2}, "velocity": {"x": -10, "y": 5}
+      }
+    },
+    {
+      "id": "independent-orbs", "kind": "sprites",
+      "sprites": {
+        "images": ["orb-cyan", "orb-pink"], "count": 4,
+        "frameStride": 1, "speed": 1, "scale": {"x": 2, "y": 2},
+        "anchor": {"x": 0.5, "y": 0.5},
+        "sampledFormation": {
+          "loop": 4,
+          "frames": [
+            {"time": 0, "points": [
+              {"x": 100, "y": 220}, {"x": 220, "y": 180},
+              {"x": 420, "y": 180}, {"x": 540, "y": 220}
+            ]},
+            {"time": 1, "points": [
+              {"x": 220, "y": 100}, {"x": 420, "y": 260},
+              {"x": 220, "y": 260}, {"x": 420, "y": 100}
+            ]},
+            {"time": 2, "points": [
+              {"x": 540, "y": 220}, {"x": 420, "y": 180},
+              {"x": 220, "y": 180}, {"x": 100, "y": 220}
+            ]},
+            {"time": 3, "points": [
+              {"x": 420, "y": 260}, {"x": 220, "y": 100},
+              {"x": 420, "y": 100}, {"x": 220, "y": 260}
+            ]},
+            {"time": 4, "points": [
+              {"x": 100, "y": 220}, {"x": 220, "y": 180},
+              {"x": 420, "y": 180}, {"x": 540, "y": 220}
+            ]}
+          ]
+        }
+      }
+    },
+    {
+      "id": "heading", "kind": "scroll",
+      "scroll": {
+        "text": "FOUR INDEPENDENT SPRITE PATHS",
+        "fonts": {"main": "small"}, "font": "main",
+        "origin": {"x": 80, "y": 40}, "speed": 0
+      }
+    },
+    {
+      "id": "message", "kind": "scroll",
+      "scroll": {
+        "text": "ONE JSON PROJECT: FOUR PATHS, MOVING BACKGROUND AND A REPEATING SCROLLER.   ",
+        "fonts": {"main": "small"}, "font": "main",
+        "origin": {"x": 640, "y": 305}, "speed": 96,
+        "gap": 100, "repeat": true
+      }
+    }
+  ]
+}

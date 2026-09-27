@@ -154,7 +154,9 @@ data.
 - The saved `authoring` formation compiles through the normal sprite group;
   tests compare its poses at four times, reject invalid cues and loops, and
   cover independent property clocks. The standalone JSON example rendered at
-  frame 120 with a moving backdrop, text layers and a bent sprite phrase.
+  frame 120 with a moving backdrop, text layers and a bent sprite phrase. A
+  second saved project rendered four independent keyframed sprites with the
+  same layered host at frame 90, without scene-specific Go callbacks.
 - Union Replicants now uses 126 ordered, per-letter position banks over a
   25-second loop. Sixteen aligned Atari-video/DCK capture pairs cover the
   opening stacks, wave section, fast two-way arcs and loop join. The point
