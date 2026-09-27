@@ -336,8 +336,20 @@ PSS / graphics memory of 249,775 / 121,068 KiB for Cuddly's intro,
 Multiscreen. These snapshots are not peak-memory measurements. Android reported
 thermal status 0 after the sampled runs.
 The Vectorballs authored sequence additionally used 198,956 KiB process PSS
-and 101,156 KiB graphics memory in one snapshot. Cube, pyramid, plane and
-flag variants have desktop GPU captures but have not yet been selected on Pixel.
+and 101,156 KiB graphics memory in one snapshot. Its optional object previews
+were also inspected on Pixel 10a after their exact desktop GPU comparisons:
+
+| Vectorballs Pixel preview | Distinct intervals | p95 | Maximum | Above 20 ms |
+| --- | ---: | ---: | ---: | ---: |
+| Cube, edges, six segments | 822 | 16.736 ms | 16.866 ms | 0 |
+| Pyramid, surface, six segments | 808 | 16.730 ms | 16.912 ms | 0 |
+| Plane, six segments | 806 | 16.745 ms | 16.938 ms | 0 |
+| Flag, twelve segments | 790 | 16.733 ms | 16.904 ms | 0 |
+
+These are approximately 13-second presentation samples, not long-run memory
+or battery measurements. Thermal status was 0 after the four previews. Both
+six- and twelve-segment flags were inspected; six leaves individual balls more
+legible while twelve reads as a denser waving surface.
 After the CRT migration, a separate 744-interval MegaTwist run reported p95
 16.764 ms, maximum 16.933 ms and zero intervals above 20 ms. Cuddly's menu
 run used its default CRT-off setting; the optional pass has desktop GPU
