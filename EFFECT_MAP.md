@@ -411,6 +411,13 @@ preserved and shared CRT shaders produce identical pixels when fed one texture.
 An unmanaged DCK intro surface reduces the remaining full-frame error by about
 threefold, suggesting texture preparation or sampling contributes; exact output
 parity remains open.
+The reusable CRT now has an opt-in normalized source-coordinate policy. Its
+native GPU check produces exactly the same pixels from managed and unmanaged
+textures for transparent, partly transparent and opaque materials. Coco keeps
+the historical policy by default: the normalized variant increases the
+original-versus-port intro difference to 18,107 pixels before glyphs and
+35,538 pixels at tick 240, whereas the current historical default differs at
+6,269 and 11,396 pixels respectively.
 TeamG1's raw intro source also matches at ticks 0, 1, 60, 240 and 600. Its
 authored 640-pixel insertion edge fixes the previously delayed scene handoff,
 while the flat CRT intentionally prevents clipping the font's outer rows.

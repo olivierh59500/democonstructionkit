@@ -13,6 +13,10 @@ import (
 type CRTOverlayConfig struct {
 	Curvature, ScanlineFrequency, ScanlineAmplitude float32
 	ChromaticShift, Vignette                        float32
+	// NormalizeSource makes sampling independent of the source's texture-atlas
+	// placement and clamps the output to valid premultiplied alpha. The default
+	// retains the original shader's coordinates for existing productions.
+	NormalizeSource bool
 	// Blend selects how the processed image covers the destination. The zero
 	// value uses regular alpha blending; BlendCopy replaces the full pass.
 	Blend ebiten.Blend
@@ -31,7 +35,11 @@ func NewCRTOverlay(c CRTOverlayConfig) (*CRTOverlay, error) {
 			return nil, fmt.Errorf("effects: nonfinite CRT overlay parameter")
 		}
 	}
-	shader, err := ebiten.NewShader([]byte(crtOverlayShader))
+	source := crtOverlayShader
+	if c.NormalizeSource {
+		source = crtOverlayNormalizedShader
+	}
+	shader, err := ebiten.NewShader([]byte(source))
 	if err != nil {
 		return nil, fmt.Errorf("effects: compile CRT overlay: %w", err)
 	}
@@ -100,5 +108,38 @@ func Fragment(position vec4, texCoord vec2, color vec4) vec4 {
 	vignette = 1.0 - dot(dc, dc) * Vignette
 	col.rgb = col.rgb * vignette
 	return col * color
+}
+`
+
+const crtOverlayNormalizedShader = `//kage:unit pixels
+package main
+
+var Curvature float
+var ScanlineFrequency float
+var ScanlineAmplitude float
+var ChromaticShift float
+var Vignette float
+
+func Fragment(position vec4, texCoord vec2, color vec4) vec4 {
+	origin := imageSrc0Origin()
+	size := imageSrc0Size()
+	uv := (texCoord - origin) / size
+	dc := uv - 0.5
+	dc *= 1.0 + dot(dc, dc)*Curvature
+	uv = dc + 0.5
+	if uv.x < 0.0 || uv.x > 1.0 || uv.y < 0.0 || uv.y > 1.0 {
+		return vec4(0.0, 0.0, 0.0, 1.0)
+	}
+	col := imageSrc0At(origin + uv*size)
+	scanline := sin(uv.y*ScanlineFrequency) * ScanlineAmplitude
+	col.rgb -= scanline
+	rShift := imageSrc0At(origin + (uv+vec2(ChromaticShift, 0.0))*size).r
+	bShift := imageSrc0At(origin + (uv-vec2(ChromaticShift, 0.0))*size).b
+	col.r = rShift
+	col.b = bShift
+	col.rgb *= 1.0 - dot(dc, dc)*Vignette
+	col *= color
+	col.rgb = min(max(col.rgb, vec3(0.0)), vec3(col.a))
+	return col
 }
 `

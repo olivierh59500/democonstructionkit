@@ -3429,10 +3429,18 @@ intro. For example:
 ```go
 config := presets.ClassicCRTOverlay()
 config.Blend = ebiten.BlendCopy
+config.NormalizeSource = true // Stable sampling across managed/unmanaged images.
 crt, err := effects.NewCRTOverlay(config)
 if err != nil { return err }
 crt.DrawAt(destination, source, 0, 0)
 ```
+
+`NormalizeSource` maps the shader's coordinates to the source image region and
+clamps colors to premultiplied alpha. Use it for new compositions that may
+switch between managed and unmanaged GPU surfaces. Its default is false so
+existing demos retain their historical atlas-dependent CRT pixels. A native
+GPU check compares transparent, partly transparent and opaque sources in both
+storage classes and gets identical output in the normalized mode.
 
 The same shader and classic recipe now serve DMA, Coco, Cuddly and MegaTwist.
 Six complete GPU captures of the newly migrated scenes differ from their
