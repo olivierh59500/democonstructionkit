@@ -292,6 +292,13 @@ data.
   inside a stable screen. Thermal status stayed 0; three later process PSS
   snapshots ranged from 450,355 to 458,699 KiB. These are not peak-memory
   or battery measurements.
+- Union's longer Pixel tour stayed one minute on each of its eleven screens,
+  completed one hall cycle and entered a second. Its 500 PixelProbe windows
+  spanned 1,108.04 seconds, retaining 31,000 distinct intervals and 517.61
+  seconds of frame history. The p95 was 16.735 ms; six intervals exceeded
+  20 ms, with a 133.623 ms maximum. Forty memory snapshots reached at most
+  419,572 KiB process PSS and 190,832 KiB graphics memory. Thermal status
+  stayed 0; these maxima are sampled, not absolute peaks.
 - Cuddly's opt-in Pixel tour visited its introduction, thirteen doors, Reset
   and the final menu before ending normally. With `-allow-end`, PixelProbe
   retained 127 of 170 requested windows: 7,874 unique intervals covering
@@ -308,10 +315,9 @@ data.
   near loader/menu handoffs. Twenty-one memory snapshots over its last ten
   minutes reached at most 595,053 KiB process PSS and 317,992 KiB graphics
   memory; thermal status stayed 0. These are sampled maxima, not peaks.
-- A comparable one-minute Union tour, unmeasured optional combinations,
-  varying device refresh rates, true memory peaks and battery consumption
-  still need checks. Sparse presentation windows do not prove every cue
-  boundary stays at 60 FPS.
+- Unmeasured optional combinations, varying device refresh rates, true memory
+  peaks and battery consumption still need checks. Sparse presentation
+  windows do not prove every cue boundary stays at 60 FPS.
 
 | Pixel 10a DCK scene | Distinct intervals | p95 present interval | Maximum | Above 20 ms |
 | --- | ---: | ---: | ---: | ---: |
@@ -480,10 +486,10 @@ different TCB animation or camera trajectory.
 4. Continue measuring combined scene classes on Pixel. The ledger now samples
    scanline/warp, projected field, masks and multi-layer compositions, with
    Cuddly CPU timings, twenty-two baseline presentation traces across twenty
-   catalog scenes and two optional sphere variants, a one-minute-per-screen
-   Cuddly tour and focused cube/pyramid/plane/flag runs. A similarly long Union
-   tour, unmeasured optional combinations, varying refresh rates, true memory
-   peaks and battery consumption still need device evidence.
+   catalog scenes and two optional sphere variants, one-minute-per-screen
+   Cuddly and Union tours, and focused cube/pyramid/plane/flag runs. Unmeasured
+   optional combinations, varying refresh rates, true memory peaks and battery
+   consumption still need device evidence.
 
 The 2026-09-27 host-source pass found no further active screen-local sine/cosine,
 triangle/shader submission or pixel recoloring loop in the audited DCK versions
