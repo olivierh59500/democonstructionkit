@@ -274,9 +274,18 @@ data.
   inside a stable screen. Thermal status stayed 0; three later process PSS
   snapshots ranged from 450,355 to 458,699 KiB. These are not peak-memory
   or battery measurements.
-- The remaining catalog screens, longer playback, varying device refresh rates
-  and battery consumption still need device checks. The sampled windows do not
-  prove that every cue boundary or full megademo tour stays at 60 FPS.
+- Cuddly's opt-in Pixel tour visited its introduction, thirteen doors, Reset
+  and the final menu before ending normally. With `-allow-end`, PixelProbe
+  retained 127 of 170 requested windows: 7,874 unique intervals covering
+  about 132 seconds across 282 elapsed seconds. The p95 interval was 16.736 ms;
+  four exceeded 20 ms, with a 200.307 ms maximum. Their presentation times
+  preceded loader handoffs into Ehhh, Mega Scroller, Starwars and Megaball by
+  24–68 ms. No sampled slow interval occurred inside an already running
+  screen. Thermal status remained 0. The highest mean CPU Update and Draw
+  submission times among 71 logged windows were 4.474 and 3.044 ms.
+- One-minute-per-screen playback, optional effect variants, varying device
+  refresh rates, memory peaks and battery consumption still need checks. The
+  sparse sampled windows do not prove every cue boundary stays at 60 FPS.
 
 | Pixel 10a DCK scene | Distinct intervals | p95 present interval | Maximum | Above 20 ms |
 | --- | ---: | ---: | ---: | ---: |
