@@ -44,7 +44,8 @@ func TestParseLatencyAndSummarizeUniqueIntervals(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if r.UniqueIntervals != 3 || r.OverSlowThreshold != 1 || r.P95MS < 33 || r.IntervalCoverageSeconds < .06 {
+	if r.UniqueIntervals != 3 || r.OverSlowThreshold != 1 || r.P95MS < 33 || r.IntervalCoverageSeconds < .06 ||
+		len(r.SlowIntervals) != 1 || r.SlowIntervals[0].PresentNS != 166666668 || r.SlowIntervals[0].DurationMS < 33 {
 		t.Fatalf("unexpected frame summary: %+v", r)
 	}
 	if _, _, err := parseLatency("invalid\n1 2 3\n"); err == nil {

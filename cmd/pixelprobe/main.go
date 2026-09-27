@@ -18,22 +18,29 @@ import (
 
 type interval [2]int64
 
+type slowInterval struct {
+	PresentNS  int64   `json:"present_ns"`
+	DurationMS float64 `json:"duration_ms"`
+	AtUTC      string  `json:"at_utc,omitempty"`
+}
+
 type report struct {
-	Package                 string  `json:"package"`
-	Serial                  string  `json:"serial,omitempty"`
-	Layer                   string  `json:"layer"`
-	RefreshHz               float64 `json:"refresh_hz"`
-	Samples                 int     `json:"samples"`
-	UniqueIntervals         int     `json:"unique_intervals"`
-	IntervalCoverageSeconds float64 `json:"interval_coverage_seconds"`
-	ElapsedSeconds          float64 `json:"elapsed_seconds"`
-	MeanMS                  float64 `json:"mean_ms"`
-	P50MS                   float64 `json:"p50_ms"`
-	P95MS                   float64 `json:"p95_ms"`
-	P99MS                   float64 `json:"p99_ms"`
-	MaxMS                   float64 `json:"max_ms"`
-	SlowThresholdMS         float64 `json:"slow_threshold_ms"`
-	OverSlowThreshold       int     `json:"over_slow_threshold"`
+	Package                 string         `json:"package"`
+	Serial                  string         `json:"serial,omitempty"`
+	Layer                   string         `json:"layer"`
+	RefreshHz               float64        `json:"refresh_hz"`
+	Samples                 int            `json:"samples"`
+	UniqueIntervals         int            `json:"unique_intervals"`
+	IntervalCoverageSeconds float64        `json:"interval_coverage_seconds"`
+	ElapsedSeconds          float64        `json:"elapsed_seconds"`
+	MeanMS                  float64        `json:"mean_ms"`
+	P50MS                   float64        `json:"p50_ms"`
+	P95MS                   float64        `json:"p95_ms"`
+	P99MS                   float64        `json:"p99_ms"`
+	MaxMS                   float64        `json:"max_ms"`
+	SlowThresholdMS         float64        `json:"slow_threshold_ms"`
+	OverSlowThreshold       int            `json:"over_slow_threshold"`
+	SlowIntervals           []slowInterval `json:"slow_intervals,omitempty"`
 }
 
 func selectLayer(output, pkg string) (string, error) {
@@ -111,13 +118,18 @@ func summarize(pkg, serial, layer string, period int64, unique map[interval]stru
 		return report{}, errors.New("no valid frame samples")
 	}
 	gaps := make([]float64, 0, len(unique))
+	slow := make([]slowInterval, 0)
 	var total float64
 	for pair := range unique {
 		gap := float64(pair[1]-pair[0]) / 1e6
 		gaps = append(gaps, gap)
 		total += gap
+		if gap > slowMS {
+			slow = append(slow, slowInterval{PresentNS: pair[1], DurationMS: gap})
+		}
 	}
 	sort.Float64s(gaps)
+	sort.Slice(slow, func(i, j int) bool { return slow[i].PresentNS < slow[j].PresentNS })
 	percentile := func(q float64) float64 {
 		return gaps[max(0, int(math.Ceil(q*float64(len(gaps))))-1)]
 	}
@@ -128,12 +140,7 @@ func summarize(pkg, serial, layer string, period int64, unique map[interval]stru
 		IntervalCoverageSeconds: total / 1000, ElapsedSeconds: elapsed.Seconds(),
 		MeanMS: total / float64(len(gaps)), P50MS: percentile(.5),
 		P95MS: percentile(.95), P99MS: percentile(.99), MaxMS: gaps[len(gaps)-1],
-		SlowThresholdMS: slowMS,
-	}
-	for _, gap := range gaps {
-		if gap > slowMS {
-			r.OverSlowThreshold++
-		}
+		SlowThresholdMS: slowMS, OverSlowThreshold: len(slow), SlowIntervals: slow,
 	}
 	return r, nil
 }
@@ -172,9 +179,11 @@ func measure(ctx context.Context, adb, serial, pkg, layer string, samples int, i
 	}
 	started := time.Now()
 	unique := make(map[interval]struct{}, samples*64)
+	wallOffsets := make([]int64, 0, samples)
 	var period int64
 	for sample := 0; sample < samples; sample++ {
 		output, err := adbCommand(ctx, adb, serial, "shell", "dumpsys SurfaceFlinger --latency "+shellQuote(layer))
+		sampledAt := time.Now()
 		if err != nil {
 			return report{}, err
 		}
@@ -194,6 +203,8 @@ func measure(ctx context.Context, adb, serial, pkg, layer string, samples int, i
 			return report{}, fmt.Errorf("display refresh period changed during measurement")
 		}
 		period = currentPeriod
+		lastPresent := intervals[len(intervals)-1][1]
+		wallOffsets = append(wallOffsets, sampledAt.UnixNano()-lastPresent)
 		for _, pair := range intervals {
 			unique[pair] = struct{}{}
 		}
@@ -205,7 +216,17 @@ func measure(ctx context.Context, adb, serial, pkg, layer string, samples int, i
 			}
 		}
 	}
-	return summarize(pkg, serial, layer, period, unique, samples, time.Since(started), slowMS)
+	r, err := summarize(pkg, serial, layer, period, unique, samples, time.Since(started), slowMS)
+	if err != nil {
+		return report{}, err
+	}
+	sort.Slice(wallOffsets, func(i, j int) bool { return wallOffsets[i] < wallOffsets[j] })
+	wallOffset := wallOffsets[len(wallOffsets)/2]
+	for index := range r.SlowIntervals {
+		at := time.Unix(0, r.SlowIntervals[index].PresentNS+wallOffset).UTC()
+		r.SlowIntervals[index].AtUTC = at.Format(time.RFC3339Nano)
+	}
+	return r, nil
 }
 
 func main() {
