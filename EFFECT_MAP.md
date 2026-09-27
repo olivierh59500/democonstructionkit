@@ -473,6 +473,15 @@ The follow-up check of DMA Is Back and TeamG1 confirms that their intro/music
 handoffs already use `timeline.IntroHandoff`; the remaining conditionals only
 select the active scene, own resources or place layers. No extra local cue
 controller was found in either DCK version.
+A separate AST inventory found 69 non-test loops in the audited DCK sources
+and Union screens (excluding command/mobile hosts, FR-010 and Second Reality).
+The live loops inspected in Cuddly's hall integrate its collision-aware menu
+character, Grodan's loops preserve authored layer order, and Union Delta
+dispatches events produced by DCK's shared word-motion controller. Other loops
+load or prepare artwork, resolve input, or close borrowed resources; none is
+another local pixel, sprite-trajectory or shader engine. This narrows the
+remaining work to fidelity and runtime evidence rather than a known missing
+effect family.
 
 For any migration, compare deterministic complete-frame captures before and
 after at startup, state changes, text/texture wrap and late playback. Keep the
