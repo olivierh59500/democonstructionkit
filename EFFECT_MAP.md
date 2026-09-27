@@ -262,6 +262,18 @@ data.
   above 20 ms. Screenshots confirmed the effects, and thermal status remained
   0 during the earlier eight-scene run. The newer eleven scenes and both sphere
   variants and Union Delta Force were each inspected at a visible stage frame.
+- Two Union Pixel tour runs each visited the full introduction, all eleven
+  doors and loading/menu returns, then began another cycle at six seconds per
+  screen. Their sparse 105-sample traces each spanned about 232 seconds and
+  retained 6,510 distinct
+  intervals (about 109 seconds of actual-present history). Their p95 values
+  were 16.731 and 16.738 ms; six and four intervals exceeded 20 ms. The first
+  maximum was 267.077 ms. The second, timestamped run peaked at 133.552 ms,
+  and all four slow intervals aligned within about 60 ms of loader-to-screen
+  handoffs into Wow, Hidden or Disk Copier. No sampled slow interval landed
+  inside a stable screen. Thermal status stayed 0; three later process PSS
+  snapshots ranged from 450,355 to 458,699 KiB. These are not peak-memory
+  or battery measurements.
 - The remaining catalog screens, longer playback, varying device refresh rates
   and battery consumption still need device checks. The sampled windows do not
   prove that every cue boundary or full megademo tour stays at 60 FPS.
