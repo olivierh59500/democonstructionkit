@@ -181,6 +181,11 @@ data.
   zero differing RGBA pixels at frames 0, 1, 99, 100, 101, 240, 600, 1,200
   and 2,400. A separate 5,000-tick controller test includes live speed changes
   and allocation-free sampling.
+- Standalone TCB Multi-Plane now has a direct complete-frame comparison with
+  its preserved Go original, not only the preceding DCK renderer. Twenty-one
+  PNG captures from frames 0 through 9,600 are byte-identical, including the
+  two logo wave-section joins, its strict phase reset, mountain wrap and later
+  scrolling forms. This does not establish parity with Atari ST hardware.
 - Vectorballs' four alternate object families now use one complete
   `sprites.ProjectedObject` instead of a screen-local point/flag/rotation loop.
   Thirty-six complete before/after GPU captures, including shape-switch ticks
