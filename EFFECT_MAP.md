@@ -585,6 +585,48 @@ memory peaks or battery use.
 
 ## Saved composition and progressive path edges
 
+## DNA composition through the common facade (2026-09-28)
+
+`CuedSlices` combines `SliceProgram`, configurable pause/rotation cues and
+borrowed rotating-glyph artwork through `scrolling.New`. Phenomena and its
+Multiscreen panel now use it for Update and Draw. Their explicit 320-tick
+pre-roll uses the borrowed controller; late film binding retains every cursor
+and cue state. Binding rejects a film whose frame count differs from the clock,
+and premature drawing reports an unbound-artwork error. Both old direct APIs
+remain available. Pure tests cover 5,000 updates, independent control clocks,
+odd glyph widths and zero steady-update allocations.
+
+Cuddly DNA's opposing colored faces and Spreadpoint's delayed lane now select
+`Output.Feedback` on the same facade. Their message, font and profile remain
+scene data; DCK presets configure the insertion, direction, gradient, position
+and authored phase. Source surfaces stay 320×25 and replace the preceding
+scene-owned surfaces. Phase callbacks are cached at setup and Update; Draw
+cannot advance history or reevaluate a live callback.
+
+The [DNA facade record](fidelity/dna-facade-20260928.json) contains 42 exact,
+unmasked complete-frame comparisons: Phenomena `03abf51` → `aa20b19`,
+Multiscreen `0cdca5a` → `23928fd`, and Cuddly DNA/Spreadpoint `aa94f97` →
+`f811259`/`4756742`. Cuddly DNA retains its earlier texture upload order,
+removing a former forty-pixel, one-channel-level filtering difference at tick
+1,200. Separate source-formula comparators verify eleven DNA images per
+Phenomena variant through tick 48,000. The common GPU suite compares delayed
+artwork binding, repeated draws and both feedback directions pixel for pixel.
+DCK and the three production test/vet suites pass.
+
+Phenomena, Multiscreen and both Cuddly Android variants were rebuilt and
+installed on Pixel 10a. Four active-scene samples contain 744 distinct present
+intervals each, with no interval above 20 ms:
+
+| DNA scene | p95 | Maximum |
+| --- | ---: | ---: |
+| Cuddly DNA | 16.723 ms | 16.852 ms |
+| Spreadpoint | 16.746 ms | 16.864 ms |
+| Phenomena | 16.760 ms | 16.972 ms |
+| Multiscreen's Phenomena panel | 16.759 ms | 17.488 ms |
+
+The main scenes were visually inspected. The short presentation samples and
+process-memory snapshots do not measure true memory peaks or battery use.
+
 The authoring schema now stores ordered image passes on a single layer or on
 the complete scene. CRT, water reflection and magnifier configurations compile
 directly to the existing DCK components and `kit.Pipeline`. Pass windows can

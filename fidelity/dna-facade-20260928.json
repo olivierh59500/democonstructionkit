@@ -1,0 +1,467 @@
+{
+  "Date": "2026-09-28",
+  "ToolkitRevision": "f66e493b5ef3b7f9d3165a5870b67b34d04cef59",
+  "Scope": "Complete native before/after captures of controlled and feedback DNA facade integrations; both archived revisions use the same local DCK checkout. No pixel masks or tolerance.",
+  "ComparedFrames": 42,
+  "DifferentPixels": 0,
+  "Cases": [
+    {
+      "Demo": "phenomena-dna-scroll-intro",
+      "Reference": "03abf511846a5068e70a2d9da8f862e58e7ee063",
+      "Candidate": "aa20b1937fbe83098d542142306614b44f1c111e",
+      "Scope": "complete production frames; device audio disabled; deterministic clock; both snapshots use the local DCK checkout",
+      "Frames": [
+        {
+          "Frame": 0,
+          "Pixels": 307200,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 1,
+          "Pixels": 307200,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 60,
+          "Pixels": 307200,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 240,
+          "Pixels": 307200,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 600,
+          "Pixels": 307200,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 1200,
+          "Pixels": 307200,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 2400,
+          "Pixels": 307200,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 4800,
+          "Pixels": 307200,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 9600,
+          "Pixels": 307200,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        }
+      ]
+    },
+    {
+      "Demo": "go-multiscreen",
+      "Reference": "0cdca5abb0d877762df022fb46dc9ee00cc8028e",
+      "Candidate": "23928fddd5550076d5724bfaf4f71b7b89ab7ce2",
+      "Scope": "complete production frames; device audio disabled; deterministic clock; both snapshots use the local DCK checkout",
+      "Frames": [
+        {
+          "Frame": 0,
+          "Pixels": 480000,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 1,
+          "Pixels": 480000,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 60,
+          "Pixels": 480000,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 240,
+          "Pixels": 480000,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 600,
+          "Pixels": 480000,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 1200,
+          "Pixels": 480000,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 2400,
+          "Pixels": 480000,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 4800,
+          "Pixels": 480000,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 9600,
+          "Pixels": 480000,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        }
+      ]
+    },
+    {
+      "Demo": "go-cuddlymenu",
+      "Reference": "aa94f978a77ad987f4afe342c95028e1232b9543",
+      "Candidate": "4756742fc12fff6dfca72592198fe5893e4de80b",
+      "Screen": "spreadpoint",
+      "Scenario": "idle",
+      "Scope": "complete production frames; device audio disabled; deterministic clock; both snapshots use the local DCK checkout; native collection screen at 60 Hz",
+      "Frames": [
+        {
+          "Frame": 0,
+          "Pixels": 459264,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 1,
+          "Pixels": 459264,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 60,
+          "Pixels": 459264,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 240,
+          "Pixels": 459264,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 600,
+          "Pixels": 459264,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 723,
+          "Pixels": 459264,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 724,
+          "Pixels": 459264,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 725,
+          "Pixels": 459264,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 1200,
+          "Pixels": 459264,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 1528,
+          "Pixels": 459264,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 2008,
+          "Pixels": 459264,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 2400,
+          "Pixels": 459264,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 2676,
+          "Pixels": 459264,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 4800,
+          "Pixels": 459264,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 9600,
+          "Pixels": 459264,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        }
+      ]
+    },
+    {
+      "Demo": "go-cuddlymenu",
+      "Reference": "aa94f978a77ad987f4afe342c95028e1232b9543",
+      "Candidate": "f811259868fc87eb16d2783ae1cf16e734e7ed13",
+      "Screen": "dna",
+      "Scenario": "idle",
+      "Scope": "complete production frames; device audio disabled; deterministic clock; both snapshots use the local DCK checkout; native collection screen at 60 Hz",
+      "Frames": [
+        {
+          "Frame": 0,
+          "Pixels": 459264,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 1,
+          "Pixels": 459264,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 60,
+          "Pixels": 459264,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 240,
+          "Pixels": 459264,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 600,
+          "Pixels": 459264,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 1200,
+          "Pixels": 459264,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 2400,
+          "Pixels": 459264,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 4800,
+          "Pixels": 459264,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 9600,
+          "Pixels": 459264,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        }
+      ]
+    }
+  ],
+  "IsolatedSourceChecks": {
+    "Phenomena": {
+      "Tag": "dck_slice_rendercheck",
+      "Checkpoints": [
+        0,
+        1,
+        256,
+        1024,
+        2048,
+        4096,
+        8192,
+        16384,
+        24000,
+        32000,
+        48000
+      ],
+      "Exact": true
+    },
+    "MultiscreenPhenomena": {
+      "Tag": "dck_slice_rendercheck",
+      "Checkpoints": [
+        0,
+        1,
+        256,
+        1024,
+        2048,
+        4096,
+        8192,
+        16384,
+        24000,
+        32000,
+        48000
+      ],
+      "Exact": true
+    }
+  },
+  "Notes": [
+    "CuedSlices borrows late-bound font artwork; binding preserves program pre-roll and the pause/rotation clocks.",
+    "Output.Feedback caches phase callbacks at initialization and Update, preserving repeated Draw without live-clock evaluation.",
+    "Cuddly DNA keeps the earlier texture upload order; the initial reordered variant had 40 pixels differing by one channel level at tick 1200."
+  ],
+  "PixelCuddly": [
+    {
+      "screen": "dna",
+      "warmup": 1200,
+      "uniqueIntervals": 744,
+      "p95Ms": 16.72343,
+      "maxMs": 16.851684,
+      "above20Ms": 0,
+      "thermalStatus": 0,
+      "pssKiB": 242731,
+      "graphicsKiB": 123692
+    },
+    {
+      "screen": "spreadpoint",
+      "warmup": 2800,
+      "uniqueIntervals": 744,
+      "p95Ms": 16.74646,
+      "maxMs": 16.863892,
+      "above20Ms": 0,
+      "thermalStatus": 0,
+      "pssKiB": 253109,
+      "graphicsKiB": 125448
+    }
+  ],
+  "PixelScope": "Short active-scene presentation samples after normal warmup; memory is a process snapshot, not a peak; battery use is not measured.",
+  "PixelPhenomena": {
+    "unique_intervals": 744,
+    "interval_coverage_seconds": 12.409194627999993,
+    "p95_ms": 16.759644,
+    "max_ms": 16.972453,
+    "over_slow_threshold": 0
+  },
+  "PixelMultiscreen": {
+    "unique_intervals": 744,
+    "interval_coverage_seconds": 12.415307013000007,
+    "p95_ms": 16.759481,
+    "max_ms": 17.488281,
+    "over_slow_threshold": 0
+  },
+  "InstalledVariants": [
+    "com.olivierh.phenomenadna",
+    "com.olivierh59500.multiscreen",
+    "com.olivierh.cuddlydemo",
+    "com.olivierh.cuddlymenu"
+  ]
+}
