@@ -488,6 +488,69 @@ go run ./cmd/fidelity -demo go-multiscreen -frames 600,1200 \
 
 The command exits nonzero while the documented pixel differences remain.
 
+## Complete Cuddly and Union migration sweep (2026-09-28)
+
+The collection extension of `cmd/fidelity` compares entire native canvases for
+each screen, menu and door loader, with no excluded rectangle or pixel tolerance.
+The [record](fidelity/collections-20260928.json) contains 607 exact comparisons
+in 60 cases: 289 Cuddly frames and 318 Union frames. Both archived revisions use
+the same local DCK checkout. This proves those sampled native migrations;
+it does not claim original Atari hardware parity or unsampled behavior.
+
+| Collection | Native reference → candidate | Scope |
+| --- | --- | --- |
+| Cuddly | `f3a921e` → `6f01eb4`, with DCK `23599dc` | Fifteen screens including intro and Reset; idle menu; all thirteen door loaders; editable Megaball input sequence. |
+| Union | `f12b045` → `77b56b5` | Introduction, eleven screens, idle menu and all eleven door loaders; moving Hidden pointer; five TNT3 objects; ten Starballs populations; TNT2 speed/direction controls; Replicants speed changes; Disk Copier start/stop stages. |
+
+Replicants uses `8a2fcb3` as its explicit reference to retain the intentional
+Atari-based trajectory correction. Delta Force synthesizes its real YM track
+without an audio device and feeds the three register levels to the ordinary
+scene, rather than comparing frozen music-driven sprites. Core screen frames
+include startup and late playback through tick 9,600; loader captures bracket
+counter, blank and reveal boundaries. Spreadpoint additionally covers its final
+card and three staggered main-effect entrances.
+
+The first complete sweep exposed 29 differing Cuddly frames in six screens.
+Their extracted presets had changed authored linear sampling to nearest:
+Spreadpoint's initial inner logo, DOC's inner raster, Fullscreen's logo/raster
+band, Starwars' sprite train, DNA's ribbon and sampled logo rows, and Reset's
+raster pairs. Restoring those parameters removes every sampled difference
+without adding screen-local rendering logic. The generic effects, geometry,
+clock order and owned surfaces stay unchanged. Cuddly now pins the published
+corrected DCK revision; its obsolete per-frame Spreadpoint filter setter is
+removed. A separate run of its actual capture command with `GOWORK=off` and
+no local replacement matched 60 complete frames across the six screens, from
+the same source tree committed as `8c979b0`.
+
+Reproduce a screen or input sequence with an explicit native reference:
+
+```sh
+go run ./cmd/fidelity -demo go-cuddlymenu -screen spreadpoint \
+  -reference f3a921e -frames 0,1,723,724,725,1528,2008,2676,4800,9600
+go run ./cmd/fidelity -demo go-uniondemo -screen tnt3 -scenario controls \
+  -reference f12b045 -frames 0,1,599,600,601,1200,1800,2400,3000
+```
+
+Both corrected Cuddly Android variants were built and installed on Pixel 10a.
+The complete app's six affected main scenes were visually inspected and sampled
+after their ordinary introductions/warmup. Each 12.4-second presentation sample
+contains 744 distinct intervals; all six have zero intervals above 20 ms.
+
+| Corrected Cuddly screen | p95 | Maximum | PSS snapshot (KiB) | Graphics snapshot (KiB) |
+| --- | ---: | ---: | ---: | ---: |
+| Fullscreen | 16.729 ms | 16.848 ms | 274,448 | 144,740 |
+| Starwars | 16.680 ms | 16.813 ms | 258,148 | 129,228 |
+| 3D DOC | 16.720 ms | 16.894 ms | 263,627 | 135,452 |
+| DNA | 16.685 ms | 16.817 ms | 242,522 | 123,228 |
+| Spreadpoint | 16.704 ms | 16.837 ms | 256,577 | 125,536 |
+| Reset | 16.720 ms | 16.996 ms | 322,329 | 173,980 |
+
+Thermal status was 0 after every sample. These are process snapshots and short
+presentation traces, not memory peaks or battery measurements. The filtering
+correction adds no surface, point bank or simulation loop. The complete app was
+restored to its ordinary introduction after measurement. The JSON record also
+contains the installed APK hashes, warmup ticks and published dependency check.
+
 ## Saved composition and progressive path edges
 
 The authoring schema now stores ordered image passes on a single layer or on
