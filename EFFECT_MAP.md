@@ -583,8 +583,6 @@ above 20 ms: p95/max 16.720/16.969 ms and 16.776/17.608 ms respectively.
 The two main scenes were visually inspected; these short runs do not establish
 memory peaks or battery use.
 
-## Saved composition and progressive path edges
-
 ## DNA composition through the common facade (2026-09-28)
 
 `CuedSlices` combines `SliceProgram`, configurable pause/rotation cues and
@@ -626,6 +624,8 @@ intervals each, with no interval above 20 ms:
 
 The main scenes were visually inspected. The short presentation samples and
 process-memory snapshots do not measure true memory peaks or battery use.
+
+## Saved composition and progressive path edges
 
 The authoring schema now stores ordered image passes on a single layer or on
 the complete scene. CRT, water reflection and magnifier configurations compile
