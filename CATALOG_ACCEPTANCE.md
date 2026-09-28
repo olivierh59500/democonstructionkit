@@ -41,6 +41,7 @@ are snapshots or sampled maxima; actual peaks, battery consumption and every
 future combination have not been measured. New authored compositions can use
 the existing Pixel probe and native capture tools for their own acceptance.
 
-The planned graphical editor remains a separate application task. DCK already
-provides inspectable controllers and a saved-project schema for common scenes;
-custom Go callbacks remain available for additional authored behavior.
+The planned [2.0.0 graphical editor](ROADMAP.md) remains a separate application
+task. Version 1.0.0 is the Developer Edition. DCK already provides inspectable
+controllers and a saved-project schema for common scenes; custom Go callbacks
+remain available for additional authored behavior.

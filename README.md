@@ -1,5 +1,28 @@
 # democonstructionkit
 
+**1.0.0 — Developer Edition**
+
+Demo Construction Kit 1.0.0 is the Go/Ebitengine library for developers creating
+demos and intros through code. Programming knowledge is required: this edition
+provides configurable effects, Go APIs, runnable examples, command-line tools
+and saved JSON compositions.
+
+Install the versioned module in a Go project:
+
+```sh
+go get github.com/olivierh59500/democonstructionkit@v1.0.0
+```
+
+[Release 1.0.0](https://github.com/olivierh59500/democonstructionkit/releases/tag/v1.0.0)
+ · [Changelog](CHANGELOG.md) · [Version 2.0.0 roadmap](ROADMAP.md)
+
+**Planned 2.0.0 — Visual Editor** will make demo and intro creation accessible
+to everyone, including people without programming knowledge. The creation
+workflow will be graphical: import assets, choose effects, adjust parameters
+and paths, arrange layers, synchronize music, edit the timeline, preview and
+export a demo. Writing Go or editing JSON by hand will not be required.
+The graphical editor is planned for 2.0.0; it is not part of 1.0.0.
+
 A Go/Ebitengine construction kit extracted from the actual productions in `demos/`.
 The shared code must preserve their original artwork, text, lookup tables, timing,
 pixel rounding, source crops, drawing order and blend operations.
@@ -2568,9 +2591,9 @@ Catmull-Rom `motion.Path` used by regular text and sprite trajectories.
 ## Save a composition and reload it
 
 `authoring` compiles a versioned JSON project into the same DCK effects. It is the
-basis for an eventual graphical editor: asset IDs, ordered layers, timing,
+basis for the planned 2.0.0 graphical editor: asset IDs, ordered layers, timing,
 parameters, signal bindings and validation already exist independently of a UI.
-No graphical editor is included yet.
+Version 1.0.0 exposes these capabilities through Go and JSON.
 
 ```sh
 # Save the procedural example, then edit its JSON and reload it.
