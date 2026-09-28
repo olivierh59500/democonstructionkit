@@ -127,7 +127,8 @@ type Scrolling struct {
 
 var ErrDrawBudget = errors.New("scrolling: automatic drawing exceeds its glyph budget")
 
-// Err reports a resource-budget error from the last automatic Draw.
+// Err reports a resource-budget or unavailable-artwork error from automatic
+// rendering. Feedback renders its source during Update and returns it there too.
 func (s *Scrolling) Err() error { return s.drawErr }
 
 // Finished reports completion for finite transports such as Feed. Continuous

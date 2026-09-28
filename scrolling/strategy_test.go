@@ -116,6 +116,28 @@ func TestOutputPassOrderAndFeedbackAdvanceOncePerUpdate(t *testing.T) {
 	}
 }
 
+func TestFeedbackReturnsSourceDrawBudgetBeforeSamplingPhase(t *testing.T) {
+	phases := 0
+	scroll, err := New(Config{Text: "AA", Fonts: map[string]Face{"default": face(t, 4)},
+		MaxGlyphsPerDraw: 1, Output: &OutputConfig{Width: 20, Height: 10,
+			Feedback: []FeedbackLayer{{
+				Config: FeedbackDNAConfig{Width: 20, Height: 10, HorizontalSpeed: 1,
+					ColumnWidth: 1, Direction: 1, Profile: []int{0, 1, 2}},
+				PhaseAt: func(kit.Frame) int { phases++; return 0 },
+			}},
+		}})
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer scroll.Close()
+	if err := scroll.Update(kit.Frame{Tick: 1}); err != ErrDrawBudget || scroll.Err() != err {
+		t.Fatal("source draw budget was not returned by feedback Update", err, scroll.Err())
+	}
+	if phases != 1 {
+		t.Fatal("failed feedback sampling advanced its phase callback", phases)
+	}
+}
+
 func TestNewRejectsAmbiguousTransportAndBadPage(t *testing.T) {
 	for _, c := range []Config{{Page: &PageConfig{Width: -1}}, {Recycled: &RecycledConfig{}, Text: "ignored"}, {Recycled: &RecycledConfig{}, Projected: &ProjectedConfig{}}, {DualProfiled: &DualProfiledRingConfig{}, Caption: &CaptionCarouselConfig{}}, {Caption: &CaptionCarouselConfig{}, Reveal: &RevealTransportConfig{}}, {Reveal: &RevealTransportConfig{}, Text: "ignored"}, {Glyphs: []Glyph{{Advance: 1}}, Page: &PageConfig{}}, {Glyphs: []Glyph{{Advance: 1}}, Output: &OutputConfig{Width: -1}}} {
 		if _, err := New(c); err == nil {

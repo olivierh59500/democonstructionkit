@@ -329,3 +329,56 @@ func TestFeedbackFacadeMatchesExplicitHistoryAtBothDirections(t *testing.T) {
 		got.Deallocate()
 	}
 }
+
+func TestCuedSliceFeedbackReportsMissingArtworkWithoutAdvancingHistory(t *testing.T) {
+	glyph := ebiten.NewImage(7, 5)
+	glyph.Fill(color.White)
+	defer glyph.Deallocate()
+	film, err := NewDNAFrames([]*ebiten.Image{glyph, glyph}, DNAFrameConfig{Frames: 8})
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer film.Close()
+	config := cuedFacadeConfig()
+	config.Draw.OriginY = 3
+	scroll, err := New(Config{CuedSlices: &config, Output: &OutputConfig{
+		Width: 32, Height: 10, Feedback: []FeedbackLayer{{Config: FeedbackDNAConfig{
+			Width: 32, Height: 16, HorizontalSpeed: 2, VerticalSpeed: 2,
+			ColumnWidth: 2, Direction: 1, InsertY: 5, Profile: []int{0, 2, 4, 6, 8, 10, 12, 14},
+		}}},
+	}})
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer scroll.Close()
+	if err := scroll.Update(kit.Frame{}); err != ErrSliceFilmUnbound || scroll.Err() != err {
+		t.Fatal("feedback silently sampled unavailable artwork", err, scroll.Err())
+	}
+	if err := scroll.BindSliceFilm(film); err != nil {
+		t.Fatal(err)
+	}
+	for tick := uint64(1); tick <= 90; tick++ {
+		if err := scroll.Update(kit.Frame{Tick: tick}); err != nil {
+			t.Fatal(err)
+		}
+	}
+	want, got := ebiten.NewImage(35, 16), ebiten.NewImage(35, 16)
+	defer want.Deallocate()
+	defer got.Deallocate()
+	scroll.Draw(want)
+	pixels := make([]byte, 35*16*4)
+	want.ReadPixels(pixels)
+	visible := false
+	for i := 3; i < len(pixels); i += 4 {
+		visible = visible || pixels[i] != 0
+	}
+	if !visible {
+		t.Fatal("the retained history fixture contains no visible artwork")
+	}
+	film.Close()
+	if err := scroll.Update(kit.Frame{Tick: 91}); err != ErrSliceFilmUnbound {
+		t.Fatal("closed borrowed artwork was accepted", err)
+	}
+	scroll.Draw(got)
+	requireFacadePixels(t, want, got)
+}

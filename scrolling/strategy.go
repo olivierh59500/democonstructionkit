@@ -111,7 +111,8 @@ func (s *Scrolling) finish() (*Scrolling, error) {
 	}
 	var source kit.Effect = kit.Func{OnDraw: s.drawCore}
 	if len(c.Feedback) > 0 {
-		f := &scrollFeedback{source: source, layers: append([]FeedbackLayer(nil), c.Feedback...), phases: make([]int, len(c.Feedback))}
+		f := &scrollFeedback{source: source, sourceDrawError: s.Err,
+			layers: append([]FeedbackLayer(nil), c.Feedback...), phases: make([]int, len(c.Feedback))}
 		for _, layer := range f.layers {
 			if layer.Config.Width > c.Width || !finite(layer.X) || !finite(layer.Y) || !finite(layer.PhaseSpeed) {
 				f.Close()
@@ -497,12 +498,13 @@ func (s *slicedTransport) Draw(dst *ebiten.Image) {
 }
 
 type scrollFeedback struct {
-	source kit.Effect
-	canvas *ebiten.Image
-	layers []FeedbackLayer
-	faces  []*FeedbackDNA
-	phases []int
-	frame  kit.Frame
+	source          kit.Effect
+	sourceDrawError func() error
+	canvas          *ebiten.Image
+	layers          []FeedbackLayer
+	faces           []*FeedbackDNA
+	phases          []int
+	frame           kit.Frame
 }
 
 func (f *scrollFeedback) Update(frame kit.Frame) error {
@@ -512,6 +514,10 @@ func (f *scrollFeedback) Update(frame kit.Frame) error {
 	}
 	f.canvas.Clear()
 	f.source.Draw(f.canvas)
+	// A failed source must not erase or age the last valid history frame.
+	if err := f.sourceDrawError(); err != nil {
+		return err
+	}
 	for _, face := range f.faces {
 		face.Step(f.canvas)
 	}

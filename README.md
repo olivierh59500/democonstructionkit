@@ -463,6 +463,10 @@ If artwork is created after the clocks, omit `Film`, then call
 `scroll.BindSliceFilm(film)` after graphics initialization. Binding retains the
 pre-roll, pause, cursor and rotation; the film's frame count must match the clock.
 `ErrSliceFilmUnbound` reports premature drawing rather than silently hiding text.
+When `Output.Feedback` samples text during Update, unavailable artwork or an
+exceeded glyph budget returns an error from that same Update. History and phase
+callbacks retain their last successful sample. Bind valid artwork before
+resuming; ordinary drawing reports the error through `scroll.Err()`.
 The source screen still owns
 its message, font artwork and intro/outro layer schedule.
 The graphics-free source-file test compares a 320-tick pre-roll and 4,000
