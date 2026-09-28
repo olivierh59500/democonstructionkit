@@ -117,7 +117,7 @@ func TestOutputPassOrderAndFeedbackAdvanceOncePerUpdate(t *testing.T) {
 }
 
 func TestNewRejectsAmbiguousTransportAndBadPage(t *testing.T) {
-	for _, c := range []Config{{Page: &PageConfig{Width: -1}}, {Recycled: &RecycledConfig{}, Text: "ignored"}, {Recycled: &RecycledConfig{}, Projected: &ProjectedConfig{}}, {Glyphs: []Glyph{{Advance: 1}}, Page: &PageConfig{}}, {Glyphs: []Glyph{{Advance: 1}}, Output: &OutputConfig{Width: -1}}} {
+	for _, c := range []Config{{Page: &PageConfig{Width: -1}}, {Recycled: &RecycledConfig{}, Text: "ignored"}, {Recycled: &RecycledConfig{}, Projected: &ProjectedConfig{}}, {DualProfiled: &DualProfiledRingConfig{}, Caption: &CaptionCarouselConfig{}}, {Caption: &CaptionCarouselConfig{}, Reveal: &RevealTransportConfig{}}, {Reveal: &RevealTransportConfig{}, Text: "ignored"}, {Glyphs: []Glyph{{Advance: 1}}, Page: &PageConfig{}}, {Glyphs: []Glyph{{Advance: 1}}, Output: &OutputConfig{Width: -1}}} {
 		if _, err := New(c); err == nil {
 			t.Fatal("invalid configuration accepted", c)
 		}

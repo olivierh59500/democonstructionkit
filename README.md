@@ -277,10 +277,63 @@ scroll.Update(frame)
 scroll.Draw(textLayer)
 ```
 
-Use `scrolling.NewRingLanes` directly when each ring needs its own destination:
-Big Sprite draws two synchronized fonts into separate masks with `DrawLaneAt`.
-The component owns both glyph transports and lane positions; drawing never
-advances either clock, and no message-width image is allocated.
+When each ring needs its own destination, keep the same constructor and use
+`scroll.RingLanesController().DrawLaneAt`. Big Sprite draws two synchronized
+fonts into separate masks this way. Update owns both glyph transports and lane
+positions; painting either lane never advances them, and no message-width image
+is allocated.
+
+`DrawOffset(dst, x, y)` places regular text, a recycled ring or the complete lane
+bank without changing its configured origin or allocating a composition image.
+It returns an error for other transports or an active output pipeline, whose
+placement belongs in their configuration/composition. `RecycledController()`
+exposes the borrowed slot cursor; `CursorRune()` reads its next character for
+scene cues. Use the facade's Update once, then draw any number of times.
+
+Two more text presentations use that same entry point:
+
+```go
+// Front/back texts may use different fonts, messages and speeds.
+dualConfig, err := presets.CuddlyStarwarsDualScroll(front, back, raster, message)
+if err != nil { return err }
+dual, err := scrolling.New(scrolling.Config{DualProfiled: &dualConfig})
+if err != nil { return err }
+
+captionConfig := presets.UnionTNTCaption(lines, grid)
+captions, err := scrolling.New(scrolling.Config{Caption: &captionConfig})
+if err != nil { return err }
+
+dual.Update(frame)
+captions.Update(frame)
+dual.Draw(textLayer)
+captions.Draw(scene)
+```
+
+`DualProfiled` retains ordered back-mask-front passes and independent font
+metrics. `Caption` retains each line's slide, hold and exit. Their controllers
+expose sampled profiles and poses for inspectors; they may also use the common
+`Output` image passes to add reflection, deformation or a lens. Font images and
+rasters remain borrowed; close the facade to release its owned working images.
+The former direct constructors remain available for existing callers.
+
+For independently arriving cells, select `Reveal`. Its default clock is
+`Frame.Time`; `TimeAt` can use an authored frame clock without changing either
+the delays or drawing order:
+
+```go
+credits, err := scrolling.New(scrolling.Config{
+    Reveal: &scrolling.RevealTransportConfig{
+        Reveal: presets.UnionCreditsReveal(grid, lines),
+        TimeAt: func(frame kit.Frame) float64 {
+            return float64(frame.Tick) * 140 * 60 / rate
+        },
+    },
+})
+```
+
+The clock is sampled only in Update. Repeated Draw calls cannot accelerate the
+reveal or trigger another caption change. Union's loader uses its current rate
+in that adapter, preserving its 50/60 Hz reveal and completion boundaries.
 
 `BitmapGrid` has independent `Width`, `Height`, `Columns`, `Order` or `First`,
 including fractional cells and an optional `ColumnSpan`. Regular `Face` uses

@@ -34,6 +34,14 @@ type RecycledConfig struct {
 	Vertical bool
 }
 
+// RevealTransportConfig uses Frame.Time by default. TimeAt may preserve an
+// authored clock in frames or other units; Reveal's delay/duration use those
+// same units. Rendering samples the last Update and does not advance the cue.
+type RevealTransportConfig struct {
+	Reveal RevealConfig
+	TimeAt func(kit.Frame) float64
+}
+
 // ProjectedConfig selects exact visible-slot form changes through scrolling.New.
 // PixelsPerUpdate and Planes.PhaseStep preserve authored fixed-step recurrences.
 // Face supports arbitrary metrics; an optional raster colors the projected text.
@@ -132,6 +140,15 @@ func newTransport(c Config) (*Scrolling, error) {
 	if c.RingLanes != nil {
 		count++
 	}
+	if c.DualProfiled != nil {
+		count++
+	}
+	if c.Caption != nil {
+		count++
+	}
+	if c.Reveal != nil {
+		count++
+	}
 	if c.Projected != nil {
 		count++
 	}
@@ -192,6 +209,33 @@ func newTransport(c Config) (*Scrolling, error) {
 			return nil, err
 		}
 		s.backend = lanes
+	} else if c.DualProfiled != nil {
+		if c.X != 0 || c.Y != 0 || c.Vertical {
+			return nil, fmt.Errorf("scrolling: dual-profile placement belongs in DualProfiledRingConfig")
+		}
+		dual, err := NewDualProfiledRing(*c.DualProfiled)
+		if err != nil {
+			return nil, err
+		}
+		s.backend = dual
+	} else if c.Caption != nil {
+		if c.X != 0 || c.Y != 0 || c.Vertical {
+			return nil, fmt.Errorf("scrolling: caption placement belongs in CaptionCarouselConfig")
+		}
+		caption, err := NewCaptionCarousel(*c.Caption)
+		if err != nil {
+			return nil, err
+		}
+		s.backend = caption
+	} else if c.Reveal != nil {
+		if c.X != 0 || c.Y != 0 || c.Vertical {
+			return nil, fmt.Errorf("scrolling: reveal placement belongs in RevealConfig")
+		}
+		reveal, err := NewReveal(c.Reveal.Reveal)
+		if err != nil {
+			return nil, err
+		}
+		s.backend = &revealTransport{reveal: reveal, timeAt: c.Reveal.TimeAt}
 	} else if c.Projected != nil {
 		if c.X != 0 || c.Y != 0 || c.Vertical {
 			return nil, fmt.Errorf("scrolling: projected placement belongs in Projected.Draw")
@@ -339,8 +383,13 @@ type recycledTransport struct {
 
 func (r *recycledTransport) Update(kit.Frame) error { r.ring.Step(); return nil }
 func (r *recycledTransport) Draw(dst *ebiten.Image) {
+	r.drawOffset(dst, 0, 0)
+}
+func (r *recycledTransport) CursorRune() rune { return r.ring.NextRune() }
+
+func (r *recycledTransport) drawOffset(dst *ebiten.Image, x, y float64) {
 	if !r.config.Vertical {
-		r.ring.DrawAt(dst, r.x, r.y)
+		r.ring.DrawAt(dst, r.x+x, r.y+y)
 		return
 	}
 	for _, i := range r.ring.order {
@@ -351,10 +400,30 @@ func (r *recycledTransport) Draw(dst *ebiten.Image) {
 		}
 		// A vertical column uses the same slot recurrence and atlas crop.
 		op := ebiten.DrawImageOptions{Filter: r.config.Ring.Font.Filter}
-		op.GeoM.Translate(r.x+p.Y, r.y+p.X)
+		op.GeoM.Translate(r.x+p.Y+x, r.y+p.X+y)
 		composite.DrawRegion(dst, r.config.Ring.Font.Image, region, &op)
 	}
 }
+
+type revealTransport struct {
+	reveal *Reveal
+	timeAt func(kit.Frame) float64
+	time   float64
+}
+
+func (r *revealTransport) Update(frame kit.Frame) error {
+	time := frame.Time
+	if r.timeAt != nil {
+		time = r.timeAt(frame)
+	}
+	if !finite(time) {
+		return fmt.Errorf("scrolling: nonfinite reveal clock")
+	}
+	r.time = time
+	return nil
+}
+
+func (r *revealTransport) Draw(dst *ebiten.Image) { r.reveal.DrawAt(dst, r.time) }
 
 type projectedTransport struct {
 	planes   *Planes

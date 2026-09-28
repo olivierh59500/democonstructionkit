@@ -51,23 +51,26 @@ type Config struct {
 	Speed, Gap, X, Y float64
 	Advance          float64 // Optional pen step independent of each glyph's bitmap width.
 	Vertical, Repeat bool
-	Page             *PageConfig        // Optional multiline vertical layout; Vertical alone is a glyph column.
-	Recycled         *RecycledConfig    // Authored recycled-slot transport, advanced once per Update.
-	RingLanes        *RingLanesConfig   // Synchronized recycled-slot lanes with paced placement.
-	Projected        *ProjectedConfig   // Authored visible-slot plane transport, advanced once per Update.
-	Pseudo3D         *Pseudo3DConfig    // Multiple pseudo-3D text banks with shared harmonics and independent transport.
-	Bands            *BitmapBandsConfig // Bounded repeated text lanes.
-	Slots            *BitmapSlotsConfig // Recycled glyphs with pose mapping and tangent orientation.
-	Crawl            *CrawlConfig       // Bounded paragraph transport and configurable perspective rows.
-	Sliced           *SlicedConfig      // Streaming DNA with independent transport and rotation clocks.
-	Feed             *FeedConfig        // Finite glyph insertion into a persistent scrolling trail.
-	Scanline         *ScanlineConfig    // Proportional text with cumulative row sampling and bounce.
-	Profiled         *ProfiledConfig    // Bitmap text sampled through a floating-point row profile.
-	RowColumn        *RowColumnConfig   // Fixed-advance text, row-source lookup and column displacement.
-	RowBands         *RowBandsConfig    // Circular bitmap text with ordered destination-row passes.
-	SizeBank         *SizeBankConfig    // Synchronized font-scale layers with one transport and cue clock.
-	Ribbon           *RibbonConfig      // Fixed-tick horizontal or vertical atlas ribbon.
-	Output           *OutputConfig      // Ordered image operations over the common text renderer.
+	Page             *PageConfig             // Optional multiline vertical layout; Vertical alone is a glyph column.
+	Recycled         *RecycledConfig         // Authored recycled-slot transport, advanced once per Update.
+	RingLanes        *RingLanesConfig        // Synchronized recycled-slot lanes with paced placement.
+	DualProfiled     *DualProfiledRingConfig // Independent front/back font rings with a shared strip profile.
+	Caption          *CaptionCarouselConfig  // Sliding, held and exiting bitmap captions.
+	Reveal           *RevealTransportConfig  // Per-cell entrances driven by the supplied frame clock.
+	Projected        *ProjectedConfig        // Authored visible-slot plane transport, advanced once per Update.
+	Pseudo3D         *Pseudo3DConfig         // Multiple pseudo-3D text banks with shared harmonics and independent transport.
+	Bands            *BitmapBandsConfig      // Bounded repeated text lanes.
+	Slots            *BitmapSlotsConfig      // Recycled glyphs with pose mapping and tangent orientation.
+	Crawl            *CrawlConfig            // Bounded paragraph transport and configurable perspective rows.
+	Sliced           *SlicedConfig           // Streaming DNA with independent transport and rotation clocks.
+	Feed             *FeedConfig             // Finite glyph insertion into a persistent scrolling trail.
+	Scanline         *ScanlineConfig         // Proportional text with cumulative row sampling and bounce.
+	Profiled         *ProfiledConfig         // Bitmap text sampled through a floating-point row profile.
+	RowColumn        *RowColumnConfig        // Fixed-advance text, row-source lookup and column displacement.
+	RowBands         *RowBandsConfig         // Circular bitmap text with ordered destination-row passes.
+	SizeBank         *SizeBankConfig         // Synchronized font-scale layers with one transport and cue clock.
+	Ribbon           *RibbonConfig           // Fixed-tick horizontal or vertical atlas ribbon.
+	Output           *OutputConfig           // Ordered image operations over the common text renderer.
 	// RepeatBounds selects the visible pen coordinates before any mappers run.
 	// Empty uses the destination bounds. Enlarge it for paths or projections that
 	// bring distant pen positions into view. Only automatic repeat drawing uses it.
@@ -198,6 +201,41 @@ func (s *Scrolling) ScanlineController() *ScanlineScroll {
 	return nil
 }
 
+// RecycledController exposes the borrowed slot cursor and command state. The
+// facade owns advancement; callers may inspect it without stepping it again.
+func (s *Scrolling) RecycledController() *Ring {
+	if recycled, ok := s.backend.(*recycledTransport); ok {
+		return recycled.ring
+	}
+	return nil
+}
+
+// RingLanesController exposes independent lane placement and painting when a
+// production applies a different mask to each lane. Update advances all lanes.
+func (s *Scrolling) RingLanesController() *RingLanes {
+	if lanes, ok := s.backend.(*RingLanes); ok {
+		return lanes
+	}
+	return nil
+}
+
+// DualProfiledController exposes the shared profile and the two borrowed font
+// rings of a layered strip scroller. Their clocks still advance through Update.
+func (s *Scrolling) DualProfiledController() *DualProfiledRing {
+	if dual, ok := s.backend.(*DualProfiledRing); ok {
+		return dual
+	}
+	return nil
+}
+
+// CaptionController exposes the current line and slide/hold/exit pose.
+func (s *Scrolling) CaptionController() *CaptionCarousel {
+	if caption, ok := s.backend.(*CaptionCarousel); ok {
+		return caption
+	}
+	return nil
+}
+
 // CursorRune returns the current character for transports that expose a text
 // cursor. Other transport kinds return zero.
 func (s *Scrolling) CursorRune() rune {
@@ -220,7 +258,7 @@ func New(c Config) (*Scrolling, error) {
 	if c.MaxGlyphsPerDraw < 1 || c.MaxGlyphsPerDraw > 1<<24 {
 		return nil, fmt.Errorf("scrolling: invalid automatic draw budget")
 	}
-	if c.Recycled != nil || c.RingLanes != nil || c.Projected != nil || c.Pseudo3D != nil || c.Sliced != nil || c.Crawl != nil || c.Bands != nil || c.Slots != nil || c.Feed != nil || c.Scanline != nil || c.Profiled != nil || c.RowColumn != nil || c.RowBands != nil || c.SizeBank != nil || c.Ribbon != nil {
+	if c.Recycled != nil || c.RingLanes != nil || c.DualProfiled != nil || c.Caption != nil || c.Reveal != nil || c.Projected != nil || c.Pseudo3D != nil || c.Sliced != nil || c.Crawl != nil || c.Bands != nil || c.Slots != nil || c.Feed != nil || c.Scanline != nil || c.Profiled != nil || c.RowColumn != nil || c.RowBands != nil || c.SizeBank != nil || c.Ribbon != nil {
 		return newTransport(c)
 	}
 	if c.Page != nil {
@@ -560,6 +598,44 @@ func (s *Scrolling) Draw(dst *ebiten.Image) {
 		return
 	}
 	s.drawCore(dst)
+}
+
+// DrawOffset places an ordinary glyph ribbon, recycled ring or ring-lane bank
+// without copying pixels to a new surface. It preserves each transport's own
+// coordinates and never advances state. Other transports and output pipelines
+// keep placement in their explicit configuration; unsupported offsets return
+// an error instead of silently discarding their masks or perspective passes.
+func (s *Scrolling) DrawOffset(dst *ebiten.Image, x, y float64) error {
+	if dst == nil || !finite(x) || !finite(y) {
+		return fmt.Errorf("scrolling: invalid draw offset")
+	}
+	if s.output != nil {
+		return fmt.Errorf("scrolling: output pipeline placement belongs in its composition")
+	}
+	switch backend := s.backend.(type) {
+	case *recycledTransport:
+		backend.drawOffset(dst, x, y)
+		return nil
+	case *RingLanes:
+		backend.DrawAt(dst, x, y)
+		return nil
+	case nil:
+		state := s.StateAt(s.frame.Time)
+		state.X += x
+		state.Y += y
+		state.clipGlyphs = true
+		s.drawErr = nil
+		if s.config.Repeat && len(s.glyphs) > 0 {
+			state = s.repeatState(state, dst.Bounds())
+		} else if len(s.glyphs) > s.config.MaxGlyphsPerDraw {
+			s.drawErr = ErrDrawBudget
+			return s.drawErr
+		}
+		s.DrawAt(dst, state)
+		return s.drawErr
+	default:
+		return fmt.Errorf("scrolling: selected transport requires configured placement")
+	}
 }
 
 func (s *Scrolling) drawCore(dst *ebiten.Image) {
