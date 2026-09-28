@@ -30,7 +30,7 @@ func CuddlyDNATwist() motion.TwistingRibbonConfig {
 func CuddlyDNARibbon(front, back *ebiten.Image) composite.TwistingRibbonConfig {
 	return composite.TwistingRibbonConfig{
 		Front: front, Back: back, Motion: CuddlyDNATwist(),
-		SourceHeight: 25, Filter: ebiten.FilterNearest,
+		SourceHeight: 25, Filter: ebiten.FilterLinear,
 		FirstUpdateHolds: true,
 	}
 }

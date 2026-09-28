@@ -23,6 +23,6 @@ func CuddlyDOCInnerMaterials(white, raster *ebiten.Image) (black, stripes compos
 		ColorScale: shade}
 	stripes = composite.RasterOverlayConfig{Image: raster,
 		Y: 20, ScaleX: 75, ScaleY: 1, Alpha: 1,
-		Filter: ebiten.FilterNearest, Blend: ebiten.BlendSourceAtop}
+		Filter: ebiten.FilterLinear, Blend: ebiten.BlendSourceAtop}
 	return black, stripes
 }

@@ -26,7 +26,7 @@ func CuddlyResetRasterOrbit(upLeft, upRight, downLeft, downRight *ebiten.Image) 
 			{Left: upLeft, Right: upRight},
 		},
 		LeftX: 100, RightX: 668, ScaleX: 2, ScaleY: 1,
-		Filter: ebiten.FilterNearest, Blend: ebiten.BlendSourceOver,
+		Filter: ebiten.FilterLinear, Blend: ebiten.BlendSourceOver,
 	}
 }
 

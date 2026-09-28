@@ -23,6 +23,6 @@ func CuddlyStarwarsSpriteTrain(image *ebiten.Image, pathX, pathY []float64) spri
 			XIndexPhase: 1, YIndexPhase: 1, YCos: true,
 		},
 		Image: image, Regions: regions, ScaleX: 1, ScaleY: 1,
-		Filter: ebiten.FilterNearest, Blend: ebiten.BlendSourceOver,
+		Filter: ebiten.FilterLinear, Blend: ebiten.BlendSourceOver,
 	}
 }

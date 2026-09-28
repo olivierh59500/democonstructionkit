@@ -12,9 +12,9 @@ func CuddlyFullscreenLogoLayer(logo, raster *ebiten.Image) composite.SurfaceLaye
 		Width: 768, Height: 52,
 		Passes: []composite.SurfaceImagePass{
 			{Image: logo, X: 95, Y: 5, ScaleX: 1.3, ScaleY: 1.3,
-				Filter: ebiten.FilterNearest, Blend: ebiten.BlendSourceOver},
+				Filter: ebiten.FilterLinear, Blend: ebiten.BlendSourceOver},
 			{Image: raster, ScaleX: 1, ScaleY: 1.2,
-				Filter: ebiten.FilterNearest, Blend: ebiten.BlendSourceAtop},
+				Filter: ebiten.FilterLinear, Blend: ebiten.BlendSourceAtop},
 		},
 		Outputs: []composite.SurfaceOutput{{}},
 	}
@@ -26,7 +26,7 @@ func CuddlySpreadpointLogoLayer(inner, raster, outer *ebiten.Image) composite.Su
 	return composite.SurfaceLayerConfig{
 		Width: 128, Height: 128,
 		Passes: []composite.SurfaceImagePass{
-			{Image: inner, Filter: ebiten.FilterNearest, Blend: ebiten.BlendSourceOver},
+			{Image: inner, Filter: ebiten.FilterLinear, Blend: ebiten.BlendSourceOver},
 			{Image: raster, ScaleX: 128, ScaleY: 1,
 				Filter: ebiten.FilterNearest, Blend: ebiten.BlendSourceIn},
 			{Image: outer, Filter: ebiten.FilterLinear, Blend: ebiten.BlendSourceOver},

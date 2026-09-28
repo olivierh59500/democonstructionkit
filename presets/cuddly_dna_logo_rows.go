@@ -35,7 +35,7 @@ func CuddlyDNAOuterLogoRows(image *ebiten.Image) (composite.SampledRowsConfig, e
 	}
 	return composite.SampledRowsConfig{
 		Image: image, Program: program, Rows: 56, Copies: 2,
-		SourceWidth: 96, UseTime: true, Filter: ebiten.FilterNearest,
+		SourceWidth: 96, UseTime: true, Filter: ebiten.FilterLinear,
 	}, nil
 }
 
@@ -46,6 +46,6 @@ func CuddlyDNACenterLogoRows(image *ebiten.Image) (composite.SampledRowsConfig, 
 	}
 	return composite.SampledRowsConfig{
 		Image: image, Program: program, Rows: 56, Copies: 1,
-		SourceWidth: 96, UseTime: true, Filter: ebiten.FilterNearest,
+		SourceWidth: 96, UseTime: true, Filter: ebiten.FilterLinear,
 	}, nil
 }
