@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"image"
 	"math"
+	"strings"
 
 	"github.com/hajimehoshi/ebiten/v2"
 )
@@ -18,6 +19,10 @@ type CRTOverlayConfig struct {
 	// placement and clamps the output to valid premultiplied alpha. The default
 	// retains the original shader's coordinates for existing productions.
 	NormalizeSource bool
+	// OutsideTransparent leaves pixels beyond the curved source transparent,
+	// allowing this pass to be layered over another image. The default retains
+	// the historical opaque black edge used by existing productions.
+	OutsideTransparent bool
 	// SourceOrigin copies the input into an independent texture with this
 	// pixel-space origin before the CRT pass. It reproduces authored atlas
 	// offsets without depending on Ebitengine's automatic texture packing.
@@ -53,6 +58,9 @@ func NewCRTOverlay(c CRTOverlayConfig) (*CRTOverlay, error) {
 	source := crtOverlayShader
 	if c.NormalizeSource {
 		source = crtOverlayNormalizedShader
+	}
+	if c.OutsideTransparent {
+		source = strings.Replace(source, "return vec4(0.0, 0.0, 0.0, 1.0)", "return vec4(0.0, 0.0, 0.0, 0.0)", 1)
 	}
 	shader, err := ebiten.NewShader([]byte(source))
 	if err != nil {

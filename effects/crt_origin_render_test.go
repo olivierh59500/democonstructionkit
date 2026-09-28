@@ -17,7 +17,7 @@ import (
 type crtOriginCheck struct {
 	sourceRoot, source, manualBacking, manualView *ebiten.Image
 	want, got                                     *ebiten.Image
-	reference, padded                             *CRTOverlay
+	reference, padded, edgeOpaque, edgeClear      *CRTOverlay
 	frames                                        int
 	err                                           error
 }
@@ -48,6 +48,28 @@ func (c *crtOriginCheck) Draw(*ebiten.Image) {
 	if !bytes.Equal(want, got) {
 		c.err = fmt.Errorf("CRT source origin differs from an authored padded source at frame %d", c.frames)
 	}
+	if c.frames == 0 && c.err == nil {
+		c.sourceRoot.Fill(color.White)
+		for _, pass := range []struct {
+			name        string
+			overlay     *CRTOverlay
+			transparent bool
+		}{{"opaque", c.edgeOpaque, false}, {"transparent", c.edgeClear, true}} {
+			target := ebiten.NewImage(32, 32)
+			pass.overlay.DrawAt(target, c.sourceRoot, 0, 0)
+			pixels := make([]byte, 32*32*4)
+			target.ReadPixels(pixels)
+			target.Deallocate()
+			if got := pixels[3]; (got == 0) != pass.transparent {
+				c.err = fmt.Errorf("%s CRT edge alpha = %d", pass.name, got)
+				return
+			}
+			if got := pixels[(8*32+16)*4+3]; got != 255 {
+				c.err = fmt.Errorf("%s CRT center alpha = %d", pass.name, got)
+				return
+			}
+		}
+	}
 }
 
 func TestMain(m *testing.M) {
@@ -72,19 +94,29 @@ func TestMain(m *testing.M) {
 		if err != nil {
 			return nil, err
 		}
-		root := ebiten.NewImage(32, 16)
+		edgeOpaque, err := NewCRTOverlay(CRTOverlayConfig{Curvature: 2, Blend: ebiten.BlendCopy})
+		if err != nil {
+			return nil, err
+		}
+		edgeClear, err := NewCRTOverlay(CRTOverlayConfig{Curvature: 2, Blend: ebiten.BlendCopy, OutsideTransparent: true})
+		if err != nil {
+			return nil, err
+		}
+		root := ebiten.NewImageWithOptions(image.Rect(0, 0, 32, 16), &ebiten.NewImageOptions{Unmanaged: true})
 		manual := ebiten.NewImageWithOptions(image.Rect(0, 0, 28, 15), &ebiten.NewImageOptions{Unmanaged: true})
 		check = &crtOriginCheck{
 			sourceRoot: root, source: root.SubImage(image.Rect(3, 2, 27, 14)).(*ebiten.Image),
 			manualBacking: manual, manualView: manual.SubImage(image.Rect(4, 3, 28, 15)).(*ebiten.Image),
 			want: ebiten.NewImage(32, 32), got: ebiten.NewImage(32, 32),
-			reference: reference, padded: padded,
+			reference: reference, padded: padded, edgeOpaque: edgeOpaque, edgeClear: edgeClear,
 		}
 		return check, nil
 	})
 	if check != nil {
 		check.reference.Close()
 		check.padded.Close()
+		check.edgeOpaque.Close()
+		check.edgeClear.Close()
 		check.sourceRoot.Deallocate()
 		check.manualBacking.Deallocate()
 		check.want.Deallocate()

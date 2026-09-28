@@ -3,7 +3,7 @@
 This map covers every DCK production under `demos/` except FR-010 and Second
 Reality. The screen and workspace audits began on 2026-09-23; the wrap/train
 inventory was checked across all 20 DCK repositories on 2026-09-25. The DCK
-module-wide build, vet and test checks were refreshed on 2026-09-27. A complete
+module-wide build, vet and test checks were refreshed on 2026-09-28. A complete
 component owns its transport, animation state, geometry and rendering resources.
 The production supplies assets, messages, presets, input and scene order. A
 shared draw helper alone is not counted as a complete effect.
@@ -347,6 +347,8 @@ data.
 | Grodan | 744 | 16.755 ms | 18.022 ms | 0 |
 | Cuddly menu, CRT off | 744 | 16.762 ms | 16.926 ms | 0 |
 | Cuddly menu, CRT on | 744 | 16.726 ms | 16.874 ms | 0 |
+| DCK saved CRT/water/lens composition | 744 | 16.737 ms | 16.956 ms | 0 |
+| DCK progressive path laboratory | 744 | 16.742 ms | 16.878 ms | 0 |
 | Vectorballs sphere, 144 balls, published APK | 744 | 16.776 ms | 17.594 ms | 0 |
 | Vectorballs sphere, 4,096 points, batched | 744 | 16.745 ms | 16.961 ms | 0 |
 
@@ -485,6 +487,40 @@ go run ./cmd/fidelity -demo go-multiscreen -frames 600,1200 \
 ```
 
 The command exits nonzero while the documented pixel differences remain.
+
+## Saved composition and progressive path edges
+
+The authoring schema now stores ordered image passes on a single layer or on
+the complete scene. CRT, water reflection and magnifier configurations compile
+directly to the existing DCK components and `kit.Pipeline`. Pass windows can
+fade and repeat from their first start with an explicit period; the source
+still updates once per frame. CRT's opt-in transparent curved edge permits
+alpha layers without changing existing productions' black-edge default.
+`Project.PostSurfaceBytes()` estimates owned post-processing surfaces before
+compilation, and the schema limits them to 64 MiB. The saved 640×360
+`examples/authoring/projects/composed-effects.json` uses 3.52 MiB for these
+surfaces and runs unchanged in the desktop and Android effects-lab hosts.
+Native GPU checks verify inactive/second-cycle lens windows, bounded lens
+coverage, cumulative title passes and correct partial-alpha CRT fades.
+
+The effects laboratory's trajectory scroll now uses the common automatic
+repeat transport instead of a character-index window. `PathConfig.Extrapolate`
+continues open endpoint tangents; `Viewport` clips actual glyph pixels. The
+historical `Clip` option keeps its whole-origin rule for existing callers.
+A native GPU check moves an eight-pixel solid glyph through both edges and
+verifies every one-column reveal/removal step. The updated Pixel display was
+visually accepted by the user, including the recurring lens. A 1,800-tick
+profile measured 59.99 updates/s and 59.92 Draw callbacks/s, with mean CPU
+cost of 12.9 µs per update and 1.68 ms per Draw submission. Its 744-interval
+presentation trace had no interval above 20 ms; one snapshot showed 207,983
+KiB PSS, 106,392 KiB graphics memory and thermal status 0.
+
+The repeating saved composition separately measured 59.97 updates/s and 59.90
+Draw callbacks/s over a 900-tick profile, with 32.2 µs mean Update CPU and
+1.12 ms mean Draw submission CPU. Its 744 presented intervals had p95
+16.737 ms, maximum 16.956 ms and none above 20 ms. One process snapshot
+reported 205,304 KiB PSS and 107,056 KiB graphics memory; thermal status was
+0. These short runs are not peak-memory, GPU-execution or battery measurements.
 
 ## Extraction order and acceptance
 

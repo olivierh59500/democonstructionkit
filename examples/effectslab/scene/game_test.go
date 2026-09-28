@@ -34,7 +34,7 @@ func TestBoundedProfilingConfiguration(t *testing.T) {
 	if err != nil || g.warmup != 10 {
 		t.Fatalf("short run warmup or unused capture option: %v", err)
 	}
-	for _, c := range []Config{{Frames: -1}, {CaptureFrame: -1}, {Frames: 40, Capture: "capture.png", CaptureFrame: 50}} {
+	for _, c := range []Config{{Frames: -1}, {CaptureFrame: -1}, {Frames: 40, Capture: "capture.png", CaptureFrame: 50}, {Composed: true, Eco: true}, {Composed: true, Cubes: true}, {Composed: true, Authoring: true}} {
 		if _, err := NewGame(c); err == nil {
 			t.Fatalf("accepted invalid run: %+v", c)
 		}

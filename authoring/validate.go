@@ -201,7 +201,154 @@ func (p Project) Validate() error {
 			return fmt.Errorf("authoring: layer %q: %w", l.ID, err)
 		}
 	}
+	postBytes, err := p.PostSurfaceBytes()
+	if err != nil {
+		return err
+	}
+	if postBytes > 64<<20 {
+		return fmt.Errorf("authoring: post-processing surfaces exceed 64 MiB budget")
+	}
 	return nil
+}
+
+// PostSurfaceBytes estimates the owned RGBA surfaces added by serialized image
+// passes. It excludes assets, the root scene surface and driver/atlas overhead.
+// Hosts can show this before compiling a project or choosing a mobile budget.
+func (p Project) PostSurfaceBytes() (int64, error) {
+	if p.Canvas.Width < 1 || p.Canvas.Height < 1 || p.Canvas.Width > 8192 || p.Canvas.Height > 8192 {
+		return 0, fmt.Errorf("authoring: invalid canvas for post-processing estimate")
+	}
+	rootScratch, err := validatePostEffects(p.Passes, p.Canvas)
+	if err != nil {
+		return 0, fmt.Errorf("authoring: scene passes: %w", err)
+	}
+	canvasBytes := int64(p.Canvas.Width) * int64(p.Canvas.Height) * 4
+	postBytes := int64(0)
+	if len(p.Passes) > 0 {
+		postBytes = 2*canvasBytes + rootScratch
+	}
+	for _, l := range p.Layers {
+		scratch, err := validatePostEffects(l.Passes, p.Canvas)
+		if err != nil {
+			return 0, fmt.Errorf("authoring: layer %q passes: %w", l.ID, err)
+		}
+		if len(l.Passes) > 0 {
+			postBytes += 2*canvasBytes + scratch
+		}
+	}
+	return postBytes, nil
+}
+
+func validPostValue(value float64) bool {
+	return !math.IsNaN(value) && !math.IsInf(value, 0) && math.Abs(value) <= 1e6
+}
+
+// validatePostEffects returns extra CRT scratch bytes. Each containing pipeline
+// separately owns two alternating canvas-sized surfaces.
+func validatePostEffects(passes []PostEffect, canvas Canvas) (int64, error) {
+	if len(passes) > 8 {
+		return 0, fmt.Errorf("at most eight ordered passes are allowed per scope")
+	}
+	scratch := int64(0)
+	canvasBytes := int64(canvas.Width) * int64(canvas.Height) * 4
+	for i, pass := range passes {
+		if pass.Window.Start < 0 {
+			return 0, fmt.Errorf("pass %d has a negative start time", i)
+		}
+		if err := window(pass.Window).Validate(); err != nil {
+			return 0, fmt.Errorf("pass %d: %w", i, err)
+		}
+		if !validPostValue(pass.Period) || pass.Period < 0 ||
+			pass.Period > 0 && (pass.Window.Duration <= 0 || pass.Period < pass.Window.Duration) {
+			return 0, fmt.Errorf("pass %d has an invalid repeat period", i)
+		}
+		configs := 0
+		for _, present := range []bool{pass.CRT != nil, pass.WaterReflection != nil, pass.Magnifier != nil} {
+			if present {
+				configs++
+			}
+		}
+		if configs != 1 {
+			return 0, fmt.Errorf("pass %d requires exactly one effect configuration", i)
+		}
+		switch pass.Kind {
+		case "crt":
+			c := pass.CRT
+			if c == nil {
+				return 0, fmt.Errorf("pass %d requires CRT parameters", i)
+			}
+			for _, value := range []float64{c.Curvature, c.ScanlineFrequency, c.ScanlineAmplitude, c.ChromaticShift, c.Vignette} {
+				if !validPostValue(value) {
+					return 0, fmt.Errorf("pass %d has invalid CRT parameters", i)
+				}
+			}
+			if c.SourceOrigin.X < 0 || c.SourceOrigin.Y < 0 || c.SourceOrigin.X > 8192 || c.SourceOrigin.Y > 8192 {
+				return 0, fmt.Errorf("pass %d has an invalid CRT source origin", i)
+			}
+			if c.SourceOrigin.X > 8192-canvas.Width || c.SourceOrigin.Y > 8192-canvas.Height {
+				return 0, fmt.Errorf("pass %d CRT source exceeds the GPU surface budget", i)
+			}
+			if _, err := blend(c.Blend); err != nil {
+				return 0, fmt.Errorf("pass %d: %w", i, err)
+			}
+			if c.Opacity != nil && (*c.Opacity < 0 || *c.Opacity > 1 || !validPostValue(*c.Opacity)) {
+				return 0, fmt.Errorf("pass %d has invalid CRT opacity", i)
+			}
+			if pass.Window.FadeIn > 0 || pass.Window.FadeOut > 0 || c.Opacity != nil && *c.Opacity < 1 {
+				scratch += canvasBytes
+			}
+			if c.SourceOrigin != (IntPoint{}) {
+				scratch += int64(canvas.Width+c.SourceOrigin.X) * int64(canvas.Height+c.SourceOrigin.Y) * 4
+			}
+		case "water_reflection":
+			c := pass.WaterReflection
+			if c == nil {
+				return 0, fmt.Errorf("pass %d requires water reflection parameters", i)
+			}
+			if err := validRect(c.Source); err != nil {
+				return 0, fmt.Errorf("pass %d: %w", i, err)
+			}
+			for _, value := range []float64{c.X, c.Horizon, c.ScaleY, c.Fade, c.Wave.Amplitude, c.Wave.Wavelength, c.Wave.Speed, c.Wave.Phase} {
+				if !validPostValue(value) {
+					return 0, fmt.Errorf("pass %d has invalid reflection parameters", i)
+				}
+			}
+			if c.ScaleY < 0 || c.Fade < 0 || c.Fade > 1 || c.RowHeight < 0 || c.RowHeight > 8192 ||
+				c.Wave.Amplitude != 0 && c.Wave.Wavelength <= 0 ||
+				c.Alpha != nil && (*c.Alpha < 0 || *c.Alpha > 1 || !validPostValue(*c.Alpha)) {
+				return 0, fmt.Errorf("pass %d has invalid reflection scale, wave or opacity", i)
+			}
+			if _, err := filter(c.Filter); err != nil {
+				return 0, fmt.Errorf("pass %d: %w", i, err)
+			}
+			if _, err := blend(c.Blend); err != nil {
+				return 0, fmt.Errorf("pass %d: %w", i, err)
+			}
+		case "magnifier":
+			c := pass.Magnifier
+			if c == nil {
+				return 0, fmt.Errorf("pass %d requires magnifier parameters", i)
+			}
+			if err := validRect(c.Crop); err != nil {
+				return 0, fmt.Errorf("pass %d: %w", i, err)
+			}
+			for _, value := range []float64{c.Center.X, c.Center.Y, c.Velocity.X, c.Velocity.Y, c.Radius, c.Zoom, c.Falloff, c.Feather} {
+				if !validPostValue(value) {
+					return 0, fmt.Errorf("pass %d has invalid magnifier parameters", i)
+				}
+			}
+			if c.Radius <= 0 || c.Zoom <= 0 || c.Falloff < 0 || c.Feather < 0 ||
+				c.Opacity != nil && (*c.Opacity < 0 || *c.Opacity > 1 || !validPostValue(*c.Opacity)) {
+				return 0, fmt.Errorf("pass %d has invalid magnifier radius, zoom or opacity", i)
+			}
+			if _, err := filter(c.Filter); err != nil {
+				return 0, fmt.Errorf("pass %d: %w", i, err)
+			}
+		default:
+			return 0, fmt.Errorf("pass %d has unknown kind %q", i, pass.Kind)
+		}
+	}
+	return scratch, nil
 }
 
 func (p Project) asset(id, kind string) error {

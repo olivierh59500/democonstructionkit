@@ -51,7 +51,7 @@ type Options struct {
 
 type Compiled struct {
 	canvas Canvas
-	layers *kit.Layers
+	root   kit.Effect
 	closed bool
 }
 
@@ -60,23 +60,37 @@ func (c *Compiled) Update(f kit.Frame) error {
 	if c.closed {
 		return nil
 	}
-	return c.layers.Update(f)
+	return c.root.Update(f)
 }
 func (c *Compiled) Draw(dst *ebiten.Image) {
 	if c.closed || dst == nil {
 		return
 	}
-	v := c.canvas.Background
-	dst.Fill(color.NRGBA{R: v[0], G: v[1], B: v[2], A: v[3]})
-	c.layers.Draw(dst)
+	c.root.Draw(dst)
 }
 func (c *Compiled) Close() error {
 	if c.closed {
 		return nil
 	}
 	c.closed = true
-	return c.layers.Close()
+	return kit.Close(c.root)
 }
+
+// sceneRoot is the complete scene source for optional project-level passes.
+// A layer pass sees just its own transparent surface; a scene pass sees this
+// background and every preceding layer in their authored order.
+type sceneRoot struct {
+	canvas Canvas
+	layers *kit.Layers
+}
+
+func (s *sceneRoot) Update(f kit.Frame) error { return s.layers.Update(f) }
+func (s *sceneRoot) Draw(dst *ebiten.Image) {
+	v := s.canvas.Background
+	dst.Fill(color.NRGBA{R: v[0], G: v[1], B: v[2], A: v[3]})
+	s.layers.Draw(dst)
+}
+func (s *sceneRoot) Close() error { return s.layers.Close() }
 
 // Compile creates existing DCK effects from validated data. No rendering or
 // animation equations are reimplemented here; named configurations only select
@@ -112,15 +126,24 @@ func Compile(p Project, r Resolver, o Options) (*Compiled, error) {
 			cleanup()
 			return nil, fmt.Errorf("authoring: layer %q: %w", l.ID, err)
 		}
+		effect, err = b.withPosts(effect, l.Passes)
+		if err != nil {
+			cleanup()
+			return nil, fmt.Errorf("authoring: layer %q passes: %w", l.ID, err)
+		}
 		blendMode, _ := blend(l.Blend)
 		layers = append(layers, kit.TimedLayer{Effect: effect, Window: window(l.Window), LocalTime: l.LocalTime, Blend: blendMode})
 	}
-	root, err := kit.NewLayers(p.Canvas.Width, p.Canvas.Height, layers...)
+	composed, err := kit.NewLayers(p.Canvas.Width, p.Canvas.Height, layers...)
 	if err != nil {
 		cleanup()
 		return nil, err
 	}
-	return &Compiled{canvas: p.Canvas, layers: root}, nil
+	root, err := b.withPosts(&sceneRoot{canvas: p.Canvas, layers: composed}, p.Passes)
+	if err != nil {
+		return nil, fmt.Errorf("authoring: scene passes: %w", err)
+	}
+	return &Compiled{canvas: p.Canvas, root: root}, nil
 }
 
 type compiler struct {
@@ -284,7 +307,15 @@ func compileMode(c Mode, vertical bool) (scrolling.Mode, error) {
 				return scrolling.Mode{}, err
 			}
 			v := c.Path
-			return scrolling.AlongPath(scrolling.PathConfig{Path: path, Offset: v.Offset, NormalOffset: v.NormalOffset, Rotation: v.Rotation, Orient: v.Orient, Clip: v.Clip, Vertical: vertical})
+			if err := validRect(v.Viewport); err != nil {
+				return scrolling.Mode{}, err
+			}
+			config := scrolling.PathConfig{Path: path, Offset: v.Offset, NormalOffset: v.NormalOffset, Rotation: v.Rotation,
+				Orient: v.Orient, Clip: v.Clip, Vertical: vertical, Extrapolate: v.Extrapolate}
+			if v.Viewport != nil {
+				config.Viewport = rectangle(*v.Viewport)
+			}
+			return scrolling.AlongPath(config)
 		}
 	}
 	return scrolling.Mode{}, fmt.Errorf("unknown or mismatched mode %q", c.Kind)

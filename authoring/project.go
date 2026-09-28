@@ -40,6 +40,7 @@ type Project struct {
 	Assets  map[string]string          `json:"assets"`
 	Signals map[string]modulation.Spec `json:"signals,omitempty"`
 	Layers  []Layer                    `json:"layers"`
+	Passes  []PostEffect               `json:"passes,omitempty"`
 }
 
 type Window struct {
@@ -57,6 +58,7 @@ type Layer struct {
 	Window        Window         `json:"window,omitempty"`
 	LocalTime     bool           `json:"localTime,omitempty"`
 	Blend         string         `json:"blend,omitempty"`
+	Passes        []PostEffect   `json:"passes,omitempty"`
 	Scroll        *Scroll        `json:"scroll,omitempty"`
 	Sprites       *SpriteGroup   `json:"sprites,omitempty"`
 	Background    *Background    `json:"background,omitempty"`
@@ -75,6 +77,68 @@ type Rect struct {
 	Y      int `json:"y"`
 	Width  int `json:"width"`
 	Height int `json:"height"`
+}
+
+type IntPoint struct {
+	X int `json:"x"`
+	Y int `json:"y"`
+}
+
+// PostEffect processes either one layer or the complete scene. Array order is
+// rendering order, so a reflection can follow a CRT-treated logo or scroll.
+// Window is measured in the parent layer's time (scene time at project level).
+// Period repeats a finite window from its first Start; zero runs it only once.
+type PostEffect struct {
+	Kind            string               `json:"kind"`
+	Window          Window               `json:"window,omitempty"`
+	Period          float64              `json:"period,omitempty"`
+	CRT             *CRTPost             `json:"crt,omitempty"`
+	WaterReflection *WaterReflectionPost `json:"waterReflection,omitempty"`
+	Magnifier       *MagnifierPost       `json:"magnifier,omitempty"`
+}
+
+type CRTPost struct {
+	Curvature          float64  `json:"curvature,omitempty"`
+	ScanlineFrequency  float64  `json:"scanlineFrequency,omitempty"`
+	ScanlineAmplitude  float64  `json:"scanlineAmplitude,omitempty"`
+	ChromaticShift     float64  `json:"chromaticShift,omitempty"`
+	Vignette           float64  `json:"vignette,omitempty"`
+	NormalizeSource    bool     `json:"normalizeSource,omitempty"`
+	OutsideTransparent bool     `json:"outsideTransparent,omitempty"`
+	SourceOrigin       IntPoint `json:"sourceOrigin,omitempty"`
+	Blend              string   `json:"blend,omitempty"`
+	Opacity            *float64 `json:"opacity,omitempty"`
+}
+
+type WaterWave struct {
+	Amplitude  float64 `json:"amplitude,omitempty"`
+	Wavelength float64 `json:"wavelength,omitempty"`
+	Speed      float64 `json:"speed,omitempty"`
+	Phase      float64 `json:"phase,omitempty"`
+}
+type WaterReflectionPost struct {
+	Source    *Rect     `json:"source,omitempty"`
+	X         float64   `json:"x,omitempty"`
+	Horizon   float64   `json:"horizon,omitempty"`
+	ScaleY    float64   `json:"scaleY,omitempty"`
+	Alpha     *float64  `json:"alpha,omitempty"`
+	Fade      float64   `json:"fade,omitempty"`
+	Wave      WaterWave `json:"wave,omitempty"`
+	RowHeight int       `json:"rowHeight,omitempty"`
+	Filter    string    `json:"filter,omitempty"`
+	Blend     string    `json:"blend,omitempty"`
+	Tint      *[4]uint8 `json:"tint,omitempty"`
+}
+type MagnifierPost struct {
+	Center   Point    `json:"center"`
+	Velocity Point    `json:"velocity,omitempty"`
+	Radius   float64  `json:"radius"`
+	Zoom     float64  `json:"zoom"`
+	Falloff  float64  `json:"falloff,omitempty"`
+	Feather  float64  `json:"feather,omitempty"`
+	Opacity  *float64 `json:"opacity,omitempty"`
+	Crop     *Rect    `json:"crop,omitempty"`
+	Filter   string   `json:"filter,omitempty"`
 }
 
 // Wave follows DCK's spatial-wave convention: radians per pixel and per second.
@@ -107,6 +171,8 @@ type Path struct {
 	Rotation      float64 `json:"rotation,omitempty"`
 	Orient        bool    `json:"orient,omitempty"`
 	Clip          bool    `json:"clip,omitempty"`
+	Extrapolate   bool    `json:"extrapolate,omitempty"`
+	Viewport      *Rect   `json:"viewport,omitempty"`
 }
 type Mode struct {
 	Kind        string       `json:"kind"`

@@ -31,8 +31,8 @@ func TestProceduralProjectCompilesAtBothResolutions(t *testing.T) {
 	}
 }
 
-func TestSavedFormationExamplesCompileAndAdvance(t *testing.T) {
-	for _, name := range []string{"formation.json", "individual-paths.json"} {
+func TestSavedAuthoringExamplesCompileAndAdvance(t *testing.T) {
+	for _, name := range []string{"formation.json", "individual-paths.json", "projects/composed-effects.json"} {
 		t.Run(name, func(t *testing.T) {
 			file, err := os.Open("../" + name)
 			if err != nil {
@@ -55,6 +55,12 @@ func TestSavedFormationExamplesCompileAndAdvance(t *testing.T) {
 					t.Error(err)
 				}
 			})
+			if name == "projects/composed-effects.json" {
+				postBytes, err := project.PostSurfaceBytes()
+				if err != nil || postBytes == 0 || scene.SurfaceBytes() <= postBytes {
+					t.Fatalf("invalid composed-scene surface estimate: %d bytes, %v", postBytes, err)
+				}
+			}
 			for _, second := range []float64{0, .5, 1, 2, 3.5, 4} {
 				if err := scene.Update(kit.Frame{Time: second}); err != nil {
 					t.Fatal(err)

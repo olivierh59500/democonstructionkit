@@ -22,6 +22,7 @@ import (
 type Config struct {
 	Eco                  bool
 	Authoring            bool
+	Composed             bool
 	Cubes                bool
 	Frames               int
 	Profile              string
@@ -111,8 +112,11 @@ type Game struct {
 }
 
 func NewGame(c Config) (*Game, error) {
-	if c.Authoring && c.Cubes {
+	if (c.Authoring && c.Cubes) || (c.Composed && (c.Authoring || c.Cubes)) {
 		return nil, fmt.Errorf("effectslab: choose one profiling scene")
+	}
+	if c.Composed && c.Eco {
+		return nil, fmt.Errorf("effectslab: the saved composed project uses 640x360")
 	}
 	if c.Frames < 0 || c.CaptureFrame < 0 {
 		return nil, fmt.Errorf("effectslab: negative frame limit")
@@ -149,12 +153,18 @@ func (g *Game) initialize() error {
 		g.output = ebiten.NewImage(w, h)
 		return nil
 	}
-	if g.config.Authoring {
+	if g.config.Authoring || g.config.Composed {
 		width, height := 640, 360
 		if g.config.Eco {
 			width, height = 320, 180
 		}
-		s, err := authored.NewSize(width, height)
+		var s *authored.Scene
+		var err error
+		if g.config.Composed {
+			s, err = authored.NewComposed()
+		} else {
+			s, err = authored.NewSize(width, height)
+		}
 		if err != nil {
 			return err
 		}
@@ -333,6 +343,9 @@ func (g *Game) finish() error {
 		sceneName = "jelly-cubes"
 		surfaces = map[string]int64{"cube_scene_rgba": g.jelly.SurfaceBytes()}
 	} else if g.authored != nil {
+		if g.config.Composed {
+			sceneName = "composed-authoring"
+		}
 		surfaces = map[string]int64{"authoring_scene_rgba": g.authored.SurfaceBytes()}
 	} else {
 		eco, waterRows, sceneName = g.scene.Eco, 1, "live-effects"

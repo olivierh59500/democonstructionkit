@@ -2497,8 +2497,14 @@ go run ./examples/authoring -project examples/authoring/formation.json \
 go run ./examples/authoring -project examples/authoring/individual-paths.json \
   -frames 90 -capture /tmp/dck-individual-paths.png
 
+# Stack CRT and water on text, then cue a lens over the complete scene.
+go run ./examples/authoring \
+  -project examples/authoring/projects/composed-effects.json \
+  -frames 90 -capture /tmp/dck-composed-effects.png
+
 # Use the shared desktop/mobile laboratory host for profiling this composition.
 go run ./examples/effectslab -authoring -frames 900 -profile /tmp/dck-authoring.json
+go run ./examples/effectslab -composed -frames 900 -profile /tmp/dck-composed.json
 ```
 
 The example's resolver supplies `checker`, `orb-cyan`, `orb-pink`, `small` and
@@ -2539,6 +2545,40 @@ one `kit.Frame` per Update, draws the compiled effect and closes it afterwards.
 duplicate keys, unsupported versions, invalid asset/mode references and incompatible
 units. Compilation borrows resolver assets and owns only its working resources.
 
+Each `layers[].passes` array processes just that layer in listed order.
+Project-level `passes` process the complete scene, including its background
+and every layer. In the saved `composed-effects.json`, CRT and a moving water
+reflection share one text layer, while a timed magnifier sees all eight sprites
+and the other layers together. A pass `window` supplies start, duration and
+fade times. Layer-pass cues use the layer clock when `localTime: true`;
+project-pass cues use scene seconds. Magnifier velocity and water-wave speed
+are independent parameters. A positive pass `period` repeats a finite window
+from its first start; it must be at least as long as the duration. Zero keeps a
+one-time cue. The composed example's lens stays active for seven seconds in
+each nine-second cycle, with a short fade at both ends. For example:
+
+```json
+"passes": [
+  {"kind": "crt", "crt": {"normalizeSource": true,
+    "outsideTransparent": true, "curvature": 0.18}},
+  {"kind": "water_reflection", "waterReflection": {
+    "source": {"x": 60, "y": 40, "width": 520, "height": 70},
+    "horizon": 132, "scaleY": 0.8, "alpha": 0.48,
+    "wave": {"amplitude": 2, "wavelength": 22, "speed": 2.4}}}
+]
+```
+
+The passes reuse bounded GPU surfaces and close them with the project.
+`Project.PostSurfaceBytes()` estimates their logical RGBA storage before
+compilation; version 1 rejects configurations above 64 MiB. This 640×360
+example uses 3.52 MiB of post-processing surfaces.
+On Pixel 10a, a 900-tick bounded run of this saved scene measured 59.97 updates/s
+and 59.90 Draw callbacks/s after warmup. Across 744 SurfaceFlinger intervals,
+p95 was 16.737 ms, maximum 16.956 ms and none exceeded 20 ms. Mean CPU work
+was 32.2 µs per update and 1.12 ms per submitted frame. One snapshot reported
+205,304 KiB process PSS, 107,056 KiB graphics memory and thermal status 0;
+it does not establish peak memory or battery use.
+
 The serialized subset is deliberately explicit:
 
 | Version 1 layer | Supported saved parameters |
@@ -2547,7 +2587,9 @@ The serialized subset is deliberately explicit:
 | `sprites` | Image animation, count, linear/path/orbit/weave, cued or per-sprite sampled formation, signed spacing, keyframed arch/tilt, staggered harmonic cues, transform, blend/filter, common and per-instance signal bindings |
 | `background` | Source crop, repeat period, scale, parallax, camera/movement velocities, blend/filter |
 | `jelly_cube` | Editable default/DMA preset, center, half-edge, camera, six colors, mode order/durations, phase, speed, entrance, transition and five deformation gains |
-| All layers | ID, order, start/duration/fades, local clock and final layer blend |
+| `copper_bars`, `raster_overlay`, `rotozoom` | Raster clocks, alpha/source crops, repeated textures and independent movement |
+| All layers | ID, order, start/duration/fades, local clock, final blend and ordered CRT/water/magnifier passes |
+| Complete scene | Ordered CRT/water/magnifier passes over all layers, each with an optional time window |
 
 A sprite layer can save the same expanding, inverting and bending phrase used
 by Go scenes. `speed: 1` advances the formation clock in seconds. `smooth`
@@ -2583,9 +2625,10 @@ coordinates. This is the data-only version of `motion.KeyframedFormation`.
 
 Signals store keys, oscillators and named inputs. `Options.Context` can supply
 music time and live values; otherwise project BPM and layer time define the beat
-clock. Recycled/projected/sliced compatibility transports, DNA, arbitrary image
-passes, particle fields, arbitrary mesh deformation, procedural kernels and Go callbacks
-remain Go APIs rather than saved version-1 layer kinds. Unsupported settings are
+clock. Recycled/projected/sliced compatibility transports, DNA, additional
+custom image passes, particle fields, arbitrary mesh deformation, procedural
+kernels and Go callbacks remain Go APIs rather than saved version-1 layer kinds.
+Unsupported settings are
 rejected instead of silently discarded. A future schema can add these named
 families without putting effect equations inside an editor.
 
@@ -2916,12 +2959,13 @@ Apply the path to **any font**, including mixed proportional fonts:
 
 ```go
 mode, err := scrolling.AlongPath(scrolling.PathConfig{
-    Path: path, Orient: true, Clip: true, NormalOffset: 0,
+    Path: path, Orient: true, Extrapolate: true,
+    Viewport: image.Rect(0, 0, 640, 360),
 })
 scroll, err := scrolling.New(scrolling.Config{
     Text: "HELLO FROM THE CONSTRUCTION KIT ",
     Fonts: faces, Font: "small",
-    Speed: 100, X: path.Length(),
+    Speed: 100, X: path.Length(), Repeat: true, Gap: 80,
     Modes: map[string]scrolling.Mode{"curve": mode}, Shape: "curve",
 })
 ```
@@ -2929,7 +2973,12 @@ scroll, err := scrolling.New(scrolling.Config{
 The current pen X is distance along the path, so font advances and scale remain
 meaningful. `Vertical:true` in `PathConfig` uses the pen Y instead. `Orient` aligns
 glyphs with the tangent; `Rotation` adds radians and `NormalOffset` moves the
-baseline perpendicular to it. `Clip` hides glyph origins outside an open path.
+baseline perpendicular to it. `Extrapolate` extends open endpoints along their
+tangents, while `Viewport` crops the rendered pixels. This lets a letter enter
+or leave one column at a time instead of appearing as a complete glyph.
+`Clip` retains the older whole-origin visibility rule for authored compatibility;
+it cannot be combined with endpoint extrapolation. The saved path configuration
+exposes the same `extrapolate` and `viewport` fields.
 For time-dependent geometry, supply `PathConfig.Sample` instead of `Path`:
 
 ```go

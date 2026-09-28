@@ -34,6 +34,65 @@ func TestProjectRoundTrip(t *testing.T) {
 		t.Fatalf("round trip changed project\ngot %+v\nwant %+v", got, p)
 	}
 }
+
+func TestOrderedPostEffectsRoundTripAndBounds(t *testing.T) {
+	alpha, opacity := .65, .8
+	p := testProject()
+	p.Layers[0].Passes = []PostEffect{{Kind: "water_reflection", WaterReflection: &WaterReflectionPost{
+		Source: &Rect{X: 8, Y: 4, Width: 24, Height: 12}, Horizon: 27,
+		ScaleY: .5, Alpha: &alpha, Wave: WaterWave{Amplitude: 2, Wavelength: 24, Speed: 1},
+	}}}
+	p.Passes = []PostEffect{
+		{Kind: "magnifier", Window: Window{Start: 1, Duration: 2, FadeIn: .25, FadeOut: .25}, Period: 9,
+			Magnifier: &MagnifierPost{Center: Point{X: 24, Y: 20}, Radius: 12, Zoom: 2}},
+		{Kind: "crt", CRT: &CRTPost{Curvature: .15, ScanlineFrequency: 800,
+			OutsideTransparent: true, NormalizeSource: true, SourceOrigin: IntPoint{X: 2}, Opacity: &opacity}},
+	}
+	var encoded bytes.Buffer
+	if err := Encode(&encoded, p); err != nil {
+		t.Fatal(err)
+	}
+	decoded, err := Decode(&encoded)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !reflect.DeepEqual(*decoded, p) {
+		t.Fatalf("post-effect round trip changed the project\ngot %+v\nwant %+v", decoded, p)
+	}
+	if bytes, err := p.PostSurfaceBytes(); err != nil || bytes != 74_112 {
+		t.Fatalf("post-processing surface estimate = %d bytes, %v; want 74112 bytes", bytes, err)
+	}
+	for name, mutate := range map[string]func(*Project){
+		"unknown pass":    func(p *Project) { p.Passes[0].Kind = "missing" },
+		"ambiguous pass":  func(p *Project) { p.Passes[0].CRT = &CRTPost{} },
+		"negative start":  func(p *Project) { p.Passes[0].Window.Start = -1 },
+		"short period":    func(p *Project) { p.Passes[0].Period = 1 },
+		"endless period":  func(p *Project) { p.Passes[0].Window.Duration = 0 },
+		"negative period": func(p *Project) { p.Passes[0].Period = -1 },
+		"lens radius":     func(p *Project) { p.Passes[0].Magnifier.Radius = 0 },
+		"water wave":      func(p *Project) { p.Layers[0].Passes[0].WaterReflection.Wave.Wavelength = 0 },
+		"crt origin":      func(p *Project) { p.Passes[1].CRT.SourceOrigin.X = 8192 },
+		"crt opacity":     func(p *Project) { invalid := 2.0; p.Passes[1].CRT.Opacity = &invalid },
+		"gpu budget":      func(p *Project) { p.Canvas.Width, p.Canvas.Height = 4096, 4096 },
+	} {
+		t.Run(name, func(t *testing.T) {
+			copy := p
+			copy.Layers = append([]Layer(nil), p.Layers...)
+			copy.Layers[0].Passes = append([]PostEffect(nil), p.Layers[0].Passes...)
+			copy.Passes = append([]PostEffect(nil), p.Passes...)
+			copy.Passes[0].Magnifier = &MagnifierPost{}
+			*copy.Passes[0].Magnifier = *p.Passes[0].Magnifier
+			copy.Passes[1].CRT = &CRTPost{}
+			*copy.Passes[1].CRT = *p.Passes[1].CRT
+			copy.Layers[0].Passes[0].WaterReflection = &WaterReflectionPost{}
+			*copy.Layers[0].Passes[0].WaterReflection = *p.Layers[0].Passes[0].WaterReflection
+			mutate(&copy)
+			if err := copy.Validate(); err == nil {
+				t.Fatal("accepted invalid post-processing configuration")
+			}
+		})
+	}
+}
 func TestDecodeRejectsAmbiguousDocuments(t *testing.T) {
 	var encoded bytes.Buffer
 	if err := Encode(&encoded, testProject()); err != nil {
@@ -137,15 +196,24 @@ func TestCompileMixedLayersAndBorrowedAssets(t *testing.T) {
 	p := testProject()
 	p.Signals = map[string]modulation.Spec{"x": {Base: 4}}
 	p.Layers = append(p.Layers, Layer{ID: "sprites", Kind: "sprites", Window: Window{Start: 1, Duration: 2, FadeIn: .5, FadeOut: .5}, LocalTime: true, Sprites: &SpriteGroup{Images: []string{"tile"}, Count: 2, Spacing: Point{X: 10}, Signals: Bindings{"x": "x"}}}, Layer{ID: "scroll", Kind: "scroll", Scroll: &Scroll{Text: "AB\nBA", Fonts: map[string]string{"main": "letters"}, Font: "main", Speed: 10, Page: &Page{Width: 60, LineHeight: 9, Align: "center"}, Repeat: true}})
+	crtOpacity := .8
+	p.Layers[1].Passes = []PostEffect{
+		{Kind: "crt", CRT: &CRTPost{Curvature: .15, NormalizeSource: true, OutsideTransparent: true, Opacity: &crtOpacity}},
+		{Kind: "water_reflection", Window: Window{Duration: 2, FadeIn: .5, FadeOut: .5}, WaterReflection: &WaterReflectionPost{Source: &Rect{Width: 64, Height: 24}, Horizon: 24, ScaleY: .5, Wave: WaterWave{Amplitude: 2, Wavelength: 16}}},
+	}
+	p.Passes = []PostEffect{{Kind: "magnifier", Window: Window{Start: 1, Duration: 2, FadeIn: .25, FadeOut: .25}, Magnifier: &MagnifierPost{Center: Point{X: 32, Y: 20}, Radius: 12, Zoom: 1.6}}}
 	assets := testAssets(t)
 	compiled, err := Compile(p, assets, Options{})
 	if err != nil {
 		t.Fatal(err)
 	}
+	destination := ebiten.NewImage(64, 48)
+	defer destination.Deallocate()
 	for _, seconds := range []float64{0, 1, 1.5, 2.9, 3, 0} {
 		if err := compiled.Update(kit.Frame{Time: seconds}); err != nil {
 			t.Fatal(err)
 		}
+		compiled.Draw(destination)
 	}
 	if err := compiled.Close(); err != nil {
 		t.Fatal(err)

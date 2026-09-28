@@ -29,6 +29,13 @@ func SetAuthoring(enabled bool) {
 	settings.config.Authoring = enabled
 }
 
+// SetComposed selects the saved layered-effects JSON project on Android.
+func SetComposed(enabled bool) {
+	settings.Lock()
+	defer settings.Unlock()
+	settings.config.Composed = enabled
+}
+
 // SetCubes selects the multi-instance cube scene before creating EbitenView.
 func SetCubes(enabled bool) {
 	settings.Lock()

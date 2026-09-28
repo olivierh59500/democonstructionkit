@@ -11,6 +11,7 @@ import (
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/olivierh59500/democonstructionkit/authoring"
+	"github.com/olivierh59500/democonstructionkit/examples/authoring/projects"
 	bitmap "github.com/olivierh59500/democonstructionkit/font"
 	"github.com/olivierh59500/democonstructionkit/modulation"
 	"github.com/olivierh59500/democonstructionkit/scrolling"
@@ -86,12 +87,15 @@ func NewSize(width, height int) (*Scene, error) {
 	return New(&p)
 }
 
-// SurfaceBytes estimates logical RGBA storage, excluding driver/atlas overhead.
+// SurfaceBytes estimates the demo canvas, procedural assets and serialized
+// post-processing surfaces, excluding other effect buffers and driver overhead.
 func (s *Scene) SurfaceBytes() int64 {
 	bytes := int64(s.Width) * int64(s.Height) * 4
 	for _, img := range s.images {
 		bytes += int64(img.Bounds().Dx()*img.Bounds().Dy()) * 4
 	}
+	postBytes, _ := s.Project.PostSurfaceBytes() // New accepted only validated data.
+	bytes += postBytes
 	return bytes
 }
 
@@ -122,6 +126,15 @@ func New(project *authoring.Project) (*Scene, error) {
 		return nil, err
 	}
 	return s, nil
+}
+
+// NewComposed loads the persisted CRT/reflection/lens example on every host.
+func NewComposed() (*Scene, error) {
+	project, err := projects.Composed()
+	if err != nil {
+		return nil, err
+	}
+	return New(project)
 }
 
 func (s *Scene) Close() error {

@@ -55,6 +55,7 @@ public final class MainActivity extends Activity {
         }
         Mobile.configure(eco, frames, profile);
         Mobile.setAuthoring(getIntent().getBooleanExtra("authoring", false));
+        Mobile.setComposed(getIntent().getBooleanExtra("composed", false));
         Mobile.setCubes(getIntent().getBooleanExtra("cubes", false));
         ebitenView = new EbitenView(this);
         ebitenView.setFocusableInTouchMode(true);

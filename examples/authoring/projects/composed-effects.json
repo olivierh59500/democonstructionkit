@@ -1,0 +1,85 @@
+{
+  "version": 1,
+  "units": {"distance": "pixels", "time": "seconds", "angle": "radians"},
+  "canvas": {"width": 640, "height": 360, "tps": 60, "background": [5, 8, 20, 255]},
+  "assets": {"checker": "image", "orb-cyan": "image", "orb-pink": "image", "small": "font"},
+  "layers": [
+    {
+      "id": "moving-wallpaper", "kind": "background",
+      "background": {
+        "image": "checker", "period": {"x": 32, "y": 32},
+        "scale": {"x": 2, "y": 2}, "velocity": {"x": -12, "y": 6}
+      }
+    },
+    {
+      "id": "title-with-crt-and-water", "kind": "scroll",
+      "scroll": {
+        "text": "ONE TEXT LAYER, TWO STACKED EFFECTS",
+        "fonts": {"main": "small"}, "font": "main",
+        "origin": {"x": 78, "y": 70}, "speed": 0
+      },
+      "passes": [
+        {
+          "kind": "crt",
+          "crt": {
+            "curvature": 0.18, "scanlineFrequency": 400,
+            "scanlineAmplitude": 0.015, "chromaticShift": 0.001,
+            "vignette": 0.22, "normalizeSource": true,
+            "outsideTransparent": true, "blend": "copy"
+          }
+        },
+        {
+          "kind": "water_reflection",
+          "waterReflection": {
+            "source": {"x": 60, "y": 40, "width": 520, "height": 70},
+            "x": 60, "horizon": 132, "scaleY": 0.8,
+            "alpha": 0.48, "fade": 0.85,
+            "wave": {"amplitude": 2, "wavelength": 22, "speed": 2.4},
+            "rowHeight": 2
+          }
+        }
+      ]
+    },
+    {
+      "id": "orbiting-orbs", "kind": "sprites",
+      "sprites": {
+        "images": ["orb-cyan", "orb-pink"], "count": 8,
+        "frameStride": 1, "speed": 1, "scale": {"x": 2, "y": 2},
+        "anchor": {"x": 0.5, "y": 0.5},
+        "formation": {
+          "loop": 4,
+          "poseKeys": [
+            {"time": 0, "origin": {"x": 130, "y": 240}, "spacing": {"x": 54, "y": 0}, "ease": "smooth"},
+            {"time": 1, "origin": {"x": 100, "y": 205}, "spacing": {"x": 54, "y": 0}, "arc": {"x": 0, "y": -45}, "ease": "smooth"},
+            {"time": 2, "origin": {"x": 165, "y": 250}, "spacing": {"x": 44, "y": 0}, "arc": {"x": 0, "y": 35}, "ease": "smooth"},
+            {"time": 3, "origin": {"x": 150, "y": 215}, "spacing": {"x": 48, "y": 0}, "arc": {"x": 0, "y": -35}, "ease": "smooth"},
+            {"time": 4, "origin": {"x": 130, "y": 240}, "spacing": {"x": 54, "y": 0}}
+          ]
+        }
+      }
+    },
+    {
+      "id": "bottom-scroll", "kind": "scroll",
+      "scroll": {
+        "text": "A TIMED LENS OVER THE WHOLE SCENE, WITH CRT AND WATER ON ONE SCROLLING LAYER.   ",
+        "fonts": {"main": "small"}, "font": "main",
+        "origin": {"x": 640, "y": 330}, "speed": 86,
+        "gap": 100, "repeat": true
+      }
+    }
+  ],
+  "passes": [
+    {
+      "kind": "magnifier",
+      "window": {"start": 1, "duration": 7, "fadeIn": 0.5, "fadeOut": 0.5},
+      "period": 9,
+      "magnifier": {
+        "center": {"x": 320, "y": 222},
+        "velocity": {"x": 18, "y": 0},
+        "radius": 72, "zoom": 1.7,
+        "falloff": 1, "feather": 8, "opacity": 0.9,
+        "filter": "linear"
+      }
+    }
+  ]
+}
