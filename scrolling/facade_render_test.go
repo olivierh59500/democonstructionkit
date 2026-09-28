@@ -208,3 +208,124 @@ func TestFacadeCaptionAndRevealKeepTheirAuthoredClocks(t *testing.T) {
 		t.Fatal("drawing reevaluated the reveal clock", clockSamples)
 	}
 }
+
+func TestCuedSliceFacadeBindsBorrowedFilmWithoutResetAndKeepsPixels(t *testing.T) {
+	first, second := ebiten.NewImage(7, 5), ebiten.NewImage(5, 7)
+	first.Fill(color.RGBA{R: 180, A: 255})
+	second.Fill(color.RGBA{B: 180, A: 255})
+	defer first.Deallocate()
+	defer second.Deallocate()
+	film, err := NewDNAFrames([]*ebiten.Image{first, second}, DNAFrameConfig{Frames: 8})
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer film.Close()
+	config := cuedFacadeConfig()
+	scroll, err := New(Config{CuedSlices: &config})
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer scroll.Close()
+	want, got := ebiten.NewImage(40, 20), ebiten.NewImage(40, 20)
+	defer want.Deallocate()
+	defer got.Deallocate()
+	scroll.Draw(got)
+	if scroll.Err() != ErrSliceFilmUnbound {
+		t.Fatal("drawing without artwork silently succeeded", scroll.Err())
+	}
+	program := scroll.SliceProgramController()
+	program.Warmup(11, 1)
+	head, state := program.Stream().Head(), program.Clock().State()
+	wrong := &DNAFrames{Image: film.Image, Count: 30}
+	if err := scroll.BindSliceFilm(wrong); err == nil {
+		t.Fatal("incompatible film frame count accepted")
+	}
+	if err := scroll.BindSliceFilm(film); err != nil {
+		t.Fatal(err)
+	}
+	if program.Stream().Head() != head || program.Clock().State() != state {
+		t.Fatal("binding artwork reset the pre-roll")
+	}
+	reference, err := NewSliceProgram(config.Program)
+	if err != nil {
+		t.Fatal(err)
+	}
+	reference.Warmup(11, 1)
+	for tick := 0; tick < 900; tick++ {
+		reference.Step()
+		if err := scroll.Update(kit.Frame{Tick: uint64(tick)}); err != nil {
+			t.Fatal(err)
+		}
+		if tick%29 == 0 {
+			want.Clear()
+			got.Clear()
+			reference.Draw(want, film, config.Draw)
+			scroll.Draw(got)
+			requireFacadePixels(t, want, got)
+			got.Clear()
+			scroll.Draw(got)
+			requireFacadePixels(t, want, got)
+		}
+	}
+	scroll.Close()
+	if film.Image == nil {
+		t.Fatal("facade closed borrowed artwork")
+	}
+}
+
+func TestFeedbackFacadeMatchesExplicitHistoryAtBothDirections(t *testing.T) {
+	font := facadeFont(color.RGBA{R: 200, A: 255}, 7, 5)
+	defer font.Image.Deallocate()
+	ringConfig := RingConfig{Font: font, Text: "ABCDABCD", Viewport: 35, Speed: 3}
+	for _, direction := range []int{1, -1} {
+		faceConfig := FeedbackDNAConfig{Width: 35, Height: 16, HorizontalSpeed: 3,
+			VerticalSpeed: 2, ColumnWidth: 2, Direction: direction, InsertY: 5,
+			Profile: []int{0, 2, 4, 6, 8, 10, 12, 14}, Filter: ebiten.FilterLinear}
+		ring, err := NewRing(ringConfig)
+		if err != nil {
+			t.Fatal(err)
+		}
+		history, err := NewFeedbackDNA(faceConfig)
+		if err != nil {
+			t.Fatal(err)
+		}
+		phaseSamples := 0
+		scroll, err := New(Config{Recycled: &RecycledConfig{Ring: ringConfig},
+			Output: &OutputConfig{Width: 35, Height: 5, Feedback: []FeedbackLayer{{
+				Config: faceConfig, X: 3, Y: 2,
+				PhaseAt: func(frame kit.Frame) int { phaseSamples++; return direction * (int(frame.Tick) / 2) },
+			}}}})
+		if err != nil {
+			t.Fatal(err)
+		}
+		source := ebiten.NewImageWithOptions(image.Rect(0, 0, 35, 5), &ebiten.NewImageOptions{Unmanaged: true})
+		want, got := ebiten.NewImage(48, 20), ebiten.NewImage(48, 20)
+		for tick := 0; tick < 600; tick++ {
+			ring.Step()
+			source.Clear()
+			ring.DrawAt(source, 0, 0)
+			history.Step(source)
+			if err := scroll.Update(kit.Frame{Tick: uint64(tick)}); err != nil {
+				t.Fatal(err)
+			}
+			if tick%13 == 0 {
+				want.Clear()
+				got.Clear()
+				history.DrawAt(want, 3, 2, direction*(tick/2), nil)
+				scroll.Draw(got)
+				requireFacadePixels(t, want, got)
+				got.Clear()
+				scroll.Draw(got)
+				requireFacadePixels(t, want, got)
+			}
+		}
+		if phaseSamples != 601 {
+			t.Fatal("history phase was reevaluated during Draw", phaseSamples)
+		}
+		scroll.Close()
+		history.Close()
+		source.Deallocate()
+		want.Deallocate()
+		got.Deallocate()
+	}
+}

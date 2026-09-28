@@ -441,18 +441,29 @@ characters and the one-time message prefix:
 ```go
 config, err := presets.PhenomenaDNAProgram(message, glyphIndex)
 if err != nil { return err }
-program, err := scrolling.NewSliceProgram(config)
+scroll, err := scrolling.New(scrolling.Config{
+    CuedSlices: &scrolling.CuedSlicesConfig{
+        Program: config, Film: film, Draw: draw,
+    },
+})
 if err != nil { return err }
+program := scroll.SliceProgramController()
 if err := program.Warmup(320, 1); err != nil { return err }
-// Each main-demo Update: program.Step(), then advance the scene's visual time.
+// Each main-demo Update: scroll.Update(frame), then advance visual time.
 // Each Draw, after rows.Begin(sceneTime):
-program.Draw(screen, film, draw)
+scroll.Draw(screen)
 ```
 
 Edit `Clock.Cues`, `Clock.ResumeRotationStep`, `Stream.Tokens`, `Stream.LoopStart`
 or `Offsets` without changing the renderer. `Clock().State()` exposes current
 pause, rotation and text speed for controls or an editor; `Stream()` exposes
-the circular history and cursor for inspection. The source screen still owns
+the circular history and cursor for inspection. `CuedSlices` and the uncommanded
+`Sliced` transport are alternatives, selected through the same constructor.
+If artwork is created after the clocks, omit `Film`, then call
+`scroll.BindSliceFilm(film)` after graphics initialization. Binding retains the
+pre-roll, pause, cursor and rotation; the film's frame count must match the clock.
+`ErrSliceFilmUnbound` reports premature drawing rather than silently hiding text.
+The source screen still owns
 its message, font artwork and intro/outro layer schedule.
 The graphics-free source-file test compares a 320-tick pre-roll and 4,000
 subsequent ticks against an independent strip/command reference, including all
@@ -768,8 +779,30 @@ func NewLensScroll(face scrolling.Face) (*scrolling.Scrolling, error) {
 faces before the image passes. Each `FeedbackLayer` has its own profile, direction,
 insertion/speed parameters, gradient, position and phase clock. History advances
 once per `Update`, including when rendering multiple views of the same effect.
+Phase callbacks are sampled during initialization and once per Update, so
+repeated Draw never re-evaluates a live phase function.
 Feedback output consists of those faces; add a separate layer when the ordinary
 text should also remain visible. Draw and layer placement never advance history.
+
+Cuddly's two colored DNA faces and Spreadpoint's delayed DNA lane now use this
+same facade with a recycled text source. Font metrics, message and profile are
+supplied by the production; the presets return all remaining parameters:
+
+```go
+config, err := presets.CuddlyDNAFeedbackScroll(grid, gradient, message, profile, -1)
+if err != nil { return err }
+scroll, err := scrolling.New(config)
+if err != nil { return err }
+scroll.Update(kit.Frame{Tick: uint64(sceneTick)})
+scroll.Draw(scene)
+```
+
+`Tick` drives the authored half-speed history phase in this preset. Edit
+`Output.Feedback[0].PhaseAt` to use seconds or another clock. Opposing faces
+retain independent fonts and gradients; `CuddlySpreadpointFeedbackScroll`
+selects its distinct insertion height, fixed phase and lower placement.
+Each preset owns a 320×25 source instead of a message-width image, with the
+same bounded history and visible-profile surfaces as the preceding composition.
 
 Close `Scrolling` when finished to release its output surfaces, feedback and pass
 resources. Font atlases, raster images and a supplied `DNAFrames` film remain

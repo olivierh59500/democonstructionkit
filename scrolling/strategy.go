@@ -68,6 +68,16 @@ type SlicedConfig struct {
 	RotationAt                   func(kit.Frame) float64
 }
 
+// CuedSlicesConfig combines the complete strip/control program with borrowed
+// rotating glyph artwork. Film may be attached after initialization through
+// BindSliceFilm. Draw uses the same strip width as Program.Stream; ordinary
+// Update advances insertion, pauses and rotation once, regardless of Draw rate.
+type CuedSlicesConfig struct {
+	Program SliceProgramConfig
+	Film    *DNAFrames
+	Draw    DNADrawConfig
+}
+
 // FeedbackLayer feeds the text image into a persistent DNA face once per Update.
 // PhaseSpeed uses rows per second; PhaseAt may retain an authored integer clock.
 type FeedbackLayer struct {
@@ -101,7 +111,7 @@ func (s *Scrolling) finish() (*Scrolling, error) {
 	}
 	var source kit.Effect = kit.Func{OnDraw: s.drawCore}
 	if len(c.Feedback) > 0 {
-		f := &scrollFeedback{source: source, layers: append([]FeedbackLayer(nil), c.Feedback...)}
+		f := &scrollFeedback{source: source, layers: append([]FeedbackLayer(nil), c.Feedback...), phases: make([]int, len(c.Feedback))}
 		for _, layer := range f.layers {
 			if layer.Config.Width > c.Width || !finite(layer.X) || !finite(layer.Y) || !finite(layer.PhaseSpeed) {
 				f.Close()
@@ -115,6 +125,7 @@ func (s *Scrolling) finish() (*Scrolling, error) {
 			f.faces = append(f.faces, face)
 		}
 		f.canvas = ebiten.NewImageWithOptions(image.Rect(0, 0, c.Width, c.Height), &ebiten.NewImageOptions{Unmanaged: true})
+		f.samplePhases(kit.Frame{})
 		source = f
 	}
 	if len(c.Passes) > 0 {
@@ -156,6 +167,9 @@ func newTransport(c Config) (*Scrolling, error) {
 		count++
 	}
 	if c.Sliced != nil {
+		count++
+	}
+	if c.CuedSlices != nil {
 		count++
 	}
 	if c.Crawl != nil {
@@ -352,6 +366,27 @@ func newTransport(c Config) (*Scrolling, error) {
 			return nil, err
 		}
 		s.backend = crawl
+	} else if c.CuedSlices != nil {
+		if c.X != 0 || c.Y != 0 || c.Vertical {
+			return nil, fmt.Errorf("scrolling: cued slice placement belongs in its draw configuration")
+		}
+		cfg := *c.CuedSlices
+		if cfg.Draw.SliceWidth != cfg.Program.Stream.SliceWidth || cfg.Draw.ScaleX == 0 || cfg.Draw.ScaleY == 0 ||
+			!finite(float64(cfg.Draw.ScaleX)) || !finite(float64(cfg.Draw.ScaleY)) ||
+			!finite(float64(cfg.Draw.OriginX)) || !finite(float64(cfg.Draw.OriginY)) {
+			return nil, fmt.Errorf("scrolling: invalid cued slice drawing configuration")
+		}
+		program, err := NewSliceProgram(cfg.Program)
+		if err != nil {
+			return nil, err
+		}
+		transport := &cuedSlicesTransport{program: program, draw: cfg.Draw}
+		if cfg.Film != nil {
+			if err := transport.bindFilm(cfg.Film); err != nil {
+				return nil, err
+			}
+		}
+		s.backend = transport
 	} else {
 		cfg := *c.Sliced
 		if c.X != 0 || c.Y != 0 || c.Vertical || cfg.Film == nil || cfg.Film.Image == nil || cfg.SlicesPerUpdate < 0 || !finite(cfg.RotationSpeed) || !finite(cfg.RotationPhase) || cfg.Draw.SliceWidth != cfg.Stream.SliceWidth {
@@ -466,6 +501,7 @@ type scrollFeedback struct {
 	canvas *ebiten.Image
 	layers []FeedbackLayer
 	faces  []*FeedbackDNA
+	phases []int
 	frame  kit.Frame
 }
 
@@ -479,15 +515,21 @@ func (f *scrollFeedback) Update(frame kit.Frame) error {
 	for _, face := range f.faces {
 		face.Step(f.canvas)
 	}
+	f.samplePhases(frame)
 	return nil
+}
+func (f *scrollFeedback) samplePhases(frame kit.Frame) {
+	for i, c := range f.layers {
+		phase := c.Phase + int(frame.Time*c.PhaseSpeed)
+		if c.PhaseAt != nil {
+			phase = c.PhaseAt(frame)
+		}
+		f.phases[i] = phase
+	}
 }
 func (f *scrollFeedback) Draw(dst *ebiten.Image) {
 	for i, c := range f.layers {
-		phase := c.Phase + int(f.frame.Time*c.PhaseSpeed)
-		if c.PhaseAt != nil {
-			phase = c.PhaseAt(f.frame)
-		}
-		f.faces[i].DrawAt(dst, c.X, c.Y, phase, c.Gradient)
+		f.faces[i].DrawAt(dst, c.X, c.Y, f.phases[i], c.Gradient)
 	}
 }
 func (f *scrollFeedback) Close() error {

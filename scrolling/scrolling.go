@@ -63,6 +63,7 @@ type Config struct {
 	Slots            *BitmapSlotsConfig      // Recycled glyphs with pose mapping and tangent orientation.
 	Crawl            *CrawlConfig            // Bounded paragraph transport and configurable perspective rows.
 	Sliced           *SlicedConfig           // Streaming DNA with independent transport and rotation clocks.
+	CuedSlices       *CuedSlicesConfig       // Streaming DNA with control-driven pause and rotation clocks.
 	Feed             *FeedConfig             // Finite glyph insertion into a persistent scrolling trail.
 	Scanline         *ScanlineConfig         // Proportional text with cumulative row sampling and bounce.
 	Profiled         *ProfiledConfig         // Bitmap text sampled through a floating-point row profile.
@@ -236,6 +237,33 @@ func (s *Scrolling) CaptionController() *CaptionCarousel {
 	return nil
 }
 
+// SliceProgramController exposes the borrowed strip/control program used by
+// CuedSlices. Inspect it or perform an explicit pre-roll; ordinary advancement
+// still belongs to Scrolling.Update.
+func (s *Scrolling) SliceProgramController() *SliceProgram {
+	if transport, ok := s.backend.(*cuedSlicesTransport); ok {
+		return transport.program
+	}
+	return nil
+}
+
+// BindSliceFilm attaches borrowed artwork to a CuedSlices transport without
+// resetting its message cursor, pause or rotation. This supports hosts which
+// construct clocks before graphics initialization. The film remains caller-owned.
+func (s *Scrolling) BindSliceFilm(film *DNAFrames) error {
+	transport, ok := s.backend.(*cuedSlicesTransport)
+	if !ok {
+		return fmt.Errorf("scrolling: selected transport has no cued slice artwork")
+	}
+	if err := transport.bindFilm(film); err != nil {
+		return err
+	}
+	if errors.Is(s.drawErr, ErrSliceFilmUnbound) {
+		s.drawErr = nil
+	}
+	return nil
+}
+
 // CursorRune returns the current character for transports that expose a text
 // cursor. Other transport kinds return zero.
 func (s *Scrolling) CursorRune() rune {
@@ -258,7 +286,7 @@ func New(c Config) (*Scrolling, error) {
 	if c.MaxGlyphsPerDraw < 1 || c.MaxGlyphsPerDraw > 1<<24 {
 		return nil, fmt.Errorf("scrolling: invalid automatic draw budget")
 	}
-	if c.Recycled != nil || c.RingLanes != nil || c.DualProfiled != nil || c.Caption != nil || c.Reveal != nil || c.Projected != nil || c.Pseudo3D != nil || c.Sliced != nil || c.Crawl != nil || c.Bands != nil || c.Slots != nil || c.Feed != nil || c.Scanline != nil || c.Profiled != nil || c.RowColumn != nil || c.RowBands != nil || c.SizeBank != nil || c.Ribbon != nil {
+	if c.Recycled != nil || c.RingLanes != nil || c.DualProfiled != nil || c.Caption != nil || c.Reveal != nil || c.Projected != nil || c.Pseudo3D != nil || c.Sliced != nil || c.CuedSlices != nil || c.Crawl != nil || c.Bands != nil || c.Slots != nil || c.Feed != nil || c.Scanline != nil || c.Profiled != nil || c.RowColumn != nil || c.RowBands != nil || c.SizeBank != nil || c.Ribbon != nil {
 		return newTransport(c)
 	}
 	if c.Page != nil {
@@ -642,6 +670,9 @@ func (s *Scrolling) drawCore(dst *ebiten.Image) {
 	s.drawErr = nil
 	if s.backend != nil {
 		s.backend.Draw(dst)
+		if backend, ok := s.backend.(interface{ DrawError() error }); ok {
+			s.drawErr = backend.DrawError()
+		}
 		return
 	}
 	state := s.StateAt(s.frame.Time)
