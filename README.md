@@ -1816,7 +1816,7 @@ speeds, source-strip dimensions, profile, filters and raster are editable:
 config, err := presets.CuddlyStarwarsDualScroll(greenFont, redFont,
     raster, message)
 if err != nil { return err }
-scroll, err := scrolling.NewDualProfiledRing(config)
+scroll, err := scrolling.New(scrolling.Config{DualProfiled: &config})
 if err != nil { return err }
 defer scroll.Close()
 if err := scroll.Update(frame); err != nil { return err }
@@ -2402,9 +2402,10 @@ hold and banner material are configuration, including different initial and
 subsequent waits:
 
 ```go
-caption, err := scrolling.NewCaptionCarousel(presets.UnionTNTCaption(lines, font))
+config := presets.UnionTNTCaption(lines, font)
+caption, err := scrolling.New(scrolling.Config{Caption: &config})
 if err != nil { return err }
-caption.Step()      // Capture this tick's pose, then advance the clock.
+caption.Update(frame) // Capture this tick's pose, then advance the clock.
 caption.Draw(stage) // Repeated draws retain the captured pose.
 ```
 
@@ -4111,12 +4112,12 @@ two working surfaces are bounded by its viewport, not by the total message lengt
 Its speed is **pixels per Update**; advance it once at the selected simulation TPS.
 A standalone `scrolling.Crawl` also offers `SetPosition(line, offset)` for seeking.
 
-For the Union loader entrance, `scrolling.NewReveal(presets.UnionCreditsReveal(
-font, lines))` compiles all glyph positions. Customize `Order`, `Delay`, `Duration`,
+For the Union loader entrance, `scrolling.New` with `RevealTransportConfig`
+compiles all glyph positions. Customize `Reveal.Order`, `Delay`, `Duration`,
 `FromX`/`FromY`, `UniformStartY` and an optional `Ease(progress)` function before
-construction. Call `DrawAt(dst, time)` in any consistent time unit. The historical
+construction. Supply the frame clock through Update, then call Draw. The historical
 preset's delay/duration use its original counter units; convert them when driving
-it with seconds. Changing the supplied time can seek the entrance without changing
+it with seconds, or use `TimeAt` to retain them. Changing the supplied frame time can seek the entrance without changing
 its final layout or creating textures.
 
 For independently scrolling scenery, `composite.NewBands(presets.UnionMountainBands())`

@@ -1,0 +1,5486 @@
+{
+  "Date": "2026-09-28",
+  "ToolkitRevision": "e9cb323699ca310aeacf8cb7f2502ff7ae69d439",
+  "Scope": "Complete native before/after canvases after migration to the scrolling.New facade; same local DCK checkout in both archives; deterministic 60 Hz clock; no masked regions or pixel tolerance.",
+  "Cases": [
+    {
+      "Demo": "go-cuddlymenu",
+      "Reference": "8c979b0aa697889cca5c2de78df21e5981a20dca",
+      "Candidate": "aa94f978a77ad987f4afe342c95028e1232b9543",
+      "Screen": "big-sprite",
+      "Scenario": "idle",
+      "Scope": "complete production frames; device audio disabled; deterministic clock; both snapshots use the local DCK checkout; native collection screen at 60 Hz",
+      "Frames": [
+        {
+          "Frame": 0,
+          "Pixels": 414720,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 1,
+          "Pixels": 414720,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 60,
+          "Pixels": 414720,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 240,
+          "Pixels": 414720,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 600,
+          "Pixels": 414720,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 1200,
+          "Pixels": 414720,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 2400,
+          "Pixels": 414720,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 4800,
+          "Pixels": 414720,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 9600,
+          "Pixels": 414720,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        }
+      ]
+    },
+    {
+      "Demo": "go-cuddlymenu",
+      "Reference": "8c979b0aa697889cca5c2de78df21e5981a20dca",
+      "Candidate": "aa94f978a77ad987f4afe342c95028e1232b9543",
+      "Screen": "colorshock",
+      "Scenario": "idle",
+      "Scope": "complete production frames; device audio disabled; deterministic clock; both snapshots use the local DCK checkout; native collection screen at 60 Hz",
+      "Frames": [
+        {
+          "Frame": 0,
+          "Pixels": 414720,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 1,
+          "Pixels": 414720,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 60,
+          "Pixels": 414720,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 240,
+          "Pixels": 414720,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 600,
+          "Pixels": 414720,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 1200,
+          "Pixels": 414720,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 2400,
+          "Pixels": 414720,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 4800,
+          "Pixels": 414720,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 9600,
+          "Pixels": 414720,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        }
+      ]
+    },
+    {
+      "Demo": "go-cuddlymenu",
+      "Reference": "8c979b0aa697889cca5c2de78df21e5981a20dca",
+      "Candidate": "aa94f978a77ad987f4afe342c95028e1232b9543",
+      "Screen": "ehh",
+      "Scenario": "idle",
+      "Scope": "complete production frames; device audio disabled; deterministic clock; both snapshots use the local DCK checkout; native collection screen at 60 Hz",
+      "Frames": [
+        {
+          "Frame": 0,
+          "Pixels": 414720,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 1,
+          "Pixels": 414720,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 60,
+          "Pixels": 414720,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 240,
+          "Pixels": 414720,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 600,
+          "Pixels": 414720,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 1200,
+          "Pixels": 414720,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 2400,
+          "Pixels": 414720,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 4800,
+          "Pixels": 414720,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 9600,
+          "Pixels": 414720,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        }
+      ]
+    },
+    {
+      "Demo": "go-cuddlymenu",
+      "Reference": "8c979b0aa697889cca5c2de78df21e5981a20dca",
+      "Candidate": "aa94f978a77ad987f4afe342c95028e1232b9543",
+      "Screen": "megascroller",
+      "Scenario": "idle",
+      "Scope": "complete production frames; device audio disabled; deterministic clock; both snapshots use the local DCK checkout; native collection screen at 60 Hz",
+      "Frames": [
+        {
+          "Frame": 0,
+          "Pixels": 414720,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 1,
+          "Pixels": 414720,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 60,
+          "Pixels": 414720,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 240,
+          "Pixels": 414720,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 600,
+          "Pixels": 414720,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 1200,
+          "Pixels": 414720,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 2400,
+          "Pixels": 414720,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 4800,
+          "Pixels": 414720,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 9600,
+          "Pixels": 414720,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        }
+      ]
+    },
+    {
+      "Demo": "go-cuddlymenu",
+      "Reference": "8c979b0aa697889cca5c2de78df21e5981a20dca",
+      "Candidate": "aa94f978a77ad987f4afe342c95028e1232b9543",
+      "Screen": "spreadpoint",
+      "Scenario": "idle",
+      "Scope": "complete production frames; device audio disabled; deterministic clock; both snapshots use the local DCK checkout; native collection screen at 60 Hz",
+      "Frames": [
+        {
+          "Frame": 0,
+          "Pixels": 459264,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 1,
+          "Pixels": 459264,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 60,
+          "Pixels": 459264,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 240,
+          "Pixels": 459264,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 600,
+          "Pixels": 459264,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 723,
+          "Pixels": 459264,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 724,
+          "Pixels": 459264,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 725,
+          "Pixels": 459264,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 1200,
+          "Pixels": 459264,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 1528,
+          "Pixels": 459264,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 2008,
+          "Pixels": 459264,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 2400,
+          "Pixels": 459264,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 2676,
+          "Pixels": 459264,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 4800,
+          "Pixels": 459264,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 9600,
+          "Pixels": 459264,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        }
+      ]
+    },
+    {
+      "Demo": "go-cuddlymenu",
+      "Reference": "8c979b0aa697889cca5c2de78df21e5981a20dca",
+      "Candidate": "aa94f978a77ad987f4afe342c95028e1232b9543",
+      "Screen": "digi",
+      "Scenario": "idle",
+      "Scope": "complete production frames; device audio disabled; deterministic clock; both snapshots use the local DCK checkout; native collection screen at 60 Hz",
+      "Frames": [
+        {
+          "Frame": 0,
+          "Pixels": 414720,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 1,
+          "Pixels": 414720,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 60,
+          "Pixels": 414720,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 240,
+          "Pixels": 414720,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 600,
+          "Pixels": 414720,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 1200,
+          "Pixels": 414720,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 2400,
+          "Pixels": 414720,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 4800,
+          "Pixels": 414720,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 9600,
+          "Pixels": 414720,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        }
+      ]
+    },
+    {
+      "Demo": "go-cuddlymenu",
+      "Reference": "8c979b0aa697889cca5c2de78df21e5981a20dca",
+      "Candidate": "aa94f978a77ad987f4afe342c95028e1232b9543",
+      "Screen": "led",
+      "Scenario": "idle",
+      "Scope": "complete production frames; device audio disabled; deterministic clock; both snapshots use the local DCK checkout; native collection screen at 60 Hz",
+      "Frames": [
+        {
+          "Frame": 0,
+          "Pixels": 414720,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 1,
+          "Pixels": 414720,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 60,
+          "Pixels": 414720,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 240,
+          "Pixels": 414720,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 600,
+          "Pixels": 414720,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 1200,
+          "Pixels": 414720,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 2400,
+          "Pixels": 414720,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 4800,
+          "Pixels": 414720,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 9600,
+          "Pixels": 414720,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        }
+      ]
+    },
+    {
+      "Demo": "go-cuddlymenu",
+      "Reference": "8c979b0aa697889cca5c2de78df21e5981a20dca",
+      "Candidate": "aa94f978a77ad987f4afe342c95028e1232b9543",
+      "Screen": "3d-doc",
+      "Scenario": "idle",
+      "Scope": "complete production frames; device audio disabled; deterministic clock; both snapshots use the local DCK checkout; native collection screen at 60 Hz",
+      "Frames": [
+        {
+          "Frame": 0,
+          "Pixels": 414720,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 1,
+          "Pixels": 414720,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 60,
+          "Pixels": 414720,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 240,
+          "Pixels": 414720,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 600,
+          "Pixels": 414720,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 1200,
+          "Pixels": 414720,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 2400,
+          "Pixels": 414720,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 4800,
+          "Pixels": 414720,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 9600,
+          "Pixels": 414720,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        }
+      ]
+    },
+    {
+      "Demo": "go-cuddlymenu",
+      "Reference": "8c979b0aa697889cca5c2de78df21e5981a20dca",
+      "Candidate": "aa94f978a77ad987f4afe342c95028e1232b9543",
+      "Screen": "fullscreen",
+      "Scenario": "idle",
+      "Scope": "complete production frames; device audio disabled; deterministic clock; both snapshots use the local DCK checkout; native collection screen at 60 Hz",
+      "Frames": [
+        {
+          "Frame": 0,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 1,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 60,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 240,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 600,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 1200,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 2400,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 4800,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 9600,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        }
+      ]
+    },
+    {
+      "Demo": "go-cuddlymenu",
+      "Reference": "8c979b0aa697889cca5c2de78df21e5981a20dca",
+      "Candidate": "aa94f978a77ad987f4afe342c95028e1232b9543",
+      "Screen": "starwars",
+      "Scenario": "idle",
+      "Scope": "complete production frames; device audio disabled; deterministic clock; both snapshots use the local DCK checkout; native collection screen at 60 Hz",
+      "Frames": [
+        {
+          "Frame": 0,
+          "Pixels": 414720,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 1,
+          "Pixels": 414720,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 60,
+          "Pixels": 414720,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 240,
+          "Pixels": 414720,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 600,
+          "Pixels": 414720,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 1200,
+          "Pixels": 414720,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 2400,
+          "Pixels": 414720,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 4800,
+          "Pixels": 414720,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 9600,
+          "Pixels": 414720,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        }
+      ]
+    },
+    {
+      "Demo": "go-cuddlymenu",
+      "Reference": "8c979b0aa697889cca5c2de78df21e5981a20dca",
+      "Candidate": "aa94f978a77ad987f4afe342c95028e1232b9543",
+      "Screen": "knucklebuster",
+      "Scenario": "idle",
+      "Scope": "complete production frames; device audio disabled; deterministic clock; both snapshots use the local DCK checkout; native collection screen at 60 Hz",
+      "Frames": [
+        {
+          "Frame": 0,
+          "Pixels": 414720,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 1,
+          "Pixels": 414720,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 60,
+          "Pixels": 414720,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 240,
+          "Pixels": 414720,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 600,
+          "Pixels": 414720,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 1200,
+          "Pixels": 414720,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 2400,
+          "Pixels": 414720,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 4800,
+          "Pixels": 414720,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 9600,
+          "Pixels": 414720,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        }
+      ]
+    },
+    {
+      "Demo": "go-cuddlymenu",
+      "Reference": "8c979b0aa697889cca5c2de78df21e5981a20dca",
+      "Candidate": "aa94f978a77ad987f4afe342c95028e1232b9543",
+      "Screen": "dna",
+      "Scenario": "idle",
+      "Scope": "complete production frames; device audio disabled; deterministic clock; both snapshots use the local DCK checkout; native collection screen at 60 Hz",
+      "Frames": [
+        {
+          "Frame": 0,
+          "Pixels": 459264,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 1,
+          "Pixels": 459264,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 60,
+          "Pixels": 459264,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 240,
+          "Pixels": 459264,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 600,
+          "Pixels": 459264,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 1200,
+          "Pixels": 459264,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 2400,
+          "Pixels": 459264,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 4800,
+          "Pixels": 459264,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 9600,
+          "Pixels": 459264,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        }
+      ]
+    },
+    {
+      "Demo": "go-cuddlymenu",
+      "Reference": "8c979b0aa697889cca5c2de78df21e5981a20dca",
+      "Candidate": "aa94f978a77ad987f4afe342c95028e1232b9543",
+      "Screen": "megaball",
+      "Scenario": "idle",
+      "Scope": "complete production frames; device audio disabled; deterministic clock; both snapshots use the local DCK checkout; native collection screen at 60 Hz",
+      "Frames": [
+        {
+          "Frame": 0,
+          "Pixels": 414720,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 1,
+          "Pixels": 414720,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 60,
+          "Pixels": 414720,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 240,
+          "Pixels": 414720,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 600,
+          "Pixels": 414720,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 1200,
+          "Pixels": 414720,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 2400,
+          "Pixels": 414720,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 4800,
+          "Pixels": 414720,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 9600,
+          "Pixels": 414720,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        }
+      ]
+    },
+    {
+      "Demo": "go-cuddlymenu",
+      "Reference": "8c979b0aa697889cca5c2de78df21e5981a20dca",
+      "Candidate": "aa94f978a77ad987f4afe342c95028e1232b9543",
+      "Screen": "intro",
+      "Scenario": "idle",
+      "Scope": "complete production frames; device audio disabled; deterministic clock; both snapshots use the local DCK checkout; native collection screen at 60 Hz",
+      "Frames": [
+        {
+          "Frame": 0,
+          "Pixels": 414720,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 1,
+          "Pixels": 414720,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 60,
+          "Pixels": 414720,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 240,
+          "Pixels": 414720,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 600,
+          "Pixels": 414720,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 1200,
+          "Pixels": 414720,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 2400,
+          "Pixels": 414720,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 4800,
+          "Pixels": 414720,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 9600,
+          "Pixels": 414720,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        }
+      ]
+    },
+    {
+      "Demo": "go-cuddlymenu",
+      "Reference": "8c979b0aa697889cca5c2de78df21e5981a20dca",
+      "Candidate": "aa94f978a77ad987f4afe342c95028e1232b9543",
+      "Screen": "reset",
+      "Scenario": "idle",
+      "Scope": "complete production frames; device audio disabled; deterministic clock; both snapshots use the local DCK checkout; native collection screen at 60 Hz",
+      "Frames": [
+        {
+          "Frame": 0,
+          "Pixels": 414720,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 1,
+          "Pixels": 414720,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 60,
+          "Pixels": 414720,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 240,
+          "Pixels": 414720,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 600,
+          "Pixels": 414720,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 1200,
+          "Pixels": 414720,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 2400,
+          "Pixels": 414720,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 4800,
+          "Pixels": 414720,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 9600,
+          "Pixels": 414720,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        }
+      ]
+    },
+    {
+      "Demo": "go-cuddlymenu",
+      "Reference": "8c979b0aa697889cca5c2de78df21e5981a20dca",
+      "Candidate": "aa94f978a77ad987f4afe342c95028e1232b9543",
+      "Screen": "menu",
+      "Scenario": "idle",
+      "Scope": "complete production frames; device audio disabled; deterministic clock; both snapshots use the local DCK checkout; native collection screen at 60 Hz",
+      "Frames": [
+        {
+          "Frame": 0,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 1,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 60,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 240,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 600,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 1200,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 2400,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 4800,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 9600,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        }
+      ]
+    },
+    {
+      "Demo": "go-cuddlymenu",
+      "Reference": "8c979b0aa697889cca5c2de78df21e5981a20dca",
+      "Candidate": "aa94f978a77ad987f4afe342c95028e1232b9543",
+      "Screen": "megaball",
+      "Scenario": "controls",
+      "Scope": "complete production frames; device audio disabled; deterministic clock; both snapshots use the local DCK checkout; native collection screen at 60 Hz",
+      "Frames": [
+        {
+          "Frame": 0,
+          "Pixels": 414720,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 1,
+          "Pixels": 414720,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 60,
+          "Pixels": 414720,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 240,
+          "Pixels": 414720,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 600,
+          "Pixels": 414720,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 1200,
+          "Pixels": 414720,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 2400,
+          "Pixels": 414720,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 4800,
+          "Pixels": 414720,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 9600,
+          "Pixels": 414720,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        }
+      ]
+    },
+    {
+      "Demo": "go-cuddlymenu",
+      "Reference": "8c979b0aa697889cca5c2de78df21e5981a20dca",
+      "Candidate": "aa94f978a77ad987f4afe342c95028e1232b9543",
+      "Screen": "loader:BIG_SPRITE",
+      "Scenario": "idle",
+      "Scope": "complete production frames; device audio disabled; deterministic clock; both snapshots use the local DCK checkout; native collection screen at 60 Hz",
+      "Frames": [
+        {
+          "Frame": 0,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 1,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 48,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 49,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 50,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 60,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 234,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 235,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 236,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 250,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        }
+      ]
+    },
+    {
+      "Demo": "go-cuddlymenu",
+      "Reference": "8c979b0aa697889cca5c2de78df21e5981a20dca",
+      "Candidate": "aa94f978a77ad987f4afe342c95028e1232b9543",
+      "Screen": "loader:COLORSHOCK_II",
+      "Scenario": "idle",
+      "Scope": "complete production frames; device audio disabled; deterministic clock; both snapshots use the local DCK checkout; native collection screen at 60 Hz",
+      "Frames": [
+        {
+          "Frame": 0,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 1,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 44,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 45,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 46,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 60,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 157,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 158,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 159,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 173,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        }
+      ]
+    },
+    {
+      "Demo": "go-cuddlymenu",
+      "Reference": "8c979b0aa697889cca5c2de78df21e5981a20dca",
+      "Candidate": "aa94f978a77ad987f4afe342c95028e1232b9543",
+      "Screen": "loader:DIGI_DEMO",
+      "Scenario": "idle",
+      "Scope": "complete production frames; device audio disabled; deterministic clock; both snapshots use the local DCK checkout; native collection screen at 60 Hz",
+      "Frames": [
+        {
+          "Frame": 0,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 1,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 60,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 117,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 118,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 119,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 314,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 315,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 316,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 330,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        }
+      ]
+    },
+    {
+      "Demo": "go-cuddlymenu",
+      "Reference": "8c979b0aa697889cca5c2de78df21e5981a20dca",
+      "Candidate": "aa94f978a77ad987f4afe342c95028e1232b9543",
+      "Screen": "loader:DNA_DEMO",
+      "Scenario": "idle",
+      "Scope": "complete production frames; device audio disabled; deterministic clock; both snapshots use the local DCK checkout; native collection screen at 60 Hz",
+      "Frames": [
+        {
+          "Frame": 0,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 1,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 60,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 129,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 130,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 131,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 353,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 354,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 355,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 369,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        }
+      ]
+    },
+    {
+      "Demo": "go-cuddlymenu",
+      "Reference": "8c979b0aa697889cca5c2de78df21e5981a20dca",
+      "Candidate": "aa94f978a77ad987f4afe342c95028e1232b9543",
+      "Screen": "loader:DOC",
+      "Scenario": "idle",
+      "Scope": "complete production frames; device audio disabled; deterministic clock; both snapshots use the local DCK checkout; native collection screen at 60 Hz",
+      "Frames": [
+        {
+          "Frame": 0,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 1,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 52,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 53,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 54,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 60,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 175,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 176,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 177,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 191,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        }
+      ]
+    },
+    {
+      "Demo": "go-cuddlymenu",
+      "Reference": "8c979b0aa697889cca5c2de78df21e5981a20dca",
+      "Candidate": "aa94f978a77ad987f4afe342c95028e1232b9543",
+      "Screen": "loader:FULLSCREEN",
+      "Scenario": "idle",
+      "Scope": "complete production frames; device audio disabled; deterministic clock; both snapshots use the local DCK checkout; native collection screen at 60 Hz",
+      "Frames": [
+        {
+          "Frame": 0,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 1,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 60,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 166,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 167,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 168,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 411,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 412,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 413,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 427,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        }
+      ]
+    },
+    {
+      "Demo": "go-cuddlymenu",
+      "Reference": "8c979b0aa697889cca5c2de78df21e5981a20dca",
+      "Candidate": "aa94f978a77ad987f4afe342c95028e1232b9543",
+      "Screen": "loader:KNUCKLE_BUSTER",
+      "Scenario": "idle",
+      "Scope": "complete production frames; device audio disabled; deterministic clock; both snapshots use the local DCK checkout; native collection screen at 60 Hz",
+      "Frames": [
+        {
+          "Frame": 0,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 1,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 60,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 66,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 67,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 68,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 207,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 208,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 209,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 223,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        }
+      ]
+    },
+    {
+      "Demo": "go-cuddlymenu",
+      "Reference": "8c979b0aa697889cca5c2de78df21e5981a20dca",
+      "Candidate": "aa94f978a77ad987f4afe342c95028e1232b9543",
+      "Screen": "loader:LED_SCROLLER",
+      "Scenario": "idle",
+      "Scope": "complete production frames; device audio disabled; deterministic clock; both snapshots use the local DCK checkout; native collection screen at 60 Hz",
+      "Frames": [
+        {
+          "Frame": 0,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 1,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 60,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 140,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 141,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 142,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 196,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 197,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 198,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 212,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        }
+      ]
+    },
+    {
+      "Demo": "go-cuddlymenu",
+      "Reference": "8c979b0aa697889cca5c2de78df21e5981a20dca",
+      "Candidate": "aa94f978a77ad987f4afe342c95028e1232b9543",
+      "Screen": "loader:MEGA_SCROLLER",
+      "Scenario": "idle",
+      "Scope": "complete production frames; device audio disabled; deterministic clock; both snapshots use the local DCK checkout; native collection screen at 60 Hz",
+      "Frames": [
+        {
+          "Frame": 0,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 1,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 60,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 130,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 131,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 132,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 326,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 327,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 328,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 342,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        }
+      ]
+    },
+    {
+      "Demo": "go-cuddlymenu",
+      "Reference": "8c979b0aa697889cca5c2de78df21e5981a20dca",
+      "Candidate": "aa94f978a77ad987f4afe342c95028e1232b9543",
+      "Screen": "loader:NO_NAME_1",
+      "Scenario": "idle",
+      "Scope": "complete production frames; device audio disabled; deterministic clock; both snapshots use the local DCK checkout; native collection screen at 60 Hz",
+      "Frames": [
+        {
+          "Frame": 0,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 1,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 60,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 80,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 81,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 82,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 221,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 222,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 223,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 237,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        }
+      ]
+    },
+    {
+      "Demo": "go-cuddlymenu",
+      "Reference": "8c979b0aa697889cca5c2de78df21e5981a20dca",
+      "Candidate": "aa94f978a77ad987f4afe342c95028e1232b9543",
+      "Screen": "loader:NO_NAME_2",
+      "Scenario": "idle",
+      "Scope": "complete production frames; device audio disabled; deterministic clock; both snapshots use the local DCK checkout; native collection screen at 60 Hz",
+      "Frames": [
+        {
+          "Frame": 0,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 1,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 39,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 40,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 41,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 60,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 172,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 173,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 174,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 188,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        }
+      ]
+    },
+    {
+      "Demo": "go-cuddlymenu",
+      "Reference": "8c979b0aa697889cca5c2de78df21e5981a20dca",
+      "Candidate": "aa94f978a77ad987f4afe342c95028e1232b9543",
+      "Screen": "loader:SPREADPOINT",
+      "Scenario": "idle",
+      "Scope": "complete production frames; device audio disabled; deterministic clock; both snapshots use the local DCK checkout; native collection screen at 60 Hz",
+      "Frames": [
+        {
+          "Frame": 0,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 1,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 60,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 73,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 74,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 75,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 220,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 221,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 222,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 236,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        }
+      ]
+    },
+    {
+      "Demo": "go-cuddlymenu",
+      "Reference": "8c979b0aa697889cca5c2de78df21e5981a20dca",
+      "Candidate": "aa94f978a77ad987f4afe342c95028e1232b9543",
+      "Screen": "loader:STARWARS_DEMO",
+      "Scenario": "idle",
+      "Scope": "complete production frames; device audio disabled; deterministic clock; both snapshots use the local DCK checkout; native collection screen at 60 Hz",
+      "Frames": [
+        {
+          "Frame": 0,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 1,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 60,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 107,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 108,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 109,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 350,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 351,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 352,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 366,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        }
+      ]
+    },
+    {
+      "Demo": "go-uniondemo",
+      "Reference": "77b56b54e04ad3d7821b8090b392d865f7f86c9d",
+      "Candidate": "30cae2a25ea705e3050d1d44f3816e32280a2f71",
+      "Screen": "intro",
+      "Scenario": "idle",
+      "Scope": "complete production frames; device audio disabled; deterministic clock; both snapshots use the local DCK checkout; native collection screen at 60 Hz",
+      "Frames": [
+        {
+          "Frame": 0,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 1,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 60,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 240,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 600,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 1200,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 2400,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 4800,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 9600,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        }
+      ]
+    },
+    {
+      "Demo": "go-uniondemo",
+      "Reference": "77b56b54e04ad3d7821b8090b392d865f7f86c9d",
+      "Candidate": "30cae2a25ea705e3050d1d44f3816e32280a2f71",
+      "Screen": "beatdis",
+      "Scenario": "idle",
+      "Scope": "complete production frames; device audio disabled; deterministic clock; both snapshots use the local DCK checkout; native collection screen at 60 Hz",
+      "Frames": [
+        {
+          "Frame": 0,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 1,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 60,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 240,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 600,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 1200,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 2400,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 4800,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 9600,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        }
+      ]
+    },
+    {
+      "Demo": "go-uniondemo",
+      "Reference": "77b56b54e04ad3d7821b8090b392d865f7f86c9d",
+      "Candidate": "30cae2a25ea705e3050d1d44f3816e32280a2f71",
+      "Screen": "delta",
+      "Scenario": "idle",
+      "Scope": "complete production frames; device audio disabled; deterministic clock; both snapshots use the local DCK checkout; native collection screen at 60 Hz; YM register levels advance through the actual soundtrack",
+      "Frames": [
+        {
+          "Frame": 0,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 1,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 60,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 240,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 600,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 1200,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 2400,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 4800,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 9600,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        }
+      ]
+    },
+    {
+      "Demo": "go-uniondemo",
+      "Reference": "77b56b54e04ad3d7821b8090b392d865f7f86c9d",
+      "Candidate": "30cae2a25ea705e3050d1d44f3816e32280a2f71",
+      "Screen": "tnt3",
+      "Scenario": "idle",
+      "Scope": "complete production frames; device audio disabled; deterministic clock; both snapshots use the local DCK checkout; native collection screen at 60 Hz",
+      "Frames": [
+        {
+          "Frame": 0,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 1,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 60,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 240,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 600,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 1200,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 2400,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 4800,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 9600,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        }
+      ]
+    },
+    {
+      "Demo": "go-uniondemo",
+      "Reference": "77b56b54e04ad3d7821b8090b392d865f7f86c9d",
+      "Candidate": "30cae2a25ea705e3050d1d44f3816e32280a2f71",
+      "Screen": "wow",
+      "Scenario": "idle",
+      "Scope": "complete production frames; device audio disabled; deterministic clock; both snapshots use the local DCK checkout; native collection screen at 60 Hz",
+      "Frames": [
+        {
+          "Frame": 0,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 1,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 60,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 240,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 600,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 1200,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 2400,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 4800,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 9600,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        }
+      ]
+    },
+    {
+      "Demo": "go-uniondemo",
+      "Reference": "77b56b54e04ad3d7821b8090b392d865f7f86c9d",
+      "Candidate": "30cae2a25ea705e3050d1d44f3816e32280a2f71",
+      "Screen": "hidden",
+      "Scenario": "idle",
+      "Scope": "complete production frames; device audio disabled; deterministic clock; both snapshots use the local DCK checkout; native collection screen at 60 Hz",
+      "Frames": [
+        {
+          "Frame": 0,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 1,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 60,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 240,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 600,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 1200,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 2400,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 4800,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 9600,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        }
+      ]
+    },
+    {
+      "Demo": "go-uniondemo",
+      "Reference": "77b56b54e04ad3d7821b8090b392d865f7f86c9d",
+      "Candidate": "30cae2a25ea705e3050d1d44f3816e32280a2f71",
+      "Screen": "starballs",
+      "Scenario": "idle",
+      "Scope": "complete production frames; device audio disabled; deterministic clock; both snapshots use the local DCK checkout; native collection screen at 60 Hz",
+      "Frames": [
+        {
+          "Frame": 0,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 1,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 60,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 240,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 600,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 1200,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 2400,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 4800,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 9600,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        }
+      ]
+    },
+    {
+      "Demo": "go-uniondemo",
+      "Reference": "77b56b54e04ad3d7821b8090b392d865f7f86c9d",
+      "Candidate": "30cae2a25ea705e3050d1d44f3816e32280a2f71",
+      "Screen": "replicants",
+      "Scenario": "idle",
+      "Scope": "complete production frames; device audio disabled; deterministic clock; both snapshots use the local DCK checkout; native collection screen at 60 Hz",
+      "Frames": [
+        {
+          "Frame": 0,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 1,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 60,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 240,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 600,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 1200,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 2400,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 4800,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 9600,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        }
+      ]
+    },
+    {
+      "Demo": "go-uniondemo",
+      "Reference": "77b56b54e04ad3d7821b8090b392d865f7f86c9d",
+      "Candidate": "30cae2a25ea705e3050d1d44f3816e32280a2f71",
+      "Screen": "tnt2",
+      "Scenario": "idle",
+      "Scope": "complete production frames; device audio disabled; deterministic clock; both snapshots use the local DCK checkout; native collection screen at 60 Hz",
+      "Frames": [
+        {
+          "Frame": 0,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 1,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 60,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 240,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 600,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 1200,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 2400,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 4800,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 9600,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        }
+      ]
+    },
+    {
+      "Demo": "go-uniondemo",
+      "Reference": "77b56b54e04ad3d7821b8090b392d865f7f86c9d",
+      "Candidate": "30cae2a25ea705e3050d1d44f3816e32280a2f71",
+      "Screen": "level16",
+      "Scenario": "idle",
+      "Scope": "complete production frames; device audio disabled; deterministic clock; both snapshots use the local DCK checkout; native collection screen at 60 Hz",
+      "Frames": [
+        {
+          "Frame": 0,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 1,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 60,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 240,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 600,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 1200,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 2400,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 4800,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 9600,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        }
+      ]
+    },
+    {
+      "Demo": "go-uniondemo",
+      "Reference": "77b56b54e04ad3d7821b8090b392d865f7f86c9d",
+      "Candidate": "30cae2a25ea705e3050d1d44f3816e32280a2f71",
+      "Screen": "multiplane",
+      "Scenario": "idle",
+      "Scope": "complete production frames; device audio disabled; deterministic clock; both snapshots use the local DCK checkout; native collection screen at 60 Hz",
+      "Frames": [
+        {
+          "Frame": 0,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 1,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 60,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 240,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 600,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 1200,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 2400,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 4800,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 9600,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        }
+      ]
+    },
+    {
+      "Demo": "go-uniondemo",
+      "Reference": "77b56b54e04ad3d7821b8090b392d865f7f86c9d",
+      "Candidate": "30cae2a25ea705e3050d1d44f3816e32280a2f71",
+      "Screen": "diskcopier",
+      "Scenario": "idle",
+      "Scope": "complete production frames; device audio disabled; deterministic clock; both snapshots use the local DCK checkout; native collection screen at 60 Hz",
+      "Frames": [
+        {
+          "Frame": 0,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 1,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 60,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 240,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 600,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 1200,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 2400,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 4800,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 9600,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        }
+      ]
+    },
+    {
+      "Demo": "go-uniondemo",
+      "Reference": "77b56b54e04ad3d7821b8090b392d865f7f86c9d",
+      "Candidate": "30cae2a25ea705e3050d1d44f3816e32280a2f71",
+      "Screen": "menu",
+      "Scenario": "idle",
+      "Scope": "complete production frames; device audio disabled; deterministic clock; both snapshots use the local DCK checkout; native collection screen at 60 Hz",
+      "Frames": [
+        {
+          "Frame": 0,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 1,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 60,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 240,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 600,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 1200,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 2400,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 4800,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 9600,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        }
+      ]
+    },
+    {
+      "Demo": "go-uniondemo",
+      "Reference": "77b56b54e04ad3d7821b8090b392d865f7f86c9d",
+      "Candidate": "30cae2a25ea705e3050d1d44f3816e32280a2f71",
+      "Screen": "tnt3",
+      "Scenario": "controls",
+      "Scope": "complete production frames; device audio disabled; deterministic clock; both snapshots use the local DCK checkout; native collection screen at 60 Hz",
+      "Frames": [
+        {
+          "Frame": 0,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 1,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 60,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 240,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 599,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 600,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 601,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 899,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 901,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 1200,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 1800,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 1801,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 2400,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 2401,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 3000,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 3001,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 4800,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 9600,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        }
+      ]
+    },
+    {
+      "Demo": "go-uniondemo",
+      "Reference": "77b56b54e04ad3d7821b8090b392d865f7f86c9d",
+      "Candidate": "30cae2a25ea705e3050d1d44f3816e32280a2f71",
+      "Screen": "starballs",
+      "Scenario": "controls",
+      "Scope": "complete production frames; device audio disabled; deterministic clock; both snapshots use the local DCK checkout; native collection screen at 60 Hz",
+      "Frames": [
+        {
+          "Frame": 0,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 1,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 60,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 240,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 300,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 301,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 600,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 601,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 900,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 901,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 1200,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 1201,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 1500,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 1501,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 1800,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 1801,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 2100,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 2101,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 2400,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 2401,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 2700,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 2701,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 4800,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 9600,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        }
+      ]
+    },
+    {
+      "Demo": "go-uniondemo",
+      "Reference": "77b56b54e04ad3d7821b8090b392d865f7f86c9d",
+      "Candidate": "30cae2a25ea705e3050d1d44f3816e32280a2f71",
+      "Screen": "tnt2",
+      "Scenario": "controls",
+      "Scope": "complete production frames; device audio disabled; deterministic clock; both snapshots use the local DCK checkout; native collection screen at 60 Hz",
+      "Frames": [
+        {
+          "Frame": 0,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 1,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 60,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 240,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 599,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 600,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 601,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 899,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 901,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 1200,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 1800,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 1801,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 2400,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 2401,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 3000,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 3001,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 4800,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 9600,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        }
+      ]
+    },
+    {
+      "Demo": "go-uniondemo",
+      "Reference": "77b56b54e04ad3d7821b8090b392d865f7f86c9d",
+      "Candidate": "30cae2a25ea705e3050d1d44f3816e32280a2f71",
+      "Screen": "replicants",
+      "Scenario": "controls",
+      "Scope": "complete production frames; device audio disabled; deterministic clock; both snapshots use the local DCK checkout; native collection screen at 60 Hz",
+      "Frames": [
+        {
+          "Frame": 0,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 1,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 60,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 240,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 599,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 600,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 601,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 899,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 901,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 1200,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 1800,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 1801,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 2400,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 2401,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 3000,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 3001,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 4800,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 9600,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        }
+      ]
+    },
+    {
+      "Demo": "go-uniondemo",
+      "Reference": "77b56b54e04ad3d7821b8090b392d865f7f86c9d",
+      "Candidate": "30cae2a25ea705e3050d1d44f3816e32280a2f71",
+      "Screen": "diskcopier",
+      "Scenario": "controls",
+      "Scope": "complete production frames; device audio disabled; deterministic clock; both snapshots use the local DCK checkout; native collection screen at 60 Hz",
+      "Frames": [
+        {
+          "Frame": 0,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 1,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 60,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 240,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 600,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 1000,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 1200,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 2000,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 2400,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 4000,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 4800,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 6000,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 8000,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 9600,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 10799,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 10800,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 10801,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        }
+      ]
+    },
+    {
+      "Demo": "go-uniondemo",
+      "Reference": "77b56b54e04ad3d7821b8090b392d865f7f86c9d",
+      "Candidate": "30cae2a25ea705e3050d1d44f3816e32280a2f71",
+      "Screen": "hidden",
+      "Scenario": "controls",
+      "Scope": "complete production frames; device audio disabled; deterministic clock; both snapshots use the local DCK checkout; native collection screen at 60 Hz",
+      "Frames": [
+        {
+          "Frame": 0,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 1,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 60,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 240,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 599,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 600,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 601,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 899,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 901,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 1200,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 1800,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 1801,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 2400,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 2401,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 3000,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 3001,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 4800,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 9600,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        }
+      ]
+    },
+    {
+      "Demo": "go-uniondemo",
+      "Reference": "77b56b54e04ad3d7821b8090b392d865f7f86c9d",
+      "Candidate": "30cae2a25ea705e3050d1d44f3816e32280a2f71",
+      "Screen": "loader:beatdis",
+      "Scenario": "idle",
+      "Scope": "complete production frames; device audio disabled; deterministic clock; both snapshots use the local DCK checkout; native collection screen at 60 Hz",
+      "Frames": [
+        {
+          "Frame": 0,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 1,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 60,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 120,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 226,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 227,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 228,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 240,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        }
+      ]
+    },
+    {
+      "Demo": "go-uniondemo",
+      "Reference": "77b56b54e04ad3d7821b8090b392d865f7f86c9d",
+      "Candidate": "30cae2a25ea705e3050d1d44f3816e32280a2f71",
+      "Screen": "loader:delta",
+      "Scenario": "idle",
+      "Scope": "complete production frames; device audio disabled; deterministic clock; both snapshots use the local DCK checkout; native collection screen at 60 Hz",
+      "Frames": [
+        {
+          "Frame": 0,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 1,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 60,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 120,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 226,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 227,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 228,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 240,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        }
+      ]
+    },
+    {
+      "Demo": "go-uniondemo",
+      "Reference": "77b56b54e04ad3d7821b8090b392d865f7f86c9d",
+      "Candidate": "30cae2a25ea705e3050d1d44f3816e32280a2f71",
+      "Screen": "loader:tnt3",
+      "Scenario": "idle",
+      "Scope": "complete production frames; device audio disabled; deterministic clock; both snapshots use the local DCK checkout; native collection screen at 60 Hz",
+      "Frames": [
+        {
+          "Frame": 0,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 1,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 60,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 120,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 226,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 227,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 228,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 240,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        }
+      ]
+    },
+    {
+      "Demo": "go-uniondemo",
+      "Reference": "77b56b54e04ad3d7821b8090b392d865f7f86c9d",
+      "Candidate": "30cae2a25ea705e3050d1d44f3816e32280a2f71",
+      "Screen": "loader:wow",
+      "Scenario": "idle",
+      "Scope": "complete production frames; device audio disabled; deterministic clock; both snapshots use the local DCK checkout; native collection screen at 60 Hz",
+      "Frames": [
+        {
+          "Frame": 0,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 1,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 60,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 120,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 226,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 227,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 228,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 240,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        }
+      ]
+    },
+    {
+      "Demo": "go-uniondemo",
+      "Reference": "77b56b54e04ad3d7821b8090b392d865f7f86c9d",
+      "Candidate": "30cae2a25ea705e3050d1d44f3816e32280a2f71",
+      "Screen": "loader:hidden",
+      "Scenario": "idle",
+      "Scope": "complete production frames; device audio disabled; deterministic clock; both snapshots use the local DCK checkout; native collection screen at 60 Hz",
+      "Frames": [
+        {
+          "Frame": 0,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 1,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 60,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 120,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 226,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 227,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 228,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 240,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        }
+      ]
+    },
+    {
+      "Demo": "go-uniondemo",
+      "Reference": "77b56b54e04ad3d7821b8090b392d865f7f86c9d",
+      "Candidate": "30cae2a25ea705e3050d1d44f3816e32280a2f71",
+      "Screen": "loader:starballs",
+      "Scenario": "idle",
+      "Scope": "complete production frames; device audio disabled; deterministic clock; both snapshots use the local DCK checkout; native collection screen at 60 Hz",
+      "Frames": [
+        {
+          "Frame": 0,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 1,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 60,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 120,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 226,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 227,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 228,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 240,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        }
+      ]
+    },
+    {
+      "Demo": "go-uniondemo",
+      "Reference": "77b56b54e04ad3d7821b8090b392d865f7f86c9d",
+      "Candidate": "30cae2a25ea705e3050d1d44f3816e32280a2f71",
+      "Screen": "loader:replicants",
+      "Scenario": "idle",
+      "Scope": "complete production frames; device audio disabled; deterministic clock; both snapshots use the local DCK checkout; native collection screen at 60 Hz",
+      "Frames": [
+        {
+          "Frame": 0,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 1,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 60,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 120,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 226,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 227,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 228,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 240,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        }
+      ]
+    },
+    {
+      "Demo": "go-uniondemo",
+      "Reference": "77b56b54e04ad3d7821b8090b392d865f7f86c9d",
+      "Candidate": "30cae2a25ea705e3050d1d44f3816e32280a2f71",
+      "Screen": "loader:tnt2",
+      "Scenario": "idle",
+      "Scope": "complete production frames; device audio disabled; deterministic clock; both snapshots use the local DCK checkout; native collection screen at 60 Hz",
+      "Frames": [
+        {
+          "Frame": 0,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 1,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 60,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 120,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 226,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 227,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 228,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 240,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        }
+      ]
+    },
+    {
+      "Demo": "go-uniondemo",
+      "Reference": "77b56b54e04ad3d7821b8090b392d865f7f86c9d",
+      "Candidate": "30cae2a25ea705e3050d1d44f3816e32280a2f71",
+      "Screen": "loader:level16",
+      "Scenario": "idle",
+      "Scope": "complete production frames; device audio disabled; deterministic clock; both snapshots use the local DCK checkout; native collection screen at 60 Hz",
+      "Frames": [
+        {
+          "Frame": 0,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 1,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 60,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 120,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 226,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 227,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 228,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 240,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        }
+      ]
+    },
+    {
+      "Demo": "go-uniondemo",
+      "Reference": "77b56b54e04ad3d7821b8090b392d865f7f86c9d",
+      "Candidate": "30cae2a25ea705e3050d1d44f3816e32280a2f71",
+      "Screen": "loader:multiplane",
+      "Scenario": "idle",
+      "Scope": "complete production frames; device audio disabled; deterministic clock; both snapshots use the local DCK checkout; native collection screen at 60 Hz",
+      "Frames": [
+        {
+          "Frame": 0,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 1,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 60,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 120,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 226,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 227,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 228,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 240,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        }
+      ]
+    },
+    {
+      "Demo": "go-uniondemo",
+      "Reference": "77b56b54e04ad3d7821b8090b392d865f7f86c9d",
+      "Candidate": "30cae2a25ea705e3050d1d44f3816e32280a2f71",
+      "Screen": "loader:diskcopier",
+      "Scenario": "idle",
+      "Scope": "complete production frames; device audio disabled; deterministic clock; both snapshots use the local DCK checkout; native collection screen at 60 Hz",
+      "Frames": [
+        {
+          "Frame": 0,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 1,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 60,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 120,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 226,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 227,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 228,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        },
+        {
+          "Frame": 240,
+          "Pixels": 411648,
+          "DifferentPixels": 0,
+          "MaxChannelError": 0,
+          "MeanAbsoluteError": 0,
+          "RMSE": 0
+        }
+      ]
+    }
+  ],
+  "ComparedCases": 60,
+  "ComparedFrames": 607,
+  "DifferentPixels": 0,
+  "GPUCheck": "dck_scroll_facadecheck: independent font dimensions, layered post-processing, recycled horizontal/vertical offsets, caption slide/hold/exit and column-bottom-first reveal; repeated Draw does not advance clocks.",
+  "PixelSampling": [
+    {
+      "Screen": "Cuddly Starwars",
+      "unique_intervals": 744,
+      "interval_coverage_seconds": 12.415535365000002,
+      "p95_ms": 16.720419,
+      "max_ms": 16.968588,
+      "over_slow_threshold": 0
+    },
+    {
+      "Screen": "Union TNT3",
+      "unique_intervals": 744,
+      "interval_coverage_seconds": 12.415913864999993,
+      "p95_ms": 16.776083,
+      "max_ms": 17.608398,
+      "over_slow_threshold": 0
+    }
+  ],
+  "PixelScope": "Short active-scene SurfaceFlinger samples after the facade migration. These do not measure memory peaks or battery use."
+}

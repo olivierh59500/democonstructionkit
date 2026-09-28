@@ -551,6 +551,38 @@ correction adds no surface, point bank or simulation loop. The complete app was
 restored to its ordinary introduction after measurement. The JSON record also
 contains the installed APK hashes, warmup ticks and published dependency check.
 
+## Unified scrolling entry points (2026-09-28)
+
+The common `scrolling.New` constructor now includes `DualProfiled`, `Caption`
+and `Reveal` alongside the existing fifteen specialized transport choices.
+These bind the existing complete engines rather than introducing another
+renderer. Every recycled ring in Cuddly/Union, both collections' loaders,
+Cuddly Big Sprite's separated font lanes, Starwars' back-mask-front text and
+Union TNT3's caption now enter through this facade. The former direct
+constructors remain available for compatibility. Bitmap layout helpers,
+precomputed DNA artwork and explicit history inputs remain separate asset or
+composition operations.
+
+`DrawOffset` places regular/recycled text and synchronized lanes without another
+image or a transport reset. Borrowed controllers expose cue cursors or permit
+per-lane masks; the facade still owns their Update. Reveal samples its caller's
+clock in Update so high refresh rates cannot accelerate the loading text.
+
+The [facade record](fidelity/scroll-facade-20260928.json) stores another 607
+unmasked, exact complete-frame comparisons: Cuddly `8c979b0` → `aa94f97` and
+Union `77b56b5` → `30cae2a`, including all 24 door loaders and interactive
+screen fixtures. DCK and both production test/vet suites pass against published
+DCK `e9cb323`. The native `dck_scroll_facadecheck` additionally compares
+independent font dimensions, horizontal/vertical offsets, output-pass order,
+caption line transitions and reverse-column cell reveals. Repeated Draw does
+not change the sampled cursors, poses or cue clock.
+
+Both Cuddly APKs and Union were rebuilt and installed on Pixel 10a. Active
+Starwars and TNT3 each yielded 744 distinct presentation intervals with none
+above 20 ms: p95/max 16.720/16.969 ms and 16.776/17.608 ms respectively.
+The two main scenes were visually inspected; these short runs do not establish
+memory peaks or battery use.
+
 ## Saved composition and progressive path edges
 
 The authoring schema now stores ordered image passes on a single layer or on
