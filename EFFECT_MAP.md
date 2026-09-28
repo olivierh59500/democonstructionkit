@@ -12,7 +12,9 @@ shared draw helper alone is not counted as a complete effect.
 column distinguishes intentional production composition from reusable logic
 still to extract. Authored artwork, input and layer order do not become DCK
 effects simply to shorten a source file. The entries are acceptance work, not
-claims of pixel-perfect or Pixel-device verification.
+claims of pixel-perfect or Pixel-device verification. The final
+[catalog acceptance review](CATALOG_ACCEPTANCE.md) connects the requirements to
+the tested revisions, source inventory and device evidence.
 
 ## Cross-catalog check: wrapped motion and image trains
 
@@ -57,7 +59,7 @@ production. Preserved original implementations remain unchanged.
 | Coco, intro | `Config.Feed`, configurable CRTOverlay, immediate `timeline.IntroHandoff` music cue | Scene materials stay production data. |
 | Coco, main | `Config.Scanline`, `SolidCubeTrain`, sprites.Group grid/translation, shared font metrics, `RotozoomBackground` source quad and complete `CopperTitleBand` with a retained surface | Authored art and scene layer order. |
 | DOM intro | Atlas, `scrolling.Config.SizeBank`, `motion.ScaledTextClock`, `VerticalStripTrain` background, `RasterOverlay` copies, `effects.Mask` and `sprites.AnimatedField` stars | Authored text and scene layer order. |
-| Multiscreen, four embedded productions | `Config.Scanline`, recurrent `SolidCubeTrain`, `RotozoomBackground`, `sprites.Group` recurrent translation and direct `CopperTitleBand` in Coco, `RotozoomBackground` in Viva, Phenomena's main-only `scrolling.SliceProgram`, `motion.RecurrentRowWave` with its owned scene clock, `composite.ScalarStagePainter` HSL materials and reusable gradient/mask assets, projected-plane engines, atlas recipes, Viva `RasterTitle`, `scrolling.Config.Pseudo3D` text banks and `sprites.RecurrentFormation` logos, complete TCB `effects.MultiPlaneScene` | Authored images, messages, panel sizes, placement and scene order remain in the host. No local trigonometric path, mesh submission or scrolling renderer remains in its DCK panels; the standalone Phenomena intro is preserved separately. |
+| Multiscreen, four embedded productions | `Config.Scanline`, recurrent `SolidCubeTrain`, `RotozoomBackground`, `sprites.Group` recurrent translation and direct `CopperTitleBand` in Coco, `RotozoomBackground` in Viva, Phenomena's main-only `scrolling.Config.CuedSlices`, `motion.RecurrentRowWave` with its owned scene clock, `composite.ScalarStagePainter` HSL materials and reusable gradient/mask assets, projected-plane engines, atlas recipes, Viva `RasterTitle`, `scrolling.Config.Pseudo3D` text banks and `sprites.RecurrentFormation` logos, complete TCB `effects.MultiPlaneScene` | Authored images, messages, panel sizes, placement and scene order remain in the host. No local trigonometric path, mesh submission or scrolling renderer remains in its DCK panels; the standalone Phenomena intro is preserved separately. |
 | Multiscreen, camera tour | Complete `composite.SceneTour` over `motion.CameraTour`: ten held/eased poses, direct fixed views, continuously updated sources, masked retained transition canvases, one-pass shader and fallback | Authored screen sources, world placement and music stay production configuration. |
 | Vectorballs | `sprites.PaletteAtlas` CPU recoloring and irregular-frame packing, `sprites.Projector.DrawIndexed` for direct projection of the authored point bank, `sprites.ProjectedObject` for independent cube, pyramid, plane, flag, sphere or custom clouds with owned rotation, deformation and projection; optional batched sprites, rear-hemisphere culling and perspective sizing; WaterReflection; and complete `geometry.PointSequence` for the authored point morphs, sine grid, rotors, Y orbit and bounce | Palette values, artwork, authored shape/action data and layer placement stay production parameters. |
 | Grodan | Atlas, four `scrolling.Config.Ribbon` lanes, three `SurfaceLayer` raster compositions, `GatedBackgroundPair` and harmonic `sprites.Group` | Authored art and scene layer order. |
@@ -65,7 +67,7 @@ production. Preserved original implementations remain unchanged.
 | MegaTwist, main | `Config.Scanline`, independent `ScanlineBackground` and DisplacementPrograms, harmonic `sprites.Group` and `sprites.GlowPainter` | Authored artwork and layer order remain scene composition. The former black transition overlay was visually inert after the splash reset and has been removed from the DCK version. |
 | Nonameno, stars | `sprites.ProjectedField`, editable radial pattern and vector pixel/trail material | The star field is complete. |
 | Nonameno, text pages and bottom scroll | Atlas, `motion.GlyphPageCycle`, three delay generators, `sprites.GlyphPages`, `scrolling.Config` with `HarmonicSineWith` and editable presets | Page text and bottom message remain production data. |
-| Phenomena DNA intro | Atlas, `scrolling.BitmapPage` retained intro stills, DNAFrames, `scrolling.SliceProgram` with two-pixel insertion, loop-start and configurable control cues, `motion.RecurrentRowWave` baseline and owned scene clock, `motion.GravityBounce` photon path, `motion.WrapBank` hue clock, `timeline.ScalarStages` intro/outro thresholds, `composite.ScalarStagePainter` ordered reveal/fade and HSL main materials, and reusable gradient/silhouette/inverted-font assets | Live DNA scroller, input/music and final black mask remain production composition. |
+| Phenomena DNA intro | Atlas, `scrolling.BitmapPage` retained intro stills, DNAFrames, `scrolling.Config.CuedSlices` with two-pixel insertion, loop-start and configurable control cues, `motion.RecurrentRowWave` baseline and owned scene clock, `motion.GravityBounce` photon path, `motion.WrapBank` hue clock, `timeline.ScalarStages` intro/outro thresholds, `composite.ScalarStagePainter` ordered reveal/fade and HSL main materials, and reusable gradient/silhouette/inverted-font assets | Authored pre-roll, input/music and final black mask remain production composition. |
 | TCB multiplane | Complete `effects.MultiPlaneScene`: projected scrolling, font-independent forms, snapped `composite.Bands` mountains, per-row `composite.ProfileImage` logo, `sprites.AxisFlip` emblem | Text, artwork and music remain production parameters. |
 | Replicants | Atlas, `Config.RowColumn` with variable-speed controls, `sprites.AnimatedField` stars, `CoupledLogoPair`, `BlockReveal` and `sprites.Train` foreground pair with owned speed-scaled phase | Authored text, input and scene order. |
 | TeamG1, intro | `Config.Feed` with the authored 640-pixel insertion edge inside the 768-pixel output, atlas, flat TimedCRTOverlay, `timeline.IntroHandoff` | Message and materials remain production data; the flat CRT intentionally avoids clipping the original curved pass's outer glyph rows. |
@@ -93,18 +95,18 @@ matches the previous implementation exactly.
 | Menu | TileAlphabet, `sprites.Atlas` image banks, `sprites.FrameSequence` character animation, `sprites.FormationCarousel` with seven compiled formula modes, `composite.CachedTileParallax`, `motion.CameraFollow`, scrolling, shared `CRTOverlay` with copy blending | Door/input semantics and map content stay local. |
 | Loader | Bitmap font recipes, scrolling, `timeline.Countdown`, `timeline.CueClock` overlapping fade/hold windows and `timeline.CueRamp` gain applied by the playback host | Initial pre-render, text and layer placement remain authored. |
 | Introduction | `composite.WaveChain` with an editable row-then-column logo preset, `ProfileStrips` with compiled `motion.WaveWrite` table, configurable sparkles and `timeline.StillThenMain` for the still/blank/music handoff | Authored artwork, star positions, music filename and layer order remain scene data. |
-| Big Sprite | `sprites.ProjectedField` with strict-wrap vector lines, `scrolling.RingLanes` dual-font transport, `sprites.Group` Weave formation, `RasterOverlay` fill, `sprites.AxisFlip` front/back material on a `motion.TrajectoryClock` orbit | Authored layer placement and image order stay scene data. |
+| Big Sprite | `sprites.ProjectedField` with strict-wrap vector lines, `scrolling.Config.RingLanes` dual-font transport, `sprites.Group` Weave formation, `RasterOverlay` fill, `sprites.AxisFlip` front/back material on a `motion.TrajectoryClock` orbit | Authored layer placement and image order stay scene data. |
 | Colorshock II | Background sampler, scrolling, editable `FormulaFormation` two-frequency orbit on `motion.TrajectoryClock` and `WrapBank` position-table clock | Source position samples and artwork remain screen data. |
 | Ehhh | Scrolling, `composite.TableWarpLogo` over the compiled row profile shared with Digi, `sprites.Train` raster bars, `motion.TrajectoryClock` backdrop orbit, `motion.CuedWaveClock` lookahead/landing roller, `motion.WrapBank` inner strip and `RasterOverlay` middle-text fill | Authored art, text and layer order remain screen composition. |
 | Mega Scroller | `composite.TiledWaveBackdrop` for the cached two-wave tile field, finite overlapping `composite.Background` mask copies, scrolling, directional `motion.BounceBank` text-surface transport and reusable `RasterOverlay` source-atop fill | Authored text, bar artwork and scene layer order remain production data. |
-| Spreadpoint | `Config.Bands`, feedback DNA, atlas, a 20-ball `sprites.Group` with pixel-snapped formula, a dynamic `SurfaceLayer` for the raster-filled logo, `motion.PhaseSequence` with `motion.HarmonicTransform` for its orbit/zoom and `timeline.TintedCards` for the four stills and handoff cues | Authored card images, music filenames and layer order remain scene data. |
+| Spreadpoint | `Config.Bands`, `Config.Output.Feedback` DNA over a recycled text lane, atlas, a 20-ball `sprites.Group` with pixel-snapped formula, a dynamic `SurfaceLayer` for the raster-filled logo, `motion.PhaseSequence` with `motion.HarmonicTransform` for its orbit/zoom and `timeline.TintedCards` for the four stills and handoff cues | Authored card images, music filenames and layer order remain scene data. |
 | Digi | Scrolling, complete `composite.TableWarpLogo` over compiled `motion.WaveWrite` rows and one rectified bounce shared with the Union logo, `sprites.Group` Weave formation, and independent `motion.WaveClock` scroll bounce | Authored artwork, text and layer order stay screen data. |
 | LED Scroller | `composite.TiledWaveBackdrop` with retained scrolling source and explicit preload, cached bubble matrix, scrolling, `motion.WrapBank` gradient offset, harmonic `sprites.Group`, rectified `motion.WaveClock` and `palette.UniformGradient` 11-color raster material | Authored artwork and layer order remain scene composition. |
 | 3D DOC | Scrolling, paired `composite.RowWarp` source-sampling programs, `PerspectiveCheckerboard`, `ProjectedBallTrain`, first-main-tick `timeline.IntroHandoff` cue and two ordered `RasterOverlay` source-atop passes for the inner text | Authored artwork, text and scene placement remain production data. |
 | Fullscreen | `BackgroundLayer` velocity, `sprites.Group` Weave formation, `scrolling.Config.RingLanes` with paced vertical wrap and a bounded `SurfaceLayer` logo bar | Authored layer order and screen text. |
-| Starwars | `Config.Crawl`, `scrolling.DualProfiledRing` with two independent fonts, segmented wave profile, source-in raster and exact first-frame filtering, `sprites.ProjectedField` with camera velocity/angle and depth shade, `sprites.SampledSpriteTrain` over one authored XY path, and `modulation.PeriodicDecay` backdrop flash | Authored text, image assets and layer placement remain scene data. |
+| Starwars | `Config.Crawl`, `scrolling.Config.DualProfiled` with two independent fonts, segmented wave profile, source-in raster and exact first-frame filtering, `sprites.ProjectedField` with camera velocity/angle and depth shade, `sprites.SampledSpriteTrain` over one authored XY path, and `modulation.PeriodicDecay` backdrop flash | Authored text, image assets and layer placement remain scene data. |
 | Knucklebuster | Scrolling and complete `sprites.LatchedOverlay` over `motion.LatchedTriggers`: seeded five-tick hit sampling, three held channels and four ordered sprite images | Authored artwork and message remain screen data; a separate signal preset supports music-driven variations. |
-| DNA | FeedbackDNA, wave strips, seeded `geometry.SphereCloud` distribution and complete `sprites.RotatingDiscCloud`, `composite.TwistingRibbon` with exact occlusion and two `composite.SampledRows` logo programs | Authored intro/music cue and layer order. |
+| DNA | Two `Config.Output.Feedback` faces with independent fonts and gradients, wave strips, seeded `geometry.SphereCloud` distribution and complete `sprites.RotatingDiscCloud`, `composite.TwistingRibbon` with exact occlusion and two `composite.SampledRows` logo programs | Authored intro/music cue and layer order. |
 | Megaball | Scrolling, rectified `motion.WaveClock` text bounce and `sprites.Group` with an ordered `motion.CoupledOrbitFormation` for two interleaved ball trains | The nine-value input mapping and authored labels remain screen data. |
 | Reset | `Config.Slots`, scrolling, atlas, `timeline.StageSequence` with immediate events and cue windows, `composite.PairedRasterOrbit` for ordered pairs, `motion.WrapBank` for vertical raster fill and `motion.FormulaTrajectory` for the two-clock backdrop orbit | Source-atop compositing and layer order remain screen composition. |
 
@@ -114,10 +116,10 @@ matches the previous implementation exactly.
 | --- | --- | --- |
 | Introduction | Image repetition on `motion.WrapBank`, `HarmonicCellWarp` with two active editable row/column wave banks, `motion.HarmonicTransform` logo path and bitmap recipes | Authored artwork, text placement and layer order remain screen composition. |
 | Menu | Scrolling, background sampler, `sprites.Atlas` character frames, `motion.WrapBank` panorama, `motion.LinearTick` uncover wipe, `timeline.PacedIndex` palette/walk cycles, `motion.HoldBounce` logo and `motion.WalkParallax` hall/banner | Door navigation and authored layer order stay local. |
-| Loader | Reveal, bitmap recipes and `timeline.CueClock` exact-duration transition | Playback cue and layer placement remain host composition data; retain column-major reverse-row glyph order. |
+| Loader | `Config.Reveal`, bitmap recipes and `timeline.CueClock` exact-duration transition | Playback cue and layer placement remain host composition data; retain column-major reverse-row glyph order. |
 | Beat Dis | Background sampler with independent single-copy entrance, scrolling, `motion.WrapBank` wallpaper and pattern offsets, harmonic `sprites.Group` letters with global wobble | Layer order stays authored scene data. |
 | Delta Force | YM register snapshots and complete `sprites.SignalFrameBank` for the three voice-triggered ball frames, scrolling, WaveStrips, `motion.BounceToggle` logo, `motion.WrapBank` gold fill, `motion.EnterHoldExit` handoff and one reusable `RasterOverlay` source-atop material for both texts | Authored text, images and layer order remain screen composition. |
-| TNT Crew 3 | Complete `effects.SolidMeshCarousel` over `motion.ModelCarousel` and `geometry.OrderedEuler`, reusable `SolidSphereModel` with editable checker and pole materials, plus `scrolling.CaptionCarousel` for ordered slide/hold/exit text | Other authored vertices, face groups, messages and input mapping stay production data. |
+| TNT Crew 3 | Complete `effects.SolidMeshCarousel` over `motion.ModelCarousel` and `geometry.OrderedEuler`, reusable `SolidSphereModel` with editable checker and pole materials, plus `scrolling.Config.Caption` for ordered slide/hold/exit text | Other authored vertices, face groups, messages and input mapping stay production data. |
 | Wow Scroller | Scrolling, `RasterOverlay` source-atop fill and `motion.WrapBank` paired panel offsets | The two 640×1235 images are single oversized draws naturally clipped by the 640×400 stage; no additional repeated-image transport is present. |
 | Hidden | `sprites.DelayedTrail` over `PointHistory` and `timeline.PacedIndex` for the one-tick palette offset | Authored palette colors, crosshair and border clipping remain scene composition. |
 | Starballs | Camera, scrolling, `sprites.MaskedProjectedField` with one projected population, two borrowed materials, editable mask paint, live count and depth opacity | Authored logo, scroll message and input mapping remain screen data. |
@@ -703,6 +705,29 @@ load or prepare artwork, resolve input, or close borrowed resources; none is
 another local pixel, sprite-trajectory or shader engine. This narrows the
 remaining work to fidelity and runtime evidence rather than a known missing
 effect family.
+
+## Catalog acceptance review (2026-09-28)
+
+The [requirement-by-requirement review](CATALOG_ACCEPTANCE.md) concludes the
+reusable native effect-engine extraction for the eighteen in-scope repositories.
+Its [revision and check record](fidelity/catalog-acceptance-20260928.json) refreshes
+all twenty demo modules' test/vet checks against DCK `02f4f62`, the 336 visible
+font/mode combinations and a source inventory covering 81 files and 80 loops.
+The larger loop count includes collection application/menu hosts and controls;
+it does not use the earlier 69-loop inventory's narrower file selection.
+All eighty tracked original Go files in the seventeen paired source snapshots
+remain present and unchanged. Local Git rules exclude hosting exchange folders.
+
+The final composition regression reproduced a missing-artwork failure which
+previously returned nil from feedback Update. DCK now returns that source error
+immediately, preserving the last valid history and phase sample. Native GPU
+checks retain a populated history after its borrowed film is closed; a separate
+test covers an exceeded glyph budget before phase evaluation. Successful source
+rendering keeps the existing sampling, draw order and resources.
+
+The review retains the map's known sampling differences and runtime limits.
+It does not assert continuous Atari-hardware equivalence, true memory peaks,
+battery measurements or completion of the separate graphical editor.
 
 For any migration, compare deterministic complete-frame captures before and
 after at startup, state changes, text/texture wrap and late playback. Keep the

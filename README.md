@@ -2776,12 +2776,13 @@ plasma is about 455 µs versus 442 µs, a small overhead for configurability. Th
 are kernel microbenchmarks, not Pixel, whole-frame, GPU or power measurements.
 Do not infer zero allocation for the complete application from these kernels.
 
-The audit also records remaining work. Scene scripts, asset selection, local
-controls, exact raster/material conventions and some specialized renderers still
-live in the productions. Examples include software tunnel/fire/water simulations,
-legacy quad/face sorting and materials, particular text-page choreography and
-ST3 synchronization. Common callbacks allow authored behavior to compose today;
-not every callback has a built-in configurable or serializable equivalent yet.
+The [catalog acceptance review](CATALOG_ACCEPTANCE.md) records the completed
+native effect-engine extraction and its fidelity/runtime limits. The audited
+adapters retain scene scripts, assets, controls and explicit layer conventions.
+FR-010 and Second Reality keep specialized software tunnel/fire/water parts and
+ST3 synchronization outside that full-screen inventory. Common Go callbacks
+remain available for authored behavior; the saved-project schema covers common
+compositions rather than every possible callback.
 
 ## Export portfolio videos
 

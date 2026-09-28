@@ -1,0 +1,2938 @@
+{
+  "Date": "2026-09-28",
+  "ToolkitRevision": "02f4f62b999f6e774b412723acbf7cacce5c06bb",
+  "Scope": "Native reusable effect-engine consolidation in eighteen production repositories; compatibility includes all twenty demo modules. Collection hosts and all presentation units are included. Full FR-010 and Second Reality part-renderer extraction is excluded.",
+  "Compatibility": {
+    "Date": "2026-09-28",
+    "WorkspaceReplacesDCKWithCurrentCheckout": true,
+    "Results": [
+      {
+        "Repository": "lib/democonstructionkit",
+        "Revision": "02f4f62b999f6e774b412723acbf7cacce5c06bb",
+        "Test": {
+          "ExitCode": 0,
+          "Seconds": 2.576
+        },
+        "Vet": {
+          "ExitCode": 0,
+          "Seconds": 0.621
+        }
+      },
+      {
+        "Repository": "demos/3d_doc",
+        "Revision": "9cfae0e04f2ff7cf4aa9de33f4dc7d1fef859963",
+        "Test": {
+          "ExitCode": 0,
+          "Seconds": 1.325
+        },
+        "Vet": {
+          "ExitCode": 0,
+          "Seconds": 0.275
+        }
+      },
+      {
+        "Repository": "demos/bilizir-demo",
+        "Revision": "75f994820b36baebe2352ca0d6a28cfe91a69865",
+        "Test": {
+          "ExitCode": 0,
+          "Seconds": 0.658
+        },
+        "Vet": {
+          "ExitCode": 0,
+          "Seconds": 0.287
+        }
+      },
+      {
+        "Repository": "demos/dma-3d",
+        "Revision": "37b6f462c41b593cf3adeae3ce7a0550f56c364f",
+        "Test": {
+          "ExitCode": 0,
+          "Seconds": 0.974
+        },
+        "Vet": {
+          "ExitCode": 0,
+          "Seconds": 0.289
+        }
+      },
+      {
+        "Repository": "demos/dma-is-back",
+        "Revision": "25b9fdde1c09d2b2544886afd314736da6f8ab51",
+        "Test": {
+          "ExitCode": 0,
+          "Seconds": 0.932
+        },
+        "Vet": {
+          "ExitCode": 0,
+          "Seconds": 0.295
+        }
+      },
+      {
+        "Repository": "demos/go-cocoisthebest",
+        "Revision": "7ab225b540de104b205f1353c08cdb4d5b2117c7",
+        "Test": {
+          "ExitCode": 0,
+          "Seconds": 0.947
+        },
+        "Vet": {
+          "ExitCode": 0,
+          "Seconds": 0.389
+        }
+      },
+      {
+        "Repository": "demos/go-cuddlymenu",
+        "Revision": "f811259868fc87eb16d2783ae1cf16e734e7ed13",
+        "Test": {
+          "ExitCode": 0,
+          "Seconds": 2.794
+        },
+        "Vet": {
+          "ExitCode": 0,
+          "Seconds": 0.459
+        }
+      },
+      {
+        "Repository": "demos/go-dom-intro",
+        "Revision": "f7d89e8e4a84a183dface1f0edeff0b0eada5471",
+        "Test": {
+          "ExitCode": 0,
+          "Seconds": 0.732
+        },
+        "Vet": {
+          "ExitCode": 0,
+          "Seconds": 0.289
+        }
+      },
+      {
+        "Repository": "demos/go-fr010",
+        "Revision": "02c54e3f3e59058908a75256907f22fde4722a42",
+        "Test": {
+          "ExitCode": 0,
+          "Seconds": 0.249
+        },
+        "Vet": {
+          "ExitCode": 0,
+          "Seconds": 0.225
+        }
+      },
+      {
+        "Repository": "demos/go-multiscreen",
+        "Revision": "23928fddd5550076d5724bfaf4f71b7b89ab7ce2",
+        "Test": {
+          "ExitCode": 0,
+          "Seconds": 1.317
+        },
+        "Vet": {
+          "ExitCode": 0,
+          "Seconds": 0.292
+        }
+      },
+      {
+        "Repository": "demos/go-secondreality",
+        "Revision": "579036b72bbedcf596c6557111b663879145520f",
+        "Test": {
+          "ExitCode": 0,
+          "Seconds": 1.15
+        },
+        "Vet": {
+          "ExitCode": 0,
+          "Seconds": 0.375
+        }
+      },
+      {
+        "Repository": "demos/go-uniondemo",
+        "Revision": "30cae2a25ea705e3050d1d44f3816e32280a2f71",
+        "Test": {
+          "ExitCode": 0,
+          "Seconds": 2.7
+        },
+        "Vet": {
+          "ExitCode": 0,
+          "Seconds": 0.417
+        }
+      },
+      {
+        "Repository": "demos/go-vectorballs",
+        "Revision": "308c8d519c9430228caff5d31b960b47d924c329",
+        "Test": {
+          "ExitCode": 0,
+          "Seconds": 0.657
+        },
+        "Vet": {
+          "ExitCode": 0,
+          "Seconds": 0.286
+        }
+      },
+      {
+        "Repository": "demos/grodan-kvack-kvack-demo",
+        "Revision": "522432b2ffd88acac0188004bba872beaf064c70",
+        "Test": {
+          "ExitCode": 0,
+          "Seconds": 1.227
+        },
+        "Vet": {
+          "ExitCode": 0,
+          "Seconds": 0.433
+        }
+      },
+      {
+        "Repository": "demos/megatwist",
+        "Revision": "6d065d9184adeec4206849a3c721fce4240b4dba",
+        "Test": {
+          "ExitCode": 0,
+          "Seconds": 0.918
+        },
+        "Vet": {
+          "ExitCode": 0,
+          "Seconds": 0.495
+        }
+      },
+      {
+        "Repository": "demos/nonameno-demo",
+        "Revision": "c0777596ee34700edbc7f5b4d9c4f22d69dd9e11",
+        "Test": {
+          "ExitCode": 0,
+          "Seconds": 0.929
+        },
+        "Vet": {
+          "ExitCode": 0,
+          "Seconds": 0.514
+        }
+      },
+      {
+        "Repository": "demos/phenomena-dna-scroll-intro",
+        "Revision": "aa20b1937fbe83098d542142306614b44f1c111e",
+        "Test": {
+          "ExitCode": 0,
+          "Seconds": 1.394
+        },
+        "Vet": {
+          "ExitCode": 0,
+          "Seconds": 0.448
+        }
+      },
+      {
+        "Repository": "demos/tcb-multi-plane-3d-scroller",
+        "Revision": "a6de2711e0efb38521b87a49d38b967a0847eeba",
+        "Test": {
+          "ExitCode": 0,
+          "Seconds": 0.636
+        },
+        "Vet": {
+          "ExitCode": 0,
+          "Seconds": 0.285
+        }
+      },
+      {
+        "Repository": "demos/tcb-replicants-demo",
+        "Revision": "554080d39e8a2310a2ea0cc02427934103b3c3d5",
+        "Test": {
+          "ExitCode": 0,
+          "Seconds": 0.95
+        },
+        "Vet": {
+          "ExitCode": 0,
+          "Seconds": 0.389
+        }
+      },
+      {
+        "Repository": "demos/teamg1-demo",
+        "Revision": "2e4f3a196672e63f6a484f317e484b0aa05f9e5f",
+        "Test": {
+          "ExitCode": 0,
+          "Seconds": 0.812
+        },
+        "Vet": {
+          "ExitCode": 0,
+          "Seconds": 0.44
+        }
+      },
+      {
+        "Repository": "demos/viva_tcb",
+        "Revision": "a2aa151dd546b0a525a72e6954cd811c5bdad564",
+        "Test": {
+          "ExitCode": 0,
+          "Seconds": 0.763
+        },
+        "Vet": {
+          "ExitCode": 0,
+          "Seconds": 0.274
+        }
+      }
+    ]
+  },
+  "SourceInventory": {
+    "Files": 81,
+    "LoopsReviewed": 80,
+    "Loops": [
+      {
+        "File": "demos/3d_doc/dck/main.go",
+        "Function": "Init",
+        "Kind": "for",
+        "Line": 154,
+        "Calls": [
+          "fmt.Errorf",
+          "fmt.Sprintf",
+          "g.loadImage"
+        ]
+      },
+      {
+        "File": "demos/bilizir-demo/dck/deformation.go",
+        "Function": "SetLogoWarpOptions",
+        "Kind": "range",
+        "Line": 101,
+        "Calls": [
+          "fmt.Errorf",
+          "math.Abs",
+          "math.IsInf",
+          "math.IsNaN"
+        ]
+      },
+      {
+        "File": "demos/go-cocoisthebest/dck/controls.go",
+        "Function": "updateControls",
+        "Kind": "range",
+        "Line": 54,
+        "Calls": [
+          ".In",
+          "ebiten.AppendTouchIDs",
+          "ebiten.TouchPosition",
+          "image.Pt"
+        ]
+      },
+      {
+        "File": "demos/go-cocoisthebest/dck/controls.go",
+        "Function": "updateControls",
+        "Kind": "range",
+        "Line": 56,
+        "Calls": [
+          ".In",
+          "image.Pt"
+        ]
+      },
+      {
+        "File": "demos/go-cocoisthebest/dck/controls.go",
+        "Function": "updateControls",
+        "Kind": "range",
+        "Line": 63,
+        "Calls": [
+          ".In",
+          "image.Pt"
+        ]
+      },
+      {
+        "File": "demos/go-cocoisthebest/dck/controls.go",
+        "Function": "drawControls",
+        "Kind": "range",
+        "Line": 97,
+        "Calls": [
+          ".Empty",
+          "bounds.Dx",
+          "bounds.Dy",
+          "float32",
+          "g.drawControlLabel",
+          "vector.FillRect",
+          "vector.StrokeRect"
+        ]
+      },
+      {
+        "File": "demos/go-cocoisthebest/dck/controls.go",
+        "Function": "drawControlLabel",
+        "Kind": "range",
+        "Line": 123,
+        "Calls": [
+          ".ExactGlyph",
+          "float64",
+          "int"
+        ]
+      },
+      {
+        "File": "demos/go-cocoisthebest/dck/controls.go",
+        "Function": "drawControlLabel",
+        "Kind": "range",
+        "Line": 131,
+        "Calls": [
+          ".ExactGlyph",
+          ".Scale",
+          ".Translate",
+          "float64",
+          "int",
+          "screen.DrawImage"
+        ]
+      },
+      {
+        "File": "demos/go-cuddlymenu/dck/app/app.go",
+        "Function": "Draw",
+        "Kind": "range",
+        "Line": 286,
+        "Calls": [
+          "ebitenutil.DebugPrintAt",
+          "g.panelX",
+          "screens.Catalog"
+        ]
+      },
+      {
+        "File": "demos/go-cuddlymenu/dck/app/controls.go",
+        "Function": "buttons",
+        "Kind": "range",
+        "Line": 58,
+        "Calls": [
+          "append",
+          "makeButton"
+        ]
+      },
+      {
+        "File": "demos/go-cuddlymenu/dck/app/controls.go",
+        "Function": "readControls",
+        "Kind": "range",
+        "Line": 71,
+        "Calls": [
+          ".In",
+          "g.buttons",
+          "image.Pt"
+        ]
+      },
+      {
+        "File": "demos/go-cuddlymenu/dck/app/controls.go",
+        "Function": "readControls",
+        "Kind": "range",
+        "Line": 104,
+        "Calls": [
+          "ebiten.TouchPosition",
+          "press"
+        ]
+      },
+      {
+        "File": "demos/go-cuddlymenu/dck/app/controls.go",
+        "Function": "drawControls",
+        "Kind": "range",
+        "Line": 115,
+        "Calls": [
+          ".Dx",
+          ".Dy",
+          "ebitenutil.DebugPrintAt",
+          "float32",
+          "g.buttons",
+          "len",
+          "vector.FillRect",
+          "vector.StrokeRect"
+        ]
+      },
+      {
+        "File": "demos/go-cuddlymenu/dck/desktop/main.go",
+        "Function": "Run",
+        "Kind": "range",
+        "Line": 25,
+        "Calls": [
+          "fmt.Printf",
+          "screens.Catalog"
+        ]
+      },
+      {
+        "File": "demos/go-cuddlymenu/dck/menu/assets.go",
+        "Function": "makePlaceholderTiles",
+        "Kind": "for",
+        "Line": 86,
+        "Calls": [
+          "draw.Draw",
+          "image.Rect",
+          "uint8"
+        ]
+      },
+      {
+        "File": "demos/go-cuddlymenu/dck/menu/assets.go",
+        "Function": "makePlaceholderCarebears",
+        "Kind": "for",
+        "Line": 103,
+        "Calls": [
+          "draw.Draw",
+          "image.Rect",
+          "uint8"
+        ]
+      },
+      {
+        "File": "demos/go-cuddlymenu/dck/menu/assets.go",
+        "Function": "makePlaceholderScrollFont",
+        "Kind": "for",
+        "Line": 118,
+        "Calls": [
+          "draw.Draw",
+          "image.Rect",
+          "uint8"
+        ]
+      },
+      {
+        "File": "demos/go-cuddlymenu/dck/menu/controls.go",
+        "Function": "readVirtualControls",
+        "Kind": "range",
+        "Line": 133,
+        "Calls": [
+          "ebiten.TouchPosition",
+          "state.press"
+        ]
+      },
+      {
+        "File": "demos/go-cuddlymenu/dck/menu/integration.go",
+        "Function": "NavigateTo",
+        "Kind": "range",
+        "Line": 7,
+        "Calls": null
+      },
+      {
+        "File": "demos/go-cuddlymenu/dck/menu/main.go",
+        "Function": "integrate",
+        "Kind": "for",
+        "Line": 443,
+        "Calls": [
+          "g.haveLanded",
+          "int",
+          "len",
+          "math.Floor"
+        ]
+      },
+      {
+        "File": "demos/go-cuddlymenu/dck/menu/main.go",
+        "Function": "handleLoad",
+        "Kind": "range",
+        "Line": 516,
+        "Calls": [
+          "g.startLoading"
+        ]
+      },
+      {
+        "File": "demos/go-cuddlymenu/dck/menu/main.go",
+        "Function": "maxTileIndex",
+        "Kind": "range",
+        "Line": 664,
+        "Calls": null
+      },
+      {
+        "File": "demos/go-cuddlymenu/dck/menu/main.go",
+        "Function": "maxTileIndex",
+        "Kind": "range",
+        "Line": 665,
+        "Calls": null
+      },
+      {
+        "File": "demos/go-cuddlymenu/dck/menu/tiles.go",
+        "Function": "Draw",
+        "Kind": "range",
+        "Line": 61,
+        "Calls": [
+          ".Tile"
+        ]
+      },
+      {
+        "File": "demos/go-cuddlymenu/dck/screens/basic.go",
+        "Function": "bigSprite",
+        "Kind": "range",
+        "Line": 161,
+        "Calls": [
+          "append",
+          "s.asset"
+        ]
+      },
+      {
+        "File": "demos/go-cuddlymenu/dck/screens/basic.go",
+        "Function": "fullscreen",
+        "Kind": "for",
+        "Line": 249,
+        "Calls": [
+          ".Dx",
+          "float64",
+          "fmt.Sprintf",
+          "scroll.Bounds"
+        ]
+      },
+      {
+        "File": "demos/go-cuddlymenu/dck/screens/basic.go",
+        "Function": "fullscreen",
+        "Kind": "range",
+        "Line": 266,
+        "Calls": [
+          "append",
+          "s.asset"
+        ]
+      },
+      {
+        "File": "demos/go-cuddlymenu/dck/screens/digi_led.go",
+        "Function": "digi",
+        "Kind": "range",
+        "Line": 21,
+        "Calls": [
+          "append",
+          "s.asset",
+          "string"
+        ]
+      },
+      {
+        "File": "demos/go-cuddlymenu/dck/screens/digi_led.go",
+        "Function": "led",
+        "Kind": "range",
+        "Line": 93,
+        "Calls": [
+          "append",
+          "s.asset"
+        ]
+      },
+      {
+        "File": "demos/go-cuddlymenu/dck/screens/doc.go",
+        "Function": "doc",
+        "Kind": "range",
+        "Line": 21,
+        "Calls": [
+          "append",
+          "s.asset"
+        ]
+      },
+      {
+        "File": "demos/go-cuddlymenu/dck/screens/ehh.go",
+        "Function": "ehh",
+        "Kind": "for",
+        "Line": 21,
+        "Calls": [
+          "append",
+          "fmt.Sprintf",
+          "s.asset"
+        ]
+      },
+      {
+        "File": "demos/go-cuddlymenu/dck/screens/intro_megaball.go",
+        "Function": "intro",
+        "Kind": "range",
+        "Line": 37,
+        "Calls": null
+      },
+      {
+        "File": "demos/go-cuddlymenu/dck/screens/intro_megaball.go",
+        "Function": "megaball",
+        "Kind": "range",
+        "Line": 121,
+        "Calls": [
+          "float64",
+          "fmt.Sprintf",
+          "grid.Print",
+          "int",
+          "math.Abs"
+        ]
+      },
+      {
+        "File": "demos/go-cuddlymenu/dck/screens/reset.go",
+        "Function": "reset",
+        "Kind": "range",
+        "Line": 60,
+        "Calls": [
+          "img.Clear"
+        ]
+      },
+      {
+        "File": "demos/go-cuddlymenu/dck/screens/screens.go",
+        "Function": "Find",
+        "Kind": "range",
+        "Line": 51,
+        "Calls": null
+      },
+      {
+        "File": "demos/go-cuddlymenu/dck/screens/screens.go",
+        "Function": "DoorName",
+        "Kind": "range",
+        "Line": 66,
+        "Calls": [
+          "DoorID"
+        ]
+      },
+      {
+        "File": "demos/go-cuddlymenu/dck/screens/screens.go",
+        "Function": "Close",
+        "Kind": "range",
+        "Line": 179,
+        "Calls": [
+          "close"
+        ]
+      },
+      {
+        "File": "demos/go-cuddlymenu/dck/screens/screens.go",
+        "Function": "Close",
+        "Kind": "range",
+        "Line": 183,
+        "Calls": [
+          "img.Deallocate"
+        ]
+      },
+      {
+        "File": "demos/go-cuddlymenu/dck/screens/spreadpoint.go",
+        "Function": "spreadpoint",
+        "Kind": "for",
+        "Line": 19,
+        "Calls": [
+          "append",
+          "fmt.Sprintf",
+          "s.asset"
+        ]
+      },
+      {
+        "File": "demos/go-dom-intro/dck/game.go",
+        "Function": "loadRepeatedImage",
+        "Kind": "for",
+        "Line": 173,
+        "Calls": [
+          "bounds.Dx",
+          "bounds.Dy",
+          "image.Rect",
+          "imagedraw.Draw",
+          "min"
+        ]
+      },
+      {
+        "File": "demos/go-uniondemo/internal/app/app.go",
+        "Function": "updateAudio",
+        "Kind": "for",
+        "Line": 185,
+        "Calls": null
+      },
+      {
+        "File": "demos/go-uniondemo/internal/app/controls.go",
+        "Function": "controls",
+        "Kind": "range",
+        "Line": 40,
+        "Calls": [
+          "just"
+        ]
+      },
+      {
+        "File": "demos/go-uniondemo/internal/app/controls.go",
+        "Function": "controls",
+        "Kind": "range",
+        "Line": 53,
+        "Calls": [
+          ".In",
+          "image.Pt"
+        ]
+      },
+      {
+        "File": "demos/go-uniondemo/internal/app/controls.go",
+        "Function": "controls",
+        "Kind": "range",
+        "Line": 79,
+        "Calls": [
+          "apply",
+          "ebiten.TouchPosition",
+          "inpututil.TouchPressDuration"
+        ]
+      },
+      {
+        "File": "demos/go-uniondemo/internal/app/controls.go",
+        "Function": "drawPad",
+        "Kind": "range",
+        "Line": 89,
+        "Calls": [
+          ".Dx",
+          ".Dy",
+          "ebitenutil.DebugPrintAt",
+          "float32",
+          "len",
+          "vector.DrawFilledRect",
+          "vector.StrokeRect"
+        ]
+      },
+      {
+        "File": "demos/go-uniondemo/internal/app/controls.go",
+        "Function": "drawChooser",
+        "Kind": "range",
+        "Line": 98,
+        "Calls": [
+          "ebitenutil.DebugPrintAt",
+          "fmt.Sprintf",
+          "screens.Catalog",
+          "strings.ReplaceAll"
+        ]
+      },
+      {
+        "File": "demos/go-uniondemo/internal/app/tour.go",
+        "Function": "tourScreenInput",
+        "Kind": "range",
+        "Line": 192,
+        "Calls": [
+          "at"
+        ]
+      },
+      {
+        "File": "demos/go-uniondemo/internal/app/tour.go",
+        "Function": "tourScreenInput",
+        "Kind": "range",
+        "Line": 202,
+        "Calls": [
+          "at"
+        ]
+      },
+      {
+        "File": "demos/go-uniondemo/internal/menu/menu.go",
+        "Function": "New",
+        "Kind": "range",
+        "Line": 59,
+        "Calls": [
+          ".Dx",
+          ".Dy",
+          ".Image",
+          ".Texture",
+          "fmt.Errorf",
+          "img.Bounds"
+        ]
+      },
+      {
+        "File": "demos/go-uniondemo/internal/menu/menu.go",
+        "Function": "Close",
+        "Kind": "range",
+        "Line": 176,
+        "Calls": [
+          "surface.Deallocate"
+        ]
+      },
+      {
+        "File": "demos/go-uniondemo/internal/menu/state.go",
+        "Function": "selection",
+        "Kind": "range",
+        "Line": 150,
+        "Calls": null
+      },
+      {
+        "File": "demos/go-uniondemo/internal/menu/state.go",
+        "Function": "positionDoor",
+        "Kind": "range",
+        "Line": 159,
+        "Calls": [
+          ".Set",
+          "float64"
+        ]
+      },
+      {
+        "File": "demos/go-uniondemo/internal/screens/a_beatdis_wow.go",
+        "Function": "beatDis",
+        "Kind": "range",
+        "Line": 24,
+        "Calls": [
+          "s.image"
+        ]
+      },
+      {
+        "File": "demos/go-uniondemo/internal/screens/a_delta.go",
+        "Function": "deltaForce",
+        "Kind": "range",
+        "Line": 91,
+        "Calls": [
+          "drawWord",
+          "goldMaterial.Draw",
+          "s.advanceScroll",
+          "s.draw",
+          "s.drawScroll",
+          "wave.Advance",
+          "wave.DrawAt",
+          "wordMotion.Step"
+        ]
+      },
+      {
+        "File": "demos/go-uniondemo/internal/screens/a_hidden.go",
+        "Function": "aHiddenPalette",
+        "Kind": "range",
+        "Line": 26,
+        "Calls": [
+          "strconv.ParseUint",
+          "uint8"
+        ]
+      },
+      {
+        "File": "demos/go-uniondemo/internal/screens/a_replicants.go",
+        "Function": "replicants",
+        "Kind": "range",
+        "Line": 24,
+        "Calls": [
+          "s.image"
+        ]
+      },
+      {
+        "File": "demos/go-uniondemo/internal/screens/b_diskcopier.go",
+        "Function": "buildDiskCopier",
+        "Kind": "range",
+        "Line": 27,
+        "Calls": [
+          "fmt.Sprint",
+          "s.image"
+        ]
+      },
+      {
+        "File": "demos/go-uniondemo/internal/screens/b_layers.go",
+        "Function": "buildTNT2",
+        "Kind": "range",
+        "Line": 96,
+        "Calls": [
+          "backgrounds.DrawAt",
+          "parallax.At"
+        ]
+      },
+      {
+        "File": "demos/go-uniondemo/internal/screens/b_tnt3.go",
+        "Function": "unionFaces",
+        "Kind": "range",
+        "Line": 19,
+        "Calls": null
+      },
+      {
+        "File": "demos/go-uniondemo/internal/screens/catalog.go",
+        "Function": "Find",
+        "Kind": "range",
+        "Line": 42,
+        "Calls": null
+      },
+      {
+        "File": "demos/go-uniondemo/internal/screens/replicants_trajectory.go",
+        "Function": "replicantsFormation",
+        "Kind": "range",
+        "Line": 29,
+        "Calls": [
+          "len",
+          "make"
+        ]
+      },
+      {
+        "File": "demos/go-uniondemo/internal/screens/replicants_trajectory.go",
+        "Function": "replicantsFormation",
+        "Kind": "range",
+        "Line": 31,
+        "Calls": null
+      },
+      {
+        "File": "demos/go-uniondemo/internal/screens/scene.go",
+        "Function": "Close",
+        "Kind": "range",
+        "Line": 80,
+        "Calls": [
+          "close"
+        ]
+      },
+      {
+        "File": "demos/go-uniondemo/internal/screens/scene.go",
+        "Function": "Close",
+        "Kind": "range",
+        "Line": 84,
+        "Calls": [
+          "img.Deallocate"
+        ]
+      },
+      {
+        "File": "demos/go-vectorballs/dck/main.go",
+        "Function": "loadImages",
+        "Kind": "for",
+        "Line": 158,
+        "Calls": [
+          ".Dy",
+          ".SubImage",
+          "append",
+          "image.Rect",
+          "img.Bounds"
+        ]
+      },
+      {
+        "File": "demos/go-vectorballs/dck/main.go",
+        "Function": "extractBalls",
+        "Kind": "for",
+        "Line": 192,
+        "Calls": [
+          "image.Rect",
+          "len"
+        ]
+      },
+      {
+        "File": "demos/go-vectorballs/dck/scene/compile.go",
+        "Function": "CompileActions",
+        "Kind": "range",
+        "Line": 27,
+        "Calls": [
+          "actionVector",
+          "append",
+          "fmt.Errorf",
+          "recipe"
+        ]
+      },
+      {
+        "File": "demos/go-vectorballs/dck/scene/compile.go",
+        "Function": "CompileActions",
+        "Kind": "range",
+        "Line": 51,
+        "Calls": [
+          "append",
+          "fmt.Errorf",
+          "recipe"
+        ]
+      },
+      {
+        "File": "demos/go-vectorballs/dck/scene/compile.go",
+        "Function": "CompileActions",
+        "Kind": "range",
+        "Line": 58,
+        "Calls": [
+          "append",
+          "fmt.Errorf",
+          "recipe"
+        ]
+      },
+      {
+        "File": "demos/go-vectorballs/dck/scene/shapes.go",
+        "Function": "parseShape",
+        "Kind": "range",
+        "Line": 45,
+        "Calls": [
+          "append",
+          "len",
+          "strconv.Atoi",
+          "strconv.ParseFloat",
+          "strings.Split"
+        ]
+      },
+      {
+        "File": "demos/grodan-kvack-kvack-demo/dck/main.go",
+        "Function": "NewGame",
+        "Kind": "range",
+        "Line": 98,
+        "Calls": [
+          ".SubImage",
+          "image.Rect"
+        ]
+      },
+      {
+        "File": "demos/grodan-kvack-kvack-demo/dck/main.go",
+        "Function": "initScrollTexts",
+        "Kind": "range",
+        "Line": 166,
+        "Calls": [
+          "panic",
+          "scrolling.New"
+        ]
+      },
+      {
+        "File": "demos/grodan-kvack-kvack-demo/dck/main.go",
+        "Function": "initScrollTexts",
+        "Kind": "range",
+        "Line": 174,
+        "Calls": [
+          "composite.NewSurfaceLayer",
+          "panic"
+        ]
+      },
+      {
+        "File": "demos/grodan-kvack-kvack-demo/dck/main.go",
+        "Function": "Update",
+        "Kind": "range",
+        "Line": 223,
+        "Calls": [
+          ".Update"
+        ]
+      },
+      {
+        "File": "demos/grodan-kvack-kvack-demo/dck/main.go",
+        "Function": "Draw",
+        "Kind": "range",
+        "Line": 244,
+        "Calls": [
+          "layer.Draw"
+        ]
+      },
+      {
+        "File": "demos/grodan-kvack-kvack-demo/dck/main.go",
+        "Function": "Cleanup",
+        "Kind": "range",
+        "Line": 262,
+        "Calls": [
+          "layer.Close"
+        ]
+      },
+      {
+        "File": "demos/tcb-replicants-demo/dck/controls.go",
+        "Function": "readVirtualControls",
+        "Kind": "range",
+        "Line": 127,
+        "Calls": [
+          "ebiten.TouchPosition",
+          "state.press"
+        ]
+      },
+      {
+        "File": "demos/tcb-replicants-demo/dck/game.go",
+        "Function": "Cleanup",
+        "Kind": "range",
+        "Line": 291,
+        "Calls": [
+          "frame.Deallocate"
+        ]
+      },
+      {
+        "File": "demos/teamg1-demo/dck/game.go",
+        "Function": "loadImages",
+        "Kind": "for",
+        "Line": 257,
+        "Calls": [
+          ".Set"
+        ]
+      },
+      {
+        "File": "demos/teamg1-demo/dck/game.go",
+        "Function": "loadImages",
+        "Kind": "for",
+        "Line": 258,
+        "Calls": [
+          ".Set"
+        ]
+      }
+    ],
+    "Classification": "Remaining loops prepare assets, resolve input/menu state, dispatch shared-controller events, compose layers or release resources. No additional active local scrolling, trajectory, deformation, mesh or shader engine was found."
+  },
+  "FontsAndModes": {
+    "Cases": 336,
+    "AllHaveVisiblePixels": true,
+    "RepeatedDrawStable": true,
+    "Scope": "Catalog bitmap fonts with independent mixed-size faces and twelve shared glyph modes; specialized transport fidelity has separate checks.",
+    "CasesDetail": [
+      {
+        "Font": "3d_doc",
+        "Mode": "normal",
+        "VisiblePixels": 1440
+      },
+      {
+        "Font": "3d_doc",
+        "Mode": "bounce",
+        "VisiblePixels": 1404
+      },
+      {
+        "Font": "3d_doc",
+        "Mode": "sine",
+        "VisiblePixels": 1438
+      },
+      {
+        "Font": "3d_doc",
+        "Mode": "zoom",
+        "VisiblePixels": 1617
+      },
+      {
+        "Font": "3d_doc",
+        "Mode": "3d",
+        "VisiblePixels": 1019
+      },
+      {
+        "Font": "3d_doc",
+        "Mode": "dna",
+        "VisiblePixels": 1071
+      },
+      {
+        "Font": "3d_doc",
+        "Mode": "tcb0",
+        "VisiblePixels": 499
+      },
+      {
+        "Font": "3d_doc",
+        "Mode": "tcb1",
+        "VisiblePixels": 512
+      },
+      {
+        "Font": "3d_doc",
+        "Mode": "tcb2",
+        "VisiblePixels": 528
+      },
+      {
+        "Font": "3d_doc",
+        "Mode": "tcb3",
+        "VisiblePixels": 2049
+      },
+      {
+        "Font": "3d_doc",
+        "Mode": "tcb4",
+        "VisiblePixels": 1631
+      },
+      {
+        "Font": "3d_doc",
+        "Mode": "tcb5",
+        "VisiblePixels": 1607
+      },
+      {
+        "Font": "3d_doc",
+        "Mode": "tcb6",
+        "VisiblePixels": 669
+      },
+      {
+        "Font": "3d_doc",
+        "Mode": "tcb7",
+        "VisiblePixels": 301
+      },
+      {
+        "Font": "3d_doc-in",
+        "Mode": "normal",
+        "VisiblePixels": 1159
+      },
+      {
+        "Font": "3d_doc-in",
+        "Mode": "bounce",
+        "VisiblePixels": 1098
+      },
+      {
+        "Font": "3d_doc-in",
+        "Mode": "sine",
+        "VisiblePixels": 1096
+      },
+      {
+        "Font": "3d_doc-in",
+        "Mode": "zoom",
+        "VisiblePixels": 1348
+      },
+      {
+        "Font": "3d_doc-in",
+        "Mode": "3d",
+        "VisiblePixels": 912
+      },
+      {
+        "Font": "3d_doc-in",
+        "Mode": "dna",
+        "VisiblePixels": 1041
+      },
+      {
+        "Font": "3d_doc-in",
+        "Mode": "tcb0",
+        "VisiblePixels": 468
+      },
+      {
+        "Font": "3d_doc-in",
+        "Mode": "tcb1",
+        "VisiblePixels": 469
+      },
+      {
+        "Font": "3d_doc-in",
+        "Mode": "tcb2",
+        "VisiblePixels": 477
+      },
+      {
+        "Font": "3d_doc-in",
+        "Mode": "tcb3",
+        "VisiblePixels": 1605
+      },
+      {
+        "Font": "3d_doc-in",
+        "Mode": "tcb4",
+        "VisiblePixels": 1496
+      },
+      {
+        "Font": "3d_doc-in",
+        "Mode": "tcb5",
+        "VisiblePixels": 1411
+      },
+      {
+        "Font": "3d_doc-in",
+        "Mode": "tcb6",
+        "VisiblePixels": 565
+      },
+      {
+        "Font": "3d_doc-in",
+        "Mode": "tcb7",
+        "VisiblePixels": 263
+      },
+      {
+        "Font": "3d_doc-intro",
+        "Mode": "normal",
+        "VisiblePixels": 2599
+      },
+      {
+        "Font": "3d_doc-intro",
+        "Mode": "bounce",
+        "VisiblePixels": 2502
+      },
+      {
+        "Font": "3d_doc-intro",
+        "Mode": "sine",
+        "VisiblePixels": 2534
+      },
+      {
+        "Font": "3d_doc-intro",
+        "Mode": "zoom",
+        "VisiblePixels": 2965
+      },
+      {
+        "Font": "3d_doc-intro",
+        "Mode": "3d",
+        "VisiblePixels": 1847
+      },
+      {
+        "Font": "3d_doc-intro",
+        "Mode": "dna",
+        "VisiblePixels": 1943
+      },
+      {
+        "Font": "3d_doc-intro",
+        "Mode": "tcb0",
+        "VisiblePixels": 982
+      },
+      {
+        "Font": "3d_doc-intro",
+        "Mode": "tcb1",
+        "VisiblePixels": 981
+      },
+      {
+        "Font": "3d_doc-intro",
+        "Mode": "tcb2",
+        "VisiblePixels": 1005
+      },
+      {
+        "Font": "3d_doc-intro",
+        "Mode": "tcb3",
+        "VisiblePixels": 3654
+      },
+      {
+        "Font": "3d_doc-intro",
+        "Mode": "tcb4",
+        "VisiblePixels": 3127
+      },
+      {
+        "Font": "3d_doc-intro",
+        "Mode": "tcb5",
+        "VisiblePixels": 2986
+      },
+      {
+        "Font": "3d_doc-intro",
+        "Mode": "tcb6",
+        "VisiblePixels": 1234
+      },
+      {
+        "Font": "3d_doc-intro",
+        "Mode": "tcb7",
+        "VisiblePixels": 564
+      },
+      {
+        "Font": "bilizir-demo",
+        "Mode": "normal",
+        "VisiblePixels": 649
+      },
+      {
+        "Font": "bilizir-demo",
+        "Mode": "bounce",
+        "VisiblePixels": 636
+      },
+      {
+        "Font": "bilizir-demo",
+        "Mode": "sine",
+        "VisiblePixels": 645
+      },
+      {
+        "Font": "bilizir-demo",
+        "Mode": "zoom",
+        "VisiblePixels": 774
+      },
+      {
+        "Font": "bilizir-demo",
+        "Mode": "3d",
+        "VisiblePixels": 467
+      },
+      {
+        "Font": "bilizir-demo",
+        "Mode": "dna",
+        "VisiblePixels": 441
+      },
+      {
+        "Font": "bilizir-demo",
+        "Mode": "tcb0",
+        "VisiblePixels": 250
+      },
+      {
+        "Font": "bilizir-demo",
+        "Mode": "tcb1",
+        "VisiblePixels": 249
+      },
+      {
+        "Font": "bilizir-demo",
+        "Mode": "tcb2",
+        "VisiblePixels": 248
+      },
+      {
+        "Font": "bilizir-demo",
+        "Mode": "tcb3",
+        "VisiblePixels": 906
+      },
+      {
+        "Font": "bilizir-demo",
+        "Mode": "tcb4",
+        "VisiblePixels": 809
+      },
+      {
+        "Font": "bilizir-demo",
+        "Mode": "tcb5",
+        "VisiblePixels": 749
+      },
+      {
+        "Font": "bilizir-demo",
+        "Mode": "tcb6",
+        "VisiblePixels": 324
+      },
+      {
+        "Font": "bilizir-demo",
+        "Mode": "tcb7",
+        "VisiblePixels": 148
+      },
+      {
+        "Font": "dma-3d",
+        "Mode": "normal",
+        "VisiblePixels": 3239
+      },
+      {
+        "Font": "dma-3d",
+        "Mode": "bounce",
+        "VisiblePixels": 3131
+      },
+      {
+        "Font": "dma-3d",
+        "Mode": "sine",
+        "VisiblePixels": 3156
+      },
+      {
+        "Font": "dma-3d",
+        "Mode": "zoom",
+        "VisiblePixels": 3717
+      },
+      {
+        "Font": "dma-3d",
+        "Mode": "3d",
+        "VisiblePixels": 2251
+      },
+      {
+        "Font": "dma-3d",
+        "Mode": "dna",
+        "VisiblePixels": 2184
+      },
+      {
+        "Font": "dma-3d",
+        "Mode": "tcb0",
+        "VisiblePixels": 1220
+      },
+      {
+        "Font": "dma-3d",
+        "Mode": "tcb1",
+        "VisiblePixels": 1220
+      },
+      {
+        "Font": "dma-3d",
+        "Mode": "tcb2",
+        "VisiblePixels": 1246
+      },
+      {
+        "Font": "dma-3d",
+        "Mode": "tcb3",
+        "VisiblePixels": 4395
+      },
+      {
+        "Font": "dma-3d",
+        "Mode": "tcb4",
+        "VisiblePixels": 3900
+      },
+      {
+        "Font": "dma-3d",
+        "Mode": "tcb5",
+        "VisiblePixels": 3621
+      },
+      {
+        "Font": "dma-3d",
+        "Mode": "tcb6",
+        "VisiblePixels": 1628
+      },
+      {
+        "Font": "dma-3d",
+        "Mode": "tcb7",
+        "VisiblePixels": 699
+      },
+      {
+        "Font": "dma-is-back",
+        "Mode": "normal",
+        "VisiblePixels": 1400
+      },
+      {
+        "Font": "dma-is-back",
+        "Mode": "bounce",
+        "VisiblePixels": 1375
+      },
+      {
+        "Font": "dma-is-back",
+        "Mode": "sine",
+        "VisiblePixels": 1380
+      },
+      {
+        "Font": "dma-is-back",
+        "Mode": "zoom",
+        "VisiblePixels": 1672
+      },
+      {
+        "Font": "dma-is-back",
+        "Mode": "3d",
+        "VisiblePixels": 998
+      },
+      {
+        "Font": "dma-is-back",
+        "Mode": "dna",
+        "VisiblePixels": 1050
+      },
+      {
+        "Font": "dma-is-back",
+        "Mode": "tcb0",
+        "VisiblePixels": 519
+      },
+      {
+        "Font": "dma-is-back",
+        "Mode": "tcb1",
+        "VisiblePixels": 509
+      },
+      {
+        "Font": "dma-is-back",
+        "Mode": "tcb2",
+        "VisiblePixels": 549
+      },
+      {
+        "Font": "dma-is-back",
+        "Mode": "tcb3",
+        "VisiblePixels": 1859
+      },
+      {
+        "Font": "dma-is-back",
+        "Mode": "tcb4",
+        "VisiblePixels": 1690
+      },
+      {
+        "Font": "dma-is-back",
+        "Mode": "tcb5",
+        "VisiblePixels": 1561
+      },
+      {
+        "Font": "dma-is-back",
+        "Mode": "tcb6",
+        "VisiblePixels": 678
+      },
+      {
+        "Font": "dma-is-back",
+        "Mode": "tcb7",
+        "VisiblePixels": 320
+      },
+      {
+        "Font": "go-cocoisthebest",
+        "Mode": "normal",
+        "VisiblePixels": 1400
+      },
+      {
+        "Font": "go-cocoisthebest",
+        "Mode": "bounce",
+        "VisiblePixels": 1375
+      },
+      {
+        "Font": "go-cocoisthebest",
+        "Mode": "sine",
+        "VisiblePixels": 1380
+      },
+      {
+        "Font": "go-cocoisthebest",
+        "Mode": "zoom",
+        "VisiblePixels": 1672
+      },
+      {
+        "Font": "go-cocoisthebest",
+        "Mode": "3d",
+        "VisiblePixels": 998
+      },
+      {
+        "Font": "go-cocoisthebest",
+        "Mode": "dna",
+        "VisiblePixels": 1050
+      },
+      {
+        "Font": "go-cocoisthebest",
+        "Mode": "tcb0",
+        "VisiblePixels": 519
+      },
+      {
+        "Font": "go-cocoisthebest",
+        "Mode": "tcb1",
+        "VisiblePixels": 509
+      },
+      {
+        "Font": "go-cocoisthebest",
+        "Mode": "tcb2",
+        "VisiblePixels": 549
+      },
+      {
+        "Font": "go-cocoisthebest",
+        "Mode": "tcb3",
+        "VisiblePixels": 1859
+      },
+      {
+        "Font": "go-cocoisthebest",
+        "Mode": "tcb4",
+        "VisiblePixels": 1690
+      },
+      {
+        "Font": "go-cocoisthebest",
+        "Mode": "tcb5",
+        "VisiblePixels": 1562
+      },
+      {
+        "Font": "go-cocoisthebest",
+        "Mode": "tcb6",
+        "VisiblePixels": 678
+      },
+      {
+        "Font": "go-cocoisthebest",
+        "Mode": "tcb7",
+        "VisiblePixels": 320
+      },
+      {
+        "Font": "go-cuddlymenu",
+        "Mode": "normal",
+        "VisiblePixels": 1403
+      },
+      {
+        "Font": "go-cuddlymenu",
+        "Mode": "bounce",
+        "VisiblePixels": 1414
+      },
+      {
+        "Font": "go-cuddlymenu",
+        "Mode": "sine",
+        "VisiblePixels": 1398
+      },
+      {
+        "Font": "go-cuddlymenu",
+        "Mode": "zoom",
+        "VisiblePixels": 1611
+      },
+      {
+        "Font": "go-cuddlymenu",
+        "Mode": "3d",
+        "VisiblePixels": 1071
+      },
+      {
+        "Font": "go-cuddlymenu",
+        "Mode": "dna",
+        "VisiblePixels": 1088
+      },
+      {
+        "Font": "go-cuddlymenu",
+        "Mode": "tcb0",
+        "VisiblePixels": 549
+      },
+      {
+        "Font": "go-cuddlymenu",
+        "Mode": "tcb1",
+        "VisiblePixels": 549
+      },
+      {
+        "Font": "go-cuddlymenu",
+        "Mode": "tcb2",
+        "VisiblePixels": 561
+      },
+      {
+        "Font": "go-cuddlymenu",
+        "Mode": "tcb3",
+        "VisiblePixels": 2023
+      },
+      {
+        "Font": "go-cuddlymenu",
+        "Mode": "tcb4",
+        "VisiblePixels": 1703
+      },
+      {
+        "Font": "go-cuddlymenu",
+        "Mode": "tcb5",
+        "VisiblePixels": 1652
+      },
+      {
+        "Font": "go-cuddlymenu",
+        "Mode": "tcb6",
+        "VisiblePixels": 728
+      },
+      {
+        "Font": "go-cuddlymenu",
+        "Mode": "tcb7",
+        "VisiblePixels": 311
+      },
+      {
+        "Font": "go-dom-intro",
+        "Mode": "normal",
+        "VisiblePixels": 736
+      },
+      {
+        "Font": "go-dom-intro",
+        "Mode": "bounce",
+        "VisiblePixels": 727
+      },
+      {
+        "Font": "go-dom-intro",
+        "Mode": "sine",
+        "VisiblePixels": 734
+      },
+      {
+        "Font": "go-dom-intro",
+        "Mode": "zoom",
+        "VisiblePixels": 899
+      },
+      {
+        "Font": "go-dom-intro",
+        "Mode": "3d",
+        "VisiblePixels": 521
+      },
+      {
+        "Font": "go-dom-intro",
+        "Mode": "dna",
+        "VisiblePixels": 557
+      },
+      {
+        "Font": "go-dom-intro",
+        "Mode": "tcb0",
+        "VisiblePixels": 281
+      },
+      {
+        "Font": "go-dom-intro",
+        "Mode": "tcb1",
+        "VisiblePixels": 281
+      },
+      {
+        "Font": "go-dom-intro",
+        "Mode": "tcb2",
+        "VisiblePixels": 279
+      },
+      {
+        "Font": "go-dom-intro",
+        "Mode": "tcb3",
+        "VisiblePixels": 978
+      },
+      {
+        "Font": "go-dom-intro",
+        "Mode": "tcb4",
+        "VisiblePixels": 899
+      },
+      {
+        "Font": "go-dom-intro",
+        "Mode": "tcb5",
+        "VisiblePixels": 810
+      },
+      {
+        "Font": "go-dom-intro",
+        "Mode": "tcb6",
+        "VisiblePixels": 381
+      },
+      {
+        "Font": "go-dom-intro",
+        "Mode": "tcb7",
+        "VisiblePixels": 171
+      },
+      {
+        "Font": "megatwist",
+        "Mode": "normal",
+        "VisiblePixels": 1400
+      },
+      {
+        "Font": "megatwist",
+        "Mode": "bounce",
+        "VisiblePixels": 1375
+      },
+      {
+        "Font": "megatwist",
+        "Mode": "sine",
+        "VisiblePixels": 1380
+      },
+      {
+        "Font": "megatwist",
+        "Mode": "zoom",
+        "VisiblePixels": 1672
+      },
+      {
+        "Font": "megatwist",
+        "Mode": "3d",
+        "VisiblePixels": 998
+      },
+      {
+        "Font": "megatwist",
+        "Mode": "dna",
+        "VisiblePixels": 1050
+      },
+      {
+        "Font": "megatwist",
+        "Mode": "tcb0",
+        "VisiblePixels": 519
+      },
+      {
+        "Font": "megatwist",
+        "Mode": "tcb1",
+        "VisiblePixels": 509
+      },
+      {
+        "Font": "megatwist",
+        "Mode": "tcb2",
+        "VisiblePixels": 549
+      },
+      {
+        "Font": "megatwist",
+        "Mode": "tcb3",
+        "VisiblePixels": 1859
+      },
+      {
+        "Font": "megatwist",
+        "Mode": "tcb4",
+        "VisiblePixels": 1690
+      },
+      {
+        "Font": "megatwist",
+        "Mode": "tcb5",
+        "VisiblePixels": 1562
+      },
+      {
+        "Font": "megatwist",
+        "Mode": "tcb6",
+        "VisiblePixels": 678
+      },
+      {
+        "Font": "megatwist",
+        "Mode": "tcb7",
+        "VisiblePixels": 320
+      },
+      {
+        "Font": "teamg1-demo",
+        "Mode": "normal",
+        "VisiblePixels": 1400
+      },
+      {
+        "Font": "teamg1-demo",
+        "Mode": "bounce",
+        "VisiblePixels": 1375
+      },
+      {
+        "Font": "teamg1-demo",
+        "Mode": "sine",
+        "VisiblePixels": 1380
+      },
+      {
+        "Font": "teamg1-demo",
+        "Mode": "zoom",
+        "VisiblePixels": 1672
+      },
+      {
+        "Font": "teamg1-demo",
+        "Mode": "3d",
+        "VisiblePixels": 998
+      },
+      {
+        "Font": "teamg1-demo",
+        "Mode": "dna",
+        "VisiblePixels": 1050
+      },
+      {
+        "Font": "teamg1-demo",
+        "Mode": "tcb0",
+        "VisiblePixels": 519
+      },
+      {
+        "Font": "teamg1-demo",
+        "Mode": "tcb1",
+        "VisiblePixels": 509
+      },
+      {
+        "Font": "teamg1-demo",
+        "Mode": "tcb2",
+        "VisiblePixels": 549
+      },
+      {
+        "Font": "teamg1-demo",
+        "Mode": "tcb3",
+        "VisiblePixels": 1859
+      },
+      {
+        "Font": "teamg1-demo",
+        "Mode": "tcb4",
+        "VisiblePixels": 1690
+      },
+      {
+        "Font": "teamg1-demo",
+        "Mode": "tcb5",
+        "VisiblePixels": 1562
+      },
+      {
+        "Font": "teamg1-demo",
+        "Mode": "tcb6",
+        "VisiblePixels": 678
+      },
+      {
+        "Font": "teamg1-demo",
+        "Mode": "tcb7",
+        "VisiblePixels": 320
+      },
+      {
+        "Font": "viva_tcb",
+        "Mode": "normal",
+        "VisiblePixels": 819
+      },
+      {
+        "Font": "viva_tcb",
+        "Mode": "bounce",
+        "VisiblePixels": 846
+      },
+      {
+        "Font": "viva_tcb",
+        "Mode": "sine",
+        "VisiblePixels": 858
+      },
+      {
+        "Font": "viva_tcb",
+        "Mode": "zoom",
+        "VisiblePixels": 998
+      },
+      {
+        "Font": "viva_tcb",
+        "Mode": "3d",
+        "VisiblePixels": 561
+      },
+      {
+        "Font": "viva_tcb",
+        "Mode": "dna",
+        "VisiblePixels": 534
+      },
+      {
+        "Font": "viva_tcb",
+        "Mode": "tcb0",
+        "VisiblePixels": 320
+      },
+      {
+        "Font": "viva_tcb",
+        "Mode": "tcb1",
+        "VisiblePixels": 320
+      },
+      {
+        "Font": "viva_tcb",
+        "Mode": "tcb2",
+        "VisiblePixels": 318
+      },
+      {
+        "Font": "viva_tcb",
+        "Mode": "tcb3",
+        "VisiblePixels": 1190
+      },
+      {
+        "Font": "viva_tcb",
+        "Mode": "tcb4",
+        "VisiblePixels": 1042
+      },
+      {
+        "Font": "viva_tcb",
+        "Mode": "tcb5",
+        "VisiblePixels": 906
+      },
+      {
+        "Font": "viva_tcb",
+        "Mode": "tcb6",
+        "VisiblePixels": 430
+      },
+      {
+        "Font": "viva_tcb",
+        "Mode": "tcb7",
+        "VisiblePixels": 189
+      },
+      {
+        "Font": "nonameno-demo",
+        "Mode": "normal",
+        "VisiblePixels": 876
+      },
+      {
+        "Font": "nonameno-demo",
+        "Mode": "bounce",
+        "VisiblePixels": 870
+      },
+      {
+        "Font": "nonameno-demo",
+        "Mode": "sine",
+        "VisiblePixels": 873
+      },
+      {
+        "Font": "nonameno-demo",
+        "Mode": "zoom",
+        "VisiblePixels": 1020
+      },
+      {
+        "Font": "nonameno-demo",
+        "Mode": "3d",
+        "VisiblePixels": 565
+      },
+      {
+        "Font": "nonameno-demo",
+        "Mode": "dna",
+        "VisiblePixels": 589
+      },
+      {
+        "Font": "nonameno-demo",
+        "Mode": "tcb0",
+        "VisiblePixels": 355
+      },
+      {
+        "Font": "nonameno-demo",
+        "Mode": "tcb1",
+        "VisiblePixels": 354
+      },
+      {
+        "Font": "nonameno-demo",
+        "Mode": "tcb2",
+        "VisiblePixels": 347
+      },
+      {
+        "Font": "nonameno-demo",
+        "Mode": "tcb3",
+        "VisiblePixels": 1187
+      },
+      {
+        "Font": "nonameno-demo",
+        "Mode": "tcb4",
+        "VisiblePixels": 1072
+      },
+      {
+        "Font": "nonameno-demo",
+        "Mode": "tcb5",
+        "VisiblePixels": 959
+      },
+      {
+        "Font": "nonameno-demo",
+        "Mode": "tcb6",
+        "VisiblePixels": 458
+      },
+      {
+        "Font": "nonameno-demo",
+        "Mode": "tcb7",
+        "VisiblePixels": 194
+      },
+      {
+        "Font": "nonameno-small",
+        "Mode": "normal",
+        "VisiblePixels": 54
+      },
+      {
+        "Font": "nonameno-small",
+        "Mode": "bounce",
+        "VisiblePixels": 49
+      },
+      {
+        "Font": "nonameno-small",
+        "Mode": "sine",
+        "VisiblePixels": 57
+      },
+      {
+        "Font": "nonameno-small",
+        "Mode": "zoom",
+        "VisiblePixels": 64
+      },
+      {
+        "Font": "nonameno-small",
+        "Mode": "3d",
+        "VisiblePixels": 23
+      },
+      {
+        "Font": "nonameno-small",
+        "Mode": "dna",
+        "VisiblePixels": 26
+      },
+      {
+        "Font": "nonameno-small",
+        "Mode": "tcb0",
+        "VisiblePixels": 15
+      },
+      {
+        "Font": "nonameno-small",
+        "Mode": "tcb1",
+        "VisiblePixels": 15
+      },
+      {
+        "Font": "nonameno-small",
+        "Mode": "tcb2",
+        "VisiblePixels": 18
+      },
+      {
+        "Font": "nonameno-small",
+        "Mode": "tcb3",
+        "VisiblePixels": 51
+      },
+      {
+        "Font": "nonameno-small",
+        "Mode": "tcb4",
+        "VisiblePixels": 52
+      },
+      {
+        "Font": "nonameno-small",
+        "Mode": "tcb5",
+        "VisiblePixels": 55
+      },
+      {
+        "Font": "nonameno-small",
+        "Mode": "tcb6",
+        "VisiblePixels": 23
+      },
+      {
+        "Font": "nonameno-small",
+        "Mode": "tcb7",
+        "VisiblePixels": 9
+      },
+      {
+        "Font": "phenomena-dna-scroll-intro",
+        "Mode": "normal",
+        "VisiblePixels": 310
+      },
+      {
+        "Font": "phenomena-dna-scroll-intro",
+        "Mode": "bounce",
+        "VisiblePixels": 310
+      },
+      {
+        "Font": "phenomena-dna-scroll-intro",
+        "Mode": "sine",
+        "VisiblePixels": 310
+      },
+      {
+        "Font": "phenomena-dna-scroll-intro",
+        "Mode": "zoom",
+        "VisiblePixels": 370
+      },
+      {
+        "Font": "phenomena-dna-scroll-intro",
+        "Mode": "3d",
+        "VisiblePixels": 151
+      },
+      {
+        "Font": "phenomena-dna-scroll-intro",
+        "Mode": "dna",
+        "VisiblePixels": 221
+      },
+      {
+        "Font": "phenomena-dna-scroll-intro",
+        "Mode": "tcb0",
+        "VisiblePixels": 117
+      },
+      {
+        "Font": "phenomena-dna-scroll-intro",
+        "Mode": "tcb1",
+        "VisiblePixels": 117
+      },
+      {
+        "Font": "phenomena-dna-scroll-intro",
+        "Mode": "tcb2",
+        "VisiblePixels": 117
+      },
+      {
+        "Font": "phenomena-dna-scroll-intro",
+        "Mode": "tcb3",
+        "VisiblePixels": 338
+      },
+      {
+        "Font": "phenomena-dna-scroll-intro",
+        "Mode": "tcb4",
+        "VisiblePixels": 377
+      },
+      {
+        "Font": "phenomena-dna-scroll-intro",
+        "Mode": "tcb5",
+        "VisiblePixels": 326
+      },
+      {
+        "Font": "phenomena-dna-scroll-intro",
+        "Mode": "tcb6",
+        "VisiblePixels": 153
+      },
+      {
+        "Font": "phenomena-dna-scroll-intro",
+        "Mode": "tcb7",
+        "VisiblePixels": 68
+      },
+      {
+        "Font": "tcb-multi-plane-3d-scroller",
+        "Mode": "normal",
+        "VisiblePixels": 534
+      },
+      {
+        "Font": "tcb-multi-plane-3d-scroller",
+        "Mode": "bounce",
+        "VisiblePixels": 489
+      },
+      {
+        "Font": "tcb-multi-plane-3d-scroller",
+        "Mode": "sine",
+        "VisiblePixels": 519
+      },
+      {
+        "Font": "tcb-multi-plane-3d-scroller",
+        "Mode": "zoom",
+        "VisiblePixels": 635
+      },
+      {
+        "Font": "tcb-multi-plane-3d-scroller",
+        "Mode": "3d",
+        "VisiblePixels": 365
+      },
+      {
+        "Font": "tcb-multi-plane-3d-scroller",
+        "Mode": "dna",
+        "VisiblePixels": 393
+      },
+      {
+        "Font": "tcb-multi-plane-3d-scroller",
+        "Mode": "tcb0",
+        "VisiblePixels": 197
+      },
+      {
+        "Font": "tcb-multi-plane-3d-scroller",
+        "Mode": "tcb1",
+        "VisiblePixels": 197
+      },
+      {
+        "Font": "tcb-multi-plane-3d-scroller",
+        "Mode": "tcb2",
+        "VisiblePixels": 194
+      },
+      {
+        "Font": "tcb-multi-plane-3d-scroller",
+        "Mode": "tcb3",
+        "VisiblePixels": 760
+      },
+      {
+        "Font": "tcb-multi-plane-3d-scroller",
+        "Mode": "tcb4",
+        "VisiblePixels": 657
+      },
+      {
+        "Font": "tcb-multi-plane-3d-scroller",
+        "Mode": "tcb5",
+        "VisiblePixels": 584
+      },
+      {
+        "Font": "tcb-multi-plane-3d-scroller",
+        "Mode": "tcb6",
+        "VisiblePixels": 252
+      },
+      {
+        "Font": "tcb-multi-plane-3d-scroller",
+        "Mode": "tcb7",
+        "VisiblePixels": 121
+      },
+      {
+        "Font": "tcb-replicants-demo",
+        "Mode": "normal",
+        "VisiblePixels": 3239
+      },
+      {
+        "Font": "tcb-replicants-demo",
+        "Mode": "bounce",
+        "VisiblePixels": 3131
+      },
+      {
+        "Font": "tcb-replicants-demo",
+        "Mode": "sine",
+        "VisiblePixels": 3156
+      },
+      {
+        "Font": "tcb-replicants-demo",
+        "Mode": "zoom",
+        "VisiblePixels": 3717
+      },
+      {
+        "Font": "tcb-replicants-demo",
+        "Mode": "3d",
+        "VisiblePixels": 2251
+      },
+      {
+        "Font": "tcb-replicants-demo",
+        "Mode": "dna",
+        "VisiblePixels": 2184
+      },
+      {
+        "Font": "tcb-replicants-demo",
+        "Mode": "tcb0",
+        "VisiblePixels": 1220
+      },
+      {
+        "Font": "tcb-replicants-demo",
+        "Mode": "tcb1",
+        "VisiblePixels": 1220
+      },
+      {
+        "Font": "tcb-replicants-demo",
+        "Mode": "tcb2",
+        "VisiblePixels": 1246
+      },
+      {
+        "Font": "tcb-replicants-demo",
+        "Mode": "tcb3",
+        "VisiblePixels": 4395
+      },
+      {
+        "Font": "tcb-replicants-demo",
+        "Mode": "tcb4",
+        "VisiblePixels": 3900
+      },
+      {
+        "Font": "tcb-replicants-demo",
+        "Mode": "tcb5",
+        "VisiblePixels": 3621
+      },
+      {
+        "Font": "tcb-replicants-demo",
+        "Mode": "tcb6",
+        "VisiblePixels": 1628
+      },
+      {
+        "Font": "tcb-replicants-demo",
+        "Mode": "tcb7",
+        "VisiblePixels": 699
+      },
+      {
+        "Font": "grodan-kvack-kvack-demo",
+        "Mode": "normal",
+        "VisiblePixels": 460
+      },
+      {
+        "Font": "grodan-kvack-kvack-demo",
+        "Mode": "bounce",
+        "VisiblePixels": 431
+      },
+      {
+        "Font": "grodan-kvack-kvack-demo",
+        "Mode": "sine",
+        "VisiblePixels": 459
+      },
+      {
+        "Font": "grodan-kvack-kvack-demo",
+        "Mode": "zoom",
+        "VisiblePixels": 547
+      },
+      {
+        "Font": "grodan-kvack-kvack-demo",
+        "Mode": "3d",
+        "VisiblePixels": 283
+      },
+      {
+        "Font": "grodan-kvack-kvack-demo",
+        "Mode": "dna",
+        "VisiblePixels": 322
+      },
+      {
+        "Font": "grodan-kvack-kvack-demo",
+        "Mode": "tcb0",
+        "VisiblePixels": 175
+      },
+      {
+        "Font": "grodan-kvack-kvack-demo",
+        "Mode": "tcb1",
+        "VisiblePixels": 175
+      },
+      {
+        "Font": "grodan-kvack-kvack-demo",
+        "Mode": "tcb2",
+        "VisiblePixels": 178
+      },
+      {
+        "Font": "grodan-kvack-kvack-demo",
+        "Mode": "tcb3",
+        "VisiblePixels": 535
+      },
+      {
+        "Font": "grodan-kvack-kvack-demo",
+        "Mode": "tcb4",
+        "VisiblePixels": 534
+      },
+      {
+        "Font": "grodan-kvack-kvack-demo",
+        "Mode": "tcb5",
+        "VisiblePixels": 498
+      },
+      {
+        "Font": "grodan-kvack-kvack-demo",
+        "Mode": "tcb6",
+        "VisiblePixels": 217
+      },
+      {
+        "Font": "grodan-kvack-kvack-demo",
+        "Mode": "tcb7",
+        "VisiblePixels": 109
+      },
+      {
+        "Font": "grodan-up",
+        "Mode": "normal",
+        "VisiblePixels": 677
+      },
+      {
+        "Font": "grodan-up",
+        "Mode": "bounce",
+        "VisiblePixels": 677
+      },
+      {
+        "Font": "grodan-up",
+        "Mode": "sine",
+        "VisiblePixels": 678
+      },
+      {
+        "Font": "grodan-up",
+        "Mode": "zoom",
+        "VisiblePixels": 805
+      },
+      {
+        "Font": "grodan-up",
+        "Mode": "3d",
+        "VisiblePixels": 460
+      },
+      {
+        "Font": "grodan-up",
+        "Mode": "dna",
+        "VisiblePixels": 482
+      },
+      {
+        "Font": "grodan-up",
+        "Mode": "tcb0",
+        "VisiblePixels": 275
+      },
+      {
+        "Font": "grodan-up",
+        "Mode": "tcb1",
+        "VisiblePixels": 250
+      },
+      {
+        "Font": "grodan-up",
+        "Mode": "tcb2",
+        "VisiblePixels": 270
+      },
+      {
+        "Font": "grodan-up",
+        "Mode": "tcb3",
+        "VisiblePixels": 890
+      },
+      {
+        "Font": "grodan-up",
+        "Mode": "tcb4",
+        "VisiblePixels": 810
+      },
+      {
+        "Font": "grodan-up",
+        "Mode": "tcb5",
+        "VisiblePixels": 773
+      },
+      {
+        "Font": "grodan-up",
+        "Mode": "tcb6",
+        "VisiblePixels": 335
+      },
+      {
+        "Font": "grodan-up",
+        "Mode": "tcb7",
+        "VisiblePixels": 147
+      },
+      {
+        "Font": "grodan-small",
+        "Mode": "normal",
+        "VisiblePixels": 28
+      },
+      {
+        "Font": "grodan-small",
+        "Mode": "bounce",
+        "VisiblePixels": 25
+      },
+      {
+        "Font": "grodan-small",
+        "Mode": "sine",
+        "VisiblePixels": 28
+      },
+      {
+        "Font": "grodan-small",
+        "Mode": "zoom",
+        "VisiblePixels": 30
+      },
+      {
+        "Font": "grodan-small",
+        "Mode": "3d",
+        "VisiblePixels": 11
+      },
+      {
+        "Font": "grodan-small",
+        "Mode": "dna",
+        "VisiblePixels": 17
+      },
+      {
+        "Font": "grodan-small",
+        "Mode": "tcb0",
+        "VisiblePixels": 13
+      },
+      {
+        "Font": "grodan-small",
+        "Mode": "tcb1",
+        "VisiblePixels": 13
+      },
+      {
+        "Font": "grodan-small",
+        "Mode": "tcb2",
+        "VisiblePixels": 13
+      },
+      {
+        "Font": "grodan-small",
+        "Mode": "tcb3",
+        "VisiblePixels": 25
+      },
+      {
+        "Font": "grodan-small",
+        "Mode": "tcb4",
+        "VisiblePixels": 31
+      },
+      {
+        "Font": "grodan-small",
+        "Mode": "tcb5",
+        "VisiblePixels": 30
+      },
+      {
+        "Font": "grodan-small",
+        "Mode": "tcb6",
+        "VisiblePixels": 13
+      },
+      {
+        "Font": "grodan-small",
+        "Mode": "tcb7",
+        "VisiblePixels": 8
+      },
+      {
+        "Font": "multiscreen-coco",
+        "Mode": "normal",
+        "VisiblePixels": 1400
+      },
+      {
+        "Font": "multiscreen-coco",
+        "Mode": "bounce",
+        "VisiblePixels": 1375
+      },
+      {
+        "Font": "multiscreen-coco",
+        "Mode": "sine",
+        "VisiblePixels": 1380
+      },
+      {
+        "Font": "multiscreen-coco",
+        "Mode": "zoom",
+        "VisiblePixels": 1672
+      },
+      {
+        "Font": "multiscreen-coco",
+        "Mode": "3d",
+        "VisiblePixels": 998
+      },
+      {
+        "Font": "multiscreen-coco",
+        "Mode": "dna",
+        "VisiblePixels": 1050
+      },
+      {
+        "Font": "multiscreen-coco",
+        "Mode": "tcb0",
+        "VisiblePixels": 519
+      },
+      {
+        "Font": "multiscreen-coco",
+        "Mode": "tcb1",
+        "VisiblePixels": 509
+      },
+      {
+        "Font": "multiscreen-coco",
+        "Mode": "tcb2",
+        "VisiblePixels": 549
+      },
+      {
+        "Font": "multiscreen-coco",
+        "Mode": "tcb3",
+        "VisiblePixels": 1859
+      },
+      {
+        "Font": "multiscreen-coco",
+        "Mode": "tcb4",
+        "VisiblePixels": 1690
+      },
+      {
+        "Font": "multiscreen-coco",
+        "Mode": "tcb5",
+        "VisiblePixels": 1562
+      },
+      {
+        "Font": "multiscreen-coco",
+        "Mode": "tcb6",
+        "VisiblePixels": 678
+      },
+      {
+        "Font": "multiscreen-coco",
+        "Mode": "tcb7",
+        "VisiblePixels": 320
+      },
+      {
+        "Font": "multiscreen-viva",
+        "Mode": "normal",
+        "VisiblePixels": 819
+      },
+      {
+        "Font": "multiscreen-viva",
+        "Mode": "bounce",
+        "VisiblePixels": 846
+      },
+      {
+        "Font": "multiscreen-viva",
+        "Mode": "sine",
+        "VisiblePixels": 858
+      },
+      {
+        "Font": "multiscreen-viva",
+        "Mode": "zoom",
+        "VisiblePixels": 998
+      },
+      {
+        "Font": "multiscreen-viva",
+        "Mode": "3d",
+        "VisiblePixels": 561
+      },
+      {
+        "Font": "multiscreen-viva",
+        "Mode": "dna",
+        "VisiblePixels": 534
+      },
+      {
+        "Font": "multiscreen-viva",
+        "Mode": "tcb0",
+        "VisiblePixels": 320
+      },
+      {
+        "Font": "multiscreen-viva",
+        "Mode": "tcb1",
+        "VisiblePixels": 320
+      },
+      {
+        "Font": "multiscreen-viva",
+        "Mode": "tcb2",
+        "VisiblePixels": 318
+      },
+      {
+        "Font": "multiscreen-viva",
+        "Mode": "tcb3",
+        "VisiblePixels": 1189
+      },
+      {
+        "Font": "multiscreen-viva",
+        "Mode": "tcb4",
+        "VisiblePixels": 1042
+      },
+      {
+        "Font": "multiscreen-viva",
+        "Mode": "tcb5",
+        "VisiblePixels": 906
+      },
+      {
+        "Font": "multiscreen-viva",
+        "Mode": "tcb6",
+        "VisiblePixels": 430
+      },
+      {
+        "Font": "multiscreen-viva",
+        "Mode": "tcb7",
+        "VisiblePixels": 189
+      },
+      {
+        "Font": "multiscreen-phenomena",
+        "Mode": "normal",
+        "VisiblePixels": 310
+      },
+      {
+        "Font": "multiscreen-phenomena",
+        "Mode": "bounce",
+        "VisiblePixels": 310
+      },
+      {
+        "Font": "multiscreen-phenomena",
+        "Mode": "sine",
+        "VisiblePixels": 310
+      },
+      {
+        "Font": "multiscreen-phenomena",
+        "Mode": "zoom",
+        "VisiblePixels": 371
+      },
+      {
+        "Font": "multiscreen-phenomena",
+        "Mode": "3d",
+        "VisiblePixels": 151
+      },
+      {
+        "Font": "multiscreen-phenomena",
+        "Mode": "dna",
+        "VisiblePixels": 221
+      },
+      {
+        "Font": "multiscreen-phenomena",
+        "Mode": "tcb0",
+        "VisiblePixels": 117
+      },
+      {
+        "Font": "multiscreen-phenomena",
+        "Mode": "tcb1",
+        "VisiblePixels": 117
+      },
+      {
+        "Font": "multiscreen-phenomena",
+        "Mode": "tcb2",
+        "VisiblePixels": 117
+      },
+      {
+        "Font": "multiscreen-phenomena",
+        "Mode": "tcb3",
+        "VisiblePixels": 338
+      },
+      {
+        "Font": "multiscreen-phenomena",
+        "Mode": "tcb4",
+        "VisiblePixels": 378
+      },
+      {
+        "Font": "multiscreen-phenomena",
+        "Mode": "tcb5",
+        "VisiblePixels": 326
+      },
+      {
+        "Font": "multiscreen-phenomena",
+        "Mode": "tcb6",
+        "VisiblePixels": 153
+      },
+      {
+        "Font": "multiscreen-phenomena",
+        "Mode": "tcb7",
+        "VisiblePixels": 68
+      },
+      {
+        "Font": "multiscreen-tcb",
+        "Mode": "normal",
+        "VisiblePixels": 534
+      },
+      {
+        "Font": "multiscreen-tcb",
+        "Mode": "bounce",
+        "VisiblePixels": 489
+      },
+      {
+        "Font": "multiscreen-tcb",
+        "Mode": "sine",
+        "VisiblePixels": 519
+      },
+      {
+        "Font": "multiscreen-tcb",
+        "Mode": "zoom",
+        "VisiblePixels": 635
+      },
+      {
+        "Font": "multiscreen-tcb",
+        "Mode": "3d",
+        "VisiblePixels": 365
+      },
+      {
+        "Font": "multiscreen-tcb",
+        "Mode": "dna",
+        "VisiblePixels": 393
+      },
+      {
+        "Font": "multiscreen-tcb",
+        "Mode": "tcb0",
+        "VisiblePixels": 197
+      },
+      {
+        "Font": "multiscreen-tcb",
+        "Mode": "tcb1",
+        "VisiblePixels": 197
+      },
+      {
+        "Font": "multiscreen-tcb",
+        "Mode": "tcb2",
+        "VisiblePixels": 194
+      },
+      {
+        "Font": "multiscreen-tcb",
+        "Mode": "tcb3",
+        "VisiblePixels": 760
+      },
+      {
+        "Font": "multiscreen-tcb",
+        "Mode": "tcb4",
+        "VisiblePixels": 658
+      },
+      {
+        "Font": "multiscreen-tcb",
+        "Mode": "tcb5",
+        "VisiblePixels": 584
+      },
+      {
+        "Font": "multiscreen-tcb",
+        "Mode": "tcb6",
+        "VisiblePixels": 250
+      },
+      {
+        "Font": "multiscreen-tcb",
+        "Mode": "tcb7",
+        "VisiblePixels": 120
+      }
+    ]
+  },
+  "OriginalRetention": [
+    {
+      "Repository": "3d_doc",
+      "SourceRevision": "914a84aa8543c0e34d3ac9c76a5ec5a70f93cc54",
+      "TrackedOriginalGoFiles": 3,
+      "ChangedFiles": [],
+      "MissingFiles": []
+    },
+    {
+      "Repository": "bilizir-demo",
+      "SourceRevision": "4720c97e03f3d2392211a37755d41b752fbad288",
+      "TrackedOriginalGoFiles": 5,
+      "ChangedFiles": [],
+      "MissingFiles": []
+    },
+    {
+      "Repository": "dma-3d",
+      "SourceRevision": "e16103936addf61d9b3919812d6cbedcb3e58e9c",
+      "TrackedOriginalGoFiles": 5,
+      "ChangedFiles": [],
+      "MissingFiles": []
+    },
+    {
+      "Repository": "dma-is-back",
+      "SourceRevision": "b47c293533938ec007216fbdc91d17e580b82fd0",
+      "TrackedOriginalGoFiles": 3,
+      "ChangedFiles": [],
+      "MissingFiles": []
+    },
+    {
+      "Repository": "go-cocoisthebest",
+      "SourceRevision": "0a9b678b13af04bf248b4a8f23bb79496dd36c53",
+      "TrackedOriginalGoFiles": 5,
+      "ChangedFiles": [],
+      "MissingFiles": []
+    },
+    {
+      "Repository": "go-cuddlymenu",
+      "SourceRevision": "556d02390e903e88e51fdc9a77d3ebec802c672e",
+      "TrackedOriginalGoFiles": 12,
+      "ChangedFiles": [],
+      "MissingFiles": []
+    },
+    {
+      "Repository": "go-dom-intro",
+      "SourceRevision": "a02358c5470366449f0fadcd25c1ba1f358e44be",
+      "TrackedOriginalGoFiles": 4,
+      "ChangedFiles": [],
+      "MissingFiles": []
+    },
+    {
+      "Repository": "go-multiscreen",
+      "SourceRevision": "2cd2bc12a9df9509ba3b3313c2b14543c3a97acc",
+      "TrackedOriginalGoFiles": 3,
+      "ChangedFiles": [],
+      "MissingFiles": []
+    },
+    {
+      "Repository": "go-vectorballs",
+      "SourceRevision": "22ccd09dc8c81a6ae1ff1b2c99fcbf68935d0b42",
+      "TrackedOriginalGoFiles": 3,
+      "ChangedFiles": [],
+      "MissingFiles": []
+    },
+    {
+      "Repository": "grodan-kvack-kvack-demo",
+      "SourceRevision": "5338712539ba84170f329ac26403323be754952d",
+      "TrackedOriginalGoFiles": 4,
+      "ChangedFiles": [],
+      "MissingFiles": []
+    },
+    {
+      "Repository": "megatwist",
+      "SourceRevision": "df3ebf3439246dc6792c5be79e2e85b357c87bfa",
+      "TrackedOriginalGoFiles": 8,
+      "ChangedFiles": [],
+      "MissingFiles": []
+    },
+    {
+      "Repository": "nonameno-demo",
+      "SourceRevision": "e755a3440d494ebc8ca0e79f404e5d086c8266e8",
+      "TrackedOriginalGoFiles": 4,
+      "ChangedFiles": [],
+      "MissingFiles": []
+    },
+    {
+      "Repository": "phenomena-dna-scroll-intro",
+      "SourceRevision": "87590875c1db88c82ce57594c01a5bc492f7311f",
+      "TrackedOriginalGoFiles": 4,
+      "ChangedFiles": [],
+      "MissingFiles": []
+    },
+    {
+      "Repository": "tcb-multi-plane-3d-scroller",
+      "SourceRevision": "2fa1b3f6636c7aaa61d44ffa96f0d4366096fa21",
+      "TrackedOriginalGoFiles": 3,
+      "ChangedFiles": [],
+      "MissingFiles": []
+    },
+    {
+      "Repository": "tcb-replicants-demo",
+      "SourceRevision": "1e5e55e65d575bdb091d25d5f73b1e5e0fa09258",
+      "TrackedOriginalGoFiles": 6,
+      "ChangedFiles": [],
+      "MissingFiles": []
+    },
+    {
+      "Repository": "teamg1-demo",
+      "SourceRevision": "83e64521daea1a977cac481c9b652d2bcb86a248",
+      "TrackedOriginalGoFiles": 4,
+      "ChangedFiles": [],
+      "MissingFiles": []
+    },
+    {
+      "Repository": "viva_tcb",
+      "SourceRevision": "f4b985e070b1a27ae142e9ebc00201f75435a103",
+      "TrackedOriginalGoFiles": 4,
+      "ChangedFiles": [],
+      "MissingFiles": []
+    }
+  ],
+  "LatestDNAFidelityRecord": "dna-facade-20260928.json",
+  "CollectionFidelityRecords": [
+    "collections-20260928.json",
+    "scroll-facade-20260928.json"
+  ],
+  "GPURegression": {
+    "Tag": "dck_scroll_facadecheck",
+    "Passed": true,
+    "SourceFailure": "Reproduced nil Update error with unavailable borrowed artwork before the fix; same Update now reports the error without advancing feedback history or phase callbacks."
+  },
+  "HostingExchangeExcluded": [
+    "lib/democonstructionkit",
+    "lib/ym-player",
+    "lib/go-zikmu",
+    "www.houte2.com",
+    "demos/3d_doc",
+    "demos/bilizir-demo",
+    "demos/dma-3d",
+    "demos/dma-is-back",
+    "demos/go-cocoisthebest",
+    "demos/go-cuddlymenu",
+    "demos/go-dom-intro",
+    "demos/go-fr010",
+    "demos/go-multiscreen",
+    "demos/go-secondreality",
+    "demos/go-uniondemo",
+    "demos/go-vectorballs",
+    "demos/grodan-kvack-kvack-demo",
+    "demos/megatwist",
+    "demos/nonameno-demo",
+    "demos/phenomena-dna-scroll-intro",
+    "demos/tcb-multi-plane-3d-scroller",
+    "demos/tcb-replicants-demo",
+    "demos/teamg1-demo",
+    "demos/viva_tcb"
+  ],
+  "Limits": [
+    "Deterministic checkpoints do not prove every intermediate frame or equivalence with Atari hardware.",
+    "Source-to-DCK tiny sampling differences and intentional visual changes remain visible in EFFECT_MAP.md.",
+    "Pixel presentation and process snapshots do not establish actual memory peaks or battery use.",
+    "The graphical editor is a separate application task; not every Go callback is represented in the saved-project schema."
+  ]
+}
