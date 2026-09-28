@@ -50,6 +50,7 @@ var probes = map[string]probe{
 
 type report struct {
 	Demo, Reference, Candidate string
+	Screen, Scenario           string `json:",omitempty"`
 	Scope                      string
 	Frames                     []frameResult
 }
@@ -67,6 +68,8 @@ func main() {
 func run() error {
 	demos := flag.String("demos", "../../demos", "source demo repositories")
 	demo := flag.String("demo", "bilizir-demo", "production to compare")
+	screen := flag.String("screen", "", "Cuddly or Union screen ID, or loader:door")
+	scenario := flag.String("scenario", "idle", "collection input fixture: idle or controls")
 	kitRoot := flag.String("kit", ".", "construction kit checkout")
 	out := flag.String("out", "captures/fidelity", "comparison directory")
 	referenceOnly := flag.Bool("reference-only", false, "capture the pinned original only")
@@ -74,13 +77,14 @@ func run() error {
 	frameList := flag.String("frames", "0,1,60,240,600,1200,2400,4800", "comma-separated capture ticks")
 	inspectTCB := flag.Bool("inspect-multiscreen-tcb", false, "capture the embedded TCB tile and projected glyph positions at each requested frame")
 	flag.Parse()
-	p, ok := probes[*demo]
-	if !ok {
-		return fmt.Errorf("no fidelity probe for %s", *demo)
+	p, options, err := selectProbe(*demo, *screen, *scenario)
+	if err != nil {
+		return err
 	}
 	if *inspectTCB && *demo != "go-multiscreen" {
 		return fmt.Errorf("the TCB inspector requires go-multiscreen")
 	}
+	options.InspectTCB = *inspectTCB
 	root, err := filepath.Abs(*kitRoot)
 	if err != nil {
 		return err
@@ -93,8 +97,14 @@ func run() error {
 	if err != nil {
 		return err
 	}
+	if *screen != "" {
+		output = filepath.Join(output, strings.ReplaceAll(*screen, ":", "-"), *scenario)
+	}
 	revision := *reference
 	if revision == "" {
+		if *screen != "" {
+			return fmt.Errorf("collection comparisons require an explicit -reference revision")
+		}
 		auditData, err := os.ReadFile(filepath.Join(root, "docs/source-audit.json"))
 		if err != nil {
 			return err
@@ -124,7 +134,7 @@ func run() error {
 		}
 		frames = append(frames, frame)
 	}
-	if err = captureRevision(source, revision, root, filepath.Join(output, "reference"), p, frames, *inspectTCB); err != nil {
+	if err = captureRevision(source, revision, root, filepath.Join(output, "reference"), p, frames, options); err != nil {
 		return err
 	}
 	if *referenceOnly {
@@ -135,10 +145,18 @@ func run() error {
 		return err
 	}
 	head := strings.TrimSpace(string(headBytes))
-	if err = captureRevision(source, head, root, filepath.Join(output, "candidate"), p, frames, *inspectTCB); err != nil {
+	if err = captureRevision(source, head, root, filepath.Join(output, "candidate"), p, frames, options); err != nil {
 		return err
 	}
-	r := report{Demo: *demo, Reference: revision, Candidate: head, Scope: "complete production frames; device audio disabled; deterministic clock"}
+	r := report{Demo: *demo, Reference: revision, Candidate: head, Screen: *screen, Scenario: *scenario, Scope: "complete production frames; device audio disabled; deterministic clock; both snapshots use the local DCK checkout"}
+	if *screen == "" {
+		r.Scenario = ""
+	} else {
+		r.Scope += "; native collection screen at 60 Hz"
+		if *demo == "go-uniondemo" && *screen == "delta" {
+			r.Scope += "; YM register levels advance through the actual soundtrack"
+		}
+	}
 	if *demo == "bilizir-demo" {
 		r.Scope += "; original logo and text reset modes (intentional DCK variations disabled)"
 	}
@@ -179,7 +197,11 @@ func run() error {
 				return closeErr
 			}
 		}
-		fmt.Printf("%s frame %d: %d/%d pixels differ; max channel error %d\n", *demo, frame, result.DifferentPixels, result.Pixels, result.MaxChannelError)
+		label := *demo
+		if *screen != "" {
+			label += "/" + *screen + "/" + *scenario
+		}
+		fmt.Printf("%s frame %d: %d/%d pixels differ; max channel error %d\n", label, frame, result.DifferentPixels, result.Pixels, result.MaxChannelError)
 	}
 	data, err := json.MarshalIndent(r, "", "  ")
 	if err != nil {
@@ -246,7 +268,7 @@ func command(dir, name string, args ...string) ([]byte, error) {
 	}
 	return out, nil
 }
-func captureRevision(source, revision, root, output string, p probe, frames []int, inspectTCB bool) error {
+func captureRevision(source, revision, root, output string, p probe, frames []int, options captureOptions) error {
 	tmp, err := os.MkdirTemp("", "dck-fidelity-")
 	if err != nil {
 		return err
@@ -296,7 +318,10 @@ func captureRevision(source, revision, root, output string, p probe, frames []in
 		packageDir = filepath.Join(tmp, "dck")
 		target = "./dck"
 	}
-	if filepath.Base(source) == "go-cuddlymenu" {
+	if options.Target != "" {
+		packageDir = filepath.Join(tmp, options.Target)
+		target = "./" + options.Target
+	} else if filepath.Base(source) == "go-cuddlymenu" {
 		packageDir = filepath.Join(packageDir, "menu")
 		target += "/menu"
 	}
@@ -370,7 +395,7 @@ func captureRevision(source, revision, root, output string, p probe, frames []in
 		frameValues[i] = fmt.Sprint(f)
 	}
 	extraImports, drawHook := "", ""
-	if inspectTCB {
+	if options.InspectTCB {
 		data, err := os.ReadFile(filepath.Join(packageDir, "main.go"))
 		if err != nil {
 			return err
@@ -411,6 +436,7 @@ func(g dckClockGame)Update()error{dckFidelityTick++;return g.Game.Update()}
 func(g dckClockGame)Draw(dst *ebiten.Image){g.Game.Draw(dst);%s}
 func TestMain(m *testing.M){err:=capture.Run(capture.Config{Directory:%q,Width:%d,Height:%d,Frames:[]int{%s}},func()(ebiten.Game,error){makeGame:=func()(ebiten.Game,error){%s};g,err:=makeGame();return dckClockGame{g},err});if err!=nil{fmt.Fprintln(os.Stderr,err);os.Exit(1)}}
 `, pkg, p.Imports, extraImports, drawHook, output, p.Width, p.Height, strings.Join(frameValues, ","), p.Factory)
+	code += options.Code
 	if filepath.Base(source) == "go-secondreality" {
 		code += `
 type dckIndexedFixture struct{renderer *Renderer;vram []byte;palette [256][4]byte;frame int}

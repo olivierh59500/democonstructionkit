@@ -2800,6 +2800,35 @@ production commit to a chosen earlier commit instead of the pinned original.
 This is useful for checking an effect extraction against its immediately
 preceding renderer at update and wrap boundaries.
 
+The same command captures individual Cuddly and Union screens, introductions,
+menus and loading transitions. Collection captures require an explicit native
+Git reference and compare the complete RGBA canvas at deterministic 60 Hz ticks.
+Both archived productions use the local DCK checkout; live source files and
+their assets remain untouched. For example:
+
+```sh
+go run ./cmd/fidelity -demo go-cuddlymenu -screen intro \
+  -reference f3a921e -frames 0,1,60,240,600,1200,2400,4800,9600
+go run ./cmd/fidelity -demo go-cuddlymenu -screen loader:BIG_SPRITE \
+  -reference f3a921e -frames 0,1,48,49,50,234,235,236,250
+go run ./cmd/fidelity -demo go-uniondemo -screen delta \
+  -reference f12b045 -frames 0,1,60,240,600,1200,2400
+go run ./cmd/fidelity -demo go-uniondemo -screen tnt3 -scenario controls \
+  -reference f12b045 -frames 0,1,599,600,601,1200,1800,2400,3000
+```
+
+`-screen menu` captures the idle hall; `-screen loader:door` captures its native
+loader. The `controls` fixture switches all five Union TNT3 objects, all ten
+Starballs populations, or the TNT2 layer directions and speeds. It also supports
+the Hidden pointer trail, Disk Copier's start/stop sequence, Replicants scrolling
+speed, and Cuddly Megaball's editable orbit parameters. Each fixture uses the
+production's ordinary input interface. Delta Force advances the real YM
+soundtrack without an audio device, so its register-driven sprites remain live.
+Results are stored under `captures/fidelity/REPOSITORY/SCREEN/SCENARIO/` with the
+exact revisions, compared tick numbers and unmasked pixel differences. Any
+difference keeps the command's nonzero exit status; intended choreography fixes
+must be explained or compared to an explicitly chosen newer reference.
+
 Run production suites from their own repositories as well as the module tests;
 the preserved original packages and DCK consumers have separate entry points.
 
