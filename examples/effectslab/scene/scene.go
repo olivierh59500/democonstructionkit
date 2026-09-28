@@ -44,7 +44,7 @@ type Scene struct {
 
 func New(eco bool) (_ *Scene, err error) {
 	s := &Scene{Width: 640, Height: 360, scale: 1, Eco: eco, Water: true, Lens: true, AutoPath: true,
-		labels: make(map[string]*ebiten.Image), lensWindow: timeline.Window{Start: 4, Duration: 6, FadeIn: .5, FadeOut: .8}}
+		labels: make(map[string]*ebiten.Image), lensWindow: timeline.Window{Start: 1, Duration: 10, FadeIn: .5, FadeOut: .8}}
 	if eco {
 		s.Width, s.Height, s.scale = 320, 180, .5
 	}
@@ -86,16 +86,30 @@ func New(eco bool) (_ *Scene, err error) {
 	if err != nil {
 		return nil, err
 	}
-	modes := make(map[string]scrolling.Mode, 3)
+	var modes [3]scrolling.Mode
+	maxPathLength := 0.0
 	for i, path := range s.paths {
-		mode, e := scrolling.AlongPath(scrolling.PathConfig{Path: path, Orient: true, Clip: true})
+		mode, e := scrolling.AlongPath(scrolling.PathConfig{Path: path, Orient: true, Extrapolate: true,
+			Viewport: image.Rect(int(16*s.scale), 0, int(624*s.scale), s.Height)})
 		if e != nil {
 			return nil, e
 		}
-		modes[pathNames[i]] = mode
+		modes[i] = mode
+		maxPathLength = math.Max(maxPathLength, path.Length())
+	}
+	activePath := scrolling.Mode{
+		Map: func(sample scrolling.Sample, options *ebiten.DrawImageOptions) bool {
+			return modes[s.Path].Map(sample, options)
+		},
+		Paint: func(dst *ebiten.Image, sample scrolling.Sample, options ebiten.DrawImageOptions) {
+			modes[s.Path].Paint(dst, sample, options)
+		},
 	}
 	s.scroll, err = scrolling.New(scrolling.Config{Text: " ONE SCROLL - ANY PATH - ANY FONT - LIVE REFLECTIONS - TEMPORARY LENSES - ",
-		Fonts: map[string]scrolling.Face{"default": {Atlas: s.atlas, Metrics: metrics, ScaleX: 2 * s.scale, ScaleY: 2 * s.scale}}, Modes: modes})
+		Fonts: map[string]scrolling.Face{"default": {Atlas: s.atlas, Metrics: metrics, ScaleX: 2 * s.scale, ScaleY: 2 * s.scale}},
+		Modes: map[string]scrolling.Mode{"active": activePath}, Shape: "active",
+		Speed: 60 * s.scale, Repeat: true,
+		RepeatBounds: image.Rect(int(-32*s.scale), 0, int(math.Ceil(maxPathLength+32*s.scale)), s.Height)})
 	if err != nil {
 		return nil, err
 	}
@@ -133,7 +147,7 @@ func New(eco bool) (_ *Scene, err error) {
 	layers, err := kit.NewLayers(s.Width, s.Height,
 		kit.TimedLayer{Effect: kit.Func{OnDraw: func(dst *ebiten.Image) { dst.DrawImage(s.background, nil) }}},
 		kit.TimedLayer{Effect: kit.Func{OnDraw: s.drawLogo}, Window: timeline.Window{FadeIn: 1}},
-		kit.TimedLayer{Effect: kit.Func{OnDraw: s.drawScroll}, Window: timeline.Window{Start: .3, FadeIn: .6}},
+		kit.TimedLayer{Effect: s.scroll, Window: timeline.Window{Start: .3, FadeIn: .6}},
 	)
 	if err != nil {
 		return nil, err
@@ -183,18 +197,6 @@ func (s *Scene) Draw(dst *ebiten.Image) {
 func (s *Scene) drawLogo(dst *ebiten.Image) {
 	x := (float64(s.Width)-float64(s.logo.Bounds().Dx()))/2 + 10*s.scale*math.Sin(s.frame.Time*.7)
 	s.warp.DrawAt(dst, s.logo, s.frame, x, 112*s.scale)
-}
-func (s *Scene) drawScroll(dst *ebiten.Image) {
-	// Window provides a bounded circular character range. Movement stays continuous
-	// across message boundaries without restarting the scroller's time controls.
-	position := s.frame.Time * 60 * s.scale
-	advance := 16 * s.scale
-	first := int(math.Floor(position / advance))
-	state := s.scroll.Window(first, s.paths[s.Path].Length()+advance)
-	state.X -= math.Mod(position, advance)
-	state.Time = s.frame.Time
-	state.Shape = pathNames[s.Path]
-	s.scroll.DrawAt(dst, state)
 }
 func (s *Scene) drawHUD(dst *ebiten.Image) {
 	s.label(dst, "DEMOCONSTRUCTIONKIT / LIVE LAYERS", 12*s.scale, 12*s.scale)

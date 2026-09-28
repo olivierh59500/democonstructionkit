@@ -1,6 +1,7 @@
 package scrolling
 
 import (
+	"image"
 	"math"
 	"testing"
 
@@ -33,6 +34,34 @@ func TestPathMapperPreservesGlyphScaleAndRotation(t *testing.T) {
 	}
 	if mode.Map(Sample{X: -1}, &op) || mode.Map(Sample{X: 201}, &op) {
 		t.Fatal("open path did not clip")
+	}
+}
+
+func TestPathViewportKeepsPartialGlyphOriginsOutsideThePath(t *testing.T) {
+	p, err := motion.NewPolyline([]motion.Point{{X: 100, Y: 20}, {X: 200, Y: 20}}, false)
+	if err != nil {
+		t.Fatal(err)
+	}
+	mode, err := AlongPath(PathConfig{Path: p, Extrapolate: true, Viewport: image.Rect(100, 0, 200, 50)})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if mode.Paint == nil {
+		t.Fatal("pixel viewport has no clipping painter")
+	}
+	for _, distance := range []float64{-4, 0, 100, 104} {
+		var op ebiten.DrawImageOptions
+		op.GeoM.Translate(distance, 0)
+		if !mode.Map(Sample{X: distance}, &op) {
+			t.Fatalf("partial glyph origin %g was hidden", distance)
+		}
+		x, y := op.GeoM.Apply(0, 0)
+		if x != 100+distance || y != 20 {
+			t.Fatalf("distance %g maps to (%g,%g)", distance, x, y)
+		}
+	}
+	if _, err := AlongPath(PathConfig{Path: p, Clip: true, Extrapolate: true}); err == nil {
+		t.Fatal("accepted conflicting origin clipping and endpoint extrapolation")
 	}
 }
 func TestCustomPathReceivesDistanceAndTime(t *testing.T) {
