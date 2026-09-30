@@ -1,8 +1,8 @@
 # democonstructionkit
 
-**1.0.7 — Developer Edition**
+**1.0.8 — Developer Edition**
 
-Demo Construction Kit 1.0.7 is the Go/Ebitengine library for developers creating
+Demo Construction Kit 1.0.8 is the Go/Ebitengine library for developers creating
 demos and intros through code. Programming knowledge is required: this edition
 provides configurable effects, Go APIs, runnable examples, command-line tools
 and saved JSON compositions.
@@ -10,10 +10,10 @@ and saved JSON compositions.
 Install the versioned module in a Go project:
 
 ```sh
-go get github.com/olivierh59500/democonstructionkit@v1.0.7
+go get github.com/olivierh59500/democonstructionkit@v1.0.8
 ```
 
-[Release 1.0.7](https://github.com/olivierh59500/democonstructionkit/releases/tag/v1.0.7)
+[Release 1.0.8](https://github.com/olivierh59500/democonstructionkit/releases/tag/v1.0.8)
  · [Changelog](CHANGELOG.md) · [Effect templates](EFFECT_TEMPLATES.md)
  · [Version 2.0.0 roadmap](ROADMAP.md)
 
@@ -68,6 +68,11 @@ outlines. Filled and outlined materials reuse the same points, mapping and
 clocks; OldSkool retains all 750 sampled frames and removes its local cube,
 logo-grid and sprite-border loops. `go run ./examples/outlinelayers` compares
 one combined composition through both materials.
+Version 1.0.8 adds spatial palette grids and color-row materials, with independent
+mask offsets, channels, thresholds, optional body colors and remapped cell spans.
+Spaceballs' Blocks/Outline and Mental Hangover's finale retain 1,389 complete-frame
+samples while sharing the material. `go run ./examples/palettecells` combines
+live grids, shadows, contours and independently moving row colors.
 [Complete components](#build-a-demo-from-complete-components) include the animated
 DMA cube controller and renderer, font construction, perspective text crawl and
 independent background bands; their consumers provide assets and configuration.

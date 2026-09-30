@@ -25,13 +25,14 @@ quantized-color component added in 1.0.2. OldSkool uses owned flat/cuboid
 cell modes added in 1.0.3. Shared retained contours arrived in 1.0.4 and binary
 material offsets in 1.0.5. Sampled harmonic bands/fields arrived in 1.0.6 and
 independent mesh/warp/sprite outline materials in 1.0.7.
+Spatial palette grids/row materials arrived in 1.0.8.
 The following classification
 distinguishes completed integration from remaining extraction candidates.
 
 | Production | Reuse already in place | Further shared component or template | Source-specific boundary |
 | --- | --- | --- | --- |
-| Mental Hangover | `scrolling.New`, bitmap metrics, bounded `render.Batch.Fan` for all author/BOB/solid/patterned/outline-font contours, `RasterOverlay`, `CueClock`, cue ranges and `QuantizedColor`. | Polar transport/projection, row-palette floor sampling and original fixed-point geometry programs remain candidates for complete components. | Decoded 68000 tables, integer projection, level divisors, palette order and cue timing remain production data. Immediate contours use shared fan geometry without an additional working surface. |
-| Spaceballs | `kit.Effect`, `timeline.Sequence`, `ContourBank` for six-mask/paired-mask/pattern-mask storage, shared fan/stroke/parity edges and `BitplanePalette` for retained planes, opening, Duet exit and offset materials. | Palette-grid and indexed-page components remain candidates; Pattern, Wave and Finale now share the DCK palette material with independent sampling offsets. | Decompressed point banks, source coordinate maps, 25 Hz pose interrupts, working/display indices, bitplane offsets and cue order remain production data. |
+| Mental Hangover | `scrolling.New`, bitmap metrics, bounded `render.Batch.Fan`, `RasterOverlay`, `CueClock`, cue ranges, `QuantizedColor` and `PaletteGrid` for the finale's row colors. | Polar transport/projection and original fixed-point geometry programs remain candidates for complete components. | Decoded 68000 tables, integer projection, level divisors, palette order and cue timing remain production data. Immediate contours use shared fan geometry without an additional working surface. |
+| Spaceballs | `kit.Effect`, `timeline.Sequence`, `ContourBank`, shared fan/stroke/parity edges, `BitplanePalette` and spatial `PaletteGrid` for Blocks/Outline. | Indexed-page components remain candidates; patterned and spatial materials now use DCK. | Decompressed point banks, source coordinate maps, 25 Hz pose interrupts, working/display indices, palette words/layouts and cue order remain production data. |
 | OldSkool DirectX 8 Go | `font.CellBank`, owned `scrolling.Mode.Cells`, `effects.Warp`, `effects.Mesh`, harmonic bands/fields, shared mesh/warp/box outline skins and DCK audio. | The YM-to-meter adapter remains an extraction candidate; logo row oscillators can become a named preset. | The executable's font bit order, oscillator constants, cube face mapping, clipping margins and meter mapping remain authored parameters. Cell masks and harmonic poses are cached; shared components own their geometry and materials. |
 
 ### Screen-level extraction boundaries
@@ -43,7 +44,7 @@ distinguishes completed integration from remaining extraction candidates.
 | Trails | DCK's six-slot `ContourBank` and five-plane `BitplanePalette`. | Working/display order, zoom coordinate maps and source cue order remain authored data. |
 | Noise, Angular, Sliced and Duet | DCK retained bank, six-plane palette lookup and shared parity edges; Duet exit also uses the one-plane palette backend. | Source dither bit, endpoint exchange, coordinate maps and white-exit cue values remain authored configuration. |
 | Ribbons | DCK's four-slot/two-layer `ContourBank` and four-plane `BitplanePalette`. | Paired draw/clear timing and mirror coordinates remain source parameters. |
-| Blocks and Outline | Both use one local gradient-grid renderer with body/shadow masks. | A palette-grid material component with programmable cell size, shadow offset and color-bank uploads. |
+| Blocks and Outline | DCK `PaletteGrid` owns body/shadow color lookup, spatial cell mapping and the small palette image. | Native 24-pixel columns, first/later row spans, skipped row, colors, mask indices and update clocks remain configuration/data; no local material shader remains. |
 | Tiles and Vote | Predecoded tile/palette images are selected by source clocks. | Existing image-bank and timed-layer components can express the display path; extraction should wait until tile selection, not just drawing, is configurable. |
 
 | Mental Hangover unit | Shared path now | Next reusable boundary |
@@ -53,7 +54,7 @@ distinguishes completed integration from remaining extraction candidates.
 | Star greeting pages | Cached DCK text pages and one batched point field. | A configurable page/star composition whose star mask and text palette each have their own cue level. |
 | Circular text | The shared scrolling facade feeds a local polar outline painter. | A reusable polar glyph mapper/painter template with original control bytes as parameters. |
 | Contact spheres and perspective text | Existing projected batches and scrolling samples, with local reciprocal/projective arithmetic. | A projected glyph/point template needs supplied integer projection and clipping rules before it can replace these scenes. |
-| Checkerboard finale | Retained row-palette floor, projected balls and logo material. | The floor's palette-row shader can become a configurable image material; ball motion is already expressible through the DCK projected-sprite family. |
+| Checkerboard finale | DCK `PaletteGrid` in continuous one-column row mode, projected balls and logo material. | Original binary column image, per-row RGB12 colors and floor/ball controllers remain data; no local row-color shader remains. Ball motion is already expressible through the projected-sprite family. |
 
 | OldSkool DirectX 8 Go phase | Shared path now | Next reusable boundary |
 | --- | --- | --- |
@@ -207,9 +208,26 @@ observed crash. Normal audio and realtime cube interpolation were active.
 This does not establish new Android wireframe/visual-reference or memory
 evidence. [Outline-build Pixel measurements](fidelity/pixel-oldskool-outlines-20260930.json)
 
-Spaceballs' palette grids and indexed-page fades remain candidates.
-Mental Hangover's fixed-point projection/transport and floor
-sampling remain separate extraction families. OldSkool's YM signal adapter and
+The spatial material integration retains all 690 Spaceballs and 699 Mental
+Hangover complete-frame samples over 35,210 drawn updates. Both consumers use
+`PaletteGrid`: Spaceballs chooses background/shadow colors with alpha masks and
+a black body replacement; Mental Hangover continuously blends two row colors
+with its original red-channel column mask. Axes and channels are configured,
+while original palette words and clocks remain production data.
+
+Spaceballs' owned palette image is now 30 by 17 rather than 352 by 290 pixels,
+reducing its RGBA storage from 408,320 to 2,040 bytes. Upload size is unchanged.
+Mental Hangover retains the 2 by 272 row bank. Each draw takes one pass without
+a new stage surface or mask readback. Independent GPU checks cover unequal
+first spans, mapped indices, offset body/control masks, source atlases,
+thresholds, continuous premultiplied mixing and borrowed-source lifetime.
+The source's independent floor oracle also passes at its transition ticks.
+One muted Mental Hangover traversal measured mean CPU draw submission of
+31.66 to 32.22 microseconds; GPU completion/readback and native memory are
+excluded. [Spatial palette integration evidence](fidelity/palette-grid-20260930.json)
+
+Spaceballs' indexed-page fades remain candidates. Mental Hangover's fixed-point
+projection/transport remain separate extraction families. OldSkool's YM signal adapter and
 named row-motion presets are the next candidates.
 
 ## Cross-catalog check: wrapped motion and image trains

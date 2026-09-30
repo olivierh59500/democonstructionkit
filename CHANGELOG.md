@@ -1,5 +1,28 @@
 # Changelog
 
+## 1.0.8 — Developer Edition — 2026-09-30
+
+- Added `composite.PaletteGrid`: two editable colors per spatial cell, binary
+  or continuous control, independent mask channels/offsets and optional body
+  replacement. Axes support size, offset, first span and copied cell-index maps.
+- The component owns one small palette image and one shader. Updates upload
+  only cell colors; drawing uses one pass with borrowed full-stage masks.
+  Translucent banks retain premultiplied color and alpha.
+- Spaceballs' Blocks/Outline and Mental Hangover's checkerboard finale use the
+  common material, retaining source clocks, geometry, RGB12 words and layouts.
+  All 690 Spaceballs and 699 Mental Hangover sampled complete frames match
+  across 35,210 drawn updates. The independent floor raster oracle passes.
+- Spaceballs' palette texture shrinks from 408,320 to 2,040 bytes. Its uploads
+  remain 2,040 bytes; Mental Hangover retains its 2,176-byte row-bank image.
+- Added `examples/palettecells`, native PNG capture and independent GPU checks
+  for mapped spans, mask offsets/channels, thresholds, continuous blending,
+  translucency and borrowed-image lifetime.
+
+Complete DCK and both production test/build/vet checks pass. A muted Mental
+Hangover traversal measured mean CPU draw submission of 31.66 to 32.22
+microseconds; this single-run diagnostic excludes GPU completion/readback.
+No stage-sized surface or additional material pass is inserted.
+
 ## 1.0.7 — Developer Edition — 2026-09-30
 
 - Added `MeshEffect.SetOutline/DrawOutline`, with supplied polygon boundaries,

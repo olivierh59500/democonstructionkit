@@ -28,6 +28,8 @@ Version 1.0.6 adds cached harmonic bands and sprite fields, with OldSkool's
 original oscillator poses and filled/wireframe outputs preserved.
 Version 1.0.7 adds outline materials over cached mesh, warped-grid and sprite
 poses, removing the remaining OldSkool cube/logo/sprite contour loops.
+Version 1.0.8 adds spatial palette grids and row-color materials, sharing
+Spaceballs' background/shadow banks and Mental Hangover's checkerboard floor.
 
 ## Planned 2.0.0 — Visual Editor
 

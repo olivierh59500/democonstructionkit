@@ -88,6 +88,72 @@ Finale use this path with their original fetch offsets, fine-scroll delay,
 RGB12 palette and display crop. All 690 sampled frames through all fourteen
 effect units retain their preceding full-image hashes.
 
+## Spatial palettes for shadows, raster rows and scenery
+
+`composite.PaletteGrid` gives each cell two independently editable colors. A
+borrowed control image selects a bank at a threshold or blends continuously
+between the two. Cell sizes, offsets, a differently sized first span and an
+optional index map determine the spatial palette. A second mask can replace
+covered pixels with a body color. These masks can contain an animated logo,
+scrolling glyphs, sprites or scenery.
+
+```go
+bodyColor := color.NRGBA{R: 8, G: 16, B: 28, A: 255}
+grid, err := composite.NewPaletteGrid(composite.PaletteGridConfig{
+    Width: 640, Height: 360, Columns: 16, Rows: 18,
+    X: composite.PaletteGridAxis{CellSize: 40},
+    Y: composite.PaletteGridAxis{CellSize: 20},
+    ControlThreshold: .5, BodyColor: &bodyColor,
+})
+if err != nil { return err }
+defer grid.Close()
+
+// Both slices contain Columns*Rows colors, in row-major order.
+if err := grid.SetColors(backgroundColors, shadowColors); err != nil { return err }
+if err := grid.Draw(screen, liveMask, liveMask, composite.PaletteGridState{
+    ControlOffset: [2]float32{-12, -8},
+}); err != nil { return err }
+```
+
+The offset control sample produces the shadow while the unshifted body retains
+the foreground shape. Positive X/Y reads farther right/down; outside the mask
+is zero. `ControlChannel` and `BodyChannel` independently select alpha/R/G/B.
+Colors may be translucent and are premultiplied before upload. `SetBodyColor`
+changes an enabled body material without changing the mask or grid.
+
+For color rows, use one column and one-pixel vertical cells:
+
+```go
+rows, err := composite.NewPaletteGrid(composite.PaletteGridConfig{
+    Width: 640, Height: 360, Columns: 1, Rows: 360,
+    ControlChannel: composite.BitplaneRed,
+})
+if err != nil { return err }
+defer rows.Close()
+if err := rows.SetColors(firstRowColors, secondRowColors); err != nil { return err }
+if err := rows.Draw(screen, columnMaterial, nil, composite.PaletteGridState{}); err != nil { return err }
+```
+
+Threshold zero mixes the two colors with the stored control value, so a binary
+column mask makes a checkerboard and a grayscale material makes smooth bands.
+The source artwork remains static on the GPU while the small row bank animates.
+The body image is optional when `BodyColor` is nil.
+
+`FirstSpan` can reserve a taller initial cell; `Indices` can skip, repeat or
+reorder palette rows/columns. Mapped span coordinates clamp at each end. Their
+tables are copied at construction and limited to 256 entries per axis. Sources
+must match the configured stage dimensions with origin `(0,0)`; they remain
+caller-owned. Draw uses one triangle/shader pass and no pixel readback.
+The only owned image is `2*Columns` by `Rows`, capped at 1,048,576 pixels.
+
+Run `go run ./examples/palettecells` to combine a moving contour/body/shadow with
+a live grid and to compare it with an independently moving continuous row
+material. `-capture /path/to/output -frame 200` saves a native PNG. Spaceballs'
+Blocks and Outline retain their native 24-pixel columns, 36-pixel first row,
+16-pixel later rows and skipped palette row. Their palette image shrinks from
+408,320 to 2,040 bytes. Mental Hangover retains its two colors per original
+floor row. All 1,389 sampled complete production frames retain their prior hashes.
+
 ## Outline materials for the same moving scene
 
 Meshes, warped images and sprite fields can switch rendering materials while
