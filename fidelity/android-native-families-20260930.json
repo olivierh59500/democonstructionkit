@@ -1,0 +1,57 @@
+{
+  "date": "2026-09-30",
+  "packages": [
+    {
+      "project": "go-mentalhangover",
+      "dck": "1.0.11",
+      "sha256": "5391c5416e5e84abe2407762ea056b0a8bd2b61f83123dc202d014e3171712f6",
+      "bytes": 16604631,
+      "elf_load_alignments": [
+        16384,
+        16384,
+        16384,
+        16384
+      ],
+      "zip_library_offset": 32768,
+      "published_module_verified": true
+    },
+    {
+      "project": "go-spaceballs",
+      "dck": "1.0.11",
+      "sha256": "91e56172d3c0e524a1dc39300be944ccb568f779adf5a55a73bc62f078f1843f",
+      "bytes": 32127191,
+      "elf_load_alignments": [
+        16384,
+        16384,
+        16384,
+        16384
+      ],
+      "zip_library_offset": 16023552,
+      "published_module_verified": true
+    },
+    {
+      "project": "go-leonardintrodx",
+      "dck": "1.0.11",
+      "sha256": "72ba69b7811061f5620d998131dea4b9f4b5219039dc7910b9ff2f7d0dd02dd9",
+      "bytes": 36528575,
+      "elf_load_alignments": [
+        16384,
+        16384,
+        16384,
+        16384
+      ],
+      "zip_library_offset": 18169856,
+      "published_module_verified": true
+    }
+  ],
+  "device_installation": "All three packages installed successfully on connected Pixel10a",
+  "limits": [
+    "Package dependency/alignment and installation checks are separate from runtime and visual-reference verification."
+  ],
+  "desktop_consumer_revisions": {
+    "go-mentalhangover": "bef8ac5",
+    "go-spaceballs": "3076f85",
+    "go-leonardintrodx": "e5101f1"
+  },
+  "library_tag": "v1.0.11"
+}

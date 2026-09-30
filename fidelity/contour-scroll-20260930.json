@@ -3559,5 +3559,7 @@
     "Complete-frame parity against preceding native Go renderer, not new Amiga-hardware or Android visual-reference verification.",
     "Single muted CPU submission traversal per implementation; excludes GPU completion/readback, no performance gain claimed.",
     "Go heap excludes native/GPU resources."
-  ]
+  ],
+  "released_tag": "v1.0.10",
+  "consumer_revision": "3023776"
 }
