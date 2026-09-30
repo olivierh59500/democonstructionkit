@@ -30,12 +30,13 @@ Indexed image layers and packed-color fades arrived in 1.0.9.
 Owned contour-font scrolling, byte windows and integer mappings arrived in 1.0.10.
 Sparse point/depth fields, YM peak meters, indexed slots and row recipes arrived in 1.0.11.
 Owned word meshes, integer model projection and word cue programs arrived in 1.0.12.
+Controlled insertion, recycled record queues and sprite slots arrived in 1.0.13.
 The following classification
 distinguishes completed integration from remaining extraction candidates.
 
 | Production | Reuse already in place | Further shared component or template | Source-specific boundary |
 | --- | --- | --- | --- |
-| Mental Hangover | Shared scrolling/font modes, byte transport, sparse point/depth fields, owned `WordMesh`, word matrices/models/cue programs, quantized colors and row palettes. | Final acceptance still reviews scene-specific insertion/control transport and finale compositions; the four object renderers now use a complete shared component. | Decoded tables, projection coefficients, palettes, artwork and cue data remain authored configuration. |
+| Mental Hangover | Shared scrolling/font modes, byte transport, sparse point/depth fields, owned `WordMesh`, word matrices/models/cue programs, quantized colors and row palettes. | InsertionProgram/InsertionConfig own the BOB message; RecycledQueue/ImageSlots own the finale population and drawing. The four object renderers use WordMesh. | Decoded tables, projection coefficients, palettes, artwork and cue data remain authored configuration. |
 | Spaceballs | Timelines, contour banks, shared geometry, bitplane/spatial palettes, owned indexed pages and retained indexed image slots for Tiles/Vote. | Native cue programs select the shared banks; working/display pointer choreography remains production-specific. | Decompressed point banks, source coordinate maps, 25 Hz pose interrupts, working/display indices, palette words/layouts and cue order remain data. |
 | OldSkool DirectX 8 Go | Cell fonts/scrolling, mesh/warp materials, harmonic bands/fields, cached row profiles, YM peak meters and gradient bars. | Remaining local setup supplies assets, authored cues and editable presets; no separate meter/row renderer remains. | Native bit order, oscillator constants, face mapping, margins, volume curve and meter mapping remain parameters. |
 
@@ -54,11 +55,11 @@ distinguishes completed integration from remaining extraction candidates.
 | Mental Hangover unit | Shared path now | Next reusable boundary |
 | --- | --- | --- |
 | Eagle, title, cards and sign raster | DCK text pages, cue ranges, `RasterOverlay`, retained image layers and `QuantizedColor` for the six source copper modes. | Source artwork, operation order, thresholds and ratios remain authored parameters; no local color shader remains. |
-| Author vectors, filled BOBs, filled solids and eight patterned objects | `WordMesh`, `WordModel`, `WordEulerMatrix` and `WordProgram` own projection, cached clipping/culling, materials, instances and cue stepping. | Original model tables, shifts, depth centers, association, row/texture UV recipes and BOB control/insertion choreography remain explicit source data/configuration. |
+| Author vectors, filled BOBs, filled solids and eight patterned objects | `WordMesh`, `WordModel`, `WordEulerMatrix` and `WordProgram` own projection, cached clipping/culling, materials, instances and cue stepping. | InsertionProgram/InsertionConfig own the BOB glyph fetch, origins, retirement, speed ramps and pauses. Original models, projection values, row/texture UV recipes and scene-command payloads remain source configuration. |
 | Star greeting pages and perspective points | `IndexedPointPlane`, `WrappedPointProjection` and `WordEulerVelocity` own preparation/projection, sparse clearing, XOR/OR collisions and palette batching. | Original masks, depth thresholds, offsets, velocity tables, page/text levels and cue order remain parameters/data. |
 | Circular and perspective text | DCK owns `font.ContourBank`, `Mode.Contours`, `GlyphWindow`, `ByteWindow`, `TablePolar` and `RationalGrid`; both local polygon painters and dummy-glyph setup are removed. | Original font coordinates, waves, coefficients, byte commands, curve-profile controls, crop, layered shading and phase fades remain authored data/composition. No local glyph-rendering or cursor-lookahead loop remains. |
 | Contact spheres | `DepthQueue`, word steering/projection and `FieldRenderer` own the ordered population and variable-height atlas drawing. | Native point art, 16 size frames, visibility rules, upper-bound comparison policy and phase fades remain configuration/data. |
-| Checkerboard finale | DCK `PaletteGrid` in continuous one-column row mode, projected balls and logo material. | Original binary column image, per-row RGB12 colors and floor/ball controllers remain data; no local row-color shader remains. Ball motion is already expressible through the projected-sprite family. |
+| Checkerboard finale | DCK `PaletteGrid`, `RecycledQueue` and `ImageSlots` own the row material, ball population and ordered sprite drawing. | Original column mask, rational floor/palette recipe, byte-phase bounce table, camera coefficients, size-strip crops and logo fade remain authored configuration. |
 
 | OldSkool DirectX 8 Go phase | Shared path now | Next reusable boundary |
 | --- | --- | --- |
@@ -1057,8 +1058,17 @@ with 50.4 MiB peak Go heap; no fatal error was observed. Runtime evidence is
 separate from Android visual-reference comparisons.
 [Word-mesh Pixel evidence](fidelity/pixel-word-mesh-20260930.json)
 
-The final new-production acceptance pass still identifies two Mental Hangover
-families worth extracting: the BOB text's advance/entry/control transport and
-the finale's recycled bouncing sprite population. Their original clocks,
-particles and pixel fixtures remain the migration gates; configurable callbacks
-alone are not counted as a completed owned transport.
+The 1.0.13 integration extracts the two remaining owned transports identified
+by the new-production pass. BOB text uses InsertionProgram/InsertionConfig;
+the bouncing finale uses RecycledQueue/ImageSlots. Production callbacks supply
+decoded command meanings, byte-phase tables, projection coefficients and crops.
+The shared components own population, cursors, origins, retirement and drawing.
+All 699 complete-frame fingerprints still match over 24,001 drawn updates;
+the native controller fixtures and mixed-font/crop/ownership GPU checks pass.
+[Insertion/recycling evidence](fidelity/insertion-recycle-20261001.json)
+
+The word-object example also uses six independently colored faces with the
+screen winding expected by WordMesh. Optional vectorball presets submit far
+balls first for their Focal/(Focal+Z) camera; the authored demo retains its
+original projection/sorting choice. The two portfolio clips were regenerated.
+The project-total indicator now derives its count from the actual project cards.

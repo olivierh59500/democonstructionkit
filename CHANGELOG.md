@@ -1,5 +1,26 @@
 # Changelog
 
+## 1.0.13 — Developer Edition — 2026-10-01
+
+- Added `scrolltext.InsertionProgram`: copied glyph/control tokens, independent
+  advances and font names, lookahead insertion, speed ramps, pauses, alignment,
+  retained origins and allocation-free restart. Scene commands remain callbacks.
+- Added `scrolling.InsertionConfig` through the common constructor, with mixed
+  bitmap fonts, independent metrics/bearings, an optional external clock and
+  the existing output-pass composition. Drawing does not advance transport.
+- Added `motion.RecycledQueue`: copied records, bounded growth, configurable
+  depth/spacing/wrap, recycled records and retained projected poses.
+- Added `sprites.ImageSlots`: borrowed image banks, copied ordered selections,
+  independent crops, sizes, tint and placement, with validated atomic selection
+  updates and reusable triangle storage. No extra stage image is needed.
+- Mental Hangover's BOB insertion and finale population now use these complete
+  components. All native controller fixtures and 699 sampled complete frames
+  remain identical across 24,001 drawn updates.
+- Added a self-contained mixed-font/sprite example and configuration recipes.
+- Corrected the word-cube example's face winding and assigned six face colors.
+  Corrected optional vectorball presets to paint farther balls before nearer
+  balls; the original vectorball choreography retains its authored convention.
+
 ## 1.0.12 — Developer Edition — 2026-09-30
 
 - Added `motion.WordEulerMatrix`: copied angular banks, configurable periods,

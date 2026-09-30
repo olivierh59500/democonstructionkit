@@ -151,6 +151,9 @@ func newTransport(c Config) (*Scrolling, error) {
 		return nil, fmt.Errorf("scrolling: configure speed, repetition and font in the selected transport")
 	}
 	count := 0
+	if c.Insertion != nil {
+		count++
+	}
 	if c.Recycled != nil {
 		count++
 	}
@@ -212,7 +215,16 @@ func newTransport(c Config) (*Scrolling, error) {
 		return nil, fmt.Errorf("scrolling: choose one transport; configure glyph modes on the regular transport and image passes on any transport")
 	}
 	s := &Scrolling{config: c}
-	if c.Recycled != nil {
+	if c.Insertion != nil {
+		if c.X != 0 || c.Y != 0 || c.Vertical {
+			return nil, fmt.Errorf("scrolling: horizontal insertion placement belongs in InsertionConfig")
+		}
+		transport, err := newInsertion(*c.Insertion)
+		if err != nil {
+			return nil, err
+		}
+		s.backend = transport
+	} else if c.Recycled != nil {
 		r, err := NewRing(c.Recycled.Ring)
 		if err != nil {
 			return nil, err

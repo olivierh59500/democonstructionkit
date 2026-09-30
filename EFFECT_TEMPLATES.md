@@ -726,3 +726,71 @@ angle/depth clocks and a shared row palette. `-capture /tmp/dck-wordobjects
 -frame 200 -frames 300` exports six seconds at 50 Hz. Mental Hangover uses the
 same API for all four native object families, with unchanged projection fixtures
 and complete-frame fingerprints.
+
+## Aligned text insertion with independent scene controls
+
+`scrolling.New` accepts `InsertionConfig` when glyph insertion must preserve
+an authored integer clock rather than continuous ordinary text transport:
+
+```go
+scroll, err := scrolling.New(scrolling.Config{
+    Insertion: &scrolling.InsertionConfig{
+        Fonts: faces, Y: 240,
+        Program: scrolltext.InsertionProgramConfig{
+            Tokens: tokens, Speed: 4, TargetSpeed: 4,
+            Divisor: 2, SpeedStep: 1, Entry: 640,
+            AlignBias: 14, AlignMask: 15, RetireBefore: -32,
+            OnCommand: func(p *scrolltext.InsertionProgram, t scrolltext.InsertionToken) error {
+                switch t.Command {
+                case 's': return p.SetTargetSpeed(int(t.Payload[0]))
+                case 'p': return p.SetPause(int(t.Payload[0]))
+                }
+                return nil
+            },
+        },
+    },
+})
+```
+
+Each `InsertionToken` identifies a glyph/font/advance or an opaque command and
+copied payload. Fonts retain arbitrary character ordering, source crops and
+bearings. Advances are explicit transport pixels; scale the advance when the
+chosen layout requires it. `Entry` is the insertion edge; `AlignBias/AlignMask`
+retain source quantization, or leave both zero for unaligned insertion.
+
+The controller consumes commands while fetching at most one glyph on an update.
+A command's newly requested pause starts on the following update. Movement uses
+the current speed divided by `Divisor`, then ramps toward the target. State
+borrows a read-only origin bank and retains glyph indices after retirement.
+`Reset` reuses the bank; it does not reset scene state changed by commands.
+
+This is a finite source-program transport: completion occurs when the next
+glyph request reaches the end, and existing origins remain inspectable. Append
+blank glyphs to drain a message before restarting, or use the regular
+`scrolling.Config.Repeat` transport for seamless repetition with a chosen gap.
+`Controller` can borrow an already compiled program; `ExternalClock` leaves its
+Step to the author. Call scrolling Update as well when output passes need the
+current frame. `Output` applies the same image passes used by other transports.
+
+## Recycled records and cached sprite slots
+
+`motion.RecycledQueue[T, P]` keeps population and leading depth separate from
+the supplied records. Configure count, growth, step, spacing and depth wrap.
+A strict `depth > spacing` crossing brings the last record to the front and
+calls `Recycle`; `Project` samples each active record into one cached pose.
+Records are copied by value, so pointers inside a record still belong to its
+author. The configuration permits at most one spacing crossing per update.
+Project errors stop the update without rolling back already advanced records.
+
+`sprites.ImageSlots` draws a retained ordered selection of borrowed images:
+source crops, destination rectangles, tint and hidden flags are independent.
+Provide fixed `Slots`, update with `SetSlots`, or fill the bounded selection
+buffer through `Select`. Invalid selections leave the previous draw unchanged.
+An empty source crop uses the full image; zero width/height use crop dimensions.
+The caller chooses painter order, independently of the camera convention.
+
+The queue owns records/poses; ImageSlots owns selection and triangle buffers.
+Neither needs an offscreen image or per-frame source upload. Mental Hangover
+supplies its original byte phases, size-strip crops and floor composition while
+DCK owns insertion, recycling and sprite submission. Run
+`go run ./examples/insertionqueue` for a standalone two-font composition.

@@ -17,7 +17,7 @@ func prepareGlyphWindow(c *Config) error {
 	if w == nil {
 		return nil
 	}
-	if c.Recycled != nil || c.RingLanes != nil || c.DualProfiled != nil || c.Caption != nil || c.Reveal != nil || c.Projected != nil || c.Pseudo3D != nil || c.Sliced != nil || c.CuedSlices != nil || c.Crawl != nil || c.Bands != nil || c.Slots != nil || c.Feed != nil || c.Scanline != nil || c.Profiled != nil || c.RowColumn != nil || c.RowBands != nil || c.SizeBank != nil || c.Ribbon != nil {
+	if c.Insertion != nil || c.Recycled != nil || c.RingLanes != nil || c.DualProfiled != nil || c.Caption != nil || c.Reveal != nil || c.Projected != nil || c.Pseudo3D != nil || c.Sliced != nil || c.CuedSlices != nil || c.Crawl != nil || c.Bands != nil || c.Slots != nil || c.Feed != nil || c.Scanline != nil || c.Profiled != nil || c.RowColumn != nil || c.RowBands != nil || c.SizeBank != nil || c.Ribbon != nil {
 		return fmt.Errorf("scrolling: choose authored glyph window or another transport")
 	}
 	if w.Count < 1 || w.Count > 65536 || w.Count > c.MaxGlyphsPerDraw || !finite(w.Advance) || w.Advance <= 0 || !finite(float64(w.Count)*w.Advance) || w.Glyph == nil ||

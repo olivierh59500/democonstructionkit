@@ -50,6 +50,7 @@ type Config struct {
 	Tokens           []scrolltext.Token
 	Glyphs           []Glyph
 	GlyphWindow      *GlyphWindowConfig // Borrowed authored slot clock with owned layout/rendering.
+	Insertion        *InsertionConfig   // Finite aligned insertion with controls and speed ramps.
 	Speed, Gap, X, Y float64
 	Advance          float64 // Optional pen step independent of each glyph's bitmap width.
 	Vertical, Repeat bool
@@ -294,7 +295,7 @@ func New(c Config) (*Scrolling, error) {
 	if err := prepareGlyphWindow(&c); err != nil {
 		return nil, err
 	}
-	if c.Recycled != nil || c.RingLanes != nil || c.DualProfiled != nil || c.Caption != nil || c.Reveal != nil || c.Projected != nil || c.Pseudo3D != nil || c.Sliced != nil || c.CuedSlices != nil || c.Crawl != nil || c.Bands != nil || c.Slots != nil || c.Feed != nil || c.Scanline != nil || c.Profiled != nil || c.RowColumn != nil || c.RowBands != nil || c.SizeBank != nil || c.Ribbon != nil {
+	if c.Insertion != nil || c.Recycled != nil || c.RingLanes != nil || c.DualProfiled != nil || c.Caption != nil || c.Reveal != nil || c.Projected != nil || c.Pseudo3D != nil || c.Sliced != nil || c.CuedSlices != nil || c.Crawl != nil || c.Bands != nil || c.Slots != nil || c.Feed != nil || c.Scanline != nil || c.Profiled != nil || c.RowColumn != nil || c.RowBands != nil || c.SizeBank != nil || c.Ribbon != nil {
 		return newTransport(c)
 	}
 	if c.Page != nil {

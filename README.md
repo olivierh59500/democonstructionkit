@@ -1,8 +1,8 @@
 # democonstructionkit
 
-**1.0.12 — Developer Edition**
+**1.0.13 — Developer Edition**
 
-Demo Construction Kit 1.0.12 is the Go/Ebitengine library for developers creating
+Demo Construction Kit 1.0.13 is the Go/Ebitengine library for developers creating
 demos and intros through code. Programming knowledge is required: this edition
 provides configurable effects, Go APIs, runnable examples, command-line tools
 and saved JSON compositions.
@@ -10,10 +10,10 @@ and saved JSON compositions.
 Install the versioned module in a Go project:
 
 ```sh
-go get github.com/olivierh59500/democonstructionkit@v1.0.12
+go get github.com/olivierh59500/democonstructionkit@v1.0.13
 ```
 
-[Release 1.0.12](https://github.com/olivierh59500/democonstructionkit/releases/tag/v1.0.12)
+[Release 1.0.13](https://github.com/olivierh59500/democonstructionkit/releases/tag/v1.0.13)
  · [Changelog](CHANGELOG.md) · [Effect templates](EFFECT_TEMPLATES.md)
  · [Version 2.0.0 roadmap](ROADMAP.md)
 
@@ -99,6 +99,13 @@ clipping and material rendering, retaining all 699 sampled complete frames.
 `go run ./examples/wordobjects` composes three independent objects with a shared
 matrix and row palette. Integer precision is explicit; ordinary `effects.Mesh`
 continues to provide the floating camera/lighting path.
+Version 1.0.13 adds owned mixed-font insertion with embedded commands, integer
+advances, speed ramps, pauses and alignment, plus recycled record queues and
+retained sprite crop/placement slots. Mental Hangover uses these components for
+its BOB message and bouncing finale, preserving all 699 sampled complete frames.
+`go run ./examples/insertionqueue` combines two differently ordered fonts with
+independent sprite motion. The word-cube example now has six face colors and
+correct near-face winding; optional vectorball presets draw far balls first.
 [Complete components](#build-a-demo-from-complete-components) include the animated
 DMA cube controller and renderer, font construction, perspective text crawl and
 independent background bands; their consumers provide assets and configuration.
