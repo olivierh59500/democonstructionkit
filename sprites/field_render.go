@@ -238,7 +238,11 @@ func (r *FieldRenderer) drawOutline(x, y, left, top float64, a FieldAppearance, 
 			{rect[0], rect[1], 0, 0}, {rect[0] + rect[2], rect[1], 1, 0},
 			{rect[0] + rect[2], rect[1] + rect[3], 1, 1}, {rect[0], rect[1] + rect[3], 0, 1},
 		} {
-			vertices[i] = ebiten.Vertex{DstX: float32(x + p[0]*cos - p[1]*sin), DstY: float32(y + p[0]*sin + p[1]*cos),
+			dx, dy := x+p[0], y+p[1]
+			if sin != 0 || cos != 1 {
+				dx, dy = x+p[0]*cos-p[1]*sin, y+p[0]*sin+p[1]*cos
+			}
+			vertices[i] = ebiten.Vertex{DstX: float32(dx), DstY: float32(dy),
 				SrcX: float32(p[2]), SrcY: float32(p[3]), ColorR: colors[0], ColorG: colors[1], ColorB: colors[2], ColorA: colors[3]}
 		}
 		r.batch.Quad(vertices)
