@@ -16,6 +16,7 @@ type Mode struct {
 	Prepare func([]Glyph) error
 	Map     Mapper
 	Paint   Painter
+	Cells   *CellPainterConfig // scrolling.New owns the compiled cell painter and its resources.
 	Depth   func(Sample) float64
 }
 

@@ -98,7 +98,12 @@ type OutputConfig struct {
 	Passes        []kit.ImagePass
 }
 
-func (s *Scrolling) finish() (*Scrolling, error) {
+func (s *Scrolling) finish() (result *Scrolling, err error) {
+	defer func() {
+		if err != nil {
+			_ = s.closeCellModes()
+		}
+	}()
 	if err := s.prepareModes(); err != nil {
 		return nil, err
 	}
@@ -553,7 +558,7 @@ func (f *scrollFeedback) Close() error {
 // Close releases optional output history/passes and compatibility renderer
 // resources. Font atlases, rasters and gradients remain caller-owned.
 func (s *Scrolling) Close() error {
-	err := errors.Join(kit.Close(s.output), kit.Close(s.backend))
+	err := errors.Join(kit.Close(s.output), kit.Close(s.backend), s.closeCellModes())
 	s.output, s.backend = nil, nil
 	return err
 }

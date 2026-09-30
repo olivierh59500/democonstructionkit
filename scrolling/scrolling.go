@@ -123,6 +123,7 @@ type Scrolling struct {
 	backend              kit.Effect
 	output               kit.Effect
 	drawErr              error
+	cellPainters         map[string]*CellPainter
 }
 
 var ErrDrawBudget = errors.New("scrolling: automatic drawing exceeds its glyph budget")
@@ -493,6 +494,9 @@ func New(c Config) (*Scrolling, error) {
 }
 
 func (s *Scrolling) prepareModes() error {
+	if err := s.prepareCellModes(); err != nil {
+		return err
+	}
 	s.repeatMax = s.length
 	for _, g := range s.glyphs {
 		position, size := g.X, 0.0
@@ -516,6 +520,52 @@ func (s *Scrolling) prepareModes() error {
 		}
 	}
 	return nil
+}
+
+func (s *Scrolling) prepareCellModes() error {
+	var modes map[string]Mode
+	for name, mode := range s.config.Modes {
+		if mode.Cells == nil {
+			continue
+		}
+		if s.backend != nil {
+			return fmt.Errorf("scrolling: cell modes require regular text or supplied glyphs")
+		}
+		if mode.Paint != nil {
+			return fmt.Errorf("scrolling: mode %q selects both custom and cell painting", name)
+		}
+		if modes == nil {
+			modes = make(map[string]Mode, len(s.config.Modes))
+			for key, value := range s.config.Modes {
+				modes[key] = value
+			}
+			s.cellPainters = make(map[string]*CellPainter)
+		}
+		painter, err := NewCellPainter(*mode.Cells)
+		if err != nil {
+			return fmt.Errorf("scrolling: cell mode %q: %w", name, err)
+		}
+		s.cellPainters[name] = painter
+		mode.Paint = painter.Paint
+		modes[name] = mode
+	}
+	if modes != nil {
+		s.config.Modes = modes
+	}
+	return nil
+}
+
+// CellPainterController exposes an owned cell mode for outline toggles or cache
+// invalidation after changing a user-defined row function's parameters.
+func (s *Scrolling) CellPainterController(mode string) *CellPainter { return s.cellPainters[mode] }
+
+func (s *Scrolling) closeCellModes() error {
+	var err error
+	for _, painter := range s.cellPainters {
+		err = errors.Join(err, painter.Close())
+	}
+	s.cellPainters = nil
+	return err
 }
 func finite(v float64) bool { return !math.IsNaN(v) && !math.IsInf(v, 0) }
 func (s *Scrolling) addSegment(from, to, speed float64, shape string) {
