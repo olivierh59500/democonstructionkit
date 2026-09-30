@@ -22,6 +22,14 @@ type FieldAppearance struct {
 	TrailWidth            float64
 }
 
+// FieldOutline draws an inset box border instead of sprite pixels. Width is
+// measured in destination units before rotation and defaults to one. A nil
+// Color selects white; its premultiplied result is multiplied by Tint.
+type FieldOutline struct {
+	Width float64
+	Color color.Color
+}
+
 // FieldStyle is a skin for the common projected field. A nil Image selects a
 // white pixel, so stars and image sprites use exactly the same projection and
 // drawing path. Optional Frames are absolute atlas rectangles selected by Image.
@@ -35,6 +43,9 @@ type FieldStyle struct {
 	Filter       ebiten.Filter
 	Blend        ebiten.Blend
 	Antialias    bool
+	// Outline takes precedence over image/vector skins, retaining image metrics,
+	// anchor, scale, rotation, depth modulation and source-order overlap.
+	Outline *FieldOutline
 	// VectorRects draws each point as a filled rectangle and an optional trail
 	// in source order, retaining vector pixel coverage and overlap behavior.
 	VectorRects bool
@@ -74,7 +85,22 @@ func (r *FieldRenderer) Draw(dst *ebiten.Image, samples []FieldSample, c FieldSt
 	if source == nil {
 		source = r.white
 	}
-	if c.DrawImages && len(c.Frames) > 0 {
+	material := source
+	outlineWidth, outlineColor := 1.0, [4]float32{1, 1, 1, 1}
+	if c.Outline != nil {
+		if c.Outline.Width < 0 || !finiteField(c.Outline.Width) {
+			return
+		}
+		if c.Outline.Width > 0 {
+			outlineWidth = c.Outline.Width
+		}
+		if c.Outline.Color != nil {
+			red, green, blue, alpha := c.Outline.Color.RGBA()
+			outlineColor = [4]float32{float32(red) / 65535, float32(green) / 65535, float32(blue) / 65535, float32(alpha) / 65535}
+		}
+		material = r.white
+	}
+	if c.Outline == nil && c.DrawImages && len(c.Frames) > 0 {
 		if r.frameSource != source || !slices.Equal(r.frameRects, c.Frames) {
 			r.frameSource = source
 			r.frameRects = append(r.frameRects[:0], c.Frames...)
@@ -97,7 +123,7 @@ func (r *FieldRenderer) Draw(dst *ebiten.Image, samples []FieldSample, c FieldSt
 		r.frameImages = r.frameImages[:0]
 	}
 	r.batch.Options.Filter, r.batch.Options.Blend, r.batch.Options.AntiAlias = c.Filter, c.Blend, c.Antialias
-	r.batch.Begin(dst, source)
+	r.batch.Begin(dst, material)
 	for _, p := range samples {
 		rect := source.Bounds()
 		if len(c.Frames) > 0 {
@@ -132,7 +158,7 @@ func (r *FieldRenderer) Draw(dst *ebiten.Image, samples []FieldSample, c FieldSt
 		if a.Width <= 0 || a.Height <= 0 || !finiteField(a.Width) || !finiteField(a.Height) || !finiteField(a.Angle) || !finiteField(a.ScaleX) || !finiteField(a.ScaleY) || !finiteField(a.AnchorX) || !finiteField(a.AnchorY) {
 			continue
 		}
-		if c.VectorRects || c.VectorLines {
+		if c.Outline == nil && (c.VectorRects || c.VectorLines) {
 			if c.VectorRects {
 				vector.FillRect(dst, float32(p.X-a.Width/2), float32(p.Y-a.Height/2), float32(a.Width), float32(a.Height), a.FillColor, c.Antialias)
 			}
@@ -145,7 +171,7 @@ func (r *FieldRenderer) Draw(dst *ebiten.Image, samples []FieldSample, c FieldSt
 			}
 			continue
 		}
-		if c.DrawImages && !c.Streak {
+		if c.Outline == nil && c.DrawImages && !c.Streak {
 			r.batch.Flush()
 			img := source
 			if len(c.Frames) > 0 {
@@ -177,6 +203,10 @@ func (r *FieldRenderer) Draw(dst *ebiten.Image, samples []FieldSample, c FieldSt
 		}
 		sin, cos := math.Sincos(a.Angle)
 		left, top := -a.AnchorX*a.Width, -a.AnchorY*a.Height
+		if c.Outline != nil {
+			r.drawOutline(x, y, left, top, a, outlineWidth, outlineColor, sin, cos)
+			continue
+		}
 		corners := [4][4]float64{
 			{left, top, float64(rect.Min.X), float64(rect.Min.Y)},
 			{left + a.Width, top, float64(rect.Max.X), float64(rect.Min.Y)},
@@ -191,6 +221,28 @@ func (r *FieldRenderer) Draw(dst *ebiten.Image, samples []FieldSample, c FieldSt
 		r.batch.Quad(vertices)
 	}
 	r.batch.Flush()
+}
+
+func (r *FieldRenderer) drawOutline(x, y, left, top float64, a FieldAppearance, width float64, paint [4]float32, sin, cos float64) {
+	if math.Abs(a.Width) <= 2*width || math.Abs(a.Height) <= 2*width {
+		return
+	}
+	colors := [4]float32{paint[0] * a.Tint.R(), paint[1] * a.Tint.G(), paint[2] * a.Tint.B(), paint[3] * a.Tint.A()}
+	w, h := math.Copysign(width, a.Width), math.Copysign(width, a.Height)
+	for _, rect := range [4][4]float64{
+		{left, top, a.Width, h}, {left, top + a.Height - h, a.Width, h},
+		{left, top + h, w, a.Height - 2*h}, {left + a.Width - w, top + h, w, a.Height - 2*h},
+	} {
+		var vertices [4]ebiten.Vertex
+		for i, p := range [4][4]float64{
+			{rect[0], rect[1], 0, 0}, {rect[0] + rect[2], rect[1], 1, 0},
+			{rect[0] + rect[2], rect[1] + rect[3], 1, 1}, {rect[0], rect[1] + rect[3], 0, 1},
+		} {
+			vertices[i] = ebiten.Vertex{DstX: float32(x + p[0]*cos - p[1]*sin), DstY: float32(y + p[0]*sin + p[1]*cos),
+				SrcX: float32(p[2]), SrcY: float32(p[3]), ColorR: colors[0], ColorG: colors[1], ColorB: colors[2], ColorA: colors[3]}
+		}
+		r.batch.Quad(vertices)
+	}
 }
 
 func (r *FieldRenderer) Close() error {

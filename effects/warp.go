@@ -22,10 +22,13 @@ type Warp struct {
 	Map           func(x, y, seconds float64) geometry.Vec2
 	Depth         func(x, y, seconds float64) float64
 	Tint          func(x, y, seconds float64) color.Color
+	Blend         ebiten.Blend
 	canvas        *ebiten.Image
 	columns, rows int
 	batch         *render.Batch
 	cells         []warpCell
+	outline       *warpOutline
+	closed        bool
 }
 type warpCell struct{ x, y, w, h, depth float64 }
 
@@ -42,6 +45,9 @@ func NewWarp(source kit.Effect, width, height, columns, rows int) (*Warp, error)
 	return w, nil
 }
 func (w *Warp) Update(f kit.Frame) error {
+	if w == nil || w.closed {
+		return fmt.Errorf("effects: warp is closed")
+	}
 	w.Frame = f
 	if w.Depth != nil {
 		for i := range w.cells {
@@ -53,8 +59,12 @@ func (w *Warp) Update(f kit.Frame) error {
 	return w.Source.Update(f)
 }
 func (w *Warp) Draw(dst *ebiten.Image) {
+	if w == nil || w.closed || dst == nil {
+		return
+	}
 	w.canvas.Clear()
 	w.Source.Draw(w.canvas)
+	w.batch.Options.Blend = w.Blend
 	w.batch.Begin(dst, w.canvas)
 	for _, c := range w.cells {
 		var quad [4]ebiten.Vertex
@@ -73,7 +83,18 @@ func (w *Warp) Draw(dst *ebiten.Image) {
 	}
 	w.batch.Flush()
 }
-func (w *Warp) Close() error { w.canvas.Deallocate(); return kit.Close(w.Source) }
+func (w *Warp) Close() error {
+	if w == nil || w.closed {
+		return nil
+	}
+	w.closed = true
+	if w.outline != nil {
+		w.outline.close()
+		w.outline = nil
+	}
+	w.canvas.Deallocate()
+	return kit.Close(w.Source)
+}
 
 // Mask combines a color/raster effect with the alpha channel of another effect.
 type Mask struct {

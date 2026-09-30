@@ -84,8 +84,16 @@ func (f *HarmonicField) Sample(clocks [2]float64, envelope float64) error {
 
 func (f *HarmonicField) Samples() []FieldSample { return f.samples }
 func (f *HarmonicField) Draw(dst *ebiten.Image) {
+	if f != nil {
+		f.DrawStyle(dst, f.Style)
+	}
+}
+
+// DrawStyle draws the same cached positions with another borrowed material,
+// including box outlines or solid pixels. It does not change the default Style.
+func (f *HarmonicField) DrawStyle(dst *ebiten.Image, style FieldStyle) {
 	if f != nil && f.renderer != nil {
-		f.renderer.Draw(dst, f.samples, f.Style)
+		f.renderer.Draw(dst, f.samples, style)
 	}
 }
 

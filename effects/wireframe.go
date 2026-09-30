@@ -54,18 +54,9 @@ func (w *Wireframe) Update(f kit.Frame) error {
 func (w *Wireframe) Draw(dst *ebiten.Image) {
 	w.batch.Begin(dst, w.white)
 	for _, e := range w.Edges {
-		a, b := w.projected[e[0]], w.projected[e[1]]
-		near := w.Camera.Near
-		if a.Z < near && b.Z < near {
+		a, b, visible := geometry.ClipNearSegment(w.projected[e[0]], w.projected[e[1]], w.Camera.Near)
+		if !visible {
 			continue
-		}
-		if a.Z < near {
-			a = geometry.Lerp(a, b, (near-a.Z)/(b.Z-a.Z))
-			a.Z = near
-		}
-		if b.Z < near {
-			b = geometry.Lerp(b, a, (near-b.Z)/(a.Z-b.Z))
-			b.Z = near
 		}
 		p, _, _ := w.Camera.Project(a)
 		q, _, _ := w.Camera.Project(b)

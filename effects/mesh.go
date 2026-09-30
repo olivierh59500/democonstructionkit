@@ -23,12 +23,18 @@ type Mesh struct {
 	Triangles []Triangle
 }
 
+// CubeFaces returns independent polygon boundaries in Cube's point/face order.
+// They describe the six quads without triangulation diagonals.
+func CubeFaces() [][]int {
+	return [][]int{{0, 3, 2, 1}, {4, 5, 6, 7}, {0, 4, 7, 3}, {1, 2, 6, 5}, {0, 1, 5, 4}, {3, 7, 6, 2}}
+}
+
 // Cube provides independent UVs for each face. TextureSize may be (1,1) for solids.
 func Cube(size float64, textureSize geometry.Vec2, tint color.NRGBA) Mesh {
 	s := size / 2
 	m := Mesh{Points: []geometry.Vec3{{X: -s, Y: -s, Z: -s}, {X: s, Y: -s, Z: -s}, {X: s, Y: s, Z: -s}, {X: -s, Y: s, Z: -s}, {X: -s, Y: -s, Z: s}, {X: s, Y: -s, Z: s}, {X: s, Y: s, Z: s}, {X: -s, Y: s, Z: s}}}
 	uv := [4]geometry.Vec2{{}, {X: textureSize.X}, {X: textureSize.X, Y: textureSize.Y}, {Y: textureSize.Y}}
-	for _, face := range [][4]int{{0, 3, 2, 1}, {4, 5, 6, 7}, {0, 4, 7, 3}, {1, 2, 6, 5}, {0, 1, 5, 4}, {3, 7, 6, 2}} {
+	for _, face := range CubeFaces() {
 		m.Triangles = append(m.Triangles, Triangle{Indices: [3]int{face[0], face[1], face[2]}, UV: [3]geometry.Vec2{uv[0], uv[1], uv[2]}, Color: tint}, Triangle{Indices: [3]int{face[0], face[2], face[3]}, UV: [3]geometry.Vec2{uv[0], uv[2], uv[3]}, Color: tint})
 	}
 	return m
@@ -58,6 +64,8 @@ type MeshEffect struct {
 	points        []geometry.Vec3
 	faces         []meshFace
 	batch         *render.Batch
+	outline       *meshOutline
+	closed        bool
 }
 type meshFace struct {
 	triangle [3]geometry.Vertex
@@ -85,6 +93,9 @@ func NewMesh(mesh Mesh, texture *ebiten.Image, camera geometry.Camera) (*MeshEff
 	return m, nil
 }
 func (m *MeshEffect) Update(f kit.Frame) error {
+	if m == nil || m.closed {
+		return fmt.Errorf("effects: mesh is closed")
+	}
 	m.Frame = f
 	p := m.Transform
 	if m.Animate != nil {
@@ -116,6 +127,9 @@ func (m *MeshEffect) Update(f kit.Frame) error {
 	return nil
 }
 func (m *MeshEffect) Draw(dst *ebiten.Image) {
+	if m == nil || m.closed || dst == nil {
+		return
+	}
 	m.batch.Options.Blend = m.Blend
 	m.batch.Begin(dst, m.texture)
 	var clipped [4]geometry.Vertex
@@ -133,8 +147,17 @@ func (m *MeshEffect) Draw(dst *ebiten.Image) {
 	m.batch.Flush()
 }
 func (m *MeshEffect) Close() error {
-	if m.owned {
+	if m == nil || m.closed {
+		return nil
+	}
+	if m.outline != nil {
+		m.outline.close()
+		m.outline = nil
+	}
+	if m.owned && m.texture != nil {
 		m.texture.Deallocate()
 	}
+	m.texture = nil
+	m.closed = true
 	return nil
 }
