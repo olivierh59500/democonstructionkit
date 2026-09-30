@@ -23,14 +23,15 @@ and OldSkool DirectX 8 Go. They initially used DCK 1.0.0; Spaceballs now uses
 the binary-plane palette component added in 1.0.1, and Mental Hangover uses the
 quantized-color component added in 1.0.2. OldSkool uses owned flat/cuboid
 cell modes added in 1.0.3. Shared retained contours arrived in 1.0.4 and binary
-material offsets in 1.0.5. The following classification
+material offsets in 1.0.5. Sampled harmonic bands/fields arrived in 1.0.6.
+The following classification
 distinguishes completed integration from remaining extraction candidates.
 
 | Production | Reuse already in place | Further shared component or template | Source-specific boundary |
 | --- | --- | --- | --- |
 | Mental Hangover | `scrolling.New`, bitmap metrics, bounded `render.Batch.Fan` for all author/BOB/solid/patterned/outline-font contours, `RasterOverlay`, `CueClock`, cue ranges and `QuantizedColor`. | Polar transport/projection, row-palette floor sampling and original fixed-point geometry programs remain candidates for complete components. | Decoded 68000 tables, integer projection, level divisors, palette order and cue timing remain production data. Immediate contours use shared fan geometry without an additional working surface. |
 | Spaceballs | `kit.Effect`, `timeline.Sequence`, `ContourBank` for six-mask/paired-mask/pattern-mask storage, shared fan/stroke/parity edges and `BitplanePalette` for retained planes, opening, Duet exit and offset materials. | Palette-grid and indexed-page components remain candidates; Pattern, Wave and Finale now share the DCK palette material with independent sampling offsets. | Decompressed point banks, source coordinate maps, 25 Hz pose interrupts, working/display indices, bitplane offsets and cue order remain production data. |
-| OldSkool DirectX 8 Go | `font.CellBank`, owned `scrolling.Mode.Cells` for flat and cuboid fonts, `effects.Warp`, `effects.Mesh`, `sprites.FieldRenderer` and DCK audio. | Its four-oscillator ball field can be expressed as a sampled formation after a parity check; the colored ribbon and cube wireframe are candidate shared materials. | The executable's font bit order, oscillator constants, cube face mapping, clipping margins and meter mapping remain authored parameters. Cell masks are cached once; culling, face projection and cell materials now belong to DCK. |
+| OldSkool DirectX 8 Go | `font.CellBank`, owned `scrolling.Mode.Cells`, `effects.Warp`, `effects.Mesh`, `composite.HarmonicBands`, `sprites.HarmonicField` and DCK audio. | Cube wireframe and the YM-to-meter adapter remain extraction candidates; logo row oscillators can become a named preset. | The executable's font bit order, oscillator constants, cube face mapping, clipping margins and meter mapping remain authored parameters. Cell masks and harmonic poses are cached; shared components own their geometry and materials. |
 
 ### Screen-level extraction boundaries
 
@@ -56,8 +57,8 @@ distinguishes completed integration from remaining extraction candidates.
 | OldSkool DirectX 8 Go phase | Shared path now | Next reusable boundary |
 | --- | --- | --- |
 | Cube, present from the start | `effects.Mesh` owns the camera mesh and filled faces. | Source face order and realtime interpolation remain parameters; a shared wireframe material could remove the local edge loop. |
-| Colored bands, from 4 s | `render.Batch` submits the sixteen quads. | A paired-edge harmonic quad strip with independent sine banks and an optional outline material. |
-| Ball field, from 12 s | `sprites.FieldRenderer` draws eighty borrowed ball sprites. | A sampled harmonic formation can own the four oscillator banks and pixel snapping after exact-pose comparison. |
+| Colored bands, from 4 s | Complete `composite.HarmonicBands` with independent left/right waves, owned cached poses, filled/outlined materials and `render.Batch.StrokePath`. | Native four-oscillator values, 85-unit clock, thickness, palette, rounding and integer clamps remain parameters. |
+| Ball field, from 12 s | Complete `sprites.HarmonicField`, with shared indexed waves, absolute clock, cached rounded samples and batched borrowed sprites. | Native constants, count, image, anchor and cue start remain authored configuration; the local pose loop has been removed. |
 | Deformed logo, from 18 s | `effects.Warp` owns its source surface and ten-row mapping. | The map is already a parameter; expose a named multi-oscillator row preset rather than a new renderer. |
 | Small 3D and large raster scrolls, from 26/36 s | One `scrolling.New` transport per font with owned `Mode.Cells`; cached native font masks, row paths, cuboid face generation, culling and filled/outline materials. | Source binary readers, row oscillator values, insertion edges and face colors remain authored configuration. The local cell geometry loops have been removed. |
 | YM-driven frequency columns | DCK opens and replays the music; the production converts AY register periods to its authored columns. | A register-to-signal adapter could feed `modulation` without embedding this demo's 80-column strength and decay curve. |
@@ -148,10 +149,31 @@ row-palette floor are distinct extraction candidates. Revisions, ordered hashes
 and the resource limits are in
 [the offset-material evidence](fidelity/offset-materials-20260930.json).
 
+The harmonic integration preserves OldSkool's 750 sampled complete filled and
+outlined frames over 18,002 drawn updates. Its independent original oscillator
+oracle also compares every strip and sprite pose at every applicable tick
+through 9,000. Shared sampling allocates no memory; poses are reused by repeated
+draws and the strips borrow the existing white pixel. Immutable strip colors
+are boxed once at construction. No intermediate image is added.
+One muted native traversal per implementation/mode measured update/draw means
+of 17.20/274.27 to 19.79/263.42 microseconds filled and 16.82/453.38 to
+19.38/450.25 wireframe. These are CPU submission diagnostics, excluding GPU
+completion and readback, rather than a device performance claim.
+Revisions and hashes are in
+[the harmonic integration evidence](fidelity/oldskool-harmonics-20260930.json).
+
+Spaceballs' DCK 1.0.5 and Mental Hangover's DCK 1.0.4 builds were installed on
+the Pixel 10a on 2026-09-30 and completed their directors without an observed
+crash. Five-second samples recorded 49.8–50.9/57.0–60.1 TPS/FPS for Spaceballs
+and 49.2–51.0/58.1–60.1 for Mental Hangover. Peak Go heap was 67.0 and 53.3 MiB,
+excluding native/GPU memory. This runtime traversal is separate from visual
+reference fidelity; version-specific transitions and limits are retained in
+[the Pixel runtime evidence](fidelity/pixel-latest-20260930.json).
+
 Spaceballs' palette grids and indexed-page fades remain candidates.
 Mental Hangover's fixed-point projection/transport and floor
 sampling remain separate extraction families. OldSkool's band, ball-field and
-cube-outline paths are the next rendering/motion candidates.
+cube-outline path is the next rendering candidate.
 
 ## Cross-catalog check: wrapped motion and image trains
 

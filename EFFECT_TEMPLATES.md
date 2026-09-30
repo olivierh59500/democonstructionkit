@@ -88,6 +88,69 @@ Finale use this path with their original fetch offsets, fine-scroll delay,
 RGB12 palette and display crop. All 690 sampled frames through all fourteen
 effect units retain their preceding full-image hashes.
 
+## Harmonic bands and sprite formations
+
+`composite.HarmonicBands` treats the two coordinates of a harmonic formation as
+the heights of a strip's left and right edges. Each edge can combine its own
+sine/cosine terms, rates, instance phases and envelopes. Width, thickness,
+colors, pixel rounding and post-rounding bounds are independent parameters.
+
+```go
+bands, err := composite.NewHarmonicBands(composite.HarmonicBandsConfig{
+    LeftX: 0, RightX: 640, Thickness: 8, Colors: stripColors,
+    Motion: motion.HarmonicFormationConfig{
+        Origin: motion.Point{X: 180, Y: 180},
+        X: []motion.IndexedHarmonic{{Amplitude: 120, Rate: 1.1, IndexRate: .32}},
+        Y: []motion.IndexedHarmonic{{Amplitude: 120, Rate: .9, IndexRate: .43}},
+    },
+})
+if err != nil { return err }
+defer bands.Close()
+
+if err := bands.Update(frame); err != nil { return err }
+bands.Draw(screen) // DrawOutline(screen, 1.2) uses the same cached poses.
+```
+
+`sprites.HarmonicField` uses the same formation for positions and owns its
+bounded batch renderer. `Style.Image` can be a borrowed sprite; a nil image
+uses the fallback white pixel. Count, origin, spacing, image metrics, anchor,
+blend and appearance remain configurable.
+
+```go
+field, err := sprites.NewHarmonicField(sprites.HarmonicFieldConfig{
+    Count: 80, PixelSnap: true,
+    Motion: motion.HarmonicFormationConfig{
+        Origin: motion.Point{X: 320, Y: 180},
+        X: []motion.IndexedHarmonic{{Amplitude: 180, Rate: 1.2, IndexRate: .15}},
+        Y: []motion.IndexedHarmonic{{Amplitude: 120, Rate: .9, IndexRate: .19}},
+    },
+    Style: sprites.FieldStyle{Image: ball, Appearance: sprites.FieldAppearance{
+        Width: 24, Height: 24, AnchorX: .5, AnchorY: .5,
+    }},
+})
+if err != nil { return err }
+defer field.Close()
+
+if err := field.Update(frame); err != nil { return err }
+field.Draw(screen)
+```
+
+Both components accept explicit two-clock/envelope values through `Sample` for
+music signals, controls or authored cues. `ClockScale` lets `Update` use another
+time unit. `PhasePeriod` optionally applies signed phase remainder before each
+wave; zero preserves the existing harmonic behavior. `Poses`/`Samples` expose
+borrowed cached positions for another material, without evaluating the waves
+again. Steady sampling allocates no memory and drawing does not advance time.
+Harmonic bands support up to 4,096 strips; the sprite field supports up to
+65,536 samples and flushes bounded geometry as needed. Close components before
+releasing their borrowed images.
+
+Run `go run ./examples/harmoniclayers`, or add `-outline`; **W** switches band
+materials. `-capture /path/to/output -frame 200` saves a native PNG. OldSkool
+uses sixteen strips and eighty sprites with its original 85-unit clock and
+four oscillator values per formation. All original positions match through
+9,001 ticks and all 750 complete-frame samples retain their previous hashes.
+
 ## Integer color passes on a scrolling layer, logo or complete scene
 
 `composite.QuantizedColor` changes the colors of a borrowed image, independently

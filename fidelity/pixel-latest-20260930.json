@@ -1,0 +1,317 @@
+{
+  "date": "2026-09-30",
+  "device": "Google Pixel 10a",
+  "graphics": "runtime cadence and scene traversal; no new visual-reference comparison",
+  "productions": [
+    {
+      "production": "spaceballs",
+      "dck": "1.0.5",
+      "samples": 49,
+      "range_tick": [
+        248,
+        12256
+      ],
+      "tps_range": [
+        49.8,
+        50.9
+      ],
+      "fps_range": [
+        57.0,
+        60.1
+      ],
+      "peak_go_heap_mib": 67.0,
+      "scenes": [
+        {
+          "name": "boot",
+          "tick": 1
+        },
+        {
+          "name": "opening-effect",
+          "tick": 60
+        },
+        {
+          "name": "opening-hold",
+          "tick": 1021
+        },
+        {
+          "name": "state",
+          "tick": 1087
+        },
+        {
+          "name": "black",
+          "tick": 1110
+        },
+        {
+          "name": "of",
+          "tick": 1156
+        },
+        {
+          "name": "black",
+          "tick": 1179
+        },
+        {
+          "name": "the",
+          "tick": 1219
+        },
+        {
+          "name": "black",
+          "tick": 1242
+        },
+        {
+          "name": "art",
+          "tick": 1292
+        },
+        {
+          "name": "black",
+          "tick": 1315
+        },
+        {
+          "name": "credits",
+          "tick": 1345
+        },
+        {
+          "name": "dragon",
+          "tick": 1632
+        },
+        {
+          "name": "black",
+          "tick": 2031
+        },
+        {
+          "name": "pattern",
+          "tick": 2189
+        },
+        {
+          "name": "vote",
+          "tick": 2669
+        },
+        {
+          "name": "trails",
+          "tick": 2819
+        },
+        {
+          "name": "blocks-effect",
+          "tick": 3385
+        },
+        {
+          "name": "noise",
+          "tick": 3807
+        },
+        {
+          "name": "tiles",
+          "tick": 4157
+        },
+        {
+          "name": "wave",
+          "tick": 4300
+        },
+        {
+          "name": "angular",
+          "tick": 5055
+        },
+        {
+          "name": "sliced",
+          "tick": 5770
+        },
+        {
+          "name": "ribbons",
+          "tick": 7388
+        },
+        {
+          "name": "duet",
+          "tick": 8204
+        },
+        {
+          "name": "outline",
+          "tick": 9245
+        },
+        {
+          "name": "finale",
+          "tick": 10630
+        },
+        {
+          "name": "closing",
+          "tick": 12346
+        }
+      ],
+      "errors_found": false
+    },
+    {
+      "production": "mental",
+      "dck": "1.0.4",
+      "samples": 94,
+      "range_tick": [
+        500,
+        23790
+      ],
+      "tps_range": [
+        49.2,
+        51.0
+      ],
+      "fps_range": [
+        58.1,
+        60.1
+      ],
+      "peak_go_heap_mib": 53.3,
+      "scenes": [
+        {
+          "name": "presents",
+          "tick": 581
+        },
+        {
+          "name": "new-demonstration",
+          "tick": 747
+        },
+        {
+          "name": "called",
+          "tick": 913
+        },
+        {
+          "name": "mental-title",
+          "tick": 1079
+        },
+        {
+          "name": "coded-by",
+          "tick": 1335
+        },
+        {
+          "name": "slayer",
+          "tick": 1501
+        },
+        {
+          "name": "graphics-by",
+          "tick": 2033
+        },
+        {
+          "name": "reward",
+          "tick": 2199
+        },
+        {
+          "name": "musics-by",
+          "tick": 2769
+        },
+        {
+          "name": "uncle-tom",
+          "tick": 2935
+        },
+        {
+          "name": "follow-sign",
+          "tick": 3479
+        },
+        {
+          "name": "sign",
+          "tick": 3645
+        },
+        {
+          "name": "sign-raster",
+          "tick": 3901
+        },
+        {
+          "name": "scoopex-demo",
+          "tick": 3951
+        },
+        {
+          "name": "filled-bobs",
+          "tick": 4196
+        },
+        {
+          "name": "filled-vectors",
+          "tick": 6167
+        },
+        {
+          "name": "filled-cube",
+          "tick": 6412
+        },
+        {
+          "name": "faceted-solid",
+          "tick": 6997
+        },
+        {
+          "name": "stencil-vectors",
+          "tick": 7673
+        },
+        {
+          "name": "gold-arrow",
+          "tick": 7973
+        },
+        {
+          "name": "gold-arrow-pass",
+          "tick": 8291
+        },
+        {
+          "name": "yellow-cube",
+          "tick": 8491
+        },
+        {
+          "name": "brown-facets",
+          "tick": 9191
+        },
+        {
+          "name": "paired-boxes",
+          "tick": 9991
+        },
+        {
+          "name": "patterned-pyramid",
+          "tick": 10388
+        },
+        {
+          "name": "hollow-frame",
+          "tick": 10888
+        },
+        {
+          "name": "color-block",
+          "tick": 11838
+        },
+        {
+          "name": "greetings-load",
+          "tick": 12338
+        },
+        {
+          "name": "star-pages",
+          "tick": 12506
+        },
+        {
+          "name": "circle-load",
+          "tick": 14253
+        },
+        {
+          "name": "circle-twist",
+          "tick": 14438
+        },
+        {
+          "name": "contact-load",
+          "tick": 17779
+        },
+        {
+          "name": "contact-spheres",
+          "tick": 17879
+        },
+        {
+          "name": "perspective-load",
+          "tick": 19073
+        },
+        {
+          "name": "perspective-text",
+          "tick": 19123
+        },
+        {
+          "name": "reminder-stars",
+          "tick": 20800
+        },
+        {
+          "name": "always-remember",
+          "tick": 20948
+        },
+        {
+          "name": "finale-load",
+          "tick": 21398
+        },
+        {
+          "name": "checkerboard-finale",
+          "tick": 21536
+        }
+      ],
+      "errors_found": false
+    }
+  ]
+}

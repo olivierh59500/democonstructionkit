@@ -1,5 +1,31 @@
 # Changelog
 
+## 1.0.6 — Developer Edition — 2026-09-30
+
+- Added `composite.HarmonicBands`: independently sampled strip edges, per-strip
+  colors, thickness, rounding and clamps, filled/outlined materials and borrowed
+  cached poses. It needs no intermediate image and can borrow a white pixel.
+- Added `sprites.HarmonicField`: a batched sprite population with configurable
+  indexed harmonics, absolute clocks, envelope sampling and optional rounding.
+  Cached samples can feed another skin; images remain caller-owned.
+- Added optional signed `IndexedHarmonic.PhasePeriod` and double-precision
+  `render.Batch.StrokePath`, preserving native edge arithmetic until submission.
+- OldSkool's sixteen bands and eighty sprites now use these components. All
+  750 sampled complete filled/wireframe images match across 18,002 drawn frames;
+  every applicable band/sprite pose matches the original oscillator routines
+  through tick 9,000. No new working image is added.
+- Added `examples/harmoniclayers`, PNG capture, independent geometry/coverage
+  checks, seek/rounding tests and borrowed-resource lifetime checks.
+- Spaceballs on DCK 1.0.5 and Mental Hangover on 1.0.4 completed their directors
+  on Pixel 10a without an observed crash; five-second samples stayed near their
+  50 Hz simulation target. Version-specific figures are retained separately.
+
+Complete DCK and OldSkool tests, build and vet pass. One muted native traversal
+per mode/implementation measured mean update/draw submission of 17.20/274.27 to
+19.79/263.42 microseconds filled and 16.82/453.38 to 19.38/450.25 wireframe.
+These diagnostics exclude GPU completion and readback; they are not device
+performance claims. Pixel runtime evidence is separate from visual fidelity.
+
 ## 1.0.5 — Developer Edition — 2026-09-30
 
 - Added `BitplanePalette.DrawOffsets` with independent finite pixel offsets for

@@ -24,6 +24,8 @@ Version 1.0.4 adds retained contour image banks and common fan/stroke/parity
 submission, used throughout Spaceballs and Mental Hangover's polygon scenes.
 Version 1.0.5 extends the palette compositor with independent material offsets,
 used by Spaceballs' Pattern, Wave and Finale without another image or pass.
+Version 1.0.6 adds cached harmonic bands and sprite fields, with OldSkool's
+original oscillator poses and filled/wireframe outputs preserved.
 
 ## Planned 2.0.0 — Visual Editor
 
