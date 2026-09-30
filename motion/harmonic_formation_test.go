@@ -39,9 +39,32 @@ func TestHarmonicFormationRejectsInvalidGeometry(t *testing.T) {
 		{Spacing: Point{Y: math.Inf(1)}},
 		{X: []IndexedHarmonic{{Divisor: 10, Rate: 1}}},
 		{X: []IndexedHarmonic{{UseIndexOffsets: true}}},
+		{X: []IndexedHarmonic{{PhasePeriod: -1}}},
+		{X: []IndexedHarmonic{{PhasePeriod: math.NaN()}}},
 	} {
 		if _, err := NewHarmonicFormation(config); err == nil {
 			t.Fatalf("accepted invalid formation: %+v", config)
+		}
+	}
+}
+
+func TestHarmonicFormationReducesTheCompletePhase(t *testing.T) {
+	const period = 2 * math.Pi
+	f, err := NewHarmonicFormation(HarmonicFormationConfig{
+		X: []IndexedHarmonic{{Amplitude: 3, Rate: .0242, IndexRate: .1254, Phase: -.7, PhasePeriod: period}},
+		Y: []IndexedHarmonic{{Amplitude: 2, Divisor: 3, IndexPhase: .8, Cos: true, PhasePeriod: period}},
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, clock := range []float64{-1e6, -20, 0, 85, 1e6} {
+		for _, index := range []int{0, 1, 79} {
+			p := f.At(index, [2]float64{clock}, 1)
+			x := 3 * math.Sin(math.Mod(clock*.0242+(float64(index)*.1254-.7), period))
+			y := 2 * math.Cos(math.Mod((clock+float64(index)*.8)/3, period))
+			if math.Abs(p.X-x) > 1e-9 || math.Abs(p.Y-y) > 1e-9 {
+				t.Fatalf("clock %v index %d: got %+v, want (%v,%v)", clock, index, p, x, y)
+			}
 		}
 	}
 }

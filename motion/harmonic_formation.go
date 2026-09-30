@@ -10,9 +10,11 @@ import (
 // replaces multiplication by Rate with division when nonzero. UseIndexOffsets
 // adds the formation's authored phase for this item before rate/division.
 // SecondaryClock selects clocks[1]; otherwise clocks[0] is used. Envelope
-// multiplies the amplitude by the caller's current envelope value.
+// multiplies the amplitude by the caller's current envelope value. PhasePeriod
+// optionally applies a signed remainder to the complete phase before sampling.
 type IndexedHarmonic struct {
 	Amplitude, Rate, Divisor, IndexPhase, IndexRate, Phase float64
+	PhasePeriod                                            float64
 	Cos, SecondaryClock, Envelope, UseIndexOffsets         bool
 }
 
@@ -46,12 +48,12 @@ func NewHarmonicFormation(config HarmonicFormationConfig) (*HarmonicFormation, e
 		}
 	}
 	for _, term := range append(append([]IndexedHarmonic(nil), config.X...), config.Y...) {
-		for _, value := range []float64{term.Amplitude, term.Rate, term.Divisor, term.IndexPhase, term.IndexRate, term.Phase} {
+		for _, value := range []float64{term.Amplitude, term.Rate, term.Divisor, term.IndexPhase, term.IndexRate, term.Phase, term.PhasePeriod} {
 			if !finite(value) {
 				return nil, fmt.Errorf("motion: nonfinite formation harmonic")
 			}
 		}
-		if term.Divisor < 0 || term.Divisor != 0 && term.Rate != 0 || term.UseIndexOffsets && len(config.IndexOffsets) == 0 {
+		if term.Divisor < 0 || term.PhasePeriod < 0 || term.Divisor != 0 && term.Rate != 0 || term.UseIndexOffsets && len(config.IndexOffsets) == 0 {
 			return nil, fmt.Errorf("motion: invalid formation phase source")
 		}
 	}
@@ -106,6 +108,9 @@ func sampleFormationAxis(value float64, terms []IndexedHarmonic, offsets []float
 			phase *= term.Rate
 		}
 		phase += float64(index)*term.IndexRate + term.Phase
+		if term.PhasePeriod > 0 {
+			phase = math.Mod(phase, term.PhasePeriod)
+		}
 		wave := math.Sin(phase)
 		if term.Cos {
 			wave = math.Cos(phase)
