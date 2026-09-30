@@ -77,11 +77,23 @@ func (p *IndexedPalette) SetPalette(colors []color.NRGBA) error {
 }
 
 func (p *IndexedPalette) Draw(dst, source *ebiten.Image) error {
+	if p == nil {
+		return fmt.Errorf("composite: invalid or closed indexed palette draw")
+	}
+	return p.DrawWith(dst, source, p.options)
+}
+
+// DrawWith places and tints the indexed image in one shader draw. GeoM,
+// ColorScale and blending are copied for this call; the lookup owns Images and
+// Uniforms, so those caller fields are ignored. A later Draw retains its original
+// identity placement and configured blend rather than inheriting these options.
+func (p *IndexedPalette) DrawWith(dst, source *ebiten.Image, options ebiten.DrawRectShaderOptions) error {
 	if p == nil || p.shader == nil || dst == nil || source == nil || dst == source {
 		return fmt.Errorf("composite: invalid or closed indexed palette draw")
 	}
-	p.options.Images[0] = source
-	dst.DrawRectShader(source.Bounds().Dx(), source.Bounds().Dy(), p.shader, &p.options)
+	options.Images = [4]*ebiten.Image{source}
+	options.Uniforms = p.options.Uniforms
+	dst.DrawRectShader(source.Bounds().Dx(), source.Bounds().Dy(), p.shader, &options)
 	return nil
 }
 
@@ -111,6 +123,6 @@ func Fragment(position vec4, source vec2, color vec4) vec4 {
 	index := int(clamp(floor(dot(c, Channel)*Encoding.x+Encoding.y+0.5), 0, Encoding.z))
 	result := Palette[index]
 	if Encoding.w > 0 { result *= c.a }
-	return result
+	return result * color
 }
 `
