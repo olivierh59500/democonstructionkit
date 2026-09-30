@@ -1,8 +1,8 @@
 # democonstructionkit
 
-**1.0.6 — Developer Edition**
+**1.0.7 — Developer Edition**
 
-Demo Construction Kit 1.0.6 is the Go/Ebitengine library for developers creating
+Demo Construction Kit 1.0.7 is the Go/Ebitengine library for developers creating
 demos and intros through code. Programming knowledge is required: this edition
 provides configurable effects, Go APIs, runnable examples, command-line tools
 and saved JSON compositions.
@@ -10,10 +10,10 @@ and saved JSON compositions.
 Install the versioned module in a Go project:
 
 ```sh
-go get github.com/olivierh59500/democonstructionkit@v1.0.6
+go get github.com/olivierh59500/democonstructionkit@v1.0.7
 ```
 
-[Release 1.0.6](https://github.com/olivierh59500/democonstructionkit/releases/tag/v1.0.6)
+[Release 1.0.7](https://github.com/olivierh59500/democonstructionkit/releases/tag/v1.0.7)
  · [Changelog](CHANGELOG.md) · [Effect templates](EFFECT_TEMPLATES.md)
  · [Version 2.0.0 roadmap](ROADMAP.md)
 
@@ -63,6 +63,11 @@ independent clocks, envelopes, signed phase reduction and optional pixel
 rounding. OldSkool retains 750 matching complete filled/wireframe samples and
 all original band/sprite poses through 9,001 ticks. Run
 `go run ./examples/harmoniclayers` to superpose both components.
+Version 1.0.7 adds independently styled mesh, warped-grid and sprite-box
+outlines. Filled and outlined materials reuse the same points, mapping and
+clocks; OldSkool retains all 750 sampled frames and removes its local cube,
+logo-grid and sprite-border loops. `go run ./examples/outlinelayers` compares
+one combined composition through both materials.
 [Complete components](#build-a-demo-from-complete-components) include the animated
 DMA cube controller and renderer, font construction, perspective text crawl and
 independent background bands; their consumers provide assets and configuration.

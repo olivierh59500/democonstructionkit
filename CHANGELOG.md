@@ -1,5 +1,31 @@
 # Changelog
 
+## 1.0.7 — Developer Edition — 2026-09-30
+
+- Added `MeshEffect.SetOutline/DrawOutline`, with supplied polygon boundaries,
+  width, color, blend, back-face culling and near-segment clipping. It reuses the
+  transformed/deformed mesh points and projects each referenced point once.
+  `CubeFaces` provides undivided quad boundaries without triangle diagonals.
+- Added independently styled `Warp.SetOutline/DrawOutline` over its existing
+  grid, map, depth order and frame time. Filled tint/blend remain independent.
+- Added `FieldStyle.Outline` and `HarmonicField.DrawStyle` for batched sprite-box
+  skins, retaining image metrics, anchors, rotation, mirrors and depth scaling.
+  Translucent corner coverage avoids overlapping strips; aligned boxes skip
+  rotation arithmetic. No new working image is added in OldSkool.
+- Removed OldSkool's local cube projection, logo-grid and sprite-border loops.
+  All 750 complete-frame samples match across 18,002 drawn updates in filled
+  and wireframe modes. A longer filled replay retains 730 matching samples
+  across 20,001 drawn updates per implementation.
+- Added `examples/outlinelayers`, PNG capture, independent clipping/coverage
+  checks, borrowed-resource lifetime checks and optional native CPU profiling.
+
+Complete DCK and OldSkool tests, build and vet pass. Paired desktop diagnostics
+show variation with display/system state rather than a stable performance
+gain. A profiled extended replay measured mean update/draw submission of
+31.45/419.15 to 25.98/366.44 microseconds; these timings exclude GPU completion
+and readback. The initial slow run and controlled comparisons are retained in
+the integration evidence rather than omitted from the measurements.
+
 ## 1.0.6 — Developer Edition — 2026-09-30
 
 - Added `composite.HarmonicBands`: independently sampled strip edges, per-strip

@@ -23,7 +23,8 @@ and OldSkool DirectX 8 Go. They initially used DCK 1.0.0; Spaceballs now uses
 the binary-plane palette component added in 1.0.1, and Mental Hangover uses the
 quantized-color component added in 1.0.2. OldSkool uses owned flat/cuboid
 cell modes added in 1.0.3. Shared retained contours arrived in 1.0.4 and binary
-material offsets in 1.0.5. Sampled harmonic bands/fields arrived in 1.0.6.
+material offsets in 1.0.5. Sampled harmonic bands/fields arrived in 1.0.6 and
+independent mesh/warp/sprite outline materials in 1.0.7.
 The following classification
 distinguishes completed integration from remaining extraction candidates.
 
@@ -31,7 +32,7 @@ distinguishes completed integration from remaining extraction candidates.
 | --- | --- | --- | --- |
 | Mental Hangover | `scrolling.New`, bitmap metrics, bounded `render.Batch.Fan` for all author/BOB/solid/patterned/outline-font contours, `RasterOverlay`, `CueClock`, cue ranges and `QuantizedColor`. | Polar transport/projection, row-palette floor sampling and original fixed-point geometry programs remain candidates for complete components. | Decoded 68000 tables, integer projection, level divisors, palette order and cue timing remain production data. Immediate contours use shared fan geometry without an additional working surface. |
 | Spaceballs | `kit.Effect`, `timeline.Sequence`, `ContourBank` for six-mask/paired-mask/pattern-mask storage, shared fan/stroke/parity edges and `BitplanePalette` for retained planes, opening, Duet exit and offset materials. | Palette-grid and indexed-page components remain candidates; Pattern, Wave and Finale now share the DCK palette material with independent sampling offsets. | Decompressed point banks, source coordinate maps, 25 Hz pose interrupts, working/display indices, bitplane offsets and cue order remain production data. |
-| OldSkool DirectX 8 Go | `font.CellBank`, owned `scrolling.Mode.Cells`, `effects.Warp`, `effects.Mesh`, `composite.HarmonicBands`, `sprites.HarmonicField` and DCK audio. | Cube wireframe and the YM-to-meter adapter remain extraction candidates; logo row oscillators can become a named preset. | The executable's font bit order, oscillator constants, cube face mapping, clipping margins and meter mapping remain authored parameters. Cell masks and harmonic poses are cached; shared components own their geometry and materials. |
+| OldSkool DirectX 8 Go | `font.CellBank`, owned `scrolling.Mode.Cells`, `effects.Warp`, `effects.Mesh`, harmonic bands/fields, shared mesh/warp/box outline skins and DCK audio. | The YM-to-meter adapter remains an extraction candidate; logo row oscillators can become a named preset. | The executable's font bit order, oscillator constants, cube face mapping, clipping margins and meter mapping remain authored parameters. Cell masks and harmonic poses are cached; shared components own their geometry and materials. |
 
 ### Screen-level extraction boundaries
 
@@ -56,10 +57,10 @@ distinguishes completed integration from remaining extraction candidates.
 
 | OldSkool DirectX 8 Go phase | Shared path now | Next reusable boundary |
 | --- | --- | --- |
-| Cube, present from the start | `effects.Mesh` owns the camera mesh and filled faces. | Source face order and realtime interpolation remain parameters; a shared wireframe material could remove the local edge loop. |
+| Cube, present from the start | `effects.Mesh` owns filled and polygon-outline materials, sharing transformed points, camera, culling and near clipping. | Source face colors, outline width, quad order and realtime interpolation remain parameters; the local projection/edge loop has been removed. |
 | Colored bands, from 4 s | Complete `composite.HarmonicBands` with independent left/right waves, owned cached poses, filled/outlined materials and `render.Batch.StrokePath`. | Native four-oscillator values, 85-unit clock, thickness, palette, rounding and integer clamps remain parameters. |
-| Ball field, from 12 s | Complete `sprites.HarmonicField`, with shared indexed waves, absolute clock, cached rounded samples and batched borrowed sprites. | Native constants, count, image, anchor and cue start remain authored configuration; the local pose loop has been removed. |
-| Deformed logo, from 18 s | `effects.Warp` owns its source surface and ten-row mapping. | The map is already a parameter; expose a named multi-oscillator row preset rather than a new renderer. |
+| Ball field, from 12 s | Complete `sprites.HarmonicField`, with shared indexed waves, absolute clock, cached rounded samples, batched sprites and an optional box-outline skin. | Native constants, count, image, anchor and cue start remain authored configuration; local pose and border loops have been removed. |
+| Deformed logo, from 18 s | `effects.Warp` owns its source surface, ten-row mapping and independently styled grid outline. | The map is already a parameter; expose a named multi-oscillator row preset rather than a new renderer. The local wire-grid loop has been removed. |
 | Small 3D and large raster scrolls, from 26/36 s | One `scrolling.New` transport per font with owned `Mode.Cells`; cached native font masks, row paths, cuboid face generation, culling and filled/outline materials. | Source binary readers, row oscillator values, insertion edges and face colors remain authored configuration. The local cell geometry loops have been removed. |
 | YM-driven frequency columns | DCK opens and replays the music; the production converts AY register periods to its authored columns. | A register-to-signal adapter could feed `modulation` without embedding this demo's 80-column strength and decay curve. |
 
@@ -178,10 +179,31 @@ segments and APK placement passed 16 KiB alignment. This runtime check does
 not establish new Android wireframe/visual-reference or memory evidence.
 [Version-specific OldSkool device measurements](fidelity/pixel-oldskool-harmonics-20260930.json)
 
+The outline integration preserves all 750 OldSkool complete-frame samples in
+filled and wireframe modes through 18,002 rendered updates. Mesh outlines reuse
+transformed/deformed points and compile the referenced point set once; their
+segments use the same near-clip helper as the existing wireframe effect. Warp
+outlines reuse grid/map/time without drawing their source. Sprite boxes retain
+metrics, anchor, scale, rotation, mirrors and premultiplied color, with a fast
+aligned path. No working image or white material is added to the production.
+
+The independent GPU tests cover polygon culling, near-edge clipping, absence
+of diagonals, source/pose lifetime, filled/outline blend isolation, rotated and
+mirrored atlas-frame boxes, depth scale and non-overlapping translucent corners.
+Two paired desktop comparisons showed timing variation: filled mean draw
+submission ranged 291.16–370.48 microseconds before and 361.14–363.27 after;
+wireframe ranges were 436.63–496.37 and 447.16–457.46. The initial 1,083.09-us
+filled run with Cocoa content-scale warnings was not reproduced. A profiled
+20,001-update replay retained 730 exact samples and measured mean update/draw
+submission of 31.45/419.15 to 25.98/366.44 microseconds. These diagnostics exclude
+GPU completion/readback and do not claim a device performance gain. Revisions,
+hashes, the outlier and measurement limits are retained in
+[the outline integration evidence](fidelity/oldskool-outlines-20260930.json).
+
 Spaceballs' palette grids and indexed-page fades remain candidates.
 Mental Hangover's fixed-point projection/transport and floor
-sampling remain separate extraction families. OldSkool's band, ball-field and
-cube-outline path is the next rendering candidate.
+sampling remain separate extraction families. OldSkool's YM signal adapter and
+named row-motion presets are the next candidates.
 
 ## Cross-catalog check: wrapped motion and image trains
 

@@ -88,6 +88,77 @@ Finale use this path with their original fetch offsets, fine-scroll delay,
 RGB12 palette and display crop. All 690 sampled frames through all fourteen
 effect units retain their preceding full-image hashes.
 
+## Outline materials for the same moving scene
+
+Meshes, warped images and sprite fields can switch rendering materials while
+keeping the same animation and cached positions. This supports an entire
+wireframe scene, a temporary contour cue or an outline above a filled object.
+The outline path does not reset a transport or evaluate a second animation.
+
+```go
+mesh, err := effects.NewMesh(
+    effects.Cube(60, geometry.Vec2{X: 1, Y: 1}, color.NRGBA{R: 255, A: 255}),
+    nil, geometry.Camera{Center: geometry.Vec2{X: 320, Y: 240}, Focal: 400, Near: 1},
+)
+if err != nil { return err }
+defer mesh.Close()
+mesh.Transform = effects.Transform{Position: geometry.Vec3{Z: 200}, Scale: 1}
+mesh.CullBackFaces = true
+if err := mesh.SetOutline(effects.MeshOutlineConfig{
+    Faces: effects.CubeFaces(), Width: 1.2,
+    Color: color.NRGBA{R: 255, G: 180, B: 240, A: 255},
+}); err != nil { return err }
+
+if err := mesh.Update(frame); err != nil { return err }
+mesh.Draw(screen)
+mesh.DrawOutline(screen) // Both use the same transformed and deformed points.
+```
+
+`Faces` describes polygon boundaries, preserving their order. Omitting it uses
+the mesh triangles; `CubeFaces` keeps cube quads free of triangulation diagonals.
+Back-face culling uses the mesh's existing setting. Segments crossing the near
+plane are clipped; wholly hidden edges do not connect to an artificial origin.
+The referenced point set is compiled once and each point is projected once per
+outline draw. The outline has its own color, width and blend. A solid mesh
+reuses its white pixel; a textured mesh can borrow one through `White`, or owns
+a fallback pixel when none is supplied. No full-stage working image is added.
+
+```go
+if err := warp.SetOutline(effects.WarpOutlineConfig{
+    Width: 1.2, White: sharedWhite,
+    Color: color.NRGBA{R: 230, G: 140, B: 250, A: 255},
+}); err != nil { return err }
+if err := warp.Update(frame); err != nil { return err }
+warp.DrawOutline(screen)
+```
+
+Warp outlines use the configured grid, `Map`, depth order and current time.
+They draw cell borders without drawing the source image. Filled `Tint` and
+`Blend` remain independent from the outline material. Borrowed white images
+must be one pixel with origin `(0,0)` and survive until the component closes.
+
+```go
+style := field.Style
+style.Outline = &sprites.FieldOutline{Width: 1, Color: color.White}
+field.DrawStyle(screen, style)
+```
+
+`FieldStyle.Outline` is an inset box skin for any `FieldRenderer`, including
+projected particles. Image/frame dimensions, anchors, scale, rotation and
+depth modulation still define the box. The image's pixels are not sampled;
+the existing fallback white pixel draws its border. Width is in destination
+units before rotation. Bounds at or below twice that width are hidden. Corners
+are emitted without overlapping border strips, so translucent colors do not
+double their opacity. This skin takes precedence over vector/image choices.
+`HarmonicField.DrawStyle` draws cached samples with another style and leaves
+the default `Style` intact.
+
+Run `go run ./examples/outlinelayers` to compare one combined moving logo,
+cube and sprite formation through filled and outlined materials side by side.
+`-capture /path/to/output -frame 200` saves a native PNG. OldSkool uses these
+three paths and retains all 750 complete filled/wireframe frame samples through
+two 9,001-frame replays, without a new working image or animation clock.
+
 ## Harmonic bands and sprite formations
 
 `composite.HarmonicBands` treats the two coordinates of a harmonic formation as
