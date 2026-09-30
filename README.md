@@ -1,8 +1,8 @@
 # democonstructionkit
 
-**1.0.10 — Developer Edition**
+**1.0.11 — Developer Edition**
 
-Demo Construction Kit 1.0.10 is the Go/Ebitengine library for developers creating
+Demo Construction Kit 1.0.11 is the Go/Ebitengine library for developers creating
 demos and intros through code. Programming knowledge is required: this edition
 provides configurable effects, Go APIs, runnable examples, command-line tools
 and saved JSON compositions.
@@ -10,10 +10,10 @@ and saved JSON compositions.
 Install the versioned module in a Go project:
 
 ```sh
-go get github.com/olivierh59500/democonstructionkit@v1.0.10
+go get github.com/olivierh59500/democonstructionkit@v1.0.11
 ```
 
-[Release 1.0.10](https://github.com/olivierh59500/democonstructionkit/releases/tag/v1.0.10)
+[Release 1.0.11](https://github.com/olivierh59500/democonstructionkit/releases/tag/v1.0.11)
  · [Changelog](CHANGELOG.md) · [Effect templates](EFFECT_TEMPLATES.md)
  · [Version 2.0.0 roadmap](ROADMAP.md)
 
@@ -84,6 +84,14 @@ byte-window controls and integer-preserving polar/perspective mappings. Mental
 Hangover's circular and perspective text retain all 699 complete-frame samples.
 `go run ./examples/contourscroll` combines mixed fonts, sine/zoom, a polar text
 ring and a perspective text plane through the same scrolling constructor.
+Version 1.0.11 adds sparse indexed point planes with OR/XOR collisions,
+word-preserving projections and steering, an ordered sprite depth queue,
+configurable YM peak meters and gradient bars, retained indexed-image slots
+and cached harmonic row recipes. Mental Hangover, Spaceballs and OldSkool use
+those components while preserving their complete-frame samples and native
+controller fixtures. Spaceballs' tile textures require half the previous RGBA
+storage. `go run ./examples/sharedlayers` composes indexed backgrounds, two
+projected point skins and signal-driven bars without external assets.
 [Complete components](#build-a-demo-from-complete-components) include the animated
 DMA cube controller and renderer, font construction, perspective text crawl and
 independent background bands; their consumers provide assets and configuration.

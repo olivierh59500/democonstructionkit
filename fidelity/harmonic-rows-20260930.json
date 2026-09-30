@@ -1,0 +1,25 @@
+{
+  "baseline_source_commit": "b9506aec1d7d0cbda4ce7fe26af20b5842e3df10",
+  "original_baseline_dck": "v1.0.7",
+  "modes": [
+    {
+      "mode": "filled",
+      "drawn_frames_per_run": 9001,
+      "sampled_identical_frames": 375
+    },
+    {
+      "mode": "wire",
+      "drawn_frames_per_run": 9001,
+      "sampled_identical_frames": 375
+    }
+  ],
+  "native_pose_ticks": 9001,
+  "logo_vertices_per_tick": 40,
+  "large_rows_per_tick": 30,
+  "small_rows_per_tick": 8,
+  "cached_points": {
+    "logo": 24,
+    "large": 30,
+    "small": 17
+  }
+}

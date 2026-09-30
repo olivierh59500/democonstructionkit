@@ -28,14 +28,15 @@ independent mesh/warp/sprite outline materials in 1.0.7.
 Spatial palette grids/row materials arrived in 1.0.8.
 Indexed image layers and packed-color fades arrived in 1.0.9.
 Owned contour-font scrolling, byte windows and integer mappings arrived in 1.0.10.
+Sparse point/depth fields, YM peak meters, indexed slots and row recipes arrived in 1.0.11.
 The following classification
 distinguishes completed integration from remaining extraction candidates.
 
 | Production | Reuse already in place | Further shared component or template | Source-specific boundary |
 | --- | --- | --- | --- |
-| Mental Hangover | `scrolling.New`, bitmap/contour fonts, owned contour mode and glyph windows, shared byte transport and integer mappings, `render.Batch.Fan`, `RasterOverlay`, cue clocks, `QuantizedColor` and finale `PaletteGrid`. | Sparse point planes, contact depth queues and original fixed-point 3D geometry programs remain candidates for complete components. | Decoded 68000 tables, projection coefficients, level divisors, palette order and scene timing remain production data. Immediate contours use shared geometry without an additional image surface. |
-| Spaceballs | `kit.Effect`, `timeline.Sequence`, `ContourBank`, shared fan/stroke/parity edges, `BitplanePalette`, spatial `PaletteGrid` and owned `IndexedImage` page layers. | Timed tile/illustration selection remains a candidate; indexed, patterned and spatial materials now use DCK. | Decompressed point banks, source coordinate maps, 25 Hz pose interrupts, working/display indices, palette words/layouts and cue order remain production data. |
-| OldSkool DirectX 8 Go | `font.CellBank`, owned `scrolling.Mode.Cells`, `effects.Warp`, `effects.Mesh`, harmonic bands/fields, shared mesh/warp/box outline skins and DCK audio. | The YM-to-meter adapter remains an extraction candidate; logo row oscillators can become a named preset. | The executable's font bit order, oscillator constants, cube face mapping, clipping margins and meter mapping remain authored parameters. Cell masks and harmonic poses are cached; shared components own their geometry and materials. |
+| Mental Hangover | Shared scrolling/font modes, byte transport, integer maps, sparse OR/XOR point planes, word steering and contact depth queues, contour batches, cue clocks, quantized colors and row palettes. | Original fixed-point 3D model/projector/material programs remain candidates for a complete component. | Decoded 68000 tables, projection coefficients, level divisors, palette order and scene timing remain authored data. |
+| Spaceballs | Timelines, contour banks, shared geometry, bitplane/spatial palettes, owned indexed pages and retained indexed image slots for Tiles/Vote. | Native cue programs select the shared banks; working/display pointer choreography remains production-specific. | Decompressed point banks, source coordinate maps, 25 Hz pose interrupts, working/display indices, palette words/layouts and cue order remain data. |
+| OldSkool DirectX 8 Go | Cell fonts/scrolling, mesh/warp materials, harmonic bands/fields, cached row profiles, YM peak meters and gradient bars. | Remaining local setup supplies assets, authored cues and editable presets; no separate meter/row renderer remains. | Native bit order, oscillator constants, face mapping, margins, volume curve and meter mapping remain parameters. |
 
 ### Screen-level extraction boundaries
 
@@ -47,15 +48,15 @@ distinguishes completed integration from remaining extraction candidates.
 | Noise, Angular, Sliced and Duet | DCK retained bank, six-plane palette lookup and shared parity edges; Duet exit also uses the one-plane palette backend. | Source dither bit, endpoint exchange, coordinate maps and white-exit cue values remain authored configuration. |
 | Ribbons | DCK's four-slot/two-layer `ContourBank` and four-plane `BitplanePalette`. | Paired draw/clear timing and mirror coordinates remain source parameters. |
 | Blocks and Outline | DCK `PaletteGrid` owns body/shadow color lookup, spatial cell mapping and the small palette image. | Native 24-pixel columns, first/later row spans, skipped row, colors, mask indices and update clocks remain configuration/data; no local material shader remains. |
-| Tiles and Vote | Predecoded tile/palette images are selected by source clocks. | Existing image-bank and timed-layer components can express the display path; extraction should wait until tile selection, not just drawing, is configurable. |
+| Tiles and Vote | `IndexedImageBank` owns three retained slots over 21 indexed images and two palettes, with direct lookup drawing. | Original cue/working/display groups remain authored data. Texture storage is halved; no converted images or extra passes remain. |
 
 | Mental Hangover unit | Shared path now | Next reusable boundary |
 | --- | --- | --- |
 | Eagle, title, cards and sign raster | DCK text pages, cue ranges, `RasterOverlay`, retained image layers and `QuantizedColor` for the six source copper modes. | Source artwork, operation order, thresholds and ratios remain authored parameters; no local color shader remains. |
 | Author vectors, filled BOBs, filled solids and eight patterned objects | DCK's common fan submission, scrolling transport and original word-sized projections, preserving UVs, palette atlases and repeat materials. | Fixed-point projector and cue-program abstractions remain candidates; original point and cue tables stay authored data. |
-| Star greeting pages | Cached DCK text pages and one batched point field. | A sparse integer point-plane effect can share perspective points, with configured XOR/OR collisions, wrapped coordinates, reciprocal projection and depth masks. Text and star palettes keep separate cue levels. |
+| Star greeting pages and perspective points | `IndexedPointPlane`, `WrappedPointProjection` and `WordEulerVelocity` own preparation/projection, sparse clearing, XOR/OR collisions and palette batching. | Original masks, depth thresholds, offsets, velocity tables, page/text levels and cue order remain parameters/data. |
 | Circular and perspective text | DCK owns `font.ContourBank`, `Mode.Contours`, `GlyphWindow`, `ByteWindow`, `TablePolar` and `RationalGrid`; both local polygon painters and dummy-glyph setup are removed. | Original font coordinates, waves, coefficients, byte commands, curve-profile controls, crop, layered shading and phase fades remain authored data/composition. No local glyph-rendering or cursor-lookahead loop remains. |
-| Contact spheres | Existing projected batches with a local circular depth queue, reciprocal projection and atlas-frame selection. | A depth-queue sprite effect should own bounded poses and rendering, with configurable spacing, wrap comparison, integer projection and frame selection. Native velocity tables and phase cues remain authored data. |
+| Contact spheres | `DepthQueue`, word steering/projection and `FieldRenderer` own the ordered population and variable-height atlas drawing. | Native point art, 16 size frames, visibility rules, upper-bound comparison policy and phase fades remain configuration/data. |
 | Checkerboard finale | DCK `PaletteGrid` in continuous one-column row mode, projected balls and logo material. | Original binary column image, per-row RGB12 colors and floor/ball controllers remain data; no local row-color shader remains. Ball motion is already expressible through the projected-sprite family. |
 
 | OldSkool DirectX 8 Go phase | Shared path now | Next reusable boundary |
@@ -63,9 +64,9 @@ distinguishes completed integration from remaining extraction candidates.
 | Cube, present from the start | `effects.Mesh` owns filled and polygon-outline materials, sharing transformed points, camera, culling and near clipping. | Source face colors, outline width, quad order and realtime interpolation remain parameters; the local projection/edge loop has been removed. |
 | Colored bands, from 4 s | Complete `composite.HarmonicBands` with independent left/right waves, owned cached poses, filled/outlined materials and `render.Batch.StrokePath`. | Native four-oscillator values, 85-unit clock, thickness, palette, rounding and integer clamps remain parameters. |
 | Ball field, from 12 s | Complete `sprites.HarmonicField`, with shared indexed waves, absolute clock, cached rounded samples, batched sprites and an optional box-outline skin. | Native constants, count, image, anchor and cue start remain authored configuration; local pose and border loops have been removed. |
-| Deformed logo, from 18 s | `effects.Warp` owns its source surface, ten-row mapping and independently styled grid outline. | The map is already a parameter; expose a named multi-oscillator row preset rather than a new renderer. The local wire-grid loop has been removed. |
+| Deformed logo, from 18 s | `effects.Warp` and `HarmonicRowProfile` own the grid, independently styled outline and cached ordered row motion. | Native oscillator values, arithmetic grouping, precision options and row selection remain configuration; no local per-vertex trigonometry remains. |
 | Small 3D and large raster scrolls, from 26/36 s | One `scrolling.New` transport per font with owned `Mode.Cells`; cached native font masks, row paths, cuboid face generation, culling and filled/outline materials. | Source binary readers, row oscillator values, insertion edges and face colors remain authored configuration. The local cell geometry loops have been removed. |
-| YM-driven frequency columns | DCK opens and replays the music; the production converts AY register periods to its authored columns. | A register-to-signal adapter could feed `modulation` without embedding this demo's 80-column strength and decay curve. |
+| YM-driven frequency columns | `YMPeriodMeter`, `PeakBank` and `GradientBars` own register mapping, retained levels and filled/outline drawing. | Native volume curve, column scale, gating, envelope shift, decay and colors remain configuration. |
 
 The first new primitive is `composite.BitplanePalette`: 1–4 mask planes take one
 GPU pass; 5–6 take a bounded RGBA packing pass and a palette pass. It accepts
@@ -256,9 +257,9 @@ was 66.6 MiB, excluding native/GPU memory. This is runtime evidence rather
 than a new Android visual-reference comparison.
 [Indexed-page Pixel evidence](fidelity/pixel-indexed-pages-20260930.json)
 
-Spaceballs' timed tile/image selection and Mental Hangover's fixed-point
-3D projection and sparse point/depth-queue fields remain separate extraction families. OldSkool's YM signal adapter and
-named row-motion presets are the next candidates.
+The remaining native extraction family is Mental Hangover's fixed-word 3D
+model/matrix/projection/material pipeline. Sparse point planes, contact queues,
+YM signals, row recipes and indexed tile slots now use complete shared components.
 
 Mental Hangover's contour-font integration retains all 699 complete-frame samples
 over 24,001 drawn updates, including 42 circular and 27 perspective samples.
@@ -288,7 +289,28 @@ The native catalog was searched for polygon font renderers separately from
 ordinary shape contours. Only these two Mental Hangover scenes use that font
 family. Other DCK text users retain atlas/plane/cell modes; Spaceballs' authored
 shape banks already use the shared contour and fan components. Contact queues
-and sparse XOR/OR point planes are the next Mental Hangover families.
+and sparse XOR/OR point planes were completed in 1.0.11.
+
+The subsequent point/queue extraction retains the same 699 complete-frame
+samples. Sparse membership is tracked independently of final masks, so XOR
+cancellation cannot cause duplicate translucent draws. Original point and
+1,194-tick contact fixtures still pass. Projection and matrix precision are
+configured; their authored point banks and thresholds remain source data.
+[Point and queue evidence](fidelity/point-planes-20260930.json)
+
+Spaceballs retains all 1,218 full-director and 690 effect-unit samples after
+Tiles/Vote move to 21 indexed textures with two palettes. An independent CPU
+oracle additionally verifies every pixel over all 293 controller ticks. One
+direct lookup draw per visible slot preserves three calls without a conversion
+surface, while texture payload per instance drops from 1,731,072 to 865,536 bytes.
+[Indexed image bank evidence](fidelity/indexed-bank-20260930.json)
+
+OldSkool's YM adapter and gradient renderer retain all 750 filled/wireframe
+samples. The shared meter validates 4,096 snapshots against an independent
+native equation; variable peak charges precede same-tick decay. Native mixer
+gating and envelope mapping remain explicit configuration rather than silently
+changing the source's low-volume behavior.
+[YM meter evidence](fidelity/ym-meter-20260930.json)
 
 ## Cross-catalog check: wrapped motion and image trains
 
@@ -1007,3 +1029,12 @@ For any migration, compare deterministic complete-frame captures before and
 after at startup, state changes, text/texture wrap and late playback. Keep the
 original packages intact. Use bounded reusable GPU surfaces and geometry arrays;
 none of these effects should allocate a message-width texture during Draw.
+
+
+The latest cached-row integration preserves every OldSkool small-font row,
+large-font row and logo vertex through 9,001 ticks with strict equality. Ordered
+stages retain source grouping; optional product rounding and fused phase
+selection retain its compiled arithmetic while keeping library defaults intact.
+The logo reduces 160 sine evaluations per filled draw to 24 per distinct time,
+without a new GPU target. The full 750 filled/wireframe samples still match.
+[Row-profile evidence](fidelity/harmonic-rows-20260930.json)

@@ -1,0 +1,38 @@
+{
+  "baseline_revision": "01dfd5a",
+  "baseline_dck": "v1.0.9",
+  "candidate": "local indexed image bank integration",
+  "comparisons": [
+    {
+      "mode": "director",
+      "drawn_frames": 12414,
+      "matched_samples": 1218,
+      "matched_tiles_vote_samples": 58
+    },
+    {
+      "mode": "units",
+      "drawn_frames": 11209,
+      "matched_samples": 690,
+      "matched_tiles_vote_samples": 42
+    }
+  ],
+  "cpu_pixel_oracle": {
+    "matched_frames": 293,
+    "tiles_ticks": 143,
+    "vote_ticks": 150,
+    "original_material_combinations_decoded": 84
+  },
+  "texture_payload_per_instance": {
+    "width": 224,
+    "height": 46,
+    "previous_images": 42,
+    "current_indexed_images": 21,
+    "palettes": 2,
+    "entries_per_palette": 8,
+    "previous_rgba_bytes": 1731072,
+    "current_rgba_bytes": 865536,
+    "conversion_surfaces": 0,
+    "visible_slots": 3
+  },
+  "candidate_dck": "1.0.11"
+}

@@ -1,5 +1,36 @@
 # Changelog
 
+## 1.0.11 — Developer Edition — 2026-09-30
+
+- Added `sprites.IndexedPointPlane`: bounded sparse masks, OR/XOR collisions,
+  independent touched-pixel membership, live palettes and cached batch drawing.
+  XOR cancellation/reappearance cannot duplicate a translucent pixel. Sampling
+  clears only touched pixels and allocates no per-frame storage.
+- Added `motion.WrappedPointProjection` and `WordEulerVelocity`, with explicit
+  word/long wrapping, signed shifts, reciprocal projection and table policies.
+- Added `sprites.DepthQueue`: copied point rings, cached frame selection/poses,
+  configurable boundary policies and the existing `FieldRenderer`. Large depth
+  changes normalize with bounded arithmetic; native equality phases remain exact.
+- Added `modulation.PeakBank`, `sound.YMPeriodMeter` and `composite.GradientBars`.
+  YM snapshots drive configurable column peaks, mixer/envelope rules and decay;
+  filled/outline drawing reuses the same levels and material.
+- Added `effects.IndexedImageBank` and `IndexedPalette.DrawWith`, separating
+  borrowed artwork, named palettes and retained crop/placement/tint slots.
+  Visible slots take one direct lookup draw each with no conversion surface.
+- Added `motion.HarmonicRowProfile` for cached ordered row stages, reusing
+  existing harmonic formations and preserving floating-point grouping.
+- Mental Hangover shares point preparation, steering and contact queues;
+  Spaceballs shares Tiles/Vote image selection; OldSkool shares meter drawing
+  and row motion. All native CPU fixtures and sampled complete frames remain
+  unchanged. Tiles/Vote also retain every pixel of all 293 controller ticks.
+- Added `examples/sharedlayers` and extended English component recipes.
+
+Spaceballs retains 1,218 director and 690 unit samples; Mental Hangover retains
+699 complete samples; OldSkool retains 750 filled/wireframe samples. Tile texture
+payload per instance drops from 1,731,072 to 865,536 bytes. No stage-sized image
+or conversion pass is added by these migrations. Native parity, CPU submission
+diagnostics and device runtime evidence remain distinct checks.
+
 ## 1.0.10 — Developer Edition — 2026-09-30
 
 - Added `font.ContourBank`: copied vector glyphs, multiple contours and holes,

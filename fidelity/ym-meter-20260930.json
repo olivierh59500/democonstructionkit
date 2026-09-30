@@ -1,0 +1,17 @@
+{
+  "baseline_source_commit": "b9506aec1d7d0cbda4ce7fe26af20b5842e3df10",
+  "baseline_dck": "v1.0.7",
+  "modes": [
+    {
+      "mode": "filled",
+      "drawn_frames_per_run": 9001,
+      "sampled_identical_frames": 375
+    },
+    {
+      "mode": "wire",
+      "drawn_frames_per_run": 9001,
+      "sampled_identical_frames": 375
+    }
+  ],
+  "candidate_dck": "1.0.11"
+}

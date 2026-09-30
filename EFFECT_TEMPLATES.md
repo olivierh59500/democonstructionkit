@@ -569,3 +569,117 @@ prepared once. `-capture /path/to/output -frame 200 -frames 300` saves six secon
 of 50 Hz consecutive frames for a clip. Mental Hangover uses the same mode and
 byte/projection components for its circular and perspective text, retaining 699
 matching complete-frame samples and its original control/projection fixtures.
+
+## Sparse point planes and depth queues
+
+Sprite populations can choose individual skins through `FieldRenderer`, or
+combine coincident pixels through `sprites.IndexedPointPlane`. The latter owns
+its byte masks, touched-index list, independent membership bitset and draw batch.
+Choose `PointPlaneOR` or `PointPlaneXOR`; palette entries control the resulting
+mask colors. `DrawZero` explicitly selects whether touched cancellation pixels
+use palette entry zero. This distinction matters when that entry is opaque.
+
+```go
+plane, err := sprites.NewIndexedPointPlane(sprites.IndexedPointPlaneConfig{
+    Width: 320, Height: 200, Count: len(points),
+    Collision: sprites.PointPlaneXOR, Palette: colors,
+    Sample: func(index int) (sprites.PointPlaneSample, bool) {
+        p, visible := projection.Project(points[index], offset)
+        return sprites.PointPlaneSample{X: p.X, Y: p.Y, Mask: depthColor(p.Depth)}, visible
+    },
+})
+```
+
+`motion.WrappedPointProjection` supplies editable coordinate masks/biases,
+reciprocal numerator and depth bias, shift, center and bounds. It preserves
+signed word coordinates and long products; ordinary floating camera projections
+can instead be supplied by the callback. `WordEulerVelocity` offers a copied
+sine bank, angular period, quantization, output shifts and explicit normalized
+or guarded lookup policies. The same projected samples can drive pixels or
+sprites; scene cues and steering angles remain independent.
+
+Call `plane.Sample` once after advancing the motion state, or use its `Update`
+when the callback reads the current frame. `Draw` reuses prepared masks. Colors
+can change through `SetPalette` without resampling positions. Only previously
+touched pixels are cleared; no full-frame CPU clear, GPU upload or readback is
+required. A white pixel is borrowed or initialized lazily on first draw.
+
+`sprites.DepthQueue` owns an ordered point ring and cached visible samples.
+Configure count through its copied point bank, leading depth, spacing, bounds
+and crossing policies. `QueueUpperInclusiveFirst` includes equality on entry,
+then uses strict correction, retaining native transitions at the upper edge.
+Large jumps normalize with bounded arithmetic. An ordinary `geometry.Camera`
+or custom `Project` chooses placement, scale, visibility and atlas frames.
+`Style.Frames` supports differently sized frames; `DrawStyle` can reuse the same
+sampled population with another material. Drawing never advances the queue.
+
+## Peak signals and YM-driven visual effects
+
+`modulation.PeakBank` accepts several variable charges, retains their maxima,
+then applies configured decay. Duplicate columns combine before same-tick
+release. This works for music, user input or arbitrary scene signals.
+`sound.YMPeriodMeter` maps `Stream.YMRegisters()` snapshots through editable
+volume curves, period ranges, column scales, rounding, mixer gating and envelope
+rules. The adapter never decodes or advances music; playback remains DCK's job.
+
+```go
+registers, available := music.YMRegisters()
+if available {
+    if err := meter.Step(registers); err != nil { return err }
+}
+bars.Draw(screen) // Or bars.DrawOutline(screen).
+```
+
+`composite.GradientBars` owns its bounded batch and borrows a level callback.
+Configure baseline, spacing, width, vertex colors, texture/UVs and outline style.
+The same levels can drive sprite size, palette intensity or deformation instead
+of bars. When a seek replaces the meter, use a closure that reads the current
+meter rather than retaining a method bound to the earlier instance.
+
+## Indexed artwork banks with retained slots
+
+`effects.IndexedImageBank` separates borrowed index images from named palettes
+and copied display slots. A slot selects image/palette indices, crop, transform,
+tint, blend and visibility. `SetSlots` validates the complete window before
+replacing it; an optional `Select` fills reusable slots once per `Update`.
+`Draw` submits one direct palette lookup per visible slot, without an RGBA
+conversion surface or a precolored copy for every palette.
+
+```go
+bank, err := effects.NewIndexedImageBank(effects.IndexedImageBankConfig{
+    Images: indexedArt, Palettes: palettes, Slots: slots,
+    Channel: composite.BitplaneRed, Scale: 15, MaxSlots: 8,
+})
+```
+
+Palette entry counts remain equal across the bank. Crop coordinates start at the
+source's local origin, including atlased images. Slot options keep source images
+and uniforms reserved for the component. Palette updates change colors without
+reuploading artwork; selectors and drawing do not own the caller's scene clock.
+Spaceballs uses three slots over 21 images and two palettes for both short tile
+passages. Its original cues and working/display groups select the slots.
+
+`go run ./examples/sharedlayers` combines one indexed artwork bank, two projected
+point planes and gradient bars driven by synthetic YM snapshots. It needs no
+external image or music files. Its `-capture` and `-frames` options generate a
+native PNG or consecutive frames for a clip.
+
+
+## Cached row recipes with explicit precision
+
+`motion.HarmonicRowProfile` composes ordered stages of the existing harmonic
+formation engine. Each stage sums its own waves before adding them to a row;
+a fixed `Index` shares one global sample across every row. Configure row count,
+clock scales, origins, spacing and waves. `Apply` caches by time, so a logo
+grid and its outline can share the same row motion without repeated sine calls.
+
+`IndexedHarmonic.RoundProduct` rounds an amplitude product before accumulation.
+`FusedIndexPhase` explicitly uses a fused index/clock phase. Both default to
+false, preserving existing behavior; their native presets select the precision
+needed by the source expression. They are independent of font size or artwork.
+Several row stages preserve grouping between global waves, row spacing and
+local waves without inventing another oscillator engine.
+
+OldSkool uses these recipes for its logo, large flat letters and small cubelet
+letters. All row/vertex poses match strictly across 9,001 ticks, while its 750
+complete filled/wireframe samples remain identical.
