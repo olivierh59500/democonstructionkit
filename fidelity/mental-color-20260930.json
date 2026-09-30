@@ -56,7 +56,7 @@
   },
   "pixel_oracle": {
     "colors": 4096,
-    "mode_level_combinations": 41,
+    "mode_level_combinations": 293,
     "test": "TestCopperShaderMatchesAllOriginalNibbles",
     "result": "passed"
   },

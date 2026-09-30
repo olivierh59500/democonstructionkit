@@ -85,7 +85,7 @@ grid and the source's alpha threshold of 0.5. Its operation table supplies
 replacement gray, a fade from white and scaling divisors 16, 32, 64 and 128.
 All 699 complete-frame fingerprints across 41 production units match the
 preceding renderer over 24,001 drawn ticks, with no extra image pass or surface.
-The independent source `PaletteWord` oracle checks all 4,096 colors at 41
+The independent source `PaletteWord` oracle checks all 4,096 colors at all 293
 mode/level combinations. DCK also verifies RGB565 and eight-bit grids, mixed
 targets, translucent colors, cropped sources and byte-exact passthrough.
 
