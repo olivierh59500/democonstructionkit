@@ -494,3 +494,78 @@ conversion plus output placement, with no update/draw pixel readback.
 RGB12/RGB565 fades and independent placement. `-capture /path/to/output -frame
 140` saves a deterministic PNG. Spaceballs uses the same API for seven native
 page kinds, retaining its original words, cue timing and high-resolution crop.
+
+## Contour fonts, polar text and integer perspective
+
+`font.ContourBank` caches vector glyphs independently of their renderer. Each
+character supplies an advance and any number of polygon contours; separate
+contours can describe holes or disconnected parts. `Closed:true` removes a
+repeated closing point. Banks copy source data once and expose borrowed immutable
+points during drawing. Empty glyphs retain their space advance.
+
+Use the same `scrolling.New` constructor and normal text controls. A vector
+`Face` pairs ordinary `font.Font` layout metrics with its contour bank, without
+requiring a bitmap atlas. `Mode.Contours` collects those banks when its `Fonts`
+are omitted. Different faces keep their own dimensions, advances, character
+maps, bearings and scales.
+
+```go
+scroll, err := scrolling.New(scrolling.Config{
+    Text: "VECTOR {font:large}FONTS {shape:wave}IN MOTION ",
+    Controls: scrolltext.Braces, Font: "small", Shape: "flat",
+    Fonts: map[string]scrolling.Face{
+        "small": {Metrics: smallMetrics, Contours: smallContours},
+        "large": {Metrics: largeMetrics, Contours: largeContours},
+    },
+    Speed: 120, X: 640, Y: 80, Repeat: true, Gap: 40,
+    Modes: map[string]scrolling.Mode{
+        "flat": {Contours: &scrolling.ContourPainterConfig{FillRule: ebiten.FillRuleEvenOdd}},
+        "wave": {Contours: &scrolling.ContourPainterConfig{FillRule: ebiten.FillRuleEvenOdd},
+            Map: scrolling.Sine(motion.Wave{
+                Amplitude: 18, Spatial: .03, Speed: 2,
+            }).Map},
+    },
+})
+```
+
+Use `FillRule:ebiten.FillRuleEvenOdd` for polygon holes. A complete glyph run
+stays in one bounded batch, so overlapping glyphs retain parity rather than
+blending separately. A rejected run is discarded atomically. `BatchTriangles`
+defaults to 20,000 and can be smaller for mobile scenes; the maximum is 20,000.
+The painter owns geometry storage and a white pixel when `Texture` is nil.
+An explicit texture is borrowed; `UV` can sample a row palette or material
+independently of the projected position. Colors also follow the glyph's normal
+`ColorScale`, including control/mode changes.
+
+`ContourPainterConfig.Map` receives the original font point, glyph sample and
+ordinary glyph `GeoM`, then returns final destination coordinates. Nil uses
+that `GeoM` directly. A custom map can apply it before or after another
+projection, follow any curve, or return false to omit a contour whose points
+cannot be projected. Invalid or float32-overflowing coordinates are omitted.
+Compose the complete result with the existing image passes for lens, reflection,
+warp or CRT effects; font rendering does not add an intermediate framebuffer.
+
+`motion.TablePolar` replaces per-point sine evaluation with a copied signed
+wave table. Configure axis phases, table width, arithmetic shift, center and
+optional signed word wrapping. `motion.RationalGrid` supplies independent affine
+X/Y numerators and a denominator, each with `{base,row,column}` coefficients.
+Its signed division truncates toward zero; zero denominators and overflow return
+false. These integer maps preserve classic tables and can be used for other
+images or geometry through ordinary callbacks. They do not allocate per point.
+
+For an existing authored slot transport, `GlyphWindow` supplies actual current
+runes, font names or images through a callback. DCK owns the fixed layout bank;
+drawing samples the window without advancing its clock. `scrolltext.ByteWindow`
+can own byte positions, positive/negative crossing rules, visible slot count,
+head commands, pauses and termination/repeat. Command lookahead skips opaque
+payloads without executing handlers. Its raw byte cursor can later visit a
+payload as a character; an initial command is not eagerly consumed. This is an
+explicit native transport choice; ordinary text should use the regular control
+parser. Repeating short messages retains bounded O(slot-count) work.
+
+`go run ./examples/contourscroll` combines mixed vector fonts with sine/zoom,
+a moving polar ring and a perspective text plane. All artwork is procedural and
+prepared once. `-capture /path/to/output -frame 200 -frames 300` saves six seconds
+of 50 Hz consecutive frames for a clip. Mental Hangover uses the same mode and
+byte/projection components for its circular and perspective text, retaining 699
+matching complete-frame samples and its original control/projection fixtures.

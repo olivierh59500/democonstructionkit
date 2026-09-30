@@ -1,5 +1,34 @@
 # Changelog
 
+## 1.0.10 — Developer Edition — 2026-09-30
+
+- Added `font.ContourBank`: copied vector glyphs, multiple contours and holes,
+  independent advances, Unicode lookup/fallback and normalized closing points.
+- Added owned `scrolling.Mode.Contours`, sharing normal text controls, mixed
+  fonts, layout metrics and transforms. `Face.Contours` needs no bitmap atlas.
+  A whole run retains one parity batch; invalid/budget-exceeding runs are not
+  partially submitted. Materials can borrow a raster with independent UV mapping.
+- Added `GlyphWindow`, sampling real authored characters/poses without dummy
+  glyph construction or clock advancement during drawing.
+- Added `scrolltext.ByteWindow`: configurable signed-byte crossing, slot count,
+  head commands, opaque payloads, pauses, finite completion and bounded repeat.
+  Raw byte cursors retain initial-control and payload-entry behavior.
+- Added `motion.TablePolar` and `RationalGrid`: configurable integer projections,
+  signed shifts/division, optional word wrapping and checked overflow. Inputs are
+  copied once; point sampling allocates no storage.
+- Mental Hangover now uses those components for its circular/perspective text.
+  All 699 sampled complete frames match across 24,001 drawn updates, including
+  69 samples in the migrated scenes. Original CPU clock/projection fixtures pass.
+- Added `examples/contourscroll`, PNG/consecutive-frame capture, independent GPU
+  pixel checks for holes, overlap parity, UVs, transforms, vector controls and
+  resource ownership, plus independent transport/projection tests.
+
+No new image surface, shader or intermediate image pass is introduced. Geometry
+buffers and cached font points are owned by DCK; the perspective scene retains
+its separate point/border batch. One muted native replay per implementation
+measured mean CPU draw submission of 29.34 to 30.03 microseconds. These diagnostics
+exclude GPU completion/readback and do not establish a stable performance gain.
+
 ## 1.0.9 — Developer Edition — 2026-09-30
 
 - Added `palette.PackedRGB`: configurable non-overlapping RGB word channels,

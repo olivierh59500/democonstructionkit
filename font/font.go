@@ -1,4 +1,4 @@
-// Package font describes bitmap fonts independently of the rendering backend.
+// Package font describes bitmap and contour fonts independently of rendering.
 package font
 
 import (

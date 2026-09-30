@@ -1,8 +1,8 @@
 # democonstructionkit
 
-**1.0.9 — Developer Edition**
+**1.0.10 — Developer Edition**
 
-Demo Construction Kit 1.0.9 is the Go/Ebitengine library for developers creating
+Demo Construction Kit 1.0.10 is the Go/Ebitengine library for developers creating
 demos and intros through code. Programming knowledge is required: this edition
 provides configurable effects, Go APIs, runnable examples, command-line tools
 and saved JSON compositions.
@@ -10,10 +10,10 @@ and saved JSON compositions.
 Install the versioned module in a Go project:
 
 ```sh
-go get github.com/olivierh59500/democonstructionkit@v1.0.9
+go get github.com/olivierh59500/democonstructionkit@v1.0.10
 ```
 
-[Release 1.0.9](https://github.com/olivierh59500/democonstructionkit/releases/tag/v1.0.9)
+[Release 1.0.10](https://github.com/olivierh59500/democonstructionkit/releases/tag/v1.0.10)
  · [Changelog](CHANGELOG.md) · [Effect templates](EFFECT_TEMPLATES.md)
  · [Version 2.0.0 roadmap](ROADMAP.md)
 
@@ -78,6 +78,12 @@ live palettes, configurable index encoding, output crops and image placement.
 Spaceballs' title, credit, dragon and closing pages retain 1,218 sampled complete
 director frames, including every entrance fade. `go run ./examples/indexedpages`
 combines independently positioned RGB12 and RGB565 palette layers.
+Version 1.0.10 adds cached contour fonts through `scrolling.Mode.Contours`,
+controlled vector text without bitmap atlases, authored glyph windows, reusable
+byte-window controls and integer-preserving polar/perspective mappings. Mental
+Hangover's circular and perspective text retain all 699 complete-frame samples.
+`go run ./examples/contourscroll` combines mixed fonts, sine/zoom, a polar text
+ring and a perspective text plane through the same scrolling constructor.
 [Complete components](#build-a-demo-from-complete-components) include the animated
 DMA cube controller and renderer, font construction, perspective text crawl and
 independent background bands; their consumers provide assets and configuration.

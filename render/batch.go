@@ -48,6 +48,13 @@ func (b *Batch) Flush() {
 	b.indices = b.indices[:0]
 }
 
+// Discard abandons pending geometry without touching the destination. This
+// keeps a rejected parity run atomic, including its holes and overlaps.
+func (b *Batch) Discard() {
+	b.vertices = b.vertices[:0]
+	b.indices = b.indices[:0]
+}
+
 // Vertex converts a straight-alpha color to Ebitengine's premultiplied format.
 func Vertex(x, y, u, v float64, c color.Color) ebiten.Vertex {
 	r, g, b, a := c.RGBA()

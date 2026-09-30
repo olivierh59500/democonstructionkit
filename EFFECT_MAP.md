@@ -27,12 +27,13 @@ material offsets in 1.0.5. Sampled harmonic bands/fields arrived in 1.0.6 and
 independent mesh/warp/sprite outline materials in 1.0.7.
 Spatial palette grids/row materials arrived in 1.0.8.
 Indexed image layers and packed-color fades arrived in 1.0.9.
+Owned contour-font scrolling, byte windows and integer mappings arrived in 1.0.10.
 The following classification
 distinguishes completed integration from remaining extraction candidates.
 
 | Production | Reuse already in place | Further shared component or template | Source-specific boundary |
 | --- | --- | --- | --- |
-| Mental Hangover | `scrolling.New`, bitmap metrics, bounded `render.Batch.Fan`, `RasterOverlay`, `CueClock`, cue ranges, `QuantizedColor` and `PaletteGrid` for the finale's row colors. | Polar transport/projection and original fixed-point geometry programs remain candidates for complete components. | Decoded 68000 tables, integer projection, level divisors, palette order and cue timing remain production data. Immediate contours use shared fan geometry without an additional working surface. |
+| Mental Hangover | `scrolling.New`, bitmap/contour fonts, owned contour mode and glyph windows, shared byte transport and integer mappings, `render.Batch.Fan`, `RasterOverlay`, cue clocks, `QuantizedColor` and finale `PaletteGrid`. | Sparse point planes, contact depth queues and original fixed-point 3D geometry programs remain candidates for complete components. | Decoded 68000 tables, projection coefficients, level divisors, palette order and scene timing remain production data. Immediate contours use shared geometry without an additional image surface. |
 | Spaceballs | `kit.Effect`, `timeline.Sequence`, `ContourBank`, shared fan/stroke/parity edges, `BitplanePalette`, spatial `PaletteGrid` and owned `IndexedImage` page layers. | Timed tile/illustration selection remains a candidate; indexed, patterned and spatial materials now use DCK. | Decompressed point banks, source coordinate maps, 25 Hz pose interrupts, working/display indices, palette words/layouts and cue order remain production data. |
 | OldSkool DirectX 8 Go | `font.CellBank`, owned `scrolling.Mode.Cells`, `effects.Warp`, `effects.Mesh`, harmonic bands/fields, shared mesh/warp/box outline skins and DCK audio. | The YM-to-meter adapter remains an extraction candidate; logo row oscillators can become a named preset. | The executable's font bit order, oscillator constants, cube face mapping, clipping margins and meter mapping remain authored parameters. Cell masks and harmonic poses are cached; shared components own their geometry and materials. |
 
@@ -53,7 +54,7 @@ distinguishes completed integration from remaining extraction candidates.
 | Eagle, title, cards and sign raster | DCK text pages, cue ranges, `RasterOverlay`, retained image layers and `QuantizedColor` for the six source copper modes. | Source artwork, operation order, thresholds and ratios remain authored parameters; no local color shader remains. |
 | Author vectors, filled BOBs, filled solids and eight patterned objects | DCK's common fan submission, scrolling transport and original word-sized projections, preserving UVs, palette atlases and repeat materials. | Fixed-point projector and cue-program abstractions remain candidates; original point and cue tables stay authored data. |
 | Star greeting pages | Cached DCK text pages and one batched point field. | A sparse integer point-plane effect can share perspective points, with configured XOR/OR collisions, wrapped coordinates, reciprocal projection and depth masks. Text and star palettes keep separate cue levels. |
-| Circular and perspective text | The shared scrolling facade feeds local contour painters; both create dummy glyph slots to drive their polygon callbacks. | A cached contour-font bank and owned scrolling contour mode should share lookup, projection and fan/parity submission. Polar-table and rational integer mappings, slot transport and pause controls must remain configurable. |
+| Circular and perspective text | DCK owns `font.ContourBank`, `Mode.Contours`, `GlyphWindow`, `ByteWindow`, `TablePolar` and `RationalGrid`; both local polygon painters and dummy-glyph setup are removed. | Original font coordinates, waves, coefficients, byte commands, curve-profile controls, crop, layered shading and phase fades remain authored data/composition. No local glyph-rendering or cursor-lookahead loop remains. |
 | Contact spheres | Existing projected batches with a local circular depth queue, reciprocal projection and atlas-frame selection. | A depth-queue sprite effect should own bounded poses and rendering, with configurable spacing, wrap comparison, integer projection and frame selection. Native velocity tables and phase cues remain authored data. |
 | Checkerboard finale | DCK `PaletteGrid` in continuous one-column row mode, projected balls and logo material. | Original binary column image, per-row RGB12 colors and floor/ball controllers remain data; no local row-color shader remains. Ball motion is already expressible through the projected-sprite family. |
 
@@ -256,8 +257,31 @@ than a new Android visual-reference comparison.
 [Indexed-page Pixel evidence](fidelity/pixel-indexed-pages-20260930.json)
 
 Spaceballs' timed tile/image selection and Mental Hangover's fixed-point
-projection/transport remain separate extraction families. OldSkool's YM signal adapter and
+3D projection and sparse point/depth-queue fields remain separate extraction families. OldSkool's YM signal adapter and
 named row-motion presets are the next candidates.
+
+Mental Hangover's contour-font integration retains all 699 complete-frame samples
+over 24,001 drawn updates, including 42 circular and 27 perspective samples.
+The original 3,274-update circle control/profile fixture and perspective clock,
+lookup and point-plane fixtures pass. Generic projection checks cover every
+256-by-127 polar sample and eleven-by-280 rational grid position independently.
+The byte-window tests preserve the initial command prefix and later raw cursor
+visits to a payload byte, without executing lookahead commands.
+
+`Mode.Contours` owns one bounded parity run, clipping invalid contours and
+discarding budget failures atomically. Font banks, optional row palettes and
+authored windows stay independently configurable. Sources can use regular text
+with vector `Face` metrics, supplied glyphs, or an authored `GlyphWindow`; all
+share the existing constructor, controls and composition pipeline. No framebuffer
+or shader is added. Native CPU draw submission measured 29.34 to 30.03 microseconds
+in one muted replay per implementation; GPU completion/readback are excluded.
+[Contour-font integration evidence](fidelity/contour-scroll-20260930.json)
+
+The native catalog was searched for polygon font renderers separately from
+ordinary shape contours. Only these two Mental Hangover scenes use that font
+family. Other DCK text users retain atlas/plane/cell modes; Spaceballs' authored
+shape banks already use the shared contour and fan components. Contact queues
+and sparse XOR/OR point planes are the next Mental Hangover families.
 
 ## Cross-catalog check: wrapped motion and image trains
 

@@ -13,11 +13,12 @@ type Painter func(*ebiten.Image, Sample, ebiten.DrawImageOptions)
 // Mode combines an independent geometry transform, optional fragment renderer
 // and optional depth ordering. Larger Depth values are painted first.
 type Mode struct {
-	Prepare func([]Glyph) error
-	Map     Mapper
-	Paint   Painter
-	Cells   *CellPainterConfig // scrolling.New owns the compiled cell painter and its resources.
-	Depth   func(Sample) float64
+	Prepare  func([]Glyph) error
+	Map      Mapper
+	Paint    Painter
+	Cells    *CellPainterConfig    // scrolling.New owns the compiled cell painter and its resources.
+	Contours *ContourPainterConfig // Owned vector-font renderer, using the same glyph/mode pipeline.
+	Depth    func(Sample) float64
 }
 
 // Chain applies transforms in the requested order, allowing a bouncing, zooming

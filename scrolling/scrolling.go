@@ -18,6 +18,7 @@ import (
 // Face associates independent atlas metrics with optional native scaling.
 type Face struct {
 	Atlas          *ebiten.Image
+	Contours       *font.ContourBank // Optional vector artwork, paired with ordinary layout metrics.
 	Metrics        *font.Font
 	ScaleX, ScaleY float64
 }
@@ -48,6 +49,7 @@ type Config struct {
 	Controls         scrolltext.Decoder
 	Tokens           []scrolltext.Token
 	Glyphs           []Glyph
+	GlyphWindow      *GlyphWindowConfig // Borrowed authored slot clock with owned layout/rendering.
 	Speed, Gap, X, Y float64
 	Advance          float64 // Optional pen step independent of each glyph's bitmap width.
 	Vertical, Repeat bool
@@ -124,6 +126,7 @@ type Scrolling struct {
 	output               kit.Effect
 	drawErr              error
 	cellPainters         map[string]*CellPainter
+	contourPainters      map[string]*ContourPainter
 }
 
 var ErrDrawBudget = errors.New("scrolling: automatic drawing exceeds its glyph budget")
@@ -288,6 +291,9 @@ func New(c Config) (*Scrolling, error) {
 	if c.MaxGlyphsPerDraw < 1 || c.MaxGlyphsPerDraw > 1<<24 {
 		return nil, fmt.Errorf("scrolling: invalid automatic draw budget")
 	}
+	if err := prepareGlyphWindow(&c); err != nil {
+		return nil, err
+	}
 	if c.Recycled != nil || c.RingLanes != nil || c.DualProfiled != nil || c.Caption != nil || c.Reveal != nil || c.Projected != nil || c.Pseudo3D != nil || c.Sliced != nil || c.CuedSlices != nil || c.Crawl != nil || c.Bands != nil || c.Slots != nil || c.Feed != nil || c.Scanline != nil || c.Profiled != nil || c.RowColumn != nil || c.RowBands != nil || c.SizeBank != nil || c.Ribbon != nil {
 		return newTransport(c)
 	}
@@ -389,7 +395,7 @@ func New(c Config) (*Scrolling, error) {
 		switch t.Kind {
 		case scrolltext.Text:
 			face := c.Fonts[faceName]
-			if face.Atlas == nil || face.Metrics == nil || !face.Metrics.Bounds().In(face.Atlas.Bounds()) {
+			if face.Metrics == nil || (face.Atlas == nil && face.Contours == nil) || (face.Atlas != nil && !face.Metrics.Bounds().In(face.Atlas.Bounds())) {
 				return nil, fmt.Errorf("scrolling: invalid face %q", faceName)
 			}
 			fx, fy := face.ScaleX, face.ScaleY
@@ -420,7 +426,7 @@ func New(c Config) (*Scrolling, error) {
 					return nil, fmt.Errorf("scrolling: nonpositive advance")
 				}
 				var img *ebiten.Image
-				if !metric.Rect.Empty() {
+				if !metric.Rect.Empty() && face.Atlas != nil {
 					if cache[faceName] == nil {
 						cache[faceName] = map[rune]*ebiten.Image{}
 					}
@@ -497,6 +503,9 @@ func (s *Scrolling) prepareModes() error {
 	if err := s.prepareCellModes(); err != nil {
 		return err
 	}
+	if err := s.prepareContourModes(); err != nil {
+		return err
+	}
 	s.repeatMax = s.length
 	for _, g := range s.glyphs {
 		position, size := g.X, 0.0
@@ -534,6 +543,9 @@ func (s *Scrolling) prepareCellModes() error {
 		if mode.Paint != nil {
 			return fmt.Errorf("scrolling: mode %q selects both custom and cell painting", name)
 		}
+		if mode.Contours != nil {
+			return fmt.Errorf("scrolling: mode %q selects both cell and contour painting", name)
+		}
 		if modes == nil {
 			modes = make(map[string]Mode, len(s.config.Modes))
 			for key, value := range s.config.Modes {
@@ -565,6 +577,10 @@ func (s *Scrolling) closeCellModes() error {
 		err = errors.Join(err, painter.Close())
 	}
 	s.cellPainters = nil
+	for _, painter := range s.contourPainters {
+		err = errors.Join(err, painter.Close())
+	}
+	s.contourPainters = nil
 	return err
 }
 func finite(v float64) bool { return !math.IsNaN(v) && !math.IsInf(v, 0) }
@@ -821,6 +837,9 @@ func (s *Scrolling) ValidateRenderBounds(bounds image.Rectangle) error {
 // DrawAt does not advance time or position. Original render order and rounding
 // belong to DrawState/Mapper, so no generic sine or gap is silently substituted.
 func (s *Scrolling) DrawAt(dst *ebiten.Image, state DrawState) {
+	if !s.sampleGlyphWindow() {
+		return
+	}
 	if len(s.glyphs) == 0 {
 		return
 	}
@@ -835,6 +854,15 @@ func (s *Scrolling) DrawAt(dst *ebiten.Image, state DrawState) {
 		return
 	}
 	mode := s.config.Modes[state.Shape]
+	if painter := s.contourPainters[state.Shape]; painter != nil && state.Paint == nil && dst != nil {
+		painter.begin(dst)
+		defer func() {
+			painter.end()
+			if painter.Err() != nil {
+				s.drawErr = painter.Err()
+			}
+		}()
+	}
 	s.draws = s.draws[:0]
 	paint := state.Paint
 	if paint == nil {
