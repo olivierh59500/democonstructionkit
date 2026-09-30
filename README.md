@@ -1,8 +1,8 @@
 # democonstructionkit
 
-**1.0.4 — Developer Edition**
+**1.0.5 — Developer Edition**
 
-Demo Construction Kit 1.0.4 is the Go/Ebitengine library for developers creating
+Demo Construction Kit 1.0.5 is the Go/Ebitengine library for developers creating
 demos and intros through code. Programming knowledge is required: this edition
 provides configurable effects, Go APIs, runnable examples, command-line tools
 and saved JSON compositions.
@@ -10,10 +10,10 @@ and saved JSON compositions.
 Install the versioned module in a Go project:
 
 ```sh
-go get github.com/olivierh59500/democonstructionkit@v1.0.4
+go get github.com/olivierh59500/democonstructionkit@v1.0.5
 ```
 
-[Release 1.0.4](https://github.com/olivierh59500/democonstructionkit/releases/tag/v1.0.4)
+[Release 1.0.5](https://github.com/olivierh59500/democonstructionkit/releases/tag/v1.0.5)
  · [Changelog](CHANGELOG.md) · [Effect templates](EFFECT_TEMPLATES.md)
  · [Version 2.0.0 roadmap](ROADMAP.md)
 
@@ -53,6 +53,11 @@ Version 1.0.4 adds retained contour slots/layers and shared fan, stroke and
 parity-edge geometry. Spaceballs and Mental Hangover retain 1,389 matching
 sampled complete frames. `go run ./examples/contourtrails` combines delayed
 silhouettes with a live bitplane palette.
+Version 1.0.5 adds independent pixel offsets to each binary material, including
+several samples of one borrowed texture. Pattern, Wave and Finale use the common
+compositor while retaining all 690 Spaceballs unit-frame samples. Run
+`go run ./examples/offsetmaterials` to combine a live contour, transparent
+palette and two independently moving material planes.
 [Complete components](#build-a-demo-from-complete-components) include the animated
 DMA cube controller and renderer, font construction, perspective text crawl and
 independent background bands; their consumers provide assets and configuration.

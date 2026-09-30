@@ -1,5 +1,25 @@
 # Changelog
 
+## 1.0.5 — Developer Edition — 2026-09-30
+
+- Added `BitplanePalette.DrawOffsets` with independent finite pixel offsets for
+  every binary plane. Several planes can borrow the same source image with
+  separate offsets and channel selection; `Draw` resets to zero offsets.
+- The existing one/four-plane and five/six-plane rendering paths retain their
+  pass counts and working-image budgets. Out-of-bounds pixels sample zero;
+  fractional offsets retain nearest-neighbor sampling.
+- Spaceballs' Pattern, Wave and Finale now supply their original source offsets,
+  palette and display crop instead of a local material shader. All 690 sampled
+  full frames match through 11,209 drawn updates across fourteen effect units.
+- Added `examples/offsetmaterials`, native PNG capture and independent CPU/GPU
+  pixel checks for one through six planes, aliased atlased textures, integer and
+  fractional offsets, edge clipping and alternating offset/ordinary draws.
+
+The complete DCK test, build and vet checks pass, as do Spaceballs' source
+controllers, rendering checks and full-unit replay. Source images stay borrowed;
+the migration adds no working surface or palette pass. These desktop checks
+do not constitute a new Pixel performance measurement.
+
 ## 1.0.4 — Developer Edition — 2026-09-30
 
 - Added owned `composite.ContourBank` storage for fixed retained slots/layers,

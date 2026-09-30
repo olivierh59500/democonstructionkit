@@ -6,6 +6,9 @@ binary-plane compositor is available in DCK 1.0.1. The other templates
 use the existing scrolling, timeline and composition APIs. The integer-color
 pass is available in 1.0.2.
 
+Independent binary-material offsets are available in 1.0.5. They extend the
+existing palette compositor rather than adding another rendering family.
+
 ## Binary masks with a live palette
 
 `composite.BitplanePalette` turns up to six binary planes into one indexed image.
@@ -45,6 +48,45 @@ motivated this component. Its Noise, Angular, Sliced and Duet materials select
 alpha for five retained pose masks and red for the opaque sixth material plane.
 The scene migration matches all 309 before/after complete-frame captures over
 5,106 rendered frames.
+
+### Independently moving materials inside a mask
+
+`DrawOffsets` reads each binary plane at its own `{X, Y}` pixel offset. The same
+image can provide several planes: an animated contour, scrolling text or logo
+can combine two samples of one texture, with independent trajectories and a
+changing palette. Positive X/Y reads farther right/down, making the visible
+material move left/up. The samples remain nearest-neighbor; outside the source
+they read zero rather than repeating.
+
+```go
+lookup, err := composite.NewBitplanePalette(composite.BitplanePaletteConfig{
+    Width: width, Height: height, Planes: 3, Palette: colors,
+    Channels: []composite.BitplaneChannel{
+        composite.BitplaneAlpha, composite.BitplaneRed, composite.BitplaneRed,
+    },
+})
+if err != nil { return err }
+defer lookup.Close()
+
+// All three planes have the configured dimensions; texture is borrowed twice.
+planes := [3]*ebiten.Image{liveMask, texture, texture}
+offsets := [3][2]float32{{0, 0}, {32, 18}, {-12, 40}}
+if err := lookup.DrawOffsets(screen, planes[:], offsets[:]); err != nil { return err }
+```
+
+Update the offsets from a path, timeline or music signal before drawing. No new
+image or pass is needed: up to four planes still take one pass, and five/six
+take two. `Draw` always restores zero offsets, so it can alternate with
+`DrawOffsets` on the same compositor. `SetPalette` remains independent of the
+source images and trajectories. Transparent palette entries let the composition
+sit above another scene. Close the compositor separately from its borrowed images.
+
+Run `go run ./examples/offsetmaterials` for an animated contour with a hole and
+two independently moving samples of one immutable material. `-capture
+/path/to/output -frame 200` saves a native PNG. Spaceballs' Pattern, Wave and
+Finale use this path with their original fetch offsets, fine-scroll delay,
+RGB12 palette and display crop. All 690 sampled frames through all fourteen
+effect units retain their preceding full-image hashes.
 
 ## Integer color passes on a scrolling layer, logo or complete scene
 

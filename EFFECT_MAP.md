@@ -22,13 +22,14 @@ The original twenty-repository inventory predates Mental Hangover, Spaceballs
 and OldSkool DirectX 8 Go. They initially used DCK 1.0.0; Spaceballs now uses
 the binary-plane palette component added in 1.0.1, and Mental Hangover uses the
 quantized-color component added in 1.0.2. OldSkool uses owned flat/cuboid
-cell modes added in 1.0.3. The following classification
+cell modes added in 1.0.3. Shared retained contours arrived in 1.0.4 and binary
+material offsets in 1.0.5. The following classification
 distinguishes completed integration from remaining extraction candidates.
 
 | Production | Reuse already in place | Further shared component or template | Source-specific boundary |
 | --- | --- | --- | --- |
 | Mental Hangover | `scrolling.New`, bitmap metrics, bounded `render.Batch.Fan` for all author/BOB/solid/patterned/outline-font contours, `RasterOverlay`, `CueClock`, cue ranges and `QuantizedColor`. | Polar transport/projection, row-palette floor sampling and original fixed-point geometry programs remain candidates for complete components. | Decoded 68000 tables, integer projection, level divisors, palette order and cue timing remain production data. Immediate contours use shared fan geometry without an additional working surface. |
-| Spaceballs | `kit.Effect`, `timeline.Sequence`, `ContourBank` for six-mask/paired-mask/pattern-mask storage, shared fan/stroke/parity edges and `BitplanePalette` for retained planes, opening and Duet exit. | A two-material offset sampler and palette-grid/indexed-page components remain candidates; Pattern, Wave and Finale already share one local material renderer. | Decompressed point banks, source coordinate maps, 25 Hz pose interrupts, working/display indices, bitplane offsets and cue order remain production data. |
+| Spaceballs | `kit.Effect`, `timeline.Sequence`, `ContourBank` for six-mask/paired-mask/pattern-mask storage, shared fan/stroke/parity edges and `BitplanePalette` for retained planes, opening, Duet exit and offset materials. | Palette-grid and indexed-page components remain candidates; Pattern, Wave and Finale now share the DCK palette material with independent sampling offsets. | Decompressed point banks, source coordinate maps, 25 Hz pose interrupts, working/display indices, bitplane offsets and cue order remain production data. |
 | OldSkool DirectX 8 Go | `font.CellBank`, owned `scrolling.Mode.Cells` for flat and cuboid fonts, `effects.Warp`, `effects.Mesh`, `sprites.FieldRenderer` and DCK audio. | Its four-oscillator ball field can be expressed as a sampled formation after a parity check; the colored ribbon and cube wireframe are candidate shared materials. | The executable's font bit order, oscillator constants, cube face mapping, clipping margins and meter mapping remain authored parameters. Cell masks are cached once; culling, face projection and cell materials now belong to DCK. |
 
 ### Screen-level extraction boundaries
@@ -36,7 +37,7 @@ distinguishes completed integration from remaining extraction candidates.
 | Spaceballs unit | Shared path now | Next reusable boundary |
 | --- | --- | --- |
 | Opening and the State/Of/The/Art, credits, dragon and closing pages | A common `PageEffect` renderer and `timeline.Sequence` already handle the authored pages and fades locally. | Palette-indexed page fades could move to DCK after their RGB12 integer endpoints, transparency and high-resolution crop are compared. |
-| Pattern, Wave and Finale | Wave and Finale wrap the existing Pattern material renderer with different clocks and bank selections. | A parameterized sampler for one body mask plus two independently offset monochrome materials; a plain bitplane lookup would lose those offsets. |
+| Pattern, Wave and Finale | DCK's three-plane palette material, with independent sampling offsets and two reads from one borrowed monochrome texture. | Source mask offsets, fine-scroll delay, bank selection, integer motion and display crop remain authored data; no local material shader remains. |
 | Trails | DCK's six-slot `ContourBank` and five-plane `BitplanePalette`. | Working/display order, zoom coordinate maps and source cue order remain authored data. |
 | Noise, Angular, Sliced and Duet | DCK retained bank, six-plane palette lookup and shared parity edges; Duet exit also uses the one-plane palette backend. | Source dither bit, endpoint exchange, coordinate maps and white-exit cue values remain authored configuration. |
 | Ribbons | DCK's four-slot/two-layer `ContourBank` and four-plane `BitplanePalette`. | Paired draw/clear timing and mirror coordinates remain source parameters. |
@@ -135,8 +136,20 @@ memory. No new surfaces or GPU passes are inserted into the native pipelines.
 Source revision limits and fingerprints are in
 [the contour integration evidence](fidelity/contours-20260930.json).
 
-The remaining Spaceballs material sampler needs explicit source offsets and
-palette indexing. Mental Hangover's fixed-point projection/transport and floor
+The binary-material extension shares independently offset planes through the
+existing `BitplanePalette.DrawOffsets`. All 690 Spaceballs full-frame samples
+match across 11,209 rendered updates, including 175 samples in Pattern, Wave
+and Finale. Independent CPU/GPU checks cover one through six planes, integer
+and fractional offsets, aliasing one atlased texture, zero-offset restoration
+and transparent source boundaries. No image or rendering pass is added.
+The cross-catalog shader search found no other equivalent binary offset
+material. Spaceballs' palette grid/indexed pages and Mental Hangover's
+row-palette floor are distinct extraction candidates. Revisions, ordered hashes
+and the resource limits are in
+[the offset-material evidence](fidelity/offset-materials-20260930.json).
+
+Spaceballs' palette grids and indexed-page fades remain candidates.
+Mental Hangover's fixed-point projection/transport and floor
 sampling remain separate extraction families. OldSkool's band, ball-field and
 cube-outline paths are the next rendering/motion candidates.
 
