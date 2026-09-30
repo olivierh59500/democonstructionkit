@@ -170,6 +170,14 @@ excluding native/GPU memory. This runtime traversal is separate from visual
 reference fidelity; version-specific transitions and limits are retained in
 [the Pixel runtime evidence](fidelity/pixel-latest-20260930.json).
 
+OldSkool's published DCK 1.0.6 build was subsequently installed and exercised
+on the same Pixel. Its 37 ten-second samples after the 36-second final entrance
+recorded 49.2–50.9 TPS and 59.7–60.2 FPS without an observed crash. The filled
+composition used normal audio and realtime cube interpolation. Native ELF
+segments and APK placement passed 16 KiB alignment. This runtime check does
+not establish new Android wireframe/visual-reference or memory evidence.
+[Version-specific OldSkool device measurements](fidelity/pixel-oldskool-harmonics-20260930.json)
+
 Spaceballs' palette grids and indexed-page fades remain candidates.
 Mental Hangover's fixed-point projection/transport and floor
 sampling remain separate extraction families. OldSkool's band, ball-field and

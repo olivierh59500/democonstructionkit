@@ -1,0 +1,227 @@
+{
+  "date": "2026-09-30",
+  "device": "Google Pixel 10a",
+  "production": "OldSkool DirectX 8 Go",
+  "production_revision": "7a7ea2f",
+  "dck": "1.0.6",
+  "clock_hz": 50,
+  "sampling_seconds": 10,
+  "full_composition_from_seconds": 36,
+  "all_effects_sample_count": 37,
+  "all_effects_tps_range": [
+    49.2,
+    50.9
+  ],
+  "all_effects_fps_range": [
+    59.7,
+    60.2
+  ],
+  "errors_found": false,
+  "samples": [
+    {
+      "seconds": 9.9,
+      "tps": 49.9,
+      "fps": 59.9
+    },
+    {
+      "seconds": 20.0,
+      "tps": 50.0,
+      "fps": 60.0
+    },
+    {
+      "seconds": 30.0,
+      "tps": 49.9,
+      "fps": 59.9
+    },
+    {
+      "seconds": 40.0,
+      "tps": 49.8,
+      "fps": 59.7
+    },
+    {
+      "seconds": 50.0,
+      "tps": 50.2,
+      "fps": 60.0
+    },
+    {
+      "seconds": 60.0,
+      "tps": 50.0,
+      "fps": 60.0
+    },
+    {
+      "seconds": 70.0,
+      "tps": 49.9,
+      "fps": 59.9
+    },
+    {
+      "seconds": 80.0,
+      "tps": 50.3,
+      "fps": 60.2
+    },
+    {
+      "seconds": 90.1,
+      "tps": 49.9,
+      "fps": 59.9
+    },
+    {
+      "seconds": 100.1,
+      "tps": 50.0,
+      "fps": 59.9
+    },
+    {
+      "seconds": 110.1,
+      "tps": 49.2,
+      "fps": 60.0
+    },
+    {
+      "seconds": 120.1,
+      "tps": 49.9,
+      "fps": 59.9
+    },
+    {
+      "seconds": 130.1,
+      "tps": 49.9,
+      "fps": 59.9
+    },
+    {
+      "seconds": 140.1,
+      "tps": 49.9,
+      "fps": 59.9
+    },
+    {
+      "seconds": 150.1,
+      "tps": 49.9,
+      "fps": 59.9
+    },
+    {
+      "seconds": 160.1,
+      "tps": 49.9,
+      "fps": 59.9
+    },
+    {
+      "seconds": 170.2,
+      "tps": 50.0,
+      "fps": 59.9
+    },
+    {
+      "seconds": 180.2,
+      "tps": 49.9,
+      "fps": 59.9
+    },
+    {
+      "seconds": 190.2,
+      "tps": 49.3,
+      "fps": 60.1
+    },
+    {
+      "seconds": 200.2,
+      "tps": 50.1,
+      "fps": 59.9
+    },
+    {
+      "seconds": 210.2,
+      "tps": 49.9,
+      "fps": 59.9
+    },
+    {
+      "seconds": 220.2,
+      "tps": 50.2,
+      "fps": 60.0
+    },
+    {
+      "seconds": 230.3,
+      "tps": 50.3,
+      "fps": 60.2
+    },
+    {
+      "seconds": 240.3,
+      "tps": 50.3,
+      "fps": 60.1
+    },
+    {
+      "seconds": 250.3,
+      "tps": 50.0,
+      "fps": 60.0
+    },
+    {
+      "seconds": 260.3,
+      "tps": 50.1,
+      "fps": 59.9
+    },
+    {
+      "seconds": 270.3,
+      "tps": 50.0,
+      "fps": 60.0
+    },
+    {
+      "seconds": 280.3,
+      "tps": 50.3,
+      "fps": 60.2
+    },
+    {
+      "seconds": 290.4,
+      "tps": 50.1,
+      "fps": 60.0
+    },
+    {
+      "seconds": 300.4,
+      "tps": 50.0,
+      "fps": 60.0
+    },
+    {
+      "seconds": 310.4,
+      "tps": 50.2,
+      "fps": 60.0
+    },
+    {
+      "seconds": 320.4,
+      "tps": 49.3,
+      "fps": 60.1
+    },
+    {
+      "seconds": 330.4,
+      "tps": 49.9,
+      "fps": 59.9
+    },
+    {
+      "seconds": 340.4,
+      "tps": 50.0,
+      "fps": 60.0
+    },
+    {
+      "seconds": 350.4,
+      "tps": 49.9,
+      "fps": 59.9
+    },
+    {
+      "seconds": 360.4,
+      "tps": 50.2,
+      "fps": 60.0
+    },
+    {
+      "seconds": 370.5,
+      "tps": 49.9,
+      "fps": 59.9
+    },
+    {
+      "seconds": 380.5,
+      "tps": 50.0,
+      "fps": 60.0
+    },
+    {
+      "seconds": 390.5,
+      "tps": 50.0,
+      "fps": 60.0
+    },
+    {
+      "seconds": 400.5,
+      "tps": 50.9,
+      "fps": 59.9
+    }
+  ],
+  "limits": [
+    "Runtime cadence and process survival; no new visual-reference comparison.",
+    "Filled rendering mode; no new Android wireframe measurement.",
+    "No native/GPU memory or GPU completion timings measured."
+  ]
+}
