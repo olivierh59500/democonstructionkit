@@ -226,6 +226,14 @@ One muted Mental Hangover traversal measured mean CPU draw submission of
 31.66 to 32.22 microseconds; GPU completion/readback and native memory are
 excluded. [Spatial palette integration evidence](fidelity/palette-grid-20260930.json)
 
+Both published DCK 1.0.8 ARM64 packages were installed on the Pixel 10a and
+completed their directors through the Spaceballs closing page and Mental
+Hangover checkerboard finale without an observed crash. Five-second samples
+measured 49.2–50.9/58.9–60.1 TPS/FPS and 49.8–50.9/58.9–60.2 respectively.
+Peak Go heap was 66.5 and 60.9 MiB, excluding native/GPU memory. ELF/ZIP 16 KiB
+alignment passed. These runtime results remain separate from visual-reference
+fidelity. [Version-specific spatial-material Pixel evidence](fidelity/pixel-spatial-palettes-20260930.json)
+
 Spaceballs' indexed-page fades remain candidates. Mental Hangover's fixed-point
 projection/transport remain separate extraction families. OldSkool's YM signal adapter and
 named row-motion presets are the next candidates.

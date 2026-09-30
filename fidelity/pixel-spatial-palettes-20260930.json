@@ -1,0 +1,1187 @@
+{
+  "date": "2026-09-30",
+  "device": "Google Pixel 10a",
+  "dck": "1.0.8",
+  "productions": [
+    {
+      "production": "Spaceballs",
+      "revision": "fb90493",
+      "samples": [
+        {
+          "tick": 253,
+          "tps": 49.9,
+          "fps": 59.9,
+          "heap_mib": 2.8
+        },
+        {
+          "tick": 498,
+          "tps": 49.2,
+          "fps": 60.1,
+          "heap_mib": 4.5
+        },
+        {
+          "tick": 748,
+          "tps": 50.1,
+          "fps": 60.0,
+          "heap_mib": 5.6
+        },
+        {
+          "tick": 999,
+          "tps": 49.9,
+          "fps": 59.9,
+          "heap_mib": 4.4
+        },
+        {
+          "tick": 1241,
+          "tps": 49.9,
+          "fps": 59.9,
+          "heap_mib": 31.8
+        },
+        {
+          "tick": 1491,
+          "tps": 49.9,
+          "fps": 59.9,
+          "heap_mib": 35.3
+        },
+        {
+          "tick": 1742,
+          "tps": 50.0,
+          "fps": 60.0,
+          "heap_mib": 28.2
+        },
+        {
+          "tick": 1992,
+          "tps": 49.9,
+          "fps": 59.9,
+          "heap_mib": 28.7
+        },
+        {
+          "tick": 2242,
+          "tps": 49.9,
+          "fps": 59.9,
+          "heap_mib": 38.7
+        },
+        {
+          "tick": 2493,
+          "tps": 49.9,
+          "fps": 59.9,
+          "heap_mib": 39.5
+        },
+        {
+          "tick": 2743,
+          "tps": 50.0,
+          "fps": 60.0,
+          "heap_mib": 46.0
+        },
+        {
+          "tick": 2993,
+          "tps": 49.9,
+          "fps": 59.9,
+          "heap_mib": 48.4
+        },
+        {
+          "tick": 3244,
+          "tps": 50.9,
+          "fps": 59.8,
+          "heap_mib": 49.2
+        },
+        {
+          "tick": 3494,
+          "tps": 49.9,
+          "fps": 59.9,
+          "heap_mib": 51.4
+        },
+        {
+          "tick": 3744,
+          "tps": 49.9,
+          "fps": 59.9,
+          "heap_mib": 52.3
+        },
+        {
+          "tick": 3995,
+          "tps": 50.0,
+          "fps": 60.0,
+          "heap_mib": 37.1
+        },
+        {
+          "tick": 4245,
+          "tps": 49.9,
+          "fps": 58.9,
+          "heap_mib": 42.8
+        },
+        {
+          "tick": 4495,
+          "tps": 49.9,
+          "fps": 59.9,
+          "heap_mib": 48.6
+        },
+        {
+          "tick": 4745,
+          "tps": 49.9,
+          "fps": 59.9,
+          "heap_mib": 49.4
+        },
+        {
+          "tick": 4996,
+          "tps": 49.9,
+          "fps": 59.9,
+          "heap_mib": 50.2
+        },
+        {
+          "tick": 5246,
+          "tps": 49.9,
+          "fps": 59.9,
+          "heap_mib": 56.1
+        },
+        {
+          "tick": 5496,
+          "tps": 49.9,
+          "fps": 59.9,
+          "heap_mib": 56.8
+        },
+        {
+          "tick": 5747,
+          "tps": 49.9,
+          "fps": 59.9,
+          "heap_mib": 57.6
+        },
+        {
+          "tick": 5997,
+          "tps": 49.9,
+          "fps": 59.9,
+          "heap_mib": 35.9
+        },
+        {
+          "tick": 6247,
+          "tps": 49.9,
+          "fps": 59.9,
+          "heap_mib": 36.7
+        },
+        {
+          "tick": 6498,
+          "tps": 50.0,
+          "fps": 60.0,
+          "heap_mib": 37.7
+        },
+        {
+          "tick": 6748,
+          "tps": 50.0,
+          "fps": 59.9,
+          "heap_mib": 38.6
+        },
+        {
+          "tick": 6999,
+          "tps": 49.9,
+          "fps": 59.9,
+          "heap_mib": 39.4
+        },
+        {
+          "tick": 7250,
+          "tps": 49.9,
+          "fps": 59.9,
+          "heap_mib": 40.2
+        },
+        {
+          "tick": 7500,
+          "tps": 49.9,
+          "fps": 59.9,
+          "heap_mib": 42.4
+        },
+        {
+          "tick": 7750,
+          "tps": 49.9,
+          "fps": 59.9,
+          "heap_mib": 43.1
+        },
+        {
+          "tick": 8001,
+          "tps": 50.0,
+          "fps": 60.0,
+          "heap_mib": 43.8
+        },
+        {
+          "tick": 8252,
+          "tps": 49.9,
+          "fps": 58.9,
+          "heap_mib": 50.1
+        },
+        {
+          "tick": 8502,
+          "tps": 49.9,
+          "fps": 59.9,
+          "heap_mib": 50.9
+        },
+        {
+          "tick": 8752,
+          "tps": 50.0,
+          "fps": 60.0,
+          "heap_mib": 51.8
+        },
+        {
+          "tick": 9003,
+          "tps": 49.9,
+          "fps": 59.9,
+          "heap_mib": 52.5
+        },
+        {
+          "tick": 9254,
+          "tps": 50.3,
+          "fps": 60.1,
+          "heap_mib": 55.0
+        },
+        {
+          "tick": 9505,
+          "tps": 49.8,
+          "fps": 59.8,
+          "heap_mib": 56.0
+        },
+        {
+          "tick": 9755,
+          "tps": 50.9,
+          "fps": 59.9,
+          "heap_mib": 56.7
+        },
+        {
+          "tick": 10005,
+          "tps": 49.9,
+          "fps": 59.9,
+          "heap_mib": 57.4
+        },
+        {
+          "tick": 10256,
+          "tps": 49.8,
+          "fps": 59.7,
+          "heap_mib": 58.2
+        },
+        {
+          "tick": 10506,
+          "tps": 49.9,
+          "fps": 59.9,
+          "heap_mib": 58.9
+        },
+        {
+          "tick": 10756,
+          "tps": 49.9,
+          "fps": 59.9,
+          "heap_mib": 63.7
+        },
+        {
+          "tick": 11007,
+          "tps": 49.9,
+          "fps": 59.9,
+          "heap_mib": 64.5
+        },
+        {
+          "tick": 11258,
+          "tps": 49.9,
+          "fps": 59.9,
+          "heap_mib": 65.2
+        },
+        {
+          "tick": 11508,
+          "tps": 49.9,
+          "fps": 59.9,
+          "heap_mib": 65.9
+        },
+        {
+          "tick": 11758,
+          "tps": 50.0,
+          "fps": 60.0,
+          "heap_mib": 66.5
+        },
+        {
+          "tick": 12009,
+          "tps": 49.9,
+          "fps": 59.9,
+          "heap_mib": 34.9
+        },
+        {
+          "tick": 12259,
+          "tps": 50.0,
+          "fps": 60.0,
+          "heap_mib": 35.4
+        }
+      ],
+      "scenes": [
+        {
+          "name": "boot",
+          "tick": 1
+        },
+        {
+          "name": "opening-effect",
+          "tick": 60
+        },
+        {
+          "name": "opening-hold",
+          "tick": 1021
+        },
+        {
+          "name": "state",
+          "tick": 1087
+        },
+        {
+          "name": "black",
+          "tick": 1110
+        },
+        {
+          "name": "of",
+          "tick": 1156
+        },
+        {
+          "name": "black",
+          "tick": 1179
+        },
+        {
+          "name": "the",
+          "tick": 1219
+        },
+        {
+          "name": "black",
+          "tick": 1242
+        },
+        {
+          "name": "art",
+          "tick": 1292
+        },
+        {
+          "name": "black",
+          "tick": 1315
+        },
+        {
+          "name": "credits",
+          "tick": 1345
+        },
+        {
+          "name": "dragon",
+          "tick": 1632
+        },
+        {
+          "name": "black",
+          "tick": 2031
+        },
+        {
+          "name": "pattern",
+          "tick": 2189
+        },
+        {
+          "name": "vote",
+          "tick": 2669
+        },
+        {
+          "name": "trails",
+          "tick": 2819
+        },
+        {
+          "name": "blocks-effect",
+          "tick": 3385
+        },
+        {
+          "name": "noise",
+          "tick": 3807
+        },
+        {
+          "name": "tiles",
+          "tick": 4157
+        },
+        {
+          "name": "wave",
+          "tick": 4300
+        },
+        {
+          "name": "angular",
+          "tick": 5055
+        },
+        {
+          "name": "sliced",
+          "tick": 5770
+        },
+        {
+          "name": "ribbons",
+          "tick": 7388
+        },
+        {
+          "name": "duet",
+          "tick": 8204
+        },
+        {
+          "name": "outline",
+          "tick": 9245
+        },
+        {
+          "name": "finale",
+          "tick": 10630
+        },
+        {
+          "name": "closing",
+          "tick": 12346
+        }
+      ],
+      "tps_range": [
+        49.2,
+        50.9
+      ],
+      "fps_range": [
+        58.9,
+        60.1
+      ],
+      "peak_go_heap_mib": 66.5,
+      "errors_found": false
+    },
+    {
+      "production": "Mental Hangover",
+      "revision": "ae4c663",
+      "samples": [
+        {
+          "tick": 251,
+          "tps": 49.9,
+          "fps": 59.9,
+          "heap_mib": 47.3
+        },
+        {
+          "tick": 502,
+          "tps": 50.0,
+          "fps": 60.0,
+          "heap_mib": 47.9
+        },
+        {
+          "tick": 748,
+          "tps": 49.9,
+          "fps": 59.9,
+          "heap_mib": 51.6
+        },
+        {
+          "tick": 998,
+          "tps": 49.9,
+          "fps": 59.9,
+          "heap_mib": 52.9
+        },
+        {
+          "tick": 1248,
+          "tps": 49.9,
+          "fps": 59.9,
+          "heap_mib": 53.6
+        },
+        {
+          "tick": 1499,
+          "tps": 49.9,
+          "fps": 59.9,
+          "heap_mib": 54.4
+        },
+        {
+          "tick": 1749,
+          "tps": 50.0,
+          "fps": 59.9,
+          "heap_mib": 55.2
+        },
+        {
+          "tick": 1999,
+          "tps": 49.9,
+          "fps": 59.9,
+          "heap_mib": 55.9
+        },
+        {
+          "tick": 2250,
+          "tps": 49.9,
+          "fps": 59.9,
+          "heap_mib": 57.0
+        },
+        {
+          "tick": 2501,
+          "tps": 49.9,
+          "fps": 59.8,
+          "heap_mib": 57.7
+        },
+        {
+          "tick": 2752,
+          "tps": 49.9,
+          "fps": 59.9,
+          "heap_mib": 58.5
+        },
+        {
+          "tick": 3002,
+          "tps": 49.9,
+          "fps": 59.9,
+          "heap_mib": 59.4
+        },
+        {
+          "tick": 3252,
+          "tps": 49.9,
+          "fps": 59.9,
+          "heap_mib": 60.1
+        },
+        {
+          "tick": 3503,
+          "tps": 49.9,
+          "fps": 59.9,
+          "heap_mib": 60.9
+        },
+        {
+          "tick": 3753,
+          "tps": 50.0,
+          "fps": 60.0,
+          "heap_mib": 21.5
+        },
+        {
+          "tick": 4003,
+          "tps": 50.2,
+          "fps": 60.0,
+          "heap_mib": 23.1
+        },
+        {
+          "tick": 4254,
+          "tps": 49.9,
+          "fps": 59.9,
+          "heap_mib": 25.1
+        },
+        {
+          "tick": 4505,
+          "tps": 50.3,
+          "fps": 60.2,
+          "heap_mib": 26.9
+        },
+        {
+          "tick": 4755,
+          "tps": 50.0,
+          "fps": 60.0,
+          "heap_mib": 29.1
+        },
+        {
+          "tick": 5005,
+          "tps": 49.9,
+          "fps": 59.8,
+          "heap_mib": 31.2
+        },
+        {
+          "tick": 5256,
+          "tps": 49.9,
+          "fps": 59.8,
+          "heap_mib": 33.2
+        },
+        {
+          "tick": 5506,
+          "tps": 50.0,
+          "fps": 60.0,
+          "heap_mib": 21.3
+        },
+        {
+          "tick": 5756,
+          "tps": 49.9,
+          "fps": 59.9,
+          "heap_mib": 23.3
+        },
+        {
+          "tick": 6007,
+          "tps": 49.9,
+          "fps": 59.9,
+          "heap_mib": 25.3
+        },
+        {
+          "tick": 6257,
+          "tps": 50.0,
+          "fps": 60.0,
+          "heap_mib": 27.2
+        },
+        {
+          "tick": 6507,
+          "tps": 50.9,
+          "fps": 59.9,
+          "heap_mib": 28.6
+        },
+        {
+          "tick": 6758,
+          "tps": 50.0,
+          "fps": 60.0,
+          "heap_mib": 29.2
+        },
+        {
+          "tick": 7009,
+          "tps": 49.9,
+          "fps": 59.9,
+          "heap_mib": 29.8
+        },
+        {
+          "tick": 7259,
+          "tps": 50.0,
+          "fps": 60.0,
+          "heap_mib": 30.4
+        },
+        {
+          "tick": 7509,
+          "tps": 50.0,
+          "fps": 59.9,
+          "heap_mib": 31.0
+        },
+        {
+          "tick": 7760,
+          "tps": 49.9,
+          "fps": 59.9,
+          "heap_mib": 32.1
+        },
+        {
+          "tick": 8010,
+          "tps": 49.9,
+          "fps": 59.9,
+          "heap_mib": 34.3
+        },
+        {
+          "tick": 8260,
+          "tps": 49.9,
+          "fps": 59.9,
+          "heap_mib": 20.9
+        },
+        {
+          "tick": 8511,
+          "tps": 49.9,
+          "fps": 59.9,
+          "heap_mib": 22.1
+        },
+        {
+          "tick": 8762,
+          "tps": 50.2,
+          "fps": 60.0,
+          "heap_mib": 23.0
+        },
+        {
+          "tick": 9012,
+          "tps": 49.9,
+          "fps": 59.9,
+          "heap_mib": 24.0
+        },
+        {
+          "tick": 9262,
+          "tps": 50.0,
+          "fps": 60.0,
+          "heap_mib": 25.1
+        },
+        {
+          "tick": 9513,
+          "tps": 49.9,
+          "fps": 59.9,
+          "heap_mib": 26.8
+        },
+        {
+          "tick": 9763,
+          "tps": 50.0,
+          "fps": 60.0,
+          "heap_mib": 28.4
+        },
+        {
+          "tick": 10013,
+          "tps": 49.9,
+          "fps": 59.9,
+          "heap_mib": 30.1
+        },
+        {
+          "tick": 10264,
+          "tps": 49.9,
+          "fps": 59.9,
+          "heap_mib": 31.3
+        },
+        {
+          "tick": 10515,
+          "tps": 49.9,
+          "fps": 59.9,
+          "heap_mib": 32.4
+        },
+        {
+          "tick": 10765,
+          "tps": 50.9,
+          "fps": 59.8,
+          "heap_mib": 33.3
+        },
+        {
+          "tick": 11016,
+          "tps": 49.9,
+          "fps": 59.9,
+          "heap_mib": 20.7
+        },
+        {
+          "tick": 11267,
+          "tps": 49.9,
+          "fps": 59.9,
+          "heap_mib": 22.5
+        },
+        {
+          "tick": 11517,
+          "tps": 49.9,
+          "fps": 59.9,
+          "heap_mib": 24.4
+        },
+        {
+          "tick": 11768,
+          "tps": 49.9,
+          "fps": 59.9,
+          "heap_mib": 26.2
+        },
+        {
+          "tick": 12019,
+          "tps": 49.9,
+          "fps": 59.9,
+          "heap_mib": 27.6
+        },
+        {
+          "tick": 12269,
+          "tps": 50.0,
+          "fps": 59.9,
+          "heap_mib": 28.7
+        },
+        {
+          "tick": 12520,
+          "tps": 49.9,
+          "fps": 59.9,
+          "heap_mib": 29.6
+        },
+        {
+          "tick": 12771,
+          "tps": 50.9,
+          "fps": 59.9,
+          "heap_mib": 30.5
+        },
+        {
+          "tick": 13022,
+          "tps": 49.9,
+          "fps": 59.9,
+          "heap_mib": 31.4
+        },
+        {
+          "tick": 13272,
+          "tps": 49.8,
+          "fps": 59.8,
+          "heap_mib": 32.4
+        },
+        {
+          "tick": 13522,
+          "tps": 50.0,
+          "fps": 60.0,
+          "heap_mib": 33.1
+        },
+        {
+          "tick": 13773,
+          "tps": 49.9,
+          "fps": 58.9,
+          "heap_mib": 34.0
+        },
+        {
+          "tick": 14023,
+          "tps": 50.2,
+          "fps": 60.0,
+          "heap_mib": 20.9
+        },
+        {
+          "tick": 14273,
+          "tps": 49.9,
+          "fps": 59.9,
+          "heap_mib": 21.7
+        },
+        {
+          "tick": 14524,
+          "tps": 49.9,
+          "fps": 59.9,
+          "heap_mib": 22.3
+        },
+        {
+          "tick": 14774,
+          "tps": 49.9,
+          "fps": 59.9,
+          "heap_mib": 23.6
+        },
+        {
+          "tick": 15025,
+          "tps": 49.8,
+          "fps": 59.8,
+          "heap_mib": 24.8
+        },
+        {
+          "tick": 15276,
+          "tps": 50.0,
+          "fps": 59.9,
+          "heap_mib": 26.0
+        },
+        {
+          "tick": 15526,
+          "tps": 49.9,
+          "fps": 59.9,
+          "heap_mib": 27.2
+        },
+        {
+          "tick": 15777,
+          "tps": 49.9,
+          "fps": 59.9,
+          "heap_mib": 28.4
+        },
+        {
+          "tick": 16028,
+          "tps": 49.9,
+          "fps": 59.9,
+          "heap_mib": 29.7
+        },
+        {
+          "tick": 16278,
+          "tps": 50.0,
+          "fps": 60.0,
+          "heap_mib": 30.9
+        },
+        {
+          "tick": 16528,
+          "tps": 49.9,
+          "fps": 59.9,
+          "heap_mib": 32.1
+        },
+        {
+          "tick": 16779,
+          "tps": 50.0,
+          "fps": 59.9,
+          "heap_mib": 33.4
+        },
+        {
+          "tick": 17030,
+          "tps": 49.9,
+          "fps": 59.9,
+          "heap_mib": 34.6
+        },
+        {
+          "tick": 17280,
+          "tps": 49.9,
+          "fps": 59.9,
+          "heap_mib": 35.8
+        },
+        {
+          "tick": 17530,
+          "tps": 49.9,
+          "fps": 59.9,
+          "heap_mib": 37.0
+        },
+        {
+          "tick": 17781,
+          "tps": 50.0,
+          "fps": 59.9,
+          "heap_mib": 38.1
+        },
+        {
+          "tick": 18032,
+          "tps": 49.9,
+          "fps": 59.9,
+          "heap_mib": 38.9
+        },
+        {
+          "tick": 18282,
+          "tps": 49.9,
+          "fps": 59.9,
+          "heap_mib": 20.9
+        },
+        {
+          "tick": 18532,
+          "tps": 49.9,
+          "fps": 59.9,
+          "heap_mib": 21.7
+        },
+        {
+          "tick": 18783,
+          "tps": 50.0,
+          "fps": 59.9,
+          "heap_mib": 22.6
+        },
+        {
+          "tick": 19033,
+          "tps": 50.0,
+          "fps": 59.9,
+          "heap_mib": 23.4
+        },
+        {
+          "tick": 19283,
+          "tps": 50.0,
+          "fps": 60.0,
+          "heap_mib": 24.3
+        },
+        {
+          "tick": 19534,
+          "tps": 50.9,
+          "fps": 59.9,
+          "heap_mib": 25.6
+        },
+        {
+          "tick": 19785,
+          "tps": 49.9,
+          "fps": 59.9,
+          "heap_mib": 26.8
+        },
+        {
+          "tick": 20036,
+          "tps": 49.9,
+          "fps": 59.8,
+          "heap_mib": 28.1
+        },
+        {
+          "tick": 20286,
+          "tps": 49.9,
+          "fps": 59.9,
+          "heap_mib": 29.3
+        },
+        {
+          "tick": 20537,
+          "tps": 50.9,
+          "fps": 59.9,
+          "heap_mib": 30.5
+        },
+        {
+          "tick": 20788,
+          "tps": 49.9,
+          "fps": 59.9,
+          "heap_mib": 31.6
+        },
+        {
+          "tick": 21038,
+          "tps": 49.9,
+          "fps": 59.8,
+          "heap_mib": 32.5
+        },
+        {
+          "tick": 21289,
+          "tps": 50.0,
+          "fps": 60.0,
+          "heap_mib": 33.8
+        },
+        {
+          "tick": 21537,
+          "tps": 49.9,
+          "fps": 59.9,
+          "heap_mib": 34.9
+        },
+        {
+          "tick": 21790,
+          "tps": 49.9,
+          "fps": 59.9,
+          "heap_mib": 35.8
+        },
+        {
+          "tick": 22041,
+          "tps": 50.1,
+          "fps": 60.0,
+          "heap_mib": 36.6
+        },
+        {
+          "tick": 22292,
+          "tps": 49.9,
+          "fps": 59.9,
+          "heap_mib": 37.5
+        },
+        {
+          "tick": 22542,
+          "tps": 49.9,
+          "fps": 59.9,
+          "heap_mib": 38.4
+        },
+        {
+          "tick": 22792,
+          "tps": 50.0,
+          "fps": 59.9,
+          "heap_mib": 20.7
+        },
+        {
+          "tick": 23043,
+          "tps": 49.9,
+          "fps": 59.9,
+          "heap_mib": 21.6
+        },
+        {
+          "tick": 23293,
+          "tps": 49.9,
+          "fps": 59.8,
+          "heap_mib": 22.5
+        },
+        {
+          "tick": 23543,
+          "tps": 49.9,
+          "fps": 59.9,
+          "heap_mib": 23.4
+        },
+        {
+          "tick": 23794,
+          "tps": 50.0,
+          "fps": 60.0,
+          "heap_mib": 24.3
+        }
+      ],
+      "scenes": [
+        {
+          "name": "startup",
+          "tick": 1
+        },
+        {
+          "name": "eagle",
+          "tick": 118
+        },
+        {
+          "name": "presents",
+          "tick": 581
+        },
+        {
+          "name": "new-demonstration",
+          "tick": 747
+        },
+        {
+          "name": "called",
+          "tick": 913
+        },
+        {
+          "name": "mental-title",
+          "tick": 1079
+        },
+        {
+          "name": "coded-by",
+          "tick": 1335
+        },
+        {
+          "name": "slayer",
+          "tick": 1501
+        },
+        {
+          "name": "graphics-by",
+          "tick": 2033
+        },
+        {
+          "name": "reward",
+          "tick": 2199
+        },
+        {
+          "name": "musics-by",
+          "tick": 2769
+        },
+        {
+          "name": "uncle-tom",
+          "tick": 2935
+        },
+        {
+          "name": "follow-sign",
+          "tick": 3479
+        },
+        {
+          "name": "sign",
+          "tick": 3645
+        },
+        {
+          "name": "sign-raster",
+          "tick": 3901
+        },
+        {
+          "name": "scoopex-demo",
+          "tick": 3951
+        },
+        {
+          "name": "filled-bobs",
+          "tick": 4196
+        },
+        {
+          "name": "filled-vectors",
+          "tick": 6167
+        },
+        {
+          "name": "filled-cube",
+          "tick": 6412
+        },
+        {
+          "name": "faceted-solid",
+          "tick": 6997
+        },
+        {
+          "name": "stencil-vectors",
+          "tick": 7673
+        },
+        {
+          "name": "gold-arrow",
+          "tick": 7973
+        },
+        {
+          "name": "gold-arrow-pass",
+          "tick": 8291
+        },
+        {
+          "name": "yellow-cube",
+          "tick": 8491
+        },
+        {
+          "name": "brown-facets",
+          "tick": 9191
+        },
+        {
+          "name": "paired-boxes",
+          "tick": 9991
+        },
+        {
+          "name": "patterned-pyramid",
+          "tick": 10388
+        },
+        {
+          "name": "hollow-frame",
+          "tick": 10888
+        },
+        {
+          "name": "color-block",
+          "tick": 11838
+        },
+        {
+          "name": "greetings-load",
+          "tick": 12338
+        },
+        {
+          "name": "star-pages",
+          "tick": 12506
+        },
+        {
+          "name": "circle-load",
+          "tick": 14253
+        },
+        {
+          "name": "circle-twist",
+          "tick": 14438
+        },
+        {
+          "name": "contact-load",
+          "tick": 17779
+        },
+        {
+          "name": "contact-spheres",
+          "tick": 17879
+        },
+        {
+          "name": "perspective-load",
+          "tick": 19073
+        },
+        {
+          "name": "perspective-text",
+          "tick": 19123
+        },
+        {
+          "name": "reminder-stars",
+          "tick": 20800
+        },
+        {
+          "name": "always-remember",
+          "tick": 20948
+        },
+        {
+          "name": "finale-load",
+          "tick": 21398
+        },
+        {
+          "name": "checkerboard-finale",
+          "tick": 21536
+        }
+      ],
+      "tps_range": [
+        49.8,
+        50.9
+      ],
+      "fps_range": [
+        58.9,
+        60.2
+      ],
+      "peak_go_heap_mib": 60.9,
+      "errors_found": false
+    }
+  ],
+  "limits": [
+    "Cadence/process survival; no new Amiga-hardware or Pixel visual-reference comparison.",
+    "Go heap excludes native/GPU memory."
+  ]
+}
