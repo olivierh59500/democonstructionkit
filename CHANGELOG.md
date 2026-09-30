@@ -1,5 +1,21 @@
 # Changelog
 
+## Unreleased — next compatible Developer Edition update
+
+- Reviewed the Mental Hangover, Spaceballs and OldSkool DirectX 8 Go
+  productions against the earlier twenty-repository effect map.
+- Added `composite.BitplanePalette` for one to six binary alpha planes and a
+  live, optionally translucent palette. One to four planes render in one pass;
+  five or six use one bounded packing surface and a second pass. The caller
+  owns masks and their timing.
+- Added configuration and opt-in GPU checks for bit order, palette updates and
+  the one-pass/two-pass boundary. A source-checkout example is documented in
+  [the effect templates](EFFECT_TEMPLATES.md).
+
+The released 1.0.0 API and its pinned demo dependencies are unchanged. A new
+version number will be assigned after the candidate components have been
+validated against the source productions.
+
 ## 1.0.0 — Developer Edition — 2026-09-28
 
 The first versioned release of Demo Construction Kit is intended for Go

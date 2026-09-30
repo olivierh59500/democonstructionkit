@@ -14,7 +14,8 @@ go get github.com/olivierh59500/democonstructionkit@v1.0.0
 ```
 
 [Release 1.0.0](https://github.com/olivierh59500/democonstructionkit/releases/tag/v1.0.0)
- · [Changelog](CHANGELOG.md) · [Version 2.0.0 roadmap](ROADMAP.md)
+ · [Changelog](CHANGELOG.md) · [Effect templates](EFFECT_TEMPLATES.md)
+ · [Version 2.0.0 roadmap](ROADMAP.md)
 
 **Planned 2.0.0 — Visual Editor** will make demo and intro creation accessible
 to everyone, including people without programming knowledge. The creation
@@ -36,6 +37,10 @@ feedback ribbons, vectorball geometry, particle batches and continuous scene
 handoffs. The Cuddly application combines fifteen native screens and its menu in
 `demos/go-cuddlymenu/dck`; `demos/go-uniondemo` adds its introduction and eleven
 screens. The recipes below apply the same effects to different source images.
+[The latest effect pass](EFFECT_MAP.md#new-native-productions-reviewed-on-2026-09-30)
+maps Mental Hangover, Spaceballs and OldSkool DirectX 8 Go to current DCK
+components and candidate extractions. The new binary-plane palette compositor
+is available in this source checkout; the published 1.0.0 module stays stable.
 [Complete components](#build-a-demo-from-complete-components) include the animated
 DMA cube controller and renderer, font construction, perspective text crawl and
 independent background bands; their consumers provide assets and configuration.

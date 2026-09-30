@@ -16,6 +16,43 @@ claims of pixel-perfect or Pixel-device verification. The final
 [catalog acceptance review](CATALOG_ACCEPTANCE.md) connects the requirements to
 the tested revisions, source inventory and device evidence.
 
+## New native productions reviewed on 2026-09-30
+
+The original twenty-repository inventory predates Mental Hangover, Spaceballs
+and OldSkool DirectX 8 Go. These three projects currently pin DCK 1.0.0; the
+following classification distinguishes code already using that release from
+new source-checkout work for a compatible developer release. It does not imply
+that a new release or migration has been published.
+
+| Production | Reuse already in place | Further shared component or template | Source-specific boundary |
+| --- | --- | --- | --- |
+| Mental Hangover | `scrolling.New` for cards, BOB text and projected glyph passes; bitmap font metrics, `render.Batch`, `RasterOverlay`, `CueClock` and cue ranges. | A configurable RGB12 palette transition pass can replace the local six-mode full-screen shader; a bounded retained-mask bank can serve its parity-filled vectors, spheres and stencil stages. The outline/polar glyph painter is a useful template for custom scrolling geometry. | Decoded 68000 tables, integer projection, exact level divisors, per-stage palette order and cue timing remain production data. The RGB12 fade shader has its own modes and is not equivalent to an indexed palette lookup. |
+| Spaceballs | `kit.Effect`, `timeline.Sequence`, `render.Batch` and shared local material/mask renderers across its many screens. | `composite.BitplanePalette` now provides the one-pass 4-plane and packed 5/6-plane palette lookup repeated by Ribbons, Trails and Noise. A retained mask-bank component and a two-material offset sampler are next candidates; Pattern, Wave and Finale already share one local renderer. | Decompressed contour banks, source-specific parity/edge exchange, 25 Hz pose interrupts, bitplane offsets and palette cue order must stay with the conversion. The new component does not yet reproduce shifted material sampling. |
+| OldSkool DirectX 8 Go | `scrolling.New` with custom painters, `effects.Warp`, `effects.Mesh`, `sprites.FieldRenderer` and DCK audio. | A bitmap cell painter template can parameterize lit-cell geometry, per-row waves, depth sorting and wireframe/filled materials. Its four-oscillator ball field can be expressed as a sampled formation after a parity check; the colored ribbon is a candidate batched-quad template. | The executable's font bit order, oscillator constants, cube face mapping, clipping margins and meter mapping remain authored parameters. The small 3D scroller projects each lit cell, so an ordinary atlas transform would clip or flatten it. |
+
+The first new primitive is `composite.BitplanePalette`: 1–4 mask planes take one
+GPU pass; 5–6 take a bounded RGBA packing pass and a palette pass. It accepts
+caller-owned full-size alpha masks and a replaceable palette with transparent
+entries. The production still decides which retained mask frame appears in each
+slot. Its unit and opt-in GPU checks cover plane order, palette replacement and
+the source-count boundary. Spaceballs continues to use its pinned renderer until
+full-frame captures confirm parity at palette, mask-bank and scene boundaries.
+
+On 2026-09-30, `go test ./...` passed in all three new demo repositories on
+their published DCK 1.0.0 pins. The DCK source checkout passed its complete
+unit suite, build and vet, plus the new compositor's GPU pixel checks. These
+checks establish a non-breaking addition; they do not establish visual parity
+between a migrated Spaceballs scene and its current renderer.
+
+The next extraction should begin with Spaceballs' `maskRing`, retaining the
+source's six-frame storage and independent draw/clear cues while taking the
+contour projection as a callback. A later material sampler needs explicit
+source offsets and palette indexing; `BitplanePalette` should not silently grow
+those semantics. Mental Hangover's RGB12 transition is separate because it
+transforms each source color with integer truncation rather than choosing a
+palette entry from binary planes. The OldSkool cell painter needs visible-cell
+culling and allocation-free batching before it can replace its custom painter.
+
 ## Cross-catalog check: wrapped motion and image trains
 
 The DCK implementations in all 20 demo repositories, including every Cuddly
