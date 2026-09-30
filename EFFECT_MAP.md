@@ -200,6 +200,13 @@ GPU completion/readback and do not claim a device performance gain. Revisions,
 hashes, the outlier and measurement limits are retained in
 [the outline integration evidence](fidelity/oldskool-outlines-20260930.json).
 
+The published DCK 1.0.7 ARM64 build passed native/ZIP 16 KiB alignment and was
+installed on the Pixel 10a. Its 35 ten-second filled-mode samples after the
+last effect entrance measured 49.2–50.9 TPS and 59.8–60.1 FPS without an
+observed crash. Normal audio and realtime cube interpolation were active.
+This does not establish new Android wireframe/visual-reference or memory
+evidence. [Outline-build Pixel measurements](fidelity/pixel-oldskool-outlines-20260930.json)
+
 Spaceballs' palette grids and indexed-page fades remain candidates.
 Mental Hangover's fixed-point projection/transport and floor
 sampling remain separate extraction families. OldSkool's YM signal adapter and
