@@ -12,10 +12,15 @@ import (
 // SecondaryClock selects clocks[1]; otherwise clocks[0] is used. Envelope
 // multiplies the amplitude by the caller's current envelope value. PhasePeriod
 // optionally applies a signed remainder to the complete phase before sampling.
+// RoundProduct explicitly rounds amplitude*wave before adding it, retaining
+// source programs that store each wave result separately rather than using FMA.
+// FusedIndexPhase explicitly fuses index*IndexRate with the clock phase before
+// adding Phase. Both options are false by default, preserving ordinary sampling.
 type IndexedHarmonic struct {
 	Amplitude, Rate, Divisor, IndexPhase, IndexRate, Phase float64
 	PhasePeriod                                            float64
 	Cos, SecondaryClock, Envelope, UseIndexOffsets         bool
+	RoundProduct, FusedIndexPhase                          bool
 }
 
 // FormationBounds optionally restricts the final sprite position. Bounds are
@@ -107,7 +112,11 @@ func sampleFormationAxis(value float64, terms []IndexedHarmonic, offsets []float
 		} else {
 			phase *= term.Rate
 		}
-		phase += float64(index)*term.IndexRate + term.Phase
+		if term.FusedIndexPhase {
+			phase = math.FMA(float64(index), term.IndexRate, phase) + term.Phase
+		} else {
+			phase += float64(index)*term.IndexRate + term.Phase
+		}
 		if term.PhasePeriod > 0 {
 			phase = math.Mod(phase, term.PhasePeriod)
 		}
@@ -119,7 +128,11 @@ func sampleFormationAxis(value float64, terms []IndexedHarmonic, offsets []float
 		if term.Envelope {
 			amplitude *= envelope
 		}
-		value += amplitude * wave
+		if term.RoundProduct {
+			value += float64(amplitude * wave)
+		} else {
+			value += amplitude * wave
+		}
 	}
 	return value
 }
