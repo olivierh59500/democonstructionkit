@@ -133,6 +133,48 @@ batch submission belong to DCK. `go run ./examples/cellscroll` demonstrates two
 simultaneous lanes; hold Space for wireframe, or use `-capture /path/to/output
 -frame 360` for one native PNG. `Scrolling.Close` closes its cell painters.
 
+## Retained contours, silhouettes and trails
+
+`composite.ContourBank` keeps a fixed number of pose slots with independent
+layers. A write can clear its target or accumulate on the previous image; other
+slots keep their data. `Image` returns a borrowed handle for a palette, raster,
+reflection or another pass. A source choreography can choose the displayed
+indices without rebuilding geometry resources or allocating new canvases.
+
+```go
+bank, err := composite.NewContourBank(composite.ContourBankConfig{
+    Width: 352, Height: 290, Slots: 6, Layers: 2,
+    FillRule: ebiten.FillRuleEvenOdd,
+})
+if err != nil { return err }
+defer bank.Close()
+
+err = bank.Paint(workingSlot, 0, true, func(batch *render.Batch) {
+    for _, contour := range contours {
+        batch.Fan(len(contour), func(index int) ebiten.Vertex {
+            p := contour[index]
+            return render.Vertex(p.X, p.Y, 0, 0, color.White)
+        })
+    }
+})
+// A second write with clear=false retains the earlier silhouette.
+currentMask := bank.Image(workingSlot, 0)
+```
+
+`Fan` shares an even-odd batch across concavity and holes; omit a duplicated
+closing vertex from its count. Source vertices can also supply colors and UVs
+for a palette atlas or repeated material. Each vertex is mapped once, so the
+mapper must be stable within that call. `StrokeContour` draws open/closed paths
+with a configurable width and optional horizontal-edge exclusion.
+`ParityContour` uses ray spans for independently deformed edges, including
+endpoint-Y exchange. These methods work on any `render.Batch`, without a bank.
+
+Spaceballs retains its own buffer-pointer/cue program and integer coordinate
+maps while DCK owns mask storage and geometry submission. Mental Hangover keeps
+its exact fixed-point projectors while sharing fan geometry and materials.
+`go run ./examples/contourtrails` combines three delayed masks with a live
+palette. `-capture /path/to/output -frame 200` saves a deterministic native PNG.
+
 ## Compose independent layers and timed changes
 
 Place each effect on its own retained surface when it needs a mask or an image

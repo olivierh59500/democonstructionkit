@@ -20,6 +20,8 @@ units. Version 1.0.2 adds configurable quantized-color transitions, with Mental
 Hangover as a verified consumer. The remaining recent-production candidates
 are listed in the effect map. Version 1.0.3 adds flat and cuboid bitmap-cell
 fonts through the scrolling facade, with the OldSkool renderers as consumers.
+Version 1.0.4 adds retained contour image banks and common fan/stroke/parity
+submission, used throughout Spaceballs and Mental Hangover's polygon scenes.
 
 ## Planned 2.0.0 — Visual Editor
 

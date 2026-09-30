@@ -1,5 +1,28 @@
 # Changelog
 
+## 1.0.4 — Developer Edition — 2026-09-30
+
+- Added owned `composite.ContourBank` storage for fixed retained slots/layers,
+  selective clearing, accumulating writes and borrowed image composition.
+- Added bounded `render.Batch` fan, float32 stroke and parity-edge methods.
+  Fans map each source vertex once and preserve source UV/color attributes;
+  parity spans retain optional endpoint-Y exchange and a configurable ray edge.
+- Spaceballs now uses the bank for all six-mask, paired-mask and pattern-mask
+  families, plus the shared bitplane palette for opening and Duet's exit.
+- Mental Hangover's author objects, BOBs, solids, patterned contours and both
+  outline-font passages use the common fan submission.
+- All 690 sampled complete Spaceballs unit frames and 699 Mental Hangover
+  production frames match the preceding renderers across 35,210 drawn updates.
+- Added `examples/contourtrails` and GPU checks for holes, modified-edge parity,
+  selective outlines, XOR history and independent slot/layer lifetime.
+
+Full DCK tests, build and vet pass, with Spaceballs' controller/planar oracle
+and Mental Hangover's controller and GPU suites. Two muted native Mental
+Hangover replays per implementation measured mean CPU draw submission of
+90.66–91.36 microseconds before and 89.24–93.80 after. These timings exclude
+GPU completion/readback; image counts and native pipeline pass counts stay
+the same.
+
 ## 1.0.3 — Developer Edition — 2026-09-30
 
 - Added immutable `font.CellBank` preparation from a CPU bitmap atlas or a
