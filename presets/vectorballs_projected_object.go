@@ -28,7 +28,9 @@ func VectorballsProjectedObject(name string, fill sprites.Fill, segments int, si
 		RotationStep: geometry.Vec3{X: .012, Y: .017, Z: .005},
 		Position:     geometry.Vec3{Z: 850}, Scale: .55,
 		Focal: 1450, CenterX: 320, CenterY: 193,
-		YUp: true, AscendingDepth: true,
+		// With Focal/(Focal+Z), larger Z is farther away. Submit it first so
+		// foreground balls cover background balls at projected crossings.
+		YUp: true, AscendingDepth: false,
 	}
 	switch name {
 	case "cube":

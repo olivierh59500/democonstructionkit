@@ -2,7 +2,10 @@
 
 Run `go run ./examples/wordobjects` from the module root. Three independent
 objects share one copied model recipe, one compiled sine/matrix bank and one
-borrowed three-column row palette. Their angle rates and depth waves differ.
+borrowed six-column row palette, with a different color for each face. Their
+angle rates and depth waves differ. Face indices use the positive projected
+winding required by `WordMesh` with screen Y pointing down; this displays the
+near surfaces rather than the cube's rear surfaces.
 
 `WordEulerMatrix` configures the angular period, quantization, quarter phase,
 product shifts and nested-product association. `WordProjectionConfig` chooses

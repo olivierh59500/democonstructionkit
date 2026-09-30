@@ -14,6 +14,9 @@ func TestVectorballsSpherePresetUsesBoundedDensity(t *testing.T) {
 	if config.Sphere == nil || config.Sphere.Count != 144 || config.Sphere.Radius != 320 || config.Sphere.Image != 120 {
 		t.Fatalf("sphere preset = %+v", config.Sphere)
 	}
+	if config.AscendingDepth {
+		t.Fatal("camera must draw larger, farther Z before smaller, nearer Z")
+	}
 	if _, err := sprites.NewProjectedObject(config); err != nil {
 		t.Fatal(err)
 	}

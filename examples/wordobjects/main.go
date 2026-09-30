@@ -40,26 +40,33 @@ func newGame() (_ *game, err error) {
 	if err != nil {
 		return nil, err
 	}
-	pixels := image.NewNRGBA(image.Rect(0, 0, 3, height))
+	faceColors := [...]color.NRGBA{
+		{R: 255, G: 87, B: 66, A: 255},
+		{R: 64, G: 210, B: 255, A: 255},
+		{R: 255, G: 195, B: 56, A: 255},
+		{R: 105, G: 225, B: 126, A: 255},
+		{R: 188, G: 112, B: 255, A: 255},
+		{R: 255, G: 115, B: 197, A: 255},
+	}
+	pixels := image.NewNRGBA(image.Rect(0, 0, len(faceColors), height))
 	for y := 0; y < height; y++ {
-		for x := 0; x < 3; x++ {
-			v := byte(70 + y*180/height)
-			paint := color.NRGBA{A: 255}
-			switch x {
-			case 0:
-				paint.R, paint.G = v, v/3
-			case 1:
-				paint.G, paint.B = v, v/2
-			case 2:
-				paint.R, paint.B = v/2, v
-			}
+		for x, base := range faceColors {
+			// A subtle row gradient retains a distinct color on every face.
+			shade := 180 + y*75/height
+			paint := color.NRGBA{R: byte(int(base.R) * shade / 255), G: byte(int(base.G) * shade / 255), B: byte(int(base.B) * shade / 255), A: 255}
 			pixels.SetNRGBA(x, y, paint)
 		}
 	}
 	g.palette = ebiten.NewImageFromImage(pixels)
 	cube := effects.WordMeshModel{Points: []motion.WrappedPoint{{X: -80, Y: -80, Z: -80}, {X: 80, Y: -80, Z: -80}, {X: 80, Y: 80, Z: -80}, {X: -80, Y: 80, Z: -80}, {X: -80, Y: -80, Z: 80}, {X: 80, Y: -80, Z: 80}, {X: 80, Y: 80, Z: 80}, {X: -80, Y: 80, Z: 80}}}
 	for i, face := range effects.CubeFaces() {
-		cube.Faces = append(cube.Faces, effects.WordFace{Contours: [][]int{face}, Material: i % 3})
+		// CubeFaces uses outward world normals; WordMesh's screen convention
+		// accepts positive winding with Y down. Reverse this recipe's faces so
+		// the near surfaces hide the far surfaces instead of looking inverted.
+		for a, b := 0, len(face)-1; a < b; a, b = a+1, b-1 {
+			face[a], face[b] = face[b], face[a]
+		}
+		cube.Faces = append(cube.Faces, effects.WordFace{Contours: [][]int{face}, Material: i})
 	}
 	for i := range g.meshes {
 		index := i
