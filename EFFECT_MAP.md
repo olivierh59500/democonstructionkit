@@ -21,14 +21,15 @@ the tested revisions, source inventory and device evidence.
 The original twenty-repository inventory predates Mental Hangover, Spaceballs
 and OldSkool DirectX 8 Go. They initially used DCK 1.0.0; Spaceballs now uses
 the binary-plane palette component added in 1.0.1, and Mental Hangover uses the
-quantized-color component added in 1.0.2. The following classification
+quantized-color component added in 1.0.2. OldSkool uses owned flat/cuboid
+cell modes added in 1.0.3. The following classification
 distinguishes completed integration from remaining extraction candidates.
 
 | Production | Reuse already in place | Further shared component or template | Source-specific boundary |
 | --- | --- | --- | --- |
 | Mental Hangover | `scrolling.New` for cards, BOB text and projected glyph passes; bitmap font metrics, `render.Batch`, `RasterOverlay`, `CueClock`, cue ranges and `composite.QuantizedColor` for all six copper transition operations. | A bounded retained-mask bank can serve its parity-filled vectors, spheres and stencil stages. The outline/polar glyph painter is a useful template for custom scrolling geometry. | Decoded 68000 tables, integer projection, exact level divisors, per-stage palette order and cue timing remain production data. Quantized-color fades transform RGB values rather than indexing binary planes. |
 | Spaceballs | `kit.Effect`, `timeline.Sequence`, `render.Batch`, `composite.BitplanePalette` in Trails, Noise, Angular, Sliced, Ribbons and Duet, and shared local material/mask renderers. | A retained mask-bank component and a two-material offset sampler are next candidates; Pattern, Wave and Finale already share one local renderer. | Decompressed contour banks, source-specific parity/edge exchange, 25 Hz pose interrupts, bitplane offsets and palette cue order must stay with the conversion. Shifted material sampling remains a separate extraction. |
-| OldSkool DirectX 8 Go | `scrolling.New` with custom painters, `effects.Warp`, `effects.Mesh`, `sprites.FieldRenderer` and DCK audio. | A bitmap cell painter template can parameterize lit-cell geometry, per-row waves, depth sorting and wireframe/filled materials. Its four-oscillator ball field can be expressed as a sampled formation after a parity check; the colored ribbon is a candidate batched-quad template. | The executable's font bit order, oscillator constants, cube face mapping, clipping margins and meter mapping remain authored parameters. The small 3D scroller projects each lit cell, so an ordinary atlas transform would clip or flatten it. |
+| OldSkool DirectX 8 Go | `font.CellBank`, owned `scrolling.Mode.Cells` for flat and cuboid fonts, `effects.Warp`, `effects.Mesh`, `sprites.FieldRenderer` and DCK audio. | Its four-oscillator ball field can be expressed as a sampled formation after a parity check; the colored ribbon and cube wireframe are candidate shared materials. | The executable's font bit order, oscillator constants, cube face mapping, clipping margins and meter mapping remain authored parameters. Cell masks are cached once; culling, face projection and cell materials now belong to DCK. |
 
 ### Screen-level extraction boundaries
 
@@ -57,7 +58,7 @@ distinguishes completed integration from remaining extraction candidates.
 | Colored bands, from 4 s | `render.Batch` submits the sixteen quads. | A paired-edge harmonic quad strip with independent sine banks and an optional outline material. |
 | Ball field, from 12 s | `sprites.FieldRenderer` draws eighty borrowed ball sprites. | A sampled harmonic formation can own the four oscillator banks and pixel snapping after exact-pose comparison. |
 | Deformed logo, from 18 s | `effects.Warp` owns its source surface and ten-row mapping. | The map is already a parameter; expose a named multi-oscillator row preset rather than a new renderer. |
-| Small 3D and large raster scrolls, from 26/36 s | One `scrolling.New` transport per font; custom painters supply lit-cell geometry. | A cell-painter family with font-independent bit order, per-row offsets, culling margin, projected cubelet faces and wireframe/filled modes. |
+| Small 3D and large raster scrolls, from 26/36 s | One `scrolling.New` transport per font with owned `Mode.Cells`; cached native font masks, row paths, cuboid face generation, culling and filled/outline materials. | Source binary readers, row oscillator values, insertion edges and face colors remain authored configuration. The local cell geometry loops have been removed. |
 | YM-driven frequency columns | DCK opens and replays the music; the production converts AY register periods to its authored columns. | A register-to-signal adapter could feed `modulation` without embedding this demo's 80-column strength and decay curve. |
 
 The first new primitive is `composite.BitplanePalette`: 1–4 mask planes take one
@@ -97,14 +98,32 @@ Go heap excludes native and GPU resources. Raw timings, their limits and frame
 fingerprints are retained in
 [the color integration evidence](fidelity/mental-color-20260930.json).
 
+OldSkool's flat/cuboid cell extraction preserves both original rendering modes.
+Two 9,001-frame traversals at the authored 50 Hz simulation cadence yielded
+375 matching complete-frame fingerprints each, covering the first twelve
+frames, every 31 ticks, all five entrance cue windows and the final tick.
+This samples 750 complete filled/wireframe frames; every intervening update
+was drawn. Fonts retain their original binary readers and lookup order. The
+generic cell bank caches each unique glyph's row-major lit pixels, while
+`Mode.Cells` owns the painter and releases it through `Scrolling.Close`.
+
+One muted native replay per mode/implementation measured mean CPU draw
+submission of 737.34 to 715.49 microseconds filled, and 1,118.58 to 1,029.59
+microseconds wireframe. These are desktop submission measurements, excluding
+GPU completion and readback. Row paths are sampled once per font/time and no
+bitmap pixels are scanned during Draw. Generic cuboids conservatively discard
+cells intersecting the near plane; the native depth bank stays well beyond it.
+The ordered fingerprints and timing samples are retained in
+[the cell integration evidence](fidelity/oldskool-cells-20260930.json).
+
 The next extraction should begin with Spaceballs' `maskRing`, retaining the
 source's six-frame storage and independent draw/clear cues while taking the
 contour projection as a callback. A later material sampler needs explicit
 source offsets and palette indexing; `BitplanePalette` should not silently grow
 those semantics. Mental Hangover's shared color transition keeps its integer
-truncation distinct from binary-plane palette indexing. The OldSkool cell painter
-needs visible-cell
-culling and allocation-free batching before it can replace its custom painter.
+truncation distinct from binary-plane palette indexing. OldSkool's cell modes
+are integrated; its band, ball-field and cube-outline paths remain the next
+production-specific rendering/motion candidates.
 
 ## Cross-catalog check: wrapped motion and image trains
 

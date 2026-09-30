@@ -1,5 +1,27 @@
 # Changelog
 
+## 1.0.3 — Developer Edition — 2026-09-30
+
+- Added immutable `font.CellBank` preparation from a CPU bitmap atlas or a
+  caller-supplied pixel reader, with independent dimensions, Unicode character
+  sets, alias sharing and per-pixel colors. No bitmap scanning occurs in Draw.
+- Added owned `scrolling.Mode.Cells` to the existing `scrolling.New` facade.
+  Flat quads/rectangles and cuboids support row paths, per-cell poses, camera
+  projection, vertex colors, face culling/depth ordering and wireframe material.
+  Scrolling owns their rendering resources; controllers expose outline toggles
+  and row-cache invalidation.
+- OldSkool DirectX 8 Go now supplies its font banks and authored row parameters
+  instead of local cell drawing/projection loops. All 750 complete-frame samples
+  match its previous filled/wireframe renderers over 18,002 drawn frames.
+- Added `examples/cellscroll`, with two simultaneous cell scrollers and native
+  PNG capture, plus configuration and GPU resource/mixed-font checks.
+
+The complete DCK and OldSkool test, build and vet checks pass. Native CPU draw
+submission in one muted 9,001-frame replay per mode changed from 737.34 to
+715.49 microseconds filled and 1,118.58 to 1,029.59 wireframe. These measurements
+exclude GPU completion and readback; near-plane-intersecting cuboids are
+conservatively discarded by the generic painter.
+
 ## 1.0.2 — Developer Edition — 2026-09-30
 
 - Added `composite.QuantizedColor`: independent RGB grids, integer scaling,

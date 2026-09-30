@@ -1,8 +1,8 @@
 # democonstructionkit
 
-**1.0.2 — Developer Edition**
+**1.0.3 — Developer Edition**
 
-Demo Construction Kit 1.0.2 is the Go/Ebitengine library for developers creating
+Demo Construction Kit 1.0.3 is the Go/Ebitengine library for developers creating
 demos and intros through code. Programming knowledge is required: this edition
 provides configurable effects, Go APIs, runnable examples, command-line tools
 and saved JSON compositions.
@@ -10,10 +10,10 @@ and saved JSON compositions.
 Install the versioned module in a Go project:
 
 ```sh
-go get github.com/olivierh59500/democonstructionkit@v1.0.2
+go get github.com/olivierh59500/democonstructionkit@v1.0.3
 ```
 
-[Release 1.0.2](https://github.com/olivierh59500/democonstructionkit/releases/tag/v1.0.2)
+[Release 1.0.3](https://github.com/olivierh59500/democonstructionkit/releases/tag/v1.0.3)
  · [Changelog](CHANGELOG.md) · [Effect templates](EFFECT_TEMPLATES.md)
  · [Version 2.0.0 roadmap](ROADMAP.md)
 
@@ -44,7 +44,11 @@ palette compositor used by six Spaceballs units, with complete-frame parity
 checks against their previous renderers. Version 1.0.2 adds programmable integer
 color passes used across Mental Hangover, with RGB12 pixel-oracle and complete
 production-frame verification. Run `go run ./examples/palettefades` to compare
-the color modes on a borrowed image.
+the color modes on a borrowed image. Version 1.0.3 adds cached geometric font
+cells selected through `scrolling.Mode.Cells`: flat or projected cuboid cells,
+filled or wireframe materials, per-row paths and per-cell poses. The OldSkool
+integration retains its 750 sampled complete filled/wireframe frames exactly.
+Run `go run ./examples/cellscroll` to compose both scrolling modes.
 [Complete components](#build-a-demo-from-complete-components) include the animated
 DMA cube controller and renderer, font construction, perspective text crawl and
 independent background bands; their consumers provide assets and configuration.

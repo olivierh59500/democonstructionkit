@@ -85,30 +85,53 @@ sets it to `0.5` for its binary original artwork. Source timing and the divisors
 
 ## Projected or deformed bitmap cells
 
-`scrolling.New` owns the text, font metrics, repetition and controls. A custom
-`scrolling.Painter` can draw each lit font cell as a projected cubelet, a
-wireframe edge, a colored quad or another material. The painter receives the
-resolved glyph and its transform. A screen can change the painter with a
-`scrolling.Mode` without duplicating the transport.
+`scrolling.New` owns the text, font metrics, repetition, controls and geometric
+cell modes. `font.NewImageCellBank` prepares a decoded CPU image through its
+metrics; `font.NewCellBank` accepts another source encoding through a pixel
+reader. Sampling happens once at initialization. Different fonts can have
+independent dimensions, character sets, aliases and colors in the same painter.
 
 ```go
-cellPainter := func(dst *ebiten.Image, sample scrolling.Sample, op ebiten.DrawImageOptions) {
-    // Read lit cells from the caller's font data, project them through a camera,
-    // and submit visible triangles through one retained render.Batch.
+bank, err := font.NewImageCellBank(cpuAtlas, metrics, characters, 0)
+if err != nil { return err }
+cells := scrolling.CellPainterConfig{
+    Fonts: map[string]*font.CellBank{"main": bank},
+    Flat: scrolling.FlatCellConfig{Size: geometry.Vec2{X: .85, Y: .85}},
+    Rows: func(_ string, row int, seconds float64) geometry.Vec3 {
+        return geometry.Vec3{Y: 12 * math.Sin(seconds*3 + float64(row)*.2)}
+    },
 }
 scroll, err := scrolling.New(scrolling.Config{
     Text: message, Fonts: map[string]scrolling.Face{"main": face},
     Font: "main", Speed: 510, X: 720, Repeat: true,
     Shape: "cells", Modes: map[string]scrolling.Mode{
-        "cells": {Paint: cellPainter},
+        "cells": {Cells: &cells},
     },
 })
 ```
 
-OldSkool DirectX 8 Go uses this boundary for both its large raster cells and
-small projected 3D cells. A future shared cell renderer must preserve per-row
-motion and whole-stage clipping before replacing those painters. Ordinary atlas
-cropping does not preserve cells that travel outside the glyph rectangle.
+Set `Shape: scrolling.CellCuboid` and supply `Cuboid.Size`, `Camera`, `Origin`
+and optional eight vertex colors for voxel letters. `Rows` offsets can also
+move depth; `Pose` can rotate, scale, hide or reposition each cell. Row offsets
+are cached per font and time; `InvalidateRows` refreshes captured live parameters.
+`CellPainterController("cells").SetOutlined(true)` selects wireframe material.
+A configured `Wireframe` callback takes precedence over that controller value.
+
+The default flat mode follows all four transformed corners, including tangent
+rotation and mirroring. `Flat.Rectangles` preserves axis-aligned rectangle
+sampling; `ScreenGap` adds constant pixel gaps. `CullBounds` controls cuboid
+visibility tests, while the destination supplies actual raster clipping. Cuboid
+cells crossing the near plane are discarded as a whole; keep the requested
+row/pose depth beyond that plane. `Mode.Cells` uses regular text or supplied
+glyphs rather than the separate projected/recycled transport backends.
+
+OldSkool DirectX 8 Go uses the same two cell modes with its recovered font data
+and source oscillator parameters. Its 750 sampled filled/wireframe complete
+frames match the preceding renderer across two 9,001-frame traversals. The
+native row paths stay authored data; face generation, culling, projection and
+batch submission belong to DCK. `go run ./examples/cellscroll` demonstrates two
+simultaneous lanes; hold Space for wireframe, or use `-capture /path/to/output
+-frame 360` for one native PNG. `Scrolling.Close` closes its cell painters.
 
 ## Compose independent layers and timed changes
 

@@ -18,7 +18,8 @@ usage templates and the verification evidence from its production consumers.
 Version 1.0.1 adds the binary-plane palette composition used by six Spaceballs
 units. Version 1.0.2 adds configurable quantized-color transitions, with Mental
 Hangover as a verified consumer. The remaining recent-production candidates
-are listed in the effect map.
+are listed in the effect map. Version 1.0.3 adds flat and cuboid bitmap-cell
+fonts through the scrolling facade, with the OldSkool renderers as consumers.
 
 ## Planned 2.0.0 — Visual Editor
 
