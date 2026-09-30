@@ -30,6 +30,36 @@ that a new release or migration has been published.
 | Spaceballs | `kit.Effect`, `timeline.Sequence`, `render.Batch` and shared local material/mask renderers across its many screens. | `composite.BitplanePalette` now provides the one-pass 4-plane and packed 5/6-plane palette lookup repeated by Ribbons, Trails and Noise. A retained mask-bank component and a two-material offset sampler are next candidates; Pattern, Wave and Finale already share one local renderer. | Decompressed contour banks, source-specific parity/edge exchange, 25 Hz pose interrupts, bitplane offsets and palette cue order must stay with the conversion. The new component does not yet reproduce shifted material sampling. |
 | OldSkool DirectX 8 Go | `scrolling.New` with custom painters, `effects.Warp`, `effects.Mesh`, `sprites.FieldRenderer` and DCK audio. | A bitmap cell painter template can parameterize lit-cell geometry, per-row waves, depth sorting and wireframe/filled materials. Its four-oscillator ball field can be expressed as a sampled formation after a parity check; the colored ribbon is a candidate batched-quad template. | The executable's font bit order, oscillator constants, cube face mapping, clipping margins and meter mapping remain authored parameters. The small 3D scroller projects each lit cell, so an ordinary atlas transform would clip or flatten it. |
 
+### Screen-level extraction boundaries
+
+| Spaceballs unit | Shared path now | Next reusable boundary |
+| --- | --- | --- |
+| Opening and the State/Of/The/Art, credits, dragon and closing pages | A common `PageEffect` renderer and `timeline.Sequence` already handle the authored pages and fades locally. | Palette-indexed page fades could move to DCK after their RGB12 integer endpoints, transparency and high-resolution crop are compared. |
+| Pattern, Wave and Finale | Wave and Finale wrap the existing Pattern material renderer with different clocks and bank selections. | A parameterized sampler for one body mask plus two independently offset monochrome materials; a plain bitplane lookup would lose those offsets. |
+| Trails | A six-slot mask ring and local four-mask packing plus fifth-mask palette shader. | The five-plane path of `BitplanePalette`, followed by a separately configured retained mask bank. |
+| Noise, Angular, Sliced and Duet | Angular, Sliced and Duet already reuse Noise's six-plane renderer and retain distinct bank/cue programs. | The six-plane path of `BitplanePalette`; retain the source's extra dither bit, endpoint exchange and white-exit behavior in their authored controllers. |
+| Ribbons | Four paired pose-mask banks with a local 16-color shader. | The one-pass four-plane path of `BitplanePalette`; the paired mask lifetime remains independently timed. |
+| Blocks and Outline | Both use one local gradient-grid renderer with body/shadow masks. | A palette-grid material component with programmable cell size, shadow offset and color-bank uploads. |
+| Tiles and Vote | Predecoded tile/palette images are selected by source clocks. | Existing image-bank and timed-layer components can express the display path; extraction should wait until tile selection, not just drawing, is configurable. |
+
+| Mental Hangover unit | Shared path now | Next reusable boundary |
+| --- | --- | --- |
+| Eagle, title, cards and sign raster | DCK text pages, cue ranges, `RasterOverlay` and retained image layers. | An RGB12 per-pixel transition component covering the source's six integer modes. |
+| Author vectors, filled BOBs, filled solids and eight patterned objects | `render.Batch`, DCK scrolling for the text transport and local exact fixed-point projections. | A bounded parity-mask/contour renderer with caller-defined projection and material; preserve the original point and cue tables. |
+| Star greeting pages | Cached DCK text pages and one batched point field. | A configurable page/star composition whose star mask and text palette each have their own cue level. |
+| Circular text | The shared scrolling facade feeds a local polar outline painter. | A reusable polar glyph mapper/painter template with original control bytes as parameters. |
+| Contact spheres and perspective text | Existing projected batches and scrolling samples, with local reciprocal/projective arithmetic. | A projected glyph/point template needs supplied integer projection and clipping rules before it can replace these scenes. |
+| Checkerboard finale | Retained row-palette floor, projected balls and logo material. | The floor's palette-row shader can become a configurable image material; ball motion is already expressible through the DCK projected-sprite family. |
+
+| OldSkool DirectX 8 Go phase | Shared path now | Next reusable boundary |
+| --- | --- | --- |
+| Cube, present from the start | `effects.Mesh` owns the camera mesh and filled faces. | Source face order and realtime interpolation remain parameters; a shared wireframe material could remove the local edge loop. |
+| Colored bands, from 4 s | `render.Batch` submits the sixteen quads. | A paired-edge harmonic quad strip with independent sine banks and an optional outline material. |
+| Ball field, from 12 s | `sprites.FieldRenderer` draws eighty borrowed ball sprites. | A sampled harmonic formation can own the four oscillator banks and pixel snapping after exact-pose comparison. |
+| Deformed logo, from 18 s | `effects.Warp` owns its source surface and ten-row mapping. | The map is already a parameter; expose a named multi-oscillator row preset rather than a new renderer. |
+| Small 3D and large raster scrolls, from 26/36 s | One `scrolling.New` transport per font; custom painters supply lit-cell geometry. | A cell-painter family with font-independent bit order, per-row offsets, culling margin, projected cubelet faces and wireframe/filled modes. |
+| YM-driven frequency columns | DCK opens and replays the music; the production converts AY register periods to its authored columns. | A register-to-signal adapter could feed `modulation` without embedding this demo's 80-column strength and decay curve. |
+
 The first new primitive is `composite.BitplanePalette`: 1–4 mask planes take one
 GPU pass; 5–6 take a bounded RGBA packing pass and a palette pass. It accepts
 caller-owned full-size alpha masks and a replaceable palette with transparent
