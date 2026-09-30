@@ -3081,8 +3081,8 @@
     "No new DirectX-hardware rasterization reference."
   ],
   "initial_outlier": {
-    "filled_update_mean_us": 94.105,
-    "filled_draw_mean_us": 1083.087,
+    "filled_update_mean_us": 94.10698300188868,
+    "filled_draw_mean_us": 1083.0888822353072,
     "context": "Cocoa content-scale warnings; not reproduced by paired/profiled replays. Original final report retained separately in the local capture directory."
   },
   "extended_profiled_replay": {
@@ -3093,5 +3093,6 @@
     "mean_draw_us_before": 419.14945847707617,
     "mean_draw_us_after": 366.43793980300984,
     "scope": "Filled; Go CPU profiler enabled. Diagnostics are not hardware-device performance claims."
-  }
+  },
+  "cpu_profile_summary": "Both 20,001-update filled profiles are dominated by runtime/cgo graphics signaling and the unchanged scrolling/warp paths; no new outline hotspot is observed. Profiles are local diagnostic artifacts."
 }
