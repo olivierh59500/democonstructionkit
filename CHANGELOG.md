@@ -1,5 +1,25 @@
 # Changelog
 
+## 1.0.2 — Developer Edition — 2026-09-30
+
+- Added `composite.QuantizedColor`: independent RGB grids, integer scaling,
+  replacement colors, fades from a target, optional alpha cutoff and byte-exact
+  passthrough. It borrows any source image and needs one shader without an
+  additional working surface. Translucent inputs retain premultiplied alpha.
+- Mental Hangover now configures this component for its six copper operations.
+  All 699 sampled complete frames match the previous renderer across 24,001
+  rendered frames and 41 production units. Its independent oracle verifies
+  every RGB12 color at the source transition levels.
+- Added the `examples/palettefades` program, deterministic PNG capture and
+  reusable color-pass templates. Native replay timing distinguishes CPU draw
+  submission from GPU completion and pixel readback.
+
+Complete DCK tests, build and vet pass. Mental Hangover's controller tests and
+GPU suite pass against the new renderer. Two whole-production CPU submission
+runs per implementation measured mean draws of 37.82–38.63 microseconds before
+and 38.27–39.70 after; the pass needs no additional image surface. These are
+desktop submission measurements, excluding GPU completion and pixel readback.
+
 ## 1.0.1 — Developer Edition — 2026-09-30
 
 - Reviewed the Mental Hangover, Spaceballs and OldSkool DirectX 8 Go

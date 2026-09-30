@@ -20,12 +20,13 @@ the tested revisions, source inventory and device evidence.
 
 The original twenty-repository inventory predates Mental Hangover, Spaceballs
 and OldSkool DirectX 8 Go. They initially used DCK 1.0.0; Spaceballs now uses
-the binary-plane palette component added in 1.0.1. The following classification
+the binary-plane palette component added in 1.0.1, and Mental Hangover uses the
+quantized-color component added in 1.0.2. The following classification
 distinguishes completed integration from remaining extraction candidates.
 
 | Production | Reuse already in place | Further shared component or template | Source-specific boundary |
 | --- | --- | --- | --- |
-| Mental Hangover | `scrolling.New` for cards, BOB text and projected glyph passes; bitmap font metrics, `render.Batch`, `RasterOverlay`, `CueClock` and cue ranges. | A configurable RGB12 palette transition pass can replace the local six-mode full-screen shader; a bounded retained-mask bank can serve its parity-filled vectors, spheres and stencil stages. The outline/polar glyph painter is a useful template for custom scrolling geometry. | Decoded 68000 tables, integer projection, exact level divisors, per-stage palette order and cue timing remain production data. The RGB12 fade shader has its own modes and is not equivalent to an indexed palette lookup. |
+| Mental Hangover | `scrolling.New` for cards, BOB text and projected glyph passes; bitmap font metrics, `render.Batch`, `RasterOverlay`, `CueClock`, cue ranges and `composite.QuantizedColor` for all six copper transition operations. | A bounded retained-mask bank can serve its parity-filled vectors, spheres and stencil stages. The outline/polar glyph painter is a useful template for custom scrolling geometry. | Decoded 68000 tables, integer projection, exact level divisors, per-stage palette order and cue timing remain production data. Quantized-color fades transform RGB values rather than indexing binary planes. |
 | Spaceballs | `kit.Effect`, `timeline.Sequence`, `render.Batch`, `composite.BitplanePalette` in Trails, Noise, Angular, Sliced, Ribbons and Duet, and shared local material/mask renderers. | A retained mask-bank component and a two-material offset sampler are next candidates; Pattern, Wave and Finale already share one local renderer. | Decompressed contour banks, source-specific parity/edge exchange, 25 Hz pose interrupts, bitplane offsets and palette cue order must stay with the conversion. Shifted material sampling remains a separate extraction. |
 | OldSkool DirectX 8 Go | `scrolling.New` with custom painters, `effects.Warp`, `effects.Mesh`, `sprites.FieldRenderer` and DCK audio. | A bitmap cell painter template can parameterize lit-cell geometry, per-row waves, depth sorting and wireframe/filled materials. Its four-oscillator ball field can be expressed as a sampled formation after a parity check; the colored ribbon is a candidate batched-quad template. | The executable's font bit order, oscillator constants, cube face mapping, clipping margins and meter mapping remain authored parameters. The small 3D scroller projects each lit cell, so an ordinary atlas transform would clip or flatten it. |
 
@@ -43,7 +44,7 @@ distinguishes completed integration from remaining extraction candidates.
 
 | Mental Hangover unit | Shared path now | Next reusable boundary |
 | --- | --- | --- |
-| Eagle, title, cards and sign raster | DCK text pages, cue ranges, `RasterOverlay` and retained image layers. | An RGB12 per-pixel transition component covering the source's six integer modes. |
+| Eagle, title, cards and sign raster | DCK text pages, cue ranges, `RasterOverlay`, retained image layers and `QuantizedColor` for the six source copper modes. | Source artwork, operation order, thresholds and ratios remain authored parameters; no local color shader remains. |
 | Author vectors, filled BOBs, filled solids and eight patterned objects | `render.Batch`, DCK scrolling for the text transport and local exact fixed-point projections. | A bounded parity-mask/contour renderer with caller-defined projection and material; preserve the original point and cue tables. |
 | Star greeting pages | Cached DCK text pages and one batched point field. | A configurable page/star composition whose star mask and text palette each have their own cue level. |
 | Circular text | The shared scrolling facade feeds a local polar outline painter. | A reusable polar glyph mapper/painter template with original control bytes as parameters. |
@@ -79,13 +80,30 @@ establish renderer-migration parity for the six Spaceballs units. These captures
 compare native Go revisions; they do not establish new Amiga hardware or Pixel
 rasterization parity.
 
+Mental Hangover's color extraction uses `composite.QuantizedColor` with an RGB12
+grid and the source's alpha threshold of 0.5. Its operation table supplies
+replacement gray, a fade from white and scaling divisors 16, 32, 64 and 128.
+All 699 complete-frame fingerprints across 41 production units match the
+preceding renderer over 24,001 drawn ticks, with no extra image pass or surface.
+The independent source `PaletteWord` oracle checks all 4,096 colors at 41
+mode/level combinations. DCK also verifies RGB565 and eight-bit grids, mixed
+targets, translucent colors, cropped sources and byte-exact passthrough.
+
+Two timed desktop replays per implementation recorded mean CPU draw submissions
+of 37.82–38.63 microseconds before and 38.27–39.70 after. The p95 ranges were
+87.21–91.08 and 88.46–94.42 microseconds; peak Go heap ranges were 70.12–70.18
+and 64.51–69.65 MiB. These timings exclude GPU completion and pixel readback;
+Go heap excludes native and GPU resources. Raw timings, their limits and frame
+fingerprints are retained in
+[the color integration evidence](fidelity/mental-color-20260930.json).
+
 The next extraction should begin with Spaceballs' `maskRing`, retaining the
 source's six-frame storage and independent draw/clear cues while taking the
 contour projection as a callback. A later material sampler needs explicit
 source offsets and palette indexing; `BitplanePalette` should not silently grow
-those semantics. Mental Hangover's RGB12 transition is separate because it
-transforms each source color with integer truncation rather than choosing a
-palette entry from binary planes. The OldSkool cell painter needs visible-cell
+those semantics. Mental Hangover's shared color transition keeps its integer
+truncation distinct from binary-plane palette indexing. The OldSkool cell painter
+needs visible-cell
 culling and allocation-free batching before it can replace its custom painter.
 
 ## Cross-catalog check: wrapped motion and image trains

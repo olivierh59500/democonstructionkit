@@ -3,7 +3,8 @@
 These patterns turn source artwork and timing into reusable DCK components.
 They are ordinary Go code: images, fonts and music remain caller supplied. The
 binary-plane compositor is available in DCK 1.0.1. The other templates
-use the existing scrolling, timeline and composition APIs.
+use the existing scrolling, timeline and composition APIs. The integer-color
+pass is available in 1.0.2.
 
 ## Binary masks with a live palette
 
@@ -44,6 +45,43 @@ motivated this component. Its Noise, Angular, Sliced and Duet materials select
 alpha for five retained pose masks and red for the opaque sixth material plane.
 The scene migration matches all 309 before/after complete-frame captures over
 5,106 rendered frames.
+
+## Integer color passes on a scrolling layer, logo or complete scene
+
+`composite.QuantizedColor` changes the colors of a borrowed image, independently
+of its animation. Each RGB channel has its own grid: `{15,15,15}` models RGB12,
+while `{31,63,31}` models RGB565. Passthrough preserves the original source;
+the other operations can quantize, replace, scale or fade from a chosen target.
+The numerator can follow a timeline, a text cue or a music-derived signal.
+
+```go
+colors, err := composite.NewQuantizedColor(composite.QuantizedColorConfig{
+    Levels: [3]uint16{15, 15, 15},
+})
+if err != nil { return err }
+defer colors.Close()
+
+// The caller draws a live scrolling, logo or composite into its own surface.
+state := composite.QuantizedColorState{
+    Mode: composite.QuantizedScale, Numerator: 8, Denominator: 16,
+}
+if err := colors.Draw(screen, liveLayer, state); err != nil { return err }
+
+// Start at white and approach the source color over thirty-two integer steps.
+state = composite.QuantizedColorState{
+    Mode: composite.QuantizedFromTarget, Target: [3]uint16{15, 15, 15},
+    Numerator: 12, Denominator: 32,
+}
+```
+
+Run `go run ./examples/palettefades` to compare four ordered image passes.
+`-capture /path/to/output -frame 32` produces a deterministic PNG. An existing
+effect can also provide its source through `composite.NewPass`; close the color
+renderer separately from that pass. Each transformed draw takes one shader pass
+and no CPU pixel readback. Transparent inputs are handled in straight RGB before
+returning to premultiplied colors. `AlphaThreshold` is optional; Mental Hangover
+sets it to `0.5` for its binary original artwork. Source timing and the divisors
+16, 32, 64 and 128 remain production parameters.
 
 ## Projected or deformed bitmap cells
 
