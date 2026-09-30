@@ -432,3 +432,65 @@ are data. A shared component should own its resource lifetime, bounds,
 transport and rendering path, while exposing those authored values as explicit
 parameters. See the [effect map](EFFECT_MAP.md) for the new production-by-
 production extraction boundary.
+
+## Indexed artwork and packed-color palette transitions
+
+`effects.IndexedImage` places an indexed image while DCK owns color conversion,
+its palette clock and the retained output surface. The input stays borrowed.
+Artwork uploads once; updates only change a small bank of palette uniforms.
+A crop applies after conversion in coordinates starting at `(0,0)`, then normal
+`ebiten.DrawImageOptions` scale, rotate, tint, blend or place the output.
+
+```go
+layer, err := effects.NewIndexedImage(effects.IndexedImageConfig{
+    Image: encodedImage, Palette: []uint32{0x000, 0xf80, 0xfff},
+    FPS: 50, Channel: composite.BitplaneRed, Scale: 15,
+    Crop: image.Rect(8, 0, 88, 64),
+})
+if err != nil { return err }
+defer layer.Close()
+err = layer.Fade([]uint32{0x000, 0x000, 0x000},
+    []uint32{0x000, 0xf80, 0xfff}, 100, 17)
+if err != nil { return err }
+err = layer.Update(kit.Frame{Time: seconds})
+if err != nil { return err }
+layer.Draw(screen)
+```
+
+This encoding stores index `i` as red `i*17`, with opaque input alpha. Select
+alpha, green or blue for another image format. For byte-valued indices, set
+`Scale:255`; offset and nearest rounding precede palette-bound clamping. Stored
+RGB components are sampled as premultiplied values. `SourceAlpha:true` also
+multiplies the palette result by the input alpha. Palette entry zero is an
+ordinary color; choose a transparent entry with the lower-level
+`composite.IndexedPalette` when transparency is part of the palette itself.
+
+The zero packed format is RGB12. Construct RGB565 with
+`palette.NewPackedRGB(palette.PackedRGBConfig{Bits:[3]uint8{5,6,5},
+Shift:[3]uint8{11,5,0}})` and pass it as `Format`. Packed colors are opaque;
+`IndexedPalette` accepts `color.NRGBA` banks when independently editable palette
+alpha is required. Different layers can use different formats and image sizes.
+
+`Fade` copies both endpoints. Before its start tick, the layer displays `from`;
+the last of `ticks` steps reaches `to`. A one-tick transition retains `from`.
+Seeking backward through `Frame.Time` reproduces the scheduled palette instead
+of advancing hidden state. Negative time selects tick zero; absolute ticks and
+fade arguments are bounded to signed 32-bit values on every platform.
+`SetPalette` cancels the transition without changing placement or clock.
+Packed interpolation adds a signed, truncated channel delta: a RGB12 fade from
+15 to 0 halfway gives 8, rather than the 7 of a weighted unsigned sum. Ratios
+outside 0..1 are rejected; intentional source-program extrapolation belongs in
+an explicit authored controller.
+
+Update each layer once, then draw it among scrolls, sprite fields, contours or
+background layers in the desired order. To distort an indexed illustration,
+render it through an existing `effects.Warp`/image-pass source and configure the
+same reusable mapping used for a logo or scroll. Close the pass and layer
+according to their ownership; closing `IndexedImage` leaves the borrowed input
+alive. The high-level layer retains one source-sized surface and uses palette
+conversion plus output placement, with no update/draw pixel readback.
+
+`go run ./examples/indexedpages` combines two procedural palette layers with
+RGB12/RGB565 fades and independent placement. `-capture /path/to/output -frame
+140` saves a deterministic PNG. Spaceballs uses the same API for seven native
+page kinds, retaining its original words, cue timing and high-resolution crop.

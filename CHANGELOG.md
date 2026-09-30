@@ -1,5 +1,30 @@
 # Changelog
 
+## 1.0.9 — Developer Edition — 2026-09-30
+
+- Added `palette.PackedRGB`: configurable non-overlapping RGB word channels,
+  integer expansion and signed channel-delta interpolation. The zero format is
+  RGB12; RGB565 and RGB888 are configurable without a different renderer.
+- Added `composite.IndexedPalette`: live color lookup from alpha/R/G/B encoded
+  images, index scale/offset/clamping and optional source-alpha multiplication.
+  The shader borrows artwork and retains reusable premultiplied color uniforms.
+- Added `effects.IndexedImage`: an owned conversion surface, absolute-clock
+  palette transitions, copied endpoints, output crop and image placement.
+  Backward seeks reproduce the scheduled palette. Clock and fade bounds are
+  checked before state changes and are portable across 32/64-bit targets.
+- Spaceballs' title, credit, dragon and closing pages now supply artwork,
+  palette words, authored timing and layout instead of a local shader/fade loop.
+  All 1,218 sampled director frames match over 12,414 drawn updates; all 690
+  effect-unit samples also match over 11,209 drawn updates.
+- Added the asset-free `examples/indexedpages` composition and independent
+  packed-color and GPU checks, including atlas coordinates and resource lifetime.
+
+The migration retains the existing conversion surface and two-pass image path;
+no artwork upload or pixel readback occurs during effect update/draw. Native Go
+revision comparisons do not establish new Amiga or Android rasterization parity.
+The source opening controller's intentional extrapolated fade remains authored
+logic; the new bounded interpolation API does not replace that calculation.
+
 ## 1.0.8 — Developer Edition — 2026-09-30
 
 - Added `composite.PaletteGrid`: two editable colors per spatial cell, binary

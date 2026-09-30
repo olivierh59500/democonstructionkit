@@ -26,20 +26,21 @@ cell modes added in 1.0.3. Shared retained contours arrived in 1.0.4 and binary
 material offsets in 1.0.5. Sampled harmonic bands/fields arrived in 1.0.6 and
 independent mesh/warp/sprite outline materials in 1.0.7.
 Spatial palette grids/row materials arrived in 1.0.8.
+Indexed image layers and packed-color fades arrived in 1.0.9.
 The following classification
 distinguishes completed integration from remaining extraction candidates.
 
 | Production | Reuse already in place | Further shared component or template | Source-specific boundary |
 | --- | --- | --- | --- |
 | Mental Hangover | `scrolling.New`, bitmap metrics, bounded `render.Batch.Fan`, `RasterOverlay`, `CueClock`, cue ranges, `QuantizedColor` and `PaletteGrid` for the finale's row colors. | Polar transport/projection and original fixed-point geometry programs remain candidates for complete components. | Decoded 68000 tables, integer projection, level divisors, palette order and cue timing remain production data. Immediate contours use shared fan geometry without an additional working surface. |
-| Spaceballs | `kit.Effect`, `timeline.Sequence`, `ContourBank`, shared fan/stroke/parity edges, `BitplanePalette` and spatial `PaletteGrid` for Blocks/Outline. | Indexed-page components remain candidates; patterned and spatial materials now use DCK. | Decompressed point banks, source coordinate maps, 25 Hz pose interrupts, working/display indices, palette words/layouts and cue order remain production data. |
+| Spaceballs | `kit.Effect`, `timeline.Sequence`, `ContourBank`, shared fan/stroke/parity edges, `BitplanePalette`, spatial `PaletteGrid` and owned `IndexedImage` page layers. | Timed tile/illustration selection remains a candidate; indexed, patterned and spatial materials now use DCK. | Decompressed point banks, source coordinate maps, 25 Hz pose interrupts, working/display indices, palette words/layouts and cue order remain production data. |
 | OldSkool DirectX 8 Go | `font.CellBank`, owned `scrolling.Mode.Cells`, `effects.Warp`, `effects.Mesh`, harmonic bands/fields, shared mesh/warp/box outline skins and DCK audio. | The YM-to-meter adapter remains an extraction candidate; logo row oscillators can become a named preset. | The executable's font bit order, oscillator constants, cube face mapping, clipping margins and meter mapping remain authored parameters. Cell masks and harmonic poses are cached; shared components own their geometry and materials. |
 
 ### Screen-level extraction boundaries
 
 | Spaceballs unit | Shared path now | Next reusable boundary |
 | --- | --- | --- |
-| Opening and the State/Of/The/Art, credits, dragon and closing pages | A common `PageEffect` renderer and `timeline.Sequence` already handle the authored pages and fades locally. | Palette-indexed page fades could move to DCK after their RGB12 integer endpoints, transparency and high-resolution crop are compared. |
+| State/Of/The/Art, credits, dragon and closing pages | DCK `IndexedImage` owns absolute-clock RGB12 fades, indexed conversion, output crop, placement and resources; `timeline.Sequence` retains scene order. | Original page decoding, palette words, high-resolution art bounds and cue starts remain production data; the local palette shader and fade loop are removed. |
 | Pattern, Wave and Finale | DCK's three-plane palette material, with independent sampling offsets and two reads from one borrowed monochrome texture. | Source mask offsets, fine-scroll delay, bank selection, integer motion and display crop remain authored data; no local material shader remains. |
 | Trails | DCK's six-slot `ContourBank` and five-plane `BitplanePalette`. | Working/display order, zoom coordinate maps and source cue order remain authored data. |
 | Noise, Angular, Sliced and Duet | DCK retained bank, six-plane palette lookup and shared parity edges; Duet exit also uses the one-plane palette backend. | Source dither bit, endpoint exchange, coordinate maps and white-exit cue values remain authored configuration. |
@@ -234,7 +235,19 @@ Peak Go heap was 66.5 and 60.9 MiB, excluding native/GPU memory. ELF/ZIP 16 KiB
 alignment passed. These runtime results remain separate from visual-reference
 fidelity. [Version-specific spatial-material Pixel evidence](fidelity/pixel-spatial-palettes-20260930.json)
 
-Spaceballs' indexed-page fades remain candidates. Mental Hangover's fixed-point
+Spaceballs' seven decoded title/illustration/closing page kinds now use
+`effects.IndexedImage` and `composite.IndexedPalette`. Its full director retains
+1,218 matching sampled frames over 12,414 drawn updates, including the first
+24 ticks of every segment and the repeated dragon entrances. The fourteen
+effect units also retain all 690 sampled frames over 11,209 drawn updates.
+The RGB12 format uses signed channel deltas with truncation toward zero; its
+descending midpoint differs from weighted unsigned interpolation. The opening
+controller's intentional extrapolation stays local rather than being silently
+clamped by the new bounded API. The retained conversion surface and two-pass
+image path are unchanged; no artwork uploads or pixel readback are introduced.
+[Indexed-page integration evidence](fidelity/indexed-pages-20260930.json)
+
+Spaceballs' timed tile/image selection and Mental Hangover's fixed-point
 projection/transport remain separate extraction families. OldSkool's YM signal adapter and
 named row-motion presets are the next candidates.
 

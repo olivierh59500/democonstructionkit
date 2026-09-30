@@ -1,8 +1,8 @@
 # democonstructionkit
 
-**1.0.8 — Developer Edition**
+**1.0.9 — Developer Edition**
 
-Demo Construction Kit 1.0.8 is the Go/Ebitengine library for developers creating
+Demo Construction Kit 1.0.9 is the Go/Ebitengine library for developers creating
 demos and intros through code. Programming knowledge is required: this edition
 provides configurable effects, Go APIs, runnable examples, command-line tools
 and saved JSON compositions.
@@ -10,10 +10,10 @@ and saved JSON compositions.
 Install the versioned module in a Go project:
 
 ```sh
-go get github.com/olivierh59500/democonstructionkit@v1.0.8
+go get github.com/olivierh59500/democonstructionkit@v1.0.9
 ```
 
-[Release 1.0.8](https://github.com/olivierh59500/democonstructionkit/releases/tag/v1.0.8)
+[Release 1.0.9](https://github.com/olivierh59500/democonstructionkit/releases/tag/v1.0.9)
  · [Changelog](CHANGELOG.md) · [Effect templates](EFFECT_TEMPLATES.md)
  · [Version 2.0.0 roadmap](ROADMAP.md)
 
@@ -73,6 +73,11 @@ mask offsets, channels, thresholds, optional body colors and remapped cell spans
 Spaceballs' Blocks/Outline and Mental Hangover's finale retain 1,389 complete-frame
 samples while sharing the material. `go run ./examples/palettecells` combines
 live grids, shadows, contours and independently moving row colors.
+Version 1.0.9 adds indexed image layers with absolute-clock packed-color fades,
+live palettes, configurable index encoding, output crops and image placement.
+Spaceballs' title, credit, dragon and closing pages retain 1,218 sampled complete
+director frames, including every entrance fade. `go run ./examples/indexedpages`
+combines independently positioned RGB12 and RGB565 palette layers.
 [Complete components](#build-a-demo-from-complete-components) include the animated
 DMA cube controller and renderer, font construction, perspective text crawl and
 independent background bands; their consumers provide assets and configuration.
