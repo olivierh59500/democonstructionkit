@@ -29,12 +29,13 @@ Spatial palette grids/row materials arrived in 1.0.8.
 Indexed image layers and packed-color fades arrived in 1.0.9.
 Owned contour-font scrolling, byte windows and integer mappings arrived in 1.0.10.
 Sparse point/depth fields, YM peak meters, indexed slots and row recipes arrived in 1.0.11.
+Owned word meshes, integer model projection and word cue programs arrived in 1.0.12.
 The following classification
 distinguishes completed integration from remaining extraction candidates.
 
 | Production | Reuse already in place | Further shared component or template | Source-specific boundary |
 | --- | --- | --- | --- |
-| Mental Hangover | Shared scrolling/font modes, byte transport, integer maps, sparse OR/XOR point planes, word steering and contact depth queues, contour batches, cue clocks, quantized colors and row palettes. | Original fixed-point 3D model/projector/material programs remain candidates for a complete component. | Decoded 68000 tables, projection coefficients, level divisors, palette order and scene timing remain authored data. |
+| Mental Hangover | Shared scrolling/font modes, byte transport, sparse point/depth fields, owned `WordMesh`, word matrices/models/cue programs, quantized colors and row palettes. | Final acceptance still reviews scene-specific insertion/control transport and finale compositions; the four object renderers now use a complete shared component. | Decoded tables, projection coefficients, palettes, artwork and cue data remain authored configuration. |
 | Spaceballs | Timelines, contour banks, shared geometry, bitplane/spatial palettes, owned indexed pages and retained indexed image slots for Tiles/Vote. | Native cue programs select the shared banks; working/display pointer choreography remains production-specific. | Decompressed point banks, source coordinate maps, 25 Hz pose interrupts, working/display indices, palette words/layouts and cue order remain data. |
 | OldSkool DirectX 8 Go | Cell fonts/scrolling, mesh/warp materials, harmonic bands/fields, cached row profiles, YM peak meters and gradient bars. | Remaining local setup supplies assets, authored cues and editable presets; no separate meter/row renderer remains. | Native bit order, oscillator constants, face mapping, margins, volume curve and meter mapping remain parameters. |
 
@@ -53,7 +54,7 @@ distinguishes completed integration from remaining extraction candidates.
 | Mental Hangover unit | Shared path now | Next reusable boundary |
 | --- | --- | --- |
 | Eagle, title, cards and sign raster | DCK text pages, cue ranges, `RasterOverlay`, retained image layers and `QuantizedColor` for the six source copper modes. | Source artwork, operation order, thresholds and ratios remain authored parameters; no local color shader remains. |
-| Author vectors, filled BOBs, filled solids and eight patterned objects | DCK's common fan submission, scrolling transport and original word-sized projections, preserving UVs, palette atlases and repeat materials. | Fixed-point projector and cue-program abstractions remain candidates; original point and cue tables stay authored data. |
+| Author vectors, filled BOBs, filled solids and eight patterned objects | `WordMesh`, `WordModel`, `WordEulerMatrix` and `WordProgram` own projection, cached clipping/culling, materials, instances and cue stepping. | Original model tables, shifts, depth centers, association, row/texture UV recipes and BOB control/insertion choreography remain explicit source data/configuration. |
 | Star greeting pages and perspective points | `IndexedPointPlane`, `WrappedPointProjection` and `WordEulerVelocity` own preparation/projection, sparse clearing, XOR/OR collisions and palette batching. | Original masks, depth thresholds, offsets, velocity tables, page/text levels and cue order remain parameters/data. |
 | Circular and perspective text | DCK owns `font.ContourBank`, `Mode.Contours`, `GlyphWindow`, `ByteWindow`, `TablePolar` and `RationalGrid`; both local polygon painters and dummy-glyph setup are removed. | Original font coordinates, waves, coefficients, byte commands, curve-profile controls, crop, layered shading and phase fades remain authored data/composition. No local glyph-rendering or cursor-lookahead loop remains. |
 | Contact spheres | `DepthQueue`, word steering/projection and `FieldRenderer` own the ordered population and variable-height atlas drawing. | Native point art, 16 size frames, visibility rules, upper-bound comparison policy and phase fades remain configuration/data. |
@@ -257,9 +258,10 @@ was 66.6 MiB, excluding native/GPU memory. This is runtime evidence rather
 than a new Android visual-reference comparison.
 [Indexed-page Pixel evidence](fidelity/pixel-indexed-pages-20260930.json)
 
-The remaining native extraction family is Mental Hangover's fixed-word 3D
-model/matrix/projection/material pipeline. Sparse point planes, contact queues,
-YM signals, row recipes and indexed tile slots now use complete shared components.
+Mental Hangover's fixed-word model/matrix/projection/material pipeline is shared
+in 1.0.12. Sparse point planes, contact queues, YM signals, row recipes and
+indexed tile slots are also shared. Acceptance still audits remaining local
+transports and scene compositions rather than treating shared math as completion.
 
 Mental Hangover's contour-font integration retains all 699 complete-frame samples
 over 24,001 drawn updates, including 42 circular and 27 perspective samples.
@@ -1038,3 +1040,12 @@ selection retain its compiled arithmetic while keeping library defaults intact.
 The logo reduces 160 sine evaluations per filled draw to 24 per distinct time,
 without a new GPU target. The full 750 filled/wireframe samples still match.
 [Row-profile evidence](fidelity/harmonic-rows-20260930.json)
+
+
+The word-mesh integration retains all 699 sampled complete frames across 24,001
+drawn updates. Its 152 original projection poses cover author objects, BOBs,
+large solids and all eight textured stencil objects. Native cue boundaries and
+half-rate holds remain unchanged. The library owns projected point banks,
+projected-word winding, clipped contours and material/instance submission;
+productions retain their decoded geometry, palette recipes and choreography.
+[Word-mesh integration evidence](fidelity/word-mesh-20260930.json)

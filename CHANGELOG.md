@@ -1,5 +1,31 @@
 # Changelog
 
+## 1.0.12 — Developer Edition — 2026-09-30
+
+- Added `motion.WordEulerMatrix`: copied angular banks, configurable periods,
+  quantization, high-word scaling and nested-product association. Sampling
+  preserves signed word/long wrapping without allocating.
+- Added `geometry.WordModel`: copied points, atomic cached projection banks,
+  explicit depth/translation shifts, center, zero-depth and division-overflow
+  policies. Projected winding preserves word subtraction before long products.
+- Added `effects.WordMesh`: owned model/topology banks, projected face caching,
+  culling, inclusive rectangle clipping, parity/material batches and retained
+  instances. Textures stay borrowed; no intermediate image or shader is added.
+- Added `timeline.WordProgram`: editable word increments and cue durations with
+  same-tick boundary changes, optional repeat/reset and bounded copied storage.
+- Mental Hangover's authors, BOBs, filled solids and eight patterned objects
+  now use the complete component instead of local transform and rendering loops.
+  All 152 original projection poses and controller fixtures pass, and all 699
+  sampled complete frames remain identical through 24,001 drawn updates.
+- Added `examples/wordobjects`, English configuration recipes and independent
+  CPU/GPU checks for wrapping, division, holes, clipping, materials, instances,
+  resource ownership, invalid coordinates and parity budgets.
+
+One muted native replay per implementation measured mean CPU update/draw
+submission of 1.94/33.31 to 2.07/33.90 microseconds. These timings exclude GPU
+completion/readback and do not establish a performance gain. No new stage image
+or conversion pass is introduced; projected/clipped buffers are retained.
+
 ## 1.0.11 — Developer Edition — 2026-09-30
 
 - Added `sprites.IndexedPointPlane`: bounded sparse masks, OR/XOR collisions,

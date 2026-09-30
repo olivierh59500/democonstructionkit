@@ -683,3 +683,46 @@ local waves without inventing another oscillator engine.
 OldSkool uses these recipes for its logo, large flat letters and small cubelet
 letters. All row/vertex poses match strictly across 9,001 ticks, while its 750
 complete filled/wireframe samples remain identical.
+
+
+## Word-precision models, materials and copies
+
+`effects.WordMesh` owns copied model/face banks, cached projection, culling,
+rectangle clipping and material rendering. Choose it when a source intentionally
+uses signed words and longwords. `effects.Mesh` remains the ordinary floating
+camera/lighting component. Both can be layered with scrolling, sprites and image
+passes through the same effect interface.
+
+`motion.WordEulerMatrix` supplies a copied sine bank, angular period, quantum,
+quarter phase and scaling shifts. `MiddleAssociation` explicitly selects where
+a nested high-word product is truncated; reordering those products can change
+the matrix. `geometry.WordProjectionConfig` selects depth/translation shifts,
+depth bias, center, zero-depth behavior and quotient overflow policy. The
+keep-low-word policy retains classic signed-division overflow; clamp/reject
+policies support other compositions. An identical pose keeps its cached points.
+
+`WordFace` has independently selected contours, material values and texture
+indices. Closing indices normalize once. `CullBackFaces` uses word-subtracted
+projected winding; `FaceClip` clips before any copy placement. `PerFaceBatch`
+retains separate texture/parity groups, while whole-run parity preserves holes
+across contours. `DestinationClip` limits the final viewport. Textures are
+borrowed; no stage image, palette conversion or pixel readback is required.
+
+Set an authored `WordMeshPose` with `SetPose`, or return it from `Animate`.
+`UV` receives projected points, placed points, per-face integer centers, material
+and phase, so a row palette or repeated texture can be chosen independently of
+geometry. `Color` changes tint. A configurable instance window supplies count
+and placement while reusing one model/face cache. `Err` reports rejected draw
+coordinates or parity budgets. Source callbacks should be stable during a draw.
+
+`timeline.WordProgram` owns copied increment arrays and cue durations. The first
+step applies the first cue; a boundary applies the next cue on that update.
+Words wrap exactly, and optional repeat/reset controls continuity. Rendering and
+inspection never advance it. A production can retain other authored controllers
+while using the same model and renderer.
+
+Run `go run ./examples/wordobjects` for three objects with independently selected
+angle/depth clocks and a shared row palette. `-capture /tmp/dck-wordobjects
+-frame 200 -frames 300` exports six seconds at 50 Hz. Mental Hangover uses the
+same API for all four native object families, with unchanged projection fixtures
+and complete-frame fingerprints.

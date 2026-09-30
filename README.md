@@ -1,8 +1,8 @@
 # democonstructionkit
 
-**1.0.11 — Developer Edition**
+**1.0.12 — Developer Edition**
 
-Demo Construction Kit 1.0.11 is the Go/Ebitengine library for developers creating
+Demo Construction Kit 1.0.12 is the Go/Ebitengine library for developers creating
 demos and intros through code. Programming knowledge is required: this edition
 provides configurable effects, Go APIs, runnable examples, command-line tools
 and saved JSON compositions.
@@ -10,10 +10,10 @@ and saved JSON compositions.
 Install the versioned module in a Go project:
 
 ```sh
-go get github.com/olivierh59500/democonstructionkit@v1.0.11
+go get github.com/olivierh59500/democonstructionkit@v1.0.12
 ```
 
-[Release 1.0.11](https://github.com/olivierh59500/democonstructionkit/releases/tag/v1.0.11)
+[Release 1.0.12](https://github.com/olivierh59500/democonstructionkit/releases/tag/v1.0.12)
  · [Changelog](CHANGELOG.md) · [Effect templates](EFFECT_TEMPLATES.md)
  · [Version 2.0.0 roadmap](ROADMAP.md)
 
@@ -92,6 +92,13 @@ those components while preserving their complete-frame samples and native
 controller fixtures. Spaceballs' tile textures require half the previous RGBA
 storage. `go run ./examples/sharedlayers` composes indexed backgrounds, two
 projected point skins and signal-driven bars without external assets.
+Version 1.0.12 adds owned `effects.WordMesh`, copied/cached integer models,
+parametric word Euler matrices and cue programs. Mental Hangover's authors,
+copied BOBs, large solids and patterned objects now share projection, culling,
+clipping and material rendering, retaining all 699 sampled complete frames.
+`go run ./examples/wordobjects` composes three independent objects with a shared
+matrix and row palette. Integer precision is explicit; ordinary `effects.Mesh`
+continues to provide the floating camera/lighting path.
 [Complete components](#build-a-demo-from-complete-components) include the animated
 DMA cube controller and renderer, font construction, perspective text crawl and
 independent background bands; their consumers provide assets and configuration.
