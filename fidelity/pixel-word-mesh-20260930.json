@@ -1,0 +1,433 @@
+{
+  "date": "2026-09-30",
+  "device": "Google Pixel10a",
+  "dck": "1.0.12",
+  "consumer_revision": "388f1d2",
+  "start_tick": 1550,
+  "audio": "Muted checkpoint seek",
+  "scenes": [
+    {
+      "name": "slayer",
+      "tick": 1551
+    },
+    {
+      "name": "graphics-by",
+      "tick": 2033
+    },
+    {
+      "name": "reward",
+      "tick": 2199
+    },
+    {
+      "name": "musics-by",
+      "tick": 2769
+    },
+    {
+      "name": "uncle-tom",
+      "tick": 2935
+    },
+    {
+      "name": "follow-sign",
+      "tick": 3479
+    },
+    {
+      "name": "sign",
+      "tick": 3645
+    },
+    {
+      "name": "sign-raster",
+      "tick": 3901
+    },
+    {
+      "name": "scoopex-demo",
+      "tick": 3951
+    },
+    {
+      "name": "filled-bobs",
+      "tick": 4196
+    },
+    {
+      "name": "filled-vectors",
+      "tick": 6167
+    },
+    {
+      "name": "filled-cube",
+      "tick": 6412
+    },
+    {
+      "name": "faceted-solid",
+      "tick": 6997
+    },
+    {
+      "name": "stencil-vectors",
+      "tick": 7673
+    },
+    {
+      "name": "gold-arrow",
+      "tick": 7973
+    },
+    {
+      "name": "gold-arrow-pass",
+      "tick": 8291
+    },
+    {
+      "name": "yellow-cube",
+      "tick": 8491
+    },
+    {
+      "name": "brown-facets",
+      "tick": 9191
+    },
+    {
+      "name": "paired-boxes",
+      "tick": 9991
+    },
+    {
+      "name": "patterned-pyramid",
+      "tick": 10388
+    },
+    {
+      "name": "hollow-frame",
+      "tick": 10888
+    },
+    {
+      "name": "color-block",
+      "tick": 11838
+    },
+    {
+      "name": "greetings-load",
+      "tick": 12338
+    },
+    {
+      "name": "star-pages",
+      "tick": 12506
+    },
+    {
+      "name": "circle-load",
+      "tick": 14253
+    },
+    {
+      "name": "circle-twist",
+      "tick": 14438
+    },
+    {
+      "name": "contact-load",
+      "tick": 17779
+    },
+    {
+      "name": "contact-spheres",
+      "tick": 17879
+    },
+    {
+      "name": "perspective-load",
+      "tick": 19073
+    },
+    {
+      "name": "perspective-text",
+      "tick": 19123
+    },
+    {
+      "name": "reminder-stars",
+      "tick": 20800
+    },
+    {
+      "name": "always-remember",
+      "tick": 20948
+    },
+    {
+      "name": "finale-load",
+      "tick": 21398
+    },
+    {
+      "name": "checkerboard-finale",
+      "tick": 21536
+    }
+  ],
+  "samples": [
+    {
+      "tick": 1801,
+      "tps": 49.9,
+      "fps": 59.9,
+      "heap_mib": 50.4
+    },
+    {
+      "tick": 2051,
+      "tps": 50.0,
+      "fps": 60.0,
+      "heap_mib": 18.3
+    },
+    {
+      "tick": 2301,
+      "tps": 50.0,
+      "fps": 60.0,
+      "heap_mib": 19.2
+    },
+    {
+      "tick": 2552,
+      "tps": 50.0,
+      "fps": 60.0,
+      "heap_mib": 19.9
+    },
+    {
+      "tick": 2803,
+      "tps": 49.9,
+      "fps": 59.9,
+      "heap_mib": 20.6
+    },
+    {
+      "tick": 3054,
+      "tps": 49.9,
+      "fps": 59.9,
+      "heap_mib": 21.4
+    },
+    {
+      "tick": 3304,
+      "tps": 49.9,
+      "fps": 59.9,
+      "heap_mib": 22.0
+    },
+    {
+      "tick": 3554,
+      "tps": 49.9,
+      "fps": 59.9,
+      "heap_mib": 23.0
+    },
+    {
+      "tick": 3804,
+      "tps": 50.0,
+      "fps": 60.0,
+      "heap_mib": 24.0
+    },
+    {
+      "tick": 4055,
+      "tps": 49.9,
+      "fps": 59.9,
+      "heap_mib": 25.4
+    },
+    {
+      "tick": 4305,
+      "tps": 50.0,
+      "fps": 59.9,
+      "heap_mib": 27.1
+    },
+    {
+      "tick": 4555,
+      "tps": 50.0,
+      "fps": 59.9,
+      "heap_mib": 29.0
+    },
+    {
+      "tick": 4806,
+      "tps": 49.9,
+      "fps": 59.9,
+      "heap_mib": 31.1
+    },
+    {
+      "tick": 5057,
+      "tps": 50.9,
+      "fps": 59.9,
+      "heap_mib": 19.2
+    },
+    {
+      "tick": 5308,
+      "tps": 50.0,
+      "fps": 59.9,
+      "heap_mib": 21.0
+    },
+    {
+      "tick": 5558,
+      "tps": 49.9,
+      "fps": 59.9,
+      "heap_mib": 22.8
+    },
+    {
+      "tick": 5808,
+      "tps": 50.0,
+      "fps": 59.9,
+      "heap_mib": 24.7
+    },
+    {
+      "tick": 6059,
+      "tps": 51.0,
+      "fps": 59.9,
+      "heap_mib": 26.6
+    },
+    {
+      "tick": 6310,
+      "tps": 50.0,
+      "fps": 59.9,
+      "heap_mib": 28.4
+    },
+    {
+      "tick": 6561,
+      "tps": 49.9,
+      "fps": 59.9,
+      "heap_mib": 29.5
+    },
+    {
+      "tick": 6811,
+      "tps": 49.9,
+      "fps": 59.8,
+      "heap_mib": 30.1
+    },
+    {
+      "tick": 7061,
+      "tps": 49.9,
+      "fps": 59.9,
+      "heap_mib": 30.7
+    },
+    {
+      "tick": 7312,
+      "tps": 49.9,
+      "fps": 59.9,
+      "heap_mib": 31.3
+    },
+    {
+      "tick": 7563,
+      "tps": 49.9,
+      "fps": 59.9,
+      "heap_mib": 31.9
+    },
+    {
+      "tick": 7813,
+      "tps": 49.9,
+      "fps": 59.9,
+      "heap_mib": 19.2
+    },
+    {
+      "tick": 8063,
+      "tps": 49.9,
+      "fps": 59.9,
+      "heap_mib": 21.2
+    },
+    {
+      "tick": 8314,
+      "tps": 49.9,
+      "fps": 59.9,
+      "heap_mib": 22.3
+    },
+    {
+      "tick": 8565,
+      "tps": 49.9,
+      "fps": 59.9,
+      "heap_mib": 23.4
+    },
+    {
+      "tick": 8815,
+      "tps": 49.9,
+      "fps": 59.9,
+      "heap_mib": 24.3
+    },
+    {
+      "tick": 9065,
+      "tps": 49.9,
+      "fps": 59.9,
+      "heap_mib": 25.3
+    },
+    {
+      "tick": 9316,
+      "tps": 50.0,
+      "fps": 59.8,
+      "heap_mib": 26.6
+    },
+    {
+      "tick": 9567,
+      "tps": 49.9,
+      "fps": 59.9,
+      "heap_mib": 28.2
+    },
+    {
+      "tick": 9817,
+      "tps": 49.9,
+      "fps": 59.9,
+      "heap_mib": 29.8
+    },
+    {
+      "tick": 10067,
+      "tps": 49.9,
+      "fps": 59.9,
+      "heap_mib": 31.4
+    },
+    {
+      "tick": 10318,
+      "tps": 49.9,
+      "fps": 59.9,
+      "heap_mib": 32.6
+    },
+    {
+      "tick": 10569,
+      "tps": 49.9,
+      "fps": 59.9,
+      "heap_mib": 33.6
+    },
+    {
+      "tick": 10819,
+      "tps": 50.0,
+      "fps": 60.0,
+      "heap_mib": 34.5
+    },
+    {
+      "tick": 11069,
+      "tps": 49.9,
+      "fps": 59.9,
+      "heap_mib": 18.9
+    },
+    {
+      "tick": 11320,
+      "tps": 49.9,
+      "fps": 59.9,
+      "heap_mib": 20.7
+    },
+    {
+      "tick": 11571,
+      "tps": 49.9,
+      "fps": 59.9,
+      "heap_mib": 22.5
+    },
+    {
+      "tick": 11822,
+      "tps": 49.9,
+      "fps": 59.9,
+      "heap_mib": 24.3
+    },
+    {
+      "tick": 12072,
+      "tps": 49.9,
+      "fps": 59.9,
+      "heap_mib": 25.5
+    },
+    {
+      "tick": 12322,
+      "tps": 50.0,
+      "fps": 59.9,
+      "heap_mib": 26.7
+    }
+  ],
+  "tps": [
+    49.9,
+    51.0
+  ],
+  "fps": [
+    59.8,
+    60.0
+  ],
+  "peak_go_heap_mib": 50.4,
+  "observed_fatal_errors": 0,
+  "apk": {
+    "dck": "1.0.12",
+    "bytes": 16650575,
+    "sha256": "e048884d3b0592b7181c2c11d227387ca5a254e10044dbed7d2a594bb45b35a7",
+    "elf_load_alignment": [
+      16384,
+      16384,
+      16384,
+      16384
+    ],
+    "zip_library_offset": 32768
+  },
+  "limits": [
+    "Changed-object checkpoint traversal, separate from a full tick-zero audio replay.",
+    "Runtime verification rather than new Android visual-reference fidelity.",
+    "Go heap excludes native/GPU resources."
+  ]
+}

@@ -1049,3 +1049,16 @@ half-rate holds remain unchanged. The library owns projected point banks,
 projected-word winding, clipped contours and material/instance submission;
 productions retain their decoded geometry, palette recipes and choreography.
 [Word-mesh integration evidence](fidelity/word-mesh-20260930.json)
+
+The published 1.0.12 ARM64 package passed ELF/ZIP 16 KiB alignment and ran
+from a muted author-object checkpoint through BOBs, large solids and all eight
+patterned units on Pixel 10a. Samples measured 49.9–51.0 TPS and 59.8–60.0 FPS,
+with 50.4 MiB peak Go heap; no fatal error was observed. Runtime evidence is
+separate from Android visual-reference comparisons.
+[Word-mesh Pixel evidence](fidelity/pixel-word-mesh-20260930.json)
+
+The final new-production acceptance pass still identifies two Mental Hangover
+families worth extracting: the BOB text's advance/entry/control transport and
+the finale's recycled bouncing sprite population. Their original clocks,
+particles and pixel fixtures remain the migration gates; configurable callbacks
+alone are not counted as a completed owned transport.

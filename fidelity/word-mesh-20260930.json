@@ -3550,5 +3550,7 @@
     "Original CPU projection/control fixtures verify the shared integer path.",
     "One muted CPU submission traversal per implementation, excluding GPU completion/readback; no performance gain claimed.",
     "No new Android visual-reference or Amiga edge-rasterization claim."
-  ]
+  ],
+  "released_tag": "v1.0.12",
+  "consumer_revision": "388f1d2"
 }
