@@ -1,0 +1,476 @@
+{
+  "date": "2026-09-30",
+  "device": "Google Pixel 10a",
+  "dck": "1.0.9",
+  "production": "Spaceballs: State of the Art",
+  "revision": "4cd0b7a",
+  "verification": "Complete original 50 Hz director, tick-zero start with normal audio; existing show-when-locked checkpoint without dismissing keyguard.",
+  "samples": [
+    {
+      "tick": 1,
+      "tps": 0.0,
+      "fps": 0.0,
+      "heap_mib": 1.6
+    },
+    {
+      "tick": 253,
+      "tps": 49.9,
+      "fps": 59.9,
+      "heap_mib": 2.4
+    },
+    {
+      "tick": 495,
+      "tps": 49.9,
+      "fps": 59.9,
+      "heap_mib": 4.9
+    },
+    {
+      "tick": 746,
+      "tps": 49.9,
+      "fps": 59.9,
+      "heap_mib": 4.3
+    },
+    {
+      "tick": 996,
+      "tps": 50.0,
+      "fps": 59.9,
+      "heap_mib": 5.1
+    },
+    {
+      "tick": 1239,
+      "tps": 49.9,
+      "fps": 59.9,
+      "heap_mib": 32.0
+    },
+    {
+      "tick": 1489,
+      "tps": 49.9,
+      "fps": 59.9,
+      "heap_mib": 28.9
+    },
+    {
+      "tick": 1739,
+      "tps": 49.9,
+      "fps": 59.9,
+      "heap_mib": 34.0
+    },
+    {
+      "tick": 1990,
+      "tps": 50.9,
+      "fps": 59.9,
+      "heap_mib": 34.8
+    },
+    {
+      "tick": 2241,
+      "tps": 50.0,
+      "fps": 58.9,
+      "heap_mib": 44.6
+    },
+    {
+      "tick": 2492,
+      "tps": 49.9,
+      "fps": 59.9,
+      "heap_mib": 45.4
+    },
+    {
+      "tick": 2742,
+      "tps": 49.9,
+      "fps": 59.9,
+      "heap_mib": 31.9
+    },
+    {
+      "tick": 2992,
+      "tps": 49.9,
+      "fps": 59.9,
+      "heap_mib": 34.3
+    },
+    {
+      "tick": 3242,
+      "tps": 49.8,
+      "fps": 59.8,
+      "heap_mib": 35.1
+    },
+    {
+      "tick": 3493,
+      "tps": 49.9,
+      "fps": 59.9,
+      "heap_mib": 37.3
+    },
+    {
+      "tick": 3743,
+      "tps": 50.0,
+      "fps": 60.0,
+      "heap_mib": 38.2
+    },
+    {
+      "tick": 3993,
+      "tps": 50.9,
+      "fps": 59.9,
+      "heap_mib": 45.7
+    },
+    {
+      "tick": 4243,
+      "tps": 50.2,
+      "fps": 59.0,
+      "heap_mib": 51.0
+    },
+    {
+      "tick": 4494,
+      "tps": 50.0,
+      "fps": 59.9,
+      "heap_mib": 56.8
+    },
+    {
+      "tick": 4744,
+      "tps": 50.0,
+      "fps": 60.0,
+      "heap_mib": 57.5
+    },
+    {
+      "tick": 4994,
+      "tps": 49.9,
+      "fps": 59.9,
+      "heap_mib": 58.3
+    },
+    {
+      "tick": 5245,
+      "tps": 49.9,
+      "fps": 59.9,
+      "heap_mib": 37.6
+    },
+    {
+      "tick": 5496,
+      "tps": 49.9,
+      "fps": 59.9,
+      "heap_mib": 38.3
+    },
+    {
+      "tick": 5746,
+      "tps": 50.0,
+      "fps": 59.9,
+      "heap_mib": 39.1
+    },
+    {
+      "tick": 5996,
+      "tps": 49.9,
+      "fps": 59.9,
+      "heap_mib": 45.3
+    },
+    {
+      "tick": 6246,
+      "tps": 49.2,
+      "fps": 60.0,
+      "heap_mib": 46.1
+    },
+    {
+      "tick": 6497,
+      "tps": 49.2,
+      "fps": 60.0,
+      "heap_mib": 47.0
+    },
+    {
+      "tick": 6747,
+      "tps": 50.0,
+      "fps": 59.9,
+      "heap_mib": 47.9
+    },
+    {
+      "tick": 6998,
+      "tps": 49.9,
+      "fps": 59.9,
+      "heap_mib": 48.7
+    },
+    {
+      "tick": 7249,
+      "tps": 50.0,
+      "fps": 60.0,
+      "heap_mib": 49.5
+    },
+    {
+      "tick": 7499,
+      "tps": 49.9,
+      "fps": 59.9,
+      "heap_mib": 51.6
+    },
+    {
+      "tick": 7749,
+      "tps": 50.0,
+      "fps": 60.0,
+      "heap_mib": 52.3
+    },
+    {
+      "tick": 8000,
+      "tps": 50.9,
+      "fps": 59.9,
+      "heap_mib": 53.0
+    },
+    {
+      "tick": 8250,
+      "tps": 49.3,
+      "fps": 58.0,
+      "heap_mib": 59.2
+    },
+    {
+      "tick": 8500,
+      "tps": 49.9,
+      "fps": 59.9,
+      "heap_mib": 60.0
+    },
+    {
+      "tick": 8751,
+      "tps": 50.0,
+      "fps": 60.0,
+      "heap_mib": 60.9
+    },
+    {
+      "tick": 9002,
+      "tps": 50.0,
+      "fps": 59.9,
+      "heap_mib": 61.7
+    },
+    {
+      "tick": 9252,
+      "tps": 50.3,
+      "fps": 60.1,
+      "heap_mib": 64.2
+    },
+    {
+      "tick": 9503,
+      "tps": 49.9,
+      "fps": 59.9,
+      "heap_mib": 65.1
+    },
+    {
+      "tick": 9754,
+      "tps": 50.0,
+      "fps": 60.0,
+      "heap_mib": 65.9
+    },
+    {
+      "tick": 10004,
+      "tps": 49.9,
+      "fps": 59.9,
+      "heap_mib": 66.6
+    },
+    {
+      "tick": 10254,
+      "tps": 50.0,
+      "fps": 60.0,
+      "heap_mib": 34.3
+    },
+    {
+      "tick": 10505,
+      "tps": 49.9,
+      "fps": 59.9,
+      "heap_mib": 35.0
+    },
+    {
+      "tick": 10756,
+      "tps": 49.9,
+      "fps": 59.9,
+      "heap_mib": 39.7
+    },
+    {
+      "tick": 11006,
+      "tps": 49.9,
+      "fps": 59.9,
+      "heap_mib": 40.5
+    },
+    {
+      "tick": 11256,
+      "tps": 50.0,
+      "fps": 60.0,
+      "heap_mib": 41.3
+    },
+    {
+      "tick": 11506,
+      "tps": 49.9,
+      "fps": 59.9,
+      "heap_mib": 41.9
+    },
+    {
+      "tick": 11757,
+      "tps": 50.0,
+      "fps": 60.0,
+      "heap_mib": 42.5
+    },
+    {
+      "tick": 12007,
+      "tps": 49.9,
+      "fps": 59.9,
+      "heap_mib": 43.1
+    },
+    {
+      "tick": 12257,
+      "tps": 50.9,
+      "fps": 59.9,
+      "heap_mib": 43.6
+    },
+    {
+      "tick": 12507,
+      "tps": 49.9,
+      "fps": 59.8,
+      "heap_mib": 45.4
+    },
+    {
+      "tick": 12758,
+      "tps": 50.0,
+      "fps": 59.9,
+      "heap_mib": 46.0
+    },
+    {
+      "tick": 13008,
+      "tps": 50.0,
+      "fps": 60.0,
+      "heap_mib": 46.5
+    },
+    {
+      "tick": 13258,
+      "tps": 50.0,
+      "fps": 60.0,
+      "heap_mib": 47.1
+    },
+    {
+      "tick": 13509,
+      "tps": 50.2,
+      "fps": 60.0,
+      "heap_mib": 47.6
+    }
+  ],
+  "scenes": [
+    {
+      "name": "boot",
+      "tick": 1
+    },
+    {
+      "name": "opening-effect",
+      "tick": 60
+    },
+    {
+      "name": "opening-hold",
+      "tick": 1021
+    },
+    {
+      "name": "state",
+      "tick": 1087
+    },
+    {
+      "name": "black",
+      "tick": 1110
+    },
+    {
+      "name": "of",
+      "tick": 1156
+    },
+    {
+      "name": "black",
+      "tick": 1179
+    },
+    {
+      "name": "the",
+      "tick": 1219
+    },
+    {
+      "name": "black",
+      "tick": 1242
+    },
+    {
+      "name": "art",
+      "tick": 1292
+    },
+    {
+      "name": "black",
+      "tick": 1315
+    },
+    {
+      "name": "credits",
+      "tick": 1345
+    },
+    {
+      "name": "dragon",
+      "tick": 1632
+    },
+    {
+      "name": "black",
+      "tick": 2031
+    },
+    {
+      "name": "pattern",
+      "tick": 2189
+    },
+    {
+      "name": "vote",
+      "tick": 2669
+    },
+    {
+      "name": "trails",
+      "tick": 2819
+    },
+    {
+      "name": "blocks-effect",
+      "tick": 3385
+    },
+    {
+      "name": "noise",
+      "tick": 3807
+    },
+    {
+      "name": "tiles",
+      "tick": 4157
+    },
+    {
+      "name": "wave",
+      "tick": 4300
+    },
+    {
+      "name": "angular",
+      "tick": 5055
+    },
+    {
+      "name": "sliced",
+      "tick": 5770
+    },
+    {
+      "name": "ribbons",
+      "tick": 7388
+    },
+    {
+      "name": "duet",
+      "tick": 8204
+    },
+    {
+      "name": "outline",
+      "tick": 9245
+    },
+    {
+      "name": "finale",
+      "tick": 10630
+    },
+    {
+      "name": "closing",
+      "tick": 12346
+    }
+  ],
+  "steady_tps": [
+    49.2,
+    50.9
+  ],
+  "steady_fps": [
+    58.0,
+    60.1
+  ],
+  "peak_go_heap_mib": 66.6,
+  "observed_fatal_errors": 0,
+  "apk": {
+    "sha256": "4ddfe9c90d69ae501637e5b270dcc038ff64164d0a7fa803975eedc099779317",
+    "bytes": 32099287,
+    "published_dck_metadata": "v1.0.9",
+    "elf_16k_alignment": true,
+    "stored_library_zip_16k_alignment": true
+  },
+  "limits": [
+    "Runtime and source-clock verification; no new Android visual-reference comparison.",
+    "Go heap excludes native/GPU allocations.",
+    "Five-second FPS/TPS samples exclude the initial startup sample from steady ranges."
+  ]
+}

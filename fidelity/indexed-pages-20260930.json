@@ -9579,5 +9579,8 @@
     "Native Go revision parity on sampled full frames, rather than new Amiga hardware or Android visual-reference comparison.",
     "No CPU/GPU performance improvement claimed.",
     "Opening-program interpolation extrapolates one native sample and remains source-specific; the new checked interpolation is used for bounded page fades."
-  ]
+  ],
+  "released_dck_tag": "v1.0.9",
+  "released_dck_revision": "f6ebe02e8a5d4c2f92729bc028682b747854154e",
+  "consumer_revision": "4cd0b7a"
 }

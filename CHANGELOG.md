@@ -25,6 +25,13 @@ revision comparisons do not establish new Amiga or Android rasterization parity.
 The source opening controller's intentional extrapolated fade remains authored
 logic; the new bounded interpolation API does not replace that calculation.
 
+The published 1.0.9 ARM64 Spaceballs package passed ELF/ZIP 16 KiB alignment
+checks and completed the original director on Pixel 10a with normal audio.
+Five-second samples after startup measured 49.2–50.9 TPS and 58.0–60.1 FPS,
+with 66.6 MiB peak Go heap, excluding native/GPU memory. Runtime verification
+is separate from an Android visual-reference comparison. The verification run
+was stopped afterward; the updated application remains installed.
+
 ## 1.0.8 — Developer Edition — 2026-09-30
 
 - Added `composite.PaletteGrid`: two editable colors per spatial cell, binary

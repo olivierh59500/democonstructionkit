@@ -52,9 +52,9 @@ distinguishes completed integration from remaining extraction candidates.
 | --- | --- | --- |
 | Eagle, title, cards and sign raster | DCK text pages, cue ranges, `RasterOverlay`, retained image layers and `QuantizedColor` for the six source copper modes. | Source artwork, operation order, thresholds and ratios remain authored parameters; no local color shader remains. |
 | Author vectors, filled BOBs, filled solids and eight patterned objects | DCK's common fan submission, scrolling transport and original word-sized projections, preserving UVs, palette atlases and repeat materials. | Fixed-point projector and cue-program abstractions remain candidates; original point and cue tables stay authored data. |
-| Star greeting pages | Cached DCK text pages and one batched point field. | A configurable page/star composition whose star mask and text palette each have their own cue level. |
-| Circular text | The shared scrolling facade feeds a local polar outline painter. | A reusable polar glyph mapper/painter template with original control bytes as parameters. |
-| Contact spheres and perspective text | Existing projected batches and scrolling samples, with local reciprocal/projective arithmetic. | A projected glyph/point template needs supplied integer projection and clipping rules before it can replace these scenes. |
+| Star greeting pages | Cached DCK text pages and one batched point field. | A sparse integer point-plane effect can share perspective points, with configured XOR/OR collisions, wrapped coordinates, reciprocal projection and depth masks. Text and star palettes keep separate cue levels. |
+| Circular and perspective text | The shared scrolling facade feeds local contour painters; both create dummy glyph slots to drive their polygon callbacks. | A cached contour-font bank and owned scrolling contour mode should share lookup, projection and fan/parity submission. Polar-table and rational integer mappings, slot transport and pause controls must remain configurable. |
+| Contact spheres | Existing projected batches with a local circular depth queue, reciprocal projection and atlas-frame selection. | A depth-queue sprite effect should own bounded poses and rendering, with configurable spacing, wrap comparison, integer projection and frame selection. Native velocity tables and phase cues remain authored data. |
 | Checkerboard finale | DCK `PaletteGrid` in continuous one-column row mode, projected balls and logo material. | Original binary column image, per-row RGB12 colors and floor/ball controllers remain data; no local row-color shader remains. Ball motion is already expressible through the projected-sprite family. |
 
 | OldSkool DirectX 8 Go phase | Shared path now | Next reusable boundary |
@@ -246,6 +246,14 @@ controller's intentional extrapolation stays local rather than being silently
 clamped by the new bounded API. The retained conversion surface and two-pass
 image path are unchanged; no artwork uploads or pixel readback are introduced.
 [Indexed-page integration evidence](fidelity/indexed-pages-20260930.json)
+
+The published 1.0.9 Spaceballs ARM64 build passed ELF/ZIP 16 KiB alignment
+checks and reached its closing page at tick 12,346 on Pixel 10a. The complete
+run retained normal audio. Its five-second samples after startup measured
+49.2–50.9 TPS and 58.0–60.1 FPS without an observed fatal error; peak Go heap
+was 66.6 MiB, excluding native/GPU memory. This is runtime evidence rather
+than a new Android visual-reference comparison.
+[Indexed-page Pixel evidence](fidelity/pixel-indexed-pages-20260930.json)
 
 Spaceballs' timed tile/image selection and Mental Hangover's fixed-point
 projection/transport remain separate extraction families. OldSkool's YM signal adapter and
