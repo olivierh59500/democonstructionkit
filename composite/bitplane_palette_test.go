@@ -55,6 +55,13 @@ func TestBitplanePaletteValidationAndColorUpdates(t *testing.T) {
 	if err := effect.Draw(target, []*ebiten.Image{wrongSize}); err == nil {
 		t.Fatal("accepted wrong-sized source plane")
 	}
+	for _, offsets := range [][][2]float32{
+		{{1, 2}, {3, 4}}, {{float32(math.NaN()), 0}}, {{0, float32(math.Inf(1))}},
+	} {
+		if err := effect.DrawOffsets(target, []*ebiten.Image{target}, offsets); err == nil {
+			t.Fatalf("accepted invalid bitplane offsets %v", offsets)
+		}
+	}
 	if err := effect.Close(); err != nil {
 		t.Fatal(err)
 	}

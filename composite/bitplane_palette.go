@@ -46,6 +46,7 @@ type BitplanePalette struct {
 	threshold     float32
 	palette       []float32
 	channels      []float32
+	offsets       []float32
 	shader        *ebiten.Shader
 	packShader    *ebiten.Shader
 	packed        *ebiten.Image
@@ -74,7 +75,7 @@ func NewBitplanePalette(c BitplanePaletteConfig) (*BitplanePalette, error) {
 		}
 	}
 	b := &BitplanePalette{width: c.Width, height: c.Height, planes: c.Planes,
-		threshold: c.Threshold, palette: make([]float32, 64*4), channels: make([]float32, 6*4)}
+		threshold: c.Threshold, palette: make([]float32, 64*4), channels: make([]float32, 6*4), offsets: make([]float32, 6*2)}
 	for i := 0; i < 6; i++ {
 		channel := BitplaneAlpha
 		if i < len(c.Channels) {
@@ -102,10 +103,10 @@ func NewBitplanePalette(c BitplanePaletteConfig) (*BitplanePalette, error) {
 	if c.Planes > 4 {
 		b.packed = render.NewSurface(c.Width, c.Height)
 		b.packOptions.Blend = ebiten.BlendCopy
-		b.packOptions.Uniforms = map[string]any{"Threshold": b.threshold, "Channels": b.channels}
+		b.packOptions.Uniforms = map[string]any{"Threshold": b.threshold, "Channels": b.channels, "Offsets": b.offsets}
 	}
 	b.options.Blend = c.Blend
-	b.options.Uniforms = map[string]any{"Palette": b.palette, "Threshold": b.threshold, "Channels": b.channels}
+	b.options.Uniforms = map[string]any{"Palette": b.palette, "Threshold": b.threshold, "Channels": b.channels, "Offsets": b.offsets}
 	if err := b.SetPalette(c.Palette); err != nil {
 		b.Close()
 		return nil, err
@@ -134,17 +135,42 @@ func (b *BitplanePalette) SetPalette(colors []color.NRGBA) error {
 // slice must contain exactly the configured number of non-nil images. Borrowed
 // masks may be changed between draws, including masks from a retained ring.
 func (b *BitplanePalette) Draw(dst *ebiten.Image, planes []*ebiten.Image) error {
+	return b.DrawOffsets(dst, planes, nil)
+}
+
+// DrawOffsets samples each plane at an independent pixel offset before palette
+// lookup. A positive X/Y reads pixels to the right/below, moving the visible
+// material left/up. Nil offsets select zero for every plane; otherwise supply
+// one finite {X, Y} pair per plane. The same borrowed image may supply several
+// planes with different offsets or channels. Sampling outside a source is
+// transparent; it does not wrap. Draw resets all offsets to zero on its next
+// call. The existing one/two-pass path and image budget are unchanged.
+func (b *BitplanePalette) DrawOffsets(dst *ebiten.Image, planes []*ebiten.Image, offsets [][2]float32) error {
 	if b == nil || b.shader == nil || dst == nil {
 		return fmt.Errorf("composite: bitplane target is nil or closed")
 	}
 	if len(planes) != b.planes {
 		return fmt.Errorf("composite: expected %d bitplane images, got %d", b.planes, len(planes))
 	}
+	if len(offsets) != 0 && len(offsets) != b.planes {
+		return fmt.Errorf("composite: expected %d bitplane offsets, got %d", b.planes, len(offsets))
+	}
+	for _, offset := range offsets {
+		for _, component := range offset {
+			if math.IsNaN(float64(component)) || math.IsInf(float64(component), 0) {
+				return fmt.Errorf("composite: bitplane offset must be finite")
+			}
+		}
+	}
 	for _, plane := range planes {
 		if plane == nil || plane.Bounds().Min.X != 0 || plane.Bounds().Min.Y != 0 ||
 			plane.Bounds().Dx() != b.width || plane.Bounds().Dy() != b.height {
 			return fmt.Errorf("composite: bitplane image bounds must be (0,0)-(%d,%d)", b.width, b.height)
 		}
+	}
+	clear(b.offsets)
+	for i, offset := range offsets {
+		b.offsets[2*i], b.offsets[2*i+1] = offset[0], offset[1]
 	}
 	if b.packed == nil {
 		b.options.Images = [4]*ebiten.Image{}
@@ -186,6 +212,7 @@ func (b *BitplanePalette) Close() error {
 	b.packOptions.Uniforms = nil
 	b.palette = nil
 	b.channels = nil
+	b.offsets = nil
 	return nil
 }
 
@@ -195,12 +222,13 @@ package main
 var Threshold float
 var Palette [64]vec4
 var Channels [6]vec4
+var Offsets [6]vec2
 
 func Fragment(position vec4, source vec2, color vec4) vec4 {
-	index := int(step(Threshold, dot(imageSrc0At(source), Channels[0])) +
-		2*step(Threshold, dot(imageSrc1At(source), Channels[1])) +
-		4*step(Threshold, dot(imageSrc2At(source), Channels[2])) +
-		8*step(Threshold, dot(imageSrc3At(source), Channels[3])) + 0.5)
+	index := int(step(Threshold, dot(imageSrc0At(source + Offsets[0]), Channels[0])) +
+		2*step(Threshold, dot(imageSrc1At(source + Offsets[1]), Channels[1])) +
+		4*step(Threshold, dot(imageSrc2At(source + Offsets[2]), Channels[2])) +
+		8*step(Threshold, dot(imageSrc3At(source + Offsets[3]), Channels[3])) + 0.5)
 	return Palette[index]
 }
 `
@@ -210,12 +238,13 @@ package main
 
 var Threshold float
 var Channels [6]vec4
+var Offsets [6]vec2
 
 func Fragment(position vec4, source vec2, color vec4) vec4 {
-	return vec4(step(Threshold, dot(imageSrc0At(source), Channels[0])),
-		step(Threshold, dot(imageSrc1At(source), Channels[1])),
-		step(Threshold, dot(imageSrc2At(source), Channels[2])),
-		step(Threshold, dot(imageSrc3At(source), Channels[3])))
+	return vec4(step(Threshold, dot(imageSrc0At(source + Offsets[0]), Channels[0])),
+		step(Threshold, dot(imageSrc1At(source + Offsets[1]), Channels[1])),
+		step(Threshold, dot(imageSrc2At(source + Offsets[2]), Channels[2])),
+		step(Threshold, dot(imageSrc3At(source + Offsets[3]), Channels[3])))
 }
 `
 
@@ -225,12 +254,13 @@ package main
 var Threshold float
 var Palette [64]vec4
 var Channels [6]vec4
+var Offsets [6]vec2
 
 func Fragment(position vec4, source vec2, color vec4) vec4 {
 	bits := imageSrc0At(source)
 	index := int(bits.r + 2*bits.g + 4*bits.b + 8*bits.a +
-		16*step(Threshold, dot(imageSrc1At(source), Channels[4])) +
-		32*step(Threshold, dot(imageSrc2At(source), Channels[5])) + 0.5)
+		16*step(Threshold, dot(imageSrc1At(source + Offsets[4]), Channels[4])) +
+		32*step(Threshold, dot(imageSrc2At(source + Offsets[5]), Channels[5])) + 0.5)
 	return Palette[index]
 }
 `
