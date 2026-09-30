@@ -1,8 +1,8 @@
 # democonstructionkit
 
-**1.0.0 — Developer Edition**
+**1.0.1 — Developer Edition**
 
-Demo Construction Kit 1.0.0 is the Go/Ebitengine library for developers creating
+Demo Construction Kit 1.0.1 is the Go/Ebitengine library for developers creating
 demos and intros through code. Programming knowledge is required: this edition
 provides configurable effects, Go APIs, runnable examples, command-line tools
 and saved JSON compositions.
@@ -10,10 +10,10 @@ and saved JSON compositions.
 Install the versioned module in a Go project:
 
 ```sh
-go get github.com/olivierh59500/democonstructionkit@v1.0.0
+go get github.com/olivierh59500/democonstructionkit@v1.0.1
 ```
 
-[Release 1.0.0](https://github.com/olivierh59500/democonstructionkit/releases/tag/v1.0.0)
+[Release 1.0.1](https://github.com/olivierh59500/democonstructionkit/releases/tag/v1.0.1)
  · [Changelog](CHANGELOG.md) · [Effect templates](EFFECT_TEMPLATES.md)
  · [Version 2.0.0 roadmap](ROADMAP.md)
 
@@ -22,7 +22,7 @@ to everyone, including people without programming knowledge. The creation
 workflow will be graphical: import assets, choose effects, adjust parameters
 and paths, arrange layers, synchronize music, edit the timeline, preview and
 export a demo. Writing Go or editing JSON by hand will not be required.
-The graphical editor is planned for 2.0.0; it is not part of 1.0.0.
+The graphical editor is planned for 2.0.0; it is not part of the 1.0.x library.
 
 A Go/Ebitengine construction kit extracted from the actual productions in `demos/`.
 The shared code must preserve their original artwork, text, lookup tables, timing,
@@ -39,8 +39,9 @@ handoffs. The Cuddly application combines fifteen native screens and its menu in
 screens. The recipes below apply the same effects to different source images.
 [The latest effect pass](EFFECT_MAP.md#new-native-productions-reviewed-on-2026-09-30)
 maps Mental Hangover, Spaceballs and OldSkool DirectX 8 Go to current DCK
-components and candidate extractions. The new binary-plane palette compositor
-is available in this source checkout; the published 1.0.0 module stays stable.
+components and candidate extractions. Version 1.0.1 adds the binary-plane
+palette compositor used by six Spaceballs units, with complete-frame parity
+checks against their previous renderers.
 [Complete components](#build-a-demo-from-complete-components) include the animated
 DMA cube controller and renderer, font construction, perspective text crawl and
 independent background bands; their consumers provide assets and configuration.
@@ -2598,7 +2599,7 @@ Catmull-Rom `motion.Path` used by regular text and sprite trajectories.
 `authoring` compiles a versioned JSON project into the same DCK effects. It is the
 basis for the planned 2.0.0 graphical editor: asset IDs, ordered layers, timing,
 parameters, signal bindings and validation already exist independently of a UI.
-Version 1.0.0 exposes these capabilities through Go and JSON.
+Version 1.0.x exposes these capabilities through Go and JSON.
 
 ```sh
 # Save the procedural example, then edit its JSON and reload it.

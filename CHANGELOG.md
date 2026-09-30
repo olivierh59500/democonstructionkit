@@ -1,20 +1,24 @@
 # Changelog
 
-## Unreleased — next compatible Developer Edition update
+## 1.0.1 — Developer Edition — 2026-09-30
 
 - Reviewed the Mental Hangover, Spaceballs and OldSkool DirectX 8 Go
   productions against the earlier twenty-repository effect map.
 - Added `composite.BitplanePalette` for one to six binary alpha planes and a
   live, optionally translucent palette. One to four planes render in one pass;
   five or six use one bounded packing surface and a second pass. The caller
-  owns masks and their timing.
+  owns masks and their timing. Each plane can read alpha, red, green or blue.
+- Migrated Spaceballs' Trails, Noise, Angular, Sliced, Ribbons and Duet palette
+  composition to DCK. All 309 sampled complete frames match the preceding
+  renderer across 5,106 rendered frames, with unchanged GPU pass counts.
 - Added configuration and opt-in GPU checks for bit order, palette updates and
   the one-pass/two-pass boundary. A source-checkout example is documented in
   [the effect templates](EFFECT_TEMPLATES.md).
 
-The released 1.0.0 API and its pinned demo dependencies are unchanged. A new
-version number will be assigned after the candidate components have been
-validated against the source productions.
+The existing 1.0.0 API remains compatible. The complete DCK test, build and vet
+checks pass, together with GPU palette/plane checks and Spaceballs' independent
+planar pixel decoder. The next compatible library updates continue the 1.0.x
+patch series; 2.0.0 remains the planned graphical editor.
 
 ## 1.0.0 — Developer Edition — 2026-09-28
 

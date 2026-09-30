@@ -2,17 +2,19 @@
 
 These patterns turn source artwork and timing into reusable DCK components.
 They are ordinary Go code: images, fonts and music remain caller supplied. The
-examples use the source checkout's development API; DCK 1.0.0 remains the
-published dependency for existing demos.
+binary-plane compositor is available in DCK 1.0.1. The other templates
+use the existing scrolling, timeline and composition APIs.
 
 ## Binary masks with a live palette
 
-`composite.BitplanePalette` turns up to six alpha masks into one indexed image.
+`composite.BitplanePalette` turns up to six binary planes into one indexed image.
 The first mask contributes bit 0, the next bit 1, and so on. Palette entry 0
 may be transparent, allowing a background, logo or scrolling layer to show
 through. The mask images can come from sprites, glyph contours, vector polygons
 or a retained animation bank. They must all have the configured full-stage size
-and origin `(0, 0)`.
+and origin `(0, 0)`. Each plane defaults to alpha; `Channels` can select red,
+green or blue instead for opaque monochrome artwork. Sampling uses the stored
+premultiplied source components.
 
 Run `go run ./examples/bitplanes` from the DCK source checkout to see four
 independent moving mask banks over a dark base layer with a changing palette.
@@ -38,8 +40,10 @@ Call `SetPalette` when a cue changes colors; reuse the same masks and compositor
 One to four planes use one draw pass. Five or six use one retained, full-stage
 packing surface and a second palette pass. No mask pixels are read back to the
 CPU. Spaceballs' Ribbons, Trails and Noise show the three source layouts that
-motivated this component; they still use their pinned 1.0.0 renderers until
-scene-level parity checks justify a migration.
+motivated this component. Its Noise, Angular, Sliced and Duet materials select
+alpha for five retained pose masks and red for the opaque sixth material plane.
+The scene migration matches all 309 before/after complete-frame captures over
+5,106 rendered frames.
 
 ## Projected or deformed bitmap cells
 

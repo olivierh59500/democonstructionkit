@@ -10,6 +10,14 @@ messages and music, then chooses the composition and its timing.
 The existing runtime, asset descriptions, effect configurations, timelines and
 saved-project schema provide the foundation for the graphical application.
 
+## 1.0.x — Developer Edition updates
+
+Compatible effect additions and production migrations use patch releases:
+1.0.1, 1.0.2 and so on. Each extraction includes configurable parameters,
+usage templates and the verification evidence from its production consumers.
+Version 1.0.1 adds the binary-plane palette composition used by six Spaceballs
+units. The remaining recent-production candidates are listed in the effect map.
+
 ## Planned 2.0.0 — Visual Editor
 
 The next major version is intended for everyone, including people who do not
