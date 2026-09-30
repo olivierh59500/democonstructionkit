@@ -9,15 +9,29 @@ import (
 	"github.com/olivierh59500/democonstructionkit/render"
 )
 
+// BitplaneChannel selects the stored color component that supplies a plane bit.
+// Alpha is the default for silhouette masks; red suits opaque monochrome art.
+type BitplaneChannel uint8
+
+const (
+	BitplaneAlpha BitplaneChannel = iota
+	BitplaneRed
+	BitplaneGreen
+	BitplaneBlue
+)
+
 // BitplanePaletteConfig describes a palette lookup over one to six binary image
 // planes. Plane zero is the least significant bit. Each source must have the
-// configured dimensions and a zero origin; its alpha selects a bit. A zero
-// threshold selects 0.5. Palette entries may be translucent.
+// configured dimensions and a zero origin. Channels defaults to alpha for every
+// plane; when supplied, it must contain one selection per plane. A zero
+// threshold selects 0.5. Palette entries may be translucent. Color channels
+// sample the source image's premultiplied values, before palette lookup.
 type BitplanePaletteConfig struct {
 	Width, Height int
 	Planes        int
 	Threshold     float32
 	Palette       []color.NRGBA
+	Channels      []BitplaneChannel
 	Blend         ebiten.Blend
 }
 
@@ -31,6 +45,7 @@ type BitplanePalette struct {
 	planes        int
 	threshold     float32
 	palette       []float32
+	channels      []float32
 	shader        *ebiten.Shader
 	packShader    *ebiten.Shader
 	packed        *ebiten.Image
@@ -48,10 +63,29 @@ func NewBitplanePalette(c BitplanePaletteConfig) (*BitplanePalette, error) {
 		c.Threshold = 0.5
 	}
 	if math.IsNaN(float64(c.Threshold)) || c.Threshold <= 0 || c.Threshold > 1 {
-		return nil, fmt.Errorf("composite: invalid bitplane alpha threshold")
+		return nil, fmt.Errorf("composite: invalid bitplane threshold")
+	}
+	if len(c.Channels) != 0 && len(c.Channels) != c.Planes {
+		return nil, fmt.Errorf("composite: expected one channel per bitplane")
+	}
+	for _, channel := range c.Channels {
+		if channel > BitplaneBlue {
+			return nil, fmt.Errorf("composite: unknown bitplane channel %d", channel)
+		}
 	}
 	b := &BitplanePalette{width: c.Width, height: c.Height, planes: c.Planes,
-		threshold: c.Threshold, palette: make([]float32, 64*4)}
+		threshold: c.Threshold, palette: make([]float32, 64*4), channels: make([]float32, 6*4)}
+	for i := 0; i < 6; i++ {
+		channel := BitplaneAlpha
+		if i < len(c.Channels) {
+			channel = c.Channels[i]
+		}
+		component := 3
+		if channel != BitplaneAlpha {
+			component = int(channel) - 1
+		}
+		b.channels[4*i+component] = 1
+	}
 	var err error
 	if c.Planes <= 4 {
 		b.shader, err = ebiten.NewShader([]byte(bitplaneDirectShader))
@@ -68,10 +102,10 @@ func NewBitplanePalette(c BitplanePaletteConfig) (*BitplanePalette, error) {
 	if c.Planes > 4 {
 		b.packed = render.NewSurface(c.Width, c.Height)
 		b.packOptions.Blend = ebiten.BlendCopy
-		b.packOptions.Uniforms = map[string]any{"Threshold": b.threshold}
+		b.packOptions.Uniforms = map[string]any{"Threshold": b.threshold, "Channels": b.channels}
 	}
 	b.options.Blend = c.Blend
-	b.options.Uniforms = map[string]any{"Palette": b.palette, "Threshold": b.threshold}
+	b.options.Uniforms = map[string]any{"Palette": b.palette, "Threshold": b.threshold, "Channels": b.channels}
 	if err := b.SetPalette(c.Palette); err != nil {
 		b.Close()
 		return nil, err
@@ -151,6 +185,7 @@ func (b *BitplanePalette) Close() error {
 	b.options.Uniforms = nil
 	b.packOptions.Uniforms = nil
 	b.palette = nil
+	b.channels = nil
 	return nil
 }
 
@@ -159,12 +194,13 @@ package main
 
 var Threshold float
 var Palette [64]vec4
+var Channels [6]vec4
 
 func Fragment(position vec4, source vec2, color vec4) vec4 {
-	index := int(step(Threshold, imageSrc0At(source).a) +
-		2*step(Threshold, imageSrc1At(source).a) +
-		4*step(Threshold, imageSrc2At(source).a) +
-		8*step(Threshold, imageSrc3At(source).a) + 0.5)
+	index := int(step(Threshold, dot(imageSrc0At(source), Channels[0])) +
+		2*step(Threshold, dot(imageSrc1At(source), Channels[1])) +
+		4*step(Threshold, dot(imageSrc2At(source), Channels[2])) +
+		8*step(Threshold, dot(imageSrc3At(source), Channels[3])) + 0.5)
 	return Palette[index]
 }
 `
@@ -173,12 +209,13 @@ const bitplanePackShader = `//kage:unit pixels
 package main
 
 var Threshold float
+var Channels [6]vec4
 
 func Fragment(position vec4, source vec2, color vec4) vec4 {
-	return vec4(step(Threshold, imageSrc0At(source).a),
-		step(Threshold, imageSrc1At(source).a),
-		step(Threshold, imageSrc2At(source).a),
-		step(Threshold, imageSrc3At(source).a))
+	return vec4(step(Threshold, dot(imageSrc0At(source), Channels[0])),
+		step(Threshold, dot(imageSrc1At(source), Channels[1])),
+		step(Threshold, dot(imageSrc2At(source), Channels[2])),
+		step(Threshold, dot(imageSrc3At(source), Channels[3])))
 }
 `
 
@@ -187,12 +224,13 @@ package main
 
 var Threshold float
 var Palette [64]vec4
+var Channels [6]vec4
 
 func Fragment(position vec4, source vec2, color vec4) vec4 {
 	bits := imageSrc0At(source)
 	index := int(bits.r + 2*bits.g + 4*bits.b + 8*bits.a +
-		16*step(Threshold, imageSrc1At(source).a) +
-		32*step(Threshold, imageSrc2At(source).a) + 0.5)
+		16*step(Threshold, dot(imageSrc1At(source), Channels[4])) +
+		32*step(Threshold, dot(imageSrc2At(source), Channels[5])) + 0.5)
 	return Palette[index]
 }
 `

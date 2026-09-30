@@ -18,6 +18,8 @@ func TestBitplanePaletteValidationAndColorUpdates(t *testing.T) {
 		{Width: 8192, Height: 8192, Planes: 1, Palette: colors},
 		{Width: 8, Height: 8, Planes: 1, Palette: colors, Threshold: float32(math.NaN())},
 		{Width: 8, Height: 8, Planes: 1, Palette: colors, Threshold: 1.1},
+		{Width: 8, Height: 8, Planes: 1, Palette: colors, Channels: []BitplaneChannel{BitplaneRed, BitplaneAlpha}},
+		{Width: 8, Height: 8, Planes: 1, Palette: colors, Channels: []BitplaneChannel{BitplaneChannel(4)}},
 	} {
 		if effect, err := NewBitplanePalette(config); err == nil {
 			effect.Close()

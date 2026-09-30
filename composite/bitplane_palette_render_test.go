@@ -3,37 +3,63 @@
 package composite
 
 import (
+	"image"
 	"image/color"
 	"testing"
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/olivierh59500/democonstructionkit/fidelity/ebiten/testutil"
+	"github.com/olivierh59500/democonstructionkit/render"
 )
 
 func TestBitplanePaletteGPU(t *testing.T) {
 	testutil.RequireGPU(t)
-	for _, count := range []int{1, 2, 3, 4, 5, 6} {
+	for scenario := 0; scenario < 12; scenario++ {
+		count := scenario%6 + 1
+		mixed := scenario >= 6
 		colors := make([]color.NRGBA, 1<<count)
 		for i := range colors {
 			colors[i] = color.NRGBA{R: uint8(i*3 + 7), G: uint8(255 - i*2), B: uint8(i*4 + 1), A: 255}
 		}
-		effect, err := NewBitplanePalette(BitplanePaletteConfig{Width: 8, Height: 8, Planes: count, Palette: colors})
+		config := BitplanePaletteConfig{Width: 8, Height: 8, Planes: count, Palette: colors}
+		if mixed {
+			config.Channels = make([]BitplaneChannel, count)
+			for i := range config.Channels {
+				config.Channels[i] = BitplaneChannel(i % 4)
+			}
+		}
+		effect, err := NewBitplanePalette(config)
 		if err != nil {
 			t.Fatal(err)
 		}
 		planes := make([]*ebiten.Image, count)
 		for bit := range planes {
-			planes[bit] = ebiten.NewImage(8, 8)
 			pixels := make([]byte, 8*8*4)
+			channel := BitplaneAlpha
+			if mixed {
+				channel = config.Channels[bit]
+			}
 			for y := 0; y < 8; y++ {
 				for x := 0; x < 8; x++ {
+					at := (y*8 + x) * 4
+					if channel != BitplaneAlpha {
+						pixels[at+3] = 255 // Opaque art carries bits in RGB, not alpha.
+					}
 					if ((x + y*8) & (1 << bit)) != 0 {
-						at := (y*8 + x) * 4
-						pixels[at], pixels[at+1], pixels[at+2], pixels[at+3] = 255, 255, 255, 255
+						if channel == BitplaneAlpha {
+							pixels[at], pixels[at+1], pixels[at+2], pixels[at+3] = 255, 255, 255, 255
+						} else {
+							pixels[at+int(channel)-1] = 255
+						}
 					}
 				}
 			}
-			planes[bit].WritePixels(pixels)
+			if mixed && bit == count-1 {
+				planes[bit] = ebiten.NewImageFromImage(&image.NRGBA{Pix: pixels, Stride: 8 * 4, Rect: image.Rect(0, 0, 8, 8)})
+			} else {
+				planes[bit] = render.NewSurface(8, 8)
+				planes[bit].WritePixels(pixels)
+			}
 		}
 		dst := ebiten.NewImage(8, 8)
 		if err := effect.Draw(dst, planes); err != nil {
