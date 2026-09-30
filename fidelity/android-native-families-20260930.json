@@ -46,12 +46,500 @@
   ],
   "device_installation": "All three packages installed successfully on connected Pixel10a",
   "limits": [
-    "Package dependency/alignment and installation checks are separate from runtime and visual-reference verification."
+    "Changed-effect checkpoint runtime with published1.0.11 rather than full tick-zero directors for allapps.",
+    "Mentalcheckpoints muted; OldnormalYM music active.",
+    "Devicecadence is separate from native Go full-frame parity and Android visual-reference fidelity."
   ],
   "desktop_consumer_revisions": {
     "go-mentalhangover": "bef8ac5",
     "go-spaceballs": "3076f85",
     "go-leonardintrodx": "e5101f1"
   },
-  "library_tag": "v1.0.11"
+  "library_tag": "v1.0.11",
+  "runtime_checks": [
+    {
+      "name": "mental-points",
+      "samples": [
+        {
+          "tick": 12850,
+          "tps": 50.2,
+          "fps": 60.0,
+          "heap_mib": 50.0
+        },
+        {
+          "tick": 13101,
+          "tps": 50.0,
+          "fps": 59.9,
+          "heap_mib": 50.7
+        },
+        {
+          "tick": 13352,
+          "tps": 50.0,
+          "fps": 60.0,
+          "heap_mib": 51.3
+        },
+        {
+          "tick": 13603,
+          "tps": 50.0,
+          "fps": 60.0,
+          "heap_mib": 51.9
+        },
+        {
+          "tick": 13853,
+          "tps": 49.8,
+          "fps": 59.7,
+          "heap_mib": 52.6
+        },
+        {
+          "tick": 14103,
+          "tps": 49.9,
+          "fps": 59.9,
+          "heap_mib": 53.2
+        },
+        {
+          "tick": 14354,
+          "tps": 50.0,
+          "fps": 60.0,
+          "heap_mib": 53.8
+        },
+        {
+          "tick": 14605,
+          "tps": 50.0,
+          "fps": 60.0,
+          "heap_mib": 18.5
+        },
+        {
+          "tick": 14856,
+          "tps": 50.9,
+          "fps": 59.9,
+          "heap_mib": 19.8
+        },
+        {
+          "tick": 15106,
+          "tps": 49.9,
+          "fps": 59.9,
+          "heap_mib": 20.9
+        },
+        {
+          "tick": 15356,
+          "tps": 49.9,
+          "fps": 59.9,
+          "heap_mib": 22.0
+        },
+        {
+          "tick": 15607,
+          "tps": 49.9,
+          "fps": 59.9,
+          "heap_mib": 23.2
+        },
+        {
+          "tick": 15858,
+          "tps": 50.0,
+          "fps": 60.0,
+          "heap_mib": 24.3
+        },
+        {
+          "tick": 16108,
+          "tps": 49.9,
+          "fps": 59.9,
+          "heap_mib": 25.5
+        },
+        {
+          "tick": 16358,
+          "tps": 49.9,
+          "fps": 59.8,
+          "heap_mib": 26.6
+        }
+      ],
+      "tps": [
+        49.8,
+        50.9
+      ],
+      "fps": [
+        59.7,
+        60.0
+      ],
+      "observed_fatal_errors": 0
+    },
+    {
+      "name": "mental-queue",
+      "samples": [
+        {
+          "tick": 18050,
+          "tps": 49.9,
+          "fps": 59.9,
+          "heap_mib": 48.5
+        },
+        {
+          "tick": 18301,
+          "tps": 50.0,
+          "fps": 60.0,
+          "heap_mib": 51.7
+        },
+        {
+          "tick": 18551,
+          "tps": 49.9,
+          "fps": 59.9,
+          "heap_mib": 54.8
+        },
+        {
+          "tick": 18801,
+          "tps": 50.9,
+          "fps": 59.9,
+          "heap_mib": 58.0
+        },
+        {
+          "tick": 19052,
+          "tps": 49.9,
+          "fps": 59.9,
+          "heap_mib": 19.5
+        },
+        {
+          "tick": 19302,
+          "tps": 50.0,
+          "fps": 60.0,
+          "heap_mib": 20.6
+        },
+        {
+          "tick": 19552,
+          "tps": 49.9,
+          "fps": 59.9,
+          "heap_mib": 21.7
+        },
+        {
+          "tick": 19803,
+          "tps": 50.0,
+          "fps": 60.0,
+          "heap_mib": 22.9
+        },
+        {
+          "tick": 20054,
+          "tps": 49.9,
+          "fps": 59.9,
+          "heap_mib": 24.0
+        },
+        {
+          "tick": 20304,
+          "tps": 49.9,
+          "fps": 59.9,
+          "heap_mib": 25.1
+        },
+        {
+          "tick": 20554,
+          "tps": 49.9,
+          "fps": 59.9,
+          "heap_mib": 26.2
+        },
+        {
+          "tick": 20805,
+          "tps": 49.9,
+          "fps": 59.8,
+          "heap_mib": 27.2
+        },
+        {
+          "tick": 21056,
+          "tps": 49.9,
+          "fps": 59.8,
+          "heap_mib": 28.1
+        },
+        {
+          "tick": 21306,
+          "tps": 49.9,
+          "fps": 59.9,
+          "heap_mib": 29.5
+        },
+        {
+          "tick": 21557,
+          "tps": 49.9,
+          "fps": 59.9,
+          "heap_mib": 30.6
+        },
+        {
+          "tick": 21808,
+          "tps": 49.9,
+          "fps": 59.9,
+          "heap_mib": 31.4
+        },
+        {
+          "tick": 22059,
+          "tps": 49.9,
+          "fps": 59.9,
+          "heap_mib": 32.3
+        },
+        {
+          "tick": 22309,
+          "tps": 50.0,
+          "fps": 60.0,
+          "heap_mib": 18.5
+        },
+        {
+          "tick": 22560,
+          "tps": 50.0,
+          "fps": 60.0,
+          "heap_mib": 19.4
+        },
+        {
+          "tick": 22811,
+          "tps": 49.9,
+          "fps": 59.9,
+          "heap_mib": 20.3
+        },
+        {
+          "tick": 23061,
+          "tps": 49.9,
+          "fps": 59.9,
+          "heap_mib": 21.1
+        }
+      ],
+      "tps": [
+        49.9,
+        50.9
+      ],
+      "fps": [
+        59.8,
+        60.0
+      ],
+      "observed_fatal_errors": 0
+    },
+    {
+      "name": "old",
+      "samples": [
+        {
+          "seconds": 40.0,
+          "tps": 50.1,
+          "fps": 60.0
+        },
+        {
+          "seconds": 50.1,
+          "tps": 50.2,
+          "fps": 60.1
+        },
+        {
+          "seconds": 60.1,
+          "tps": 49.9,
+          "fps": 59.9
+        },
+        {
+          "seconds": 70.1,
+          "tps": 50.7,
+          "fps": 59.7
+        },
+        {
+          "seconds": 80.1,
+          "tps": 49.9,
+          "fps": 59.9
+        },
+        {
+          "seconds": 90.1,
+          "tps": 49.9,
+          "fps": 59.9
+        },
+        {
+          "seconds": 100.1,
+          "tps": 50.8,
+          "fps": 59.8
+        },
+        {
+          "seconds": 110.2,
+          "tps": 49.9,
+          "fps": 59.8
+        },
+        {
+          "seconds": 120.2,
+          "tps": 50.0,
+          "fps": 60.0
+        },
+        {
+          "seconds": 130.2,
+          "tps": 49.9,
+          "fps": 59.9
+        }
+      ],
+      "tps": [
+        49.9,
+        50.8
+      ],
+      "fps": [
+        59.7,
+        60.1
+      ],
+      "observed_fatal_errors": 0
+    },
+    {
+      "name": "Spaceballs Vote/Tiles checkpoint",
+      "scene_entrances": [
+        [
+          "pattern",
+          "2611"
+        ],
+        [
+          "vote",
+          "2669"
+        ],
+        [
+          "trails",
+          "2819"
+        ],
+        [
+          "blocks-effect",
+          "3385"
+        ],
+        [
+          "noise",
+          "3807"
+        ],
+        [
+          "tiles",
+          "4157"
+        ],
+        [
+          "wave",
+          "4300"
+        ],
+        [
+          "angular",
+          "5055"
+        ],
+        [
+          "sliced",
+          "5770"
+        ],
+        [
+          "ribbons",
+          "7388"
+        ]
+      ],
+      "samples": [
+        {
+          "tick": 2863,
+          "tps": 49.9,
+          "fps": 59.9,
+          "heap_mib": 4.9
+        },
+        {
+          "tick": 3113,
+          "tps": 50.0,
+          "fps": 60.0,
+          "heap_mib": 5.7
+        },
+        {
+          "tick": 3364,
+          "tps": 49.9,
+          "fps": 59.9,
+          "heap_mib": 6.5
+        },
+        {
+          "tick": 3615,
+          "tps": 49.9,
+          "fps": 59.9,
+          "heap_mib": 5.4
+        },
+        {
+          "tick": 3865,
+          "tps": 50.0,
+          "fps": 58.0,
+          "heap_mib": 5.8
+        },
+        {
+          "tick": 4115,
+          "tps": 49.9,
+          "fps": 59.9,
+          "heap_mib": 6.6
+        },
+        {
+          "tick": 4366,
+          "tps": 50.0,
+          "fps": 59.9,
+          "heap_mib": 8.7
+        },
+        {
+          "tick": 4616,
+          "tps": 49.9,
+          "fps": 59.9,
+          "heap_mib": 9.5
+        },
+        {
+          "tick": 4866,
+          "tps": 49.9,
+          "fps": 59.9,
+          "heap_mib": 10.3
+        },
+        {
+          "tick": 5117,
+          "tps": 49.9,
+          "fps": 60.8,
+          "heap_mib": 6.4
+        },
+        {
+          "tick": 5367,
+          "tps": 50.9,
+          "fps": 59.9,
+          "heap_mib": 7.3
+        },
+        {
+          "tick": 5617,
+          "tps": 50.0,
+          "fps": 60.0,
+          "heap_mib": 8.0
+        },
+        {
+          "tick": 5868,
+          "tps": 49.9,
+          "fps": 59.9,
+          "heap_mib": 9.1
+        },
+        {
+          "tick": 6118,
+          "tps": 49.9,
+          "fps": 59.9,
+          "heap_mib": 10.1
+        },
+        {
+          "tick": 6368,
+          "tps": 49.5,
+          "fps": 60.4,
+          "heap_mib": 10.8
+        },
+        {
+          "tick": 6619,
+          "tps": 49.9,
+          "fps": 59.9,
+          "heap_mib": 11.8
+        },
+        {
+          "tick": 6870,
+          "tps": 50.1,
+          "fps": 59.9,
+          "heap_mib": 12.6
+        },
+        {
+          "tick": 7120,
+          "tps": 49.9,
+          "fps": 59.8,
+          "heap_mib": 6.6
+        },
+        {
+          "tick": 7370,
+          "tps": 49.9,
+          "fps": 59.9,
+          "heap_mib": 7.4
+        },
+        {
+          "tick": 7621,
+          "tps": 49.9,
+          "fps": 59.9,
+          "heap_mib": 9.5
+        }
+      ],
+      "tps": [
+        49.5,
+        50.9
+      ],
+      "fps": [
+        58.0,
+        60.8
+      ],
+      "observed_fatal_errors": 0
+    }
+  ]
 }
