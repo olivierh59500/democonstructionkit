@@ -277,6 +277,13 @@ or shader is added. Native CPU draw submission measured 29.34 to 30.03 microseco
 in one muted replay per implementation; GPU completion/readback are excluded.
 [Contour-font integration evidence](fidelity/contour-scroll-20260930.json)
 
+The published 1.0.10 ARM64 build passed ELF/ZIP 16 KiB alignment and ran from a
+muted checkpoint before the circular passage through the perspective text and
+checkerboard ending on Pixel 10a. Samples measured 49.8–50.9 TPS and 59.7–60.0
+FPS, with 64.1 MiB peak Go heap. This validates runtime and cadence separately
+from Android visual-reference fidelity. No device-security setting was changed.
+[Contour scrolling Pixel evidence](fidelity/pixel-contour-scroll-20260930.json)
+
 The native catalog was searched for polygon font renderers separately from
 ordinary shape contours. Only these two Mental Hangover scenes use that font
 family. Other DCK text users retain atlas/plane/cell modes; Spaceballs' authored
