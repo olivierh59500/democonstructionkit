@@ -1072,3 +1072,12 @@ screen winding expected by WordMesh. Optional vectorball presets submit far
 balls first for their Focal/(Focal+Z) camera; the authored demo retains its
 original projection/sorting choice. The two portfolio clips were regenerated.
 The project-total indicator now derives its count from the actual project cards.
+
+
+The four published DCK 1.0.13 ARM64 APKs were compiled, checked for ELF/ZIP
+16 KiB alignment and installed on Pixel 10a. Mental Hangover's BOB and finale
+checkpoints ran at roughly 50 TPS/60 FPS without an observed fatal error. The
+Spaceballs full director retains 1,218 identical fingerprints; OldSkool retains
+375 filled and 375 outlined fingerprints. Vectorballs' authored GPU check passes
+while the optional object presets intentionally correct their depth ordering.
+[Release compatibility and Pixel record](fidelity/pixel-insertion-recycle-20261001.json)

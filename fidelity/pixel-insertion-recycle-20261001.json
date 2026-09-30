@@ -1,0 +1,399 @@
+{
+  "date": "2026-10-01",
+  "dck_version": "1.0.13",
+  "device": "Pixel 10a",
+  "serial": "67081JEA300033",
+  "mental_revision": "657ae3a",
+  "spaceballs_revision": "07635d2",
+  "oldskool_revision": "a3a3705",
+  "vectorballs_revision": "c7ce96f",
+  "apps": [
+    {
+      "production": "go-mentalhangover",
+      "zip_offset": 32768,
+      "load_segments": [
+        {
+          "offset": 0,
+          "address": 0,
+          "alignment": 16384
+        },
+        {
+          "offset": 5375552,
+          "address": 5391936,
+          "alignment": 16384
+        },
+        {
+          "offset": 9092992,
+          "address": 9125760,
+          "alignment": 16384
+        },
+        {
+          "offset": 10040464,
+          "address": 10089616,
+          "alignment": 16384
+        }
+      ],
+      "dck": "v1.0.13",
+      "apk_bytes": 16718042,
+      "apk_sha256": "ac9cca9d0786307b13536fcd6c3caeed98c697f85d8b3ce47479e96ed7d85ab0",
+      "installed_successfully": true
+    },
+    {
+      "production": "go-vectorballs",
+      "zip_offset": 7798784,
+      "load_segments": [
+        {
+          "offset": 0,
+          "address": 0,
+          "alignment": 16384
+        },
+        {
+          "offset": 4119056,
+          "address": 4135440,
+          "alignment": 16384
+        },
+        {
+          "offset": 7528032,
+          "address": 7560800,
+          "alignment": 16384
+        },
+        {
+          "offset": 8344592,
+          "address": 8393744,
+          "alignment": 16384
+        }
+      ],
+      "dck": "v1.0.13",
+      "apk_bytes": 16436925,
+      "apk_sha256": "3d2c9964d207f59f35eb931b135d152e4812d036f3be6fd49773f1e74e622aad",
+      "installed_successfully": true
+    },
+    {
+      "production": "go-spaceballs",
+      "zip_offset": 16023552,
+      "load_segments": [
+        {
+          "offset": 0,
+          "address": 0,
+          "alignment": 16384
+        },
+        {
+          "offset": 5390608,
+          "address": 5406992,
+          "alignment": 16384
+        },
+        {
+          "offset": 8873920,
+          "address": 8906688,
+          "alignment": 16384
+        },
+        {
+          "offset": 9698864,
+          "address": 9748016,
+          "alignment": 16384
+        }
+      ],
+      "dck": "v1.0.13",
+      "apk_bytes": 32127695,
+      "apk_sha256": "90c86f8ae1357a26200ae747fb282756470327defbbe340350705851053c1719",
+      "installed_successfully": true
+    },
+    {
+      "production": "go-leonardintrodx",
+      "zip_offset": 18169856,
+      "load_segments": [
+        {
+          "offset": 0,
+          "address": 0,
+          "alignment": 16384
+        },
+        {
+          "offset": 5460928,
+          "address": 5477312,
+          "alignment": 16384
+        },
+        {
+          "offset": 9779008,
+          "address": 9811776,
+          "alignment": 16384
+        },
+        {
+          "offset": 10843344,
+          "address": 10892496,
+          "alignment": 16384
+        }
+      ],
+      "dck": "v1.0.13",
+      "apk_bytes": 36557167,
+      "apk_sha256": "0dfa7e52b00b4a0409ccc3027d5966a6212d0d35667acb1211e92be449b91f7d",
+      "installed_successfully": true
+    }
+  ],
+  "mental_runtime": [
+    {
+      "scene": "bobs",
+      "samples": [
+        {
+          "tick": 4550,
+          "tps": 49.9,
+          "fps": 59.9,
+          "heap_mib": 51.3
+        },
+        {
+          "tick": 4801,
+          "tps": 50.0,
+          "fps": 59.9,
+          "heap_mib": 19.4
+        },
+        {
+          "tick": 5051,
+          "tps": 49.9,
+          "fps": 59.9,
+          "heap_mib": 21.4
+        },
+        {
+          "tick": 5301,
+          "tps": 51.0,
+          "fps": 59.9,
+          "heap_mib": 23.3
+        },
+        {
+          "tick": 5552,
+          "tps": 50.0,
+          "fps": 59.9,
+          "heap_mib": 25.1
+        },
+        {
+          "tick": 5803,
+          "tps": 49.9,
+          "fps": 59.9,
+          "heap_mib": 27.1
+        },
+        {
+          "tick": 6053,
+          "tps": 49.9,
+          "fps": 59.9,
+          "heap_mib": 28.9
+        },
+        {
+          "tick": 6303,
+          "tps": 49.9,
+          "fps": 59.9,
+          "heap_mib": 30.9
+        },
+        {
+          "tick": 6554,
+          "tps": 50.0,
+          "fps": 60.0,
+          "heap_mib": 32.1
+        }
+      ]
+    },
+    {
+      "scene": "finale",
+      "samples": [
+        {
+          "tick": 22301,
+          "tps": 50.2,
+          "fps": 60.0,
+          "heap_mib": 44.6
+        },
+        {
+          "tick": 22551,
+          "tps": 50.8,
+          "fps": 59.7,
+          "heap_mib": 45.5
+        },
+        {
+          "tick": 22801,
+          "tps": 50.0,
+          "fps": 59.9,
+          "heap_mib": 46.3
+        },
+        {
+          "tick": 23052,
+          "tps": 49.9,
+          "fps": 59.9,
+          "heap_mib": 47.2
+        },
+        {
+          "tick": 23302,
+          "tps": 49.9,
+          "fps": 59.9,
+          "heap_mib": 48.1
+        },
+        {
+          "tick": 23552,
+          "tps": 49.9,
+          "fps": 59.9,
+          "heap_mib": 49.0
+        },
+        {
+          "tick": 23803,
+          "tps": 50.0,
+          "fps": 59.9,
+          "heap_mib": 49.8
+        },
+        {
+          "tick": 24053,
+          "tps": 49.9,
+          "fps": 59.9,
+          "heap_mib": 50.7
+        },
+        {
+          "tick": 24303,
+          "tps": 50.0,
+          "fps": 59.9,
+          "heap_mib": 51.6
+        },
+        {
+          "tick": 24554,
+          "tps": 50.0,
+          "fps": 60.0,
+          "heap_mib": 52.5
+        },
+        {
+          "tick": 24805,
+          "tps": 49.9,
+          "fps": 59.9,
+          "heap_mib": 53.4
+        },
+        {
+          "tick": 25055,
+          "tps": 49.9,
+          "fps": 59.9,
+          "heap_mib": 54.2
+        },
+        {
+          "tick": 25305,
+          "tps": 49.9,
+          "fps": 59.9,
+          "heap_mib": 55.1
+        },
+        {
+          "tick": 25556,
+          "tps": 50.0,
+          "fps": 60.0,
+          "heap_mib": 56.0
+        },
+        {
+          "tick": 25806,
+          "tps": 49.9,
+          "fps": 59.8,
+          "heap_mib": 56.9
+        },
+        {
+          "tick": 26056,
+          "tps": 50.0,
+          "fps": 60.0,
+          "heap_mib": 57.7
+        },
+        {
+          "tick": 26307,
+          "tps": 50.0,
+          "fps": 59.9,
+          "heap_mib": 58.6
+        },
+        {
+          "tick": 26558,
+          "tps": 50.0,
+          "fps": 60.0,
+          "heap_mib": 59.5
+        },
+        {
+          "tick": 26809,
+          "tps": 49.9,
+          "fps": 59.9,
+          "heap_mib": 60.4
+        },
+        {
+          "tick": 27059,
+          "tps": 50.0,
+          "fps": 60.0,
+          "heap_mib": 61.2
+        },
+        {
+          "tick": 27309,
+          "tps": 49.9,
+          "fps": 59.9,
+          "heap_mib": 62.1
+        },
+        {
+          "tick": 27560,
+          "tps": 50.0,
+          "fps": 60.0,
+          "heap_mib": 63.0
+        },
+        {
+          "tick": 27811,
+          "tps": 50.8,
+          "fps": 59.8,
+          "heap_mib": 63.9
+        },
+        {
+          "tick": 28062,
+          "tps": 49.9,
+          "fps": 59.9,
+          "heap_mib": 18.7
+        },
+        {
+          "tick": 28312,
+          "tps": 50.0,
+          "fps": 59.9,
+          "heap_mib": 19.6
+        },
+        {
+          "tick": 28562,
+          "tps": 50.0,
+          "fps": 60.0,
+          "heap_mib": 20.4
+        },
+        {
+          "tick": 28813,
+          "tps": 49.9,
+          "fps": 59.9,
+          "heap_mib": 21.3
+        },
+        {
+          "tick": 29063,
+          "tps": 50.0,
+          "fps": 60.0,
+          "heap_mib": 22.2
+        },
+        {
+          "tick": 29313,
+          "tps": 49.9,
+          "fps": 59.9,
+          "heap_mib": 23.0
+        },
+        {
+          "tick": 29564,
+          "tps": 51.0,
+          "fps": 59.9,
+          "heap_mib": 23.9
+        }
+      ]
+    }
+  ],
+  "compatibility": [
+    {
+      "production": "Spaceballs full director",
+      "sampled_complete_frames": 1218,
+      "all_rgba_hashes_match": true,
+      "dck": "1.0.13"
+    },
+    {
+      "production": "OldSkool filled",
+      "sampled_complete_frames": 375,
+      "all_rgba_hashes_match": true,
+      "dck": "1.0.13"
+    },
+    {
+      "production": "OldSkool wireframe",
+      "sampled_complete_frames": 375,
+      "all_rgba_hashes_match": true,
+      "dck": "1.0.13"
+    }
+  ],
+  "limits": "Muted runtime checkpoints and sampled native Go before/after RGBA comparisons. No new phone visual-reference comparison, continuous original-hardware equivalence, GPU timing, battery or true memory peak claim."
+}

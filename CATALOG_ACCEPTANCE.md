@@ -45,3 +45,32 @@ The planned [2.0.0 graphical editor](ROADMAP.md) remains a separate application
 task. Version 1.0.0 is the Developer Edition. DCK already provides inspectable
 controllers and a saved-project schema for common scenes; custom Go callbacks
 remain available for additional authored behavior.
+
+
+## New native productions — 2026-10-01
+
+The subsequent pass includes Mental Hangover, Spaceballs and OldSkool DirectX
+8 Go. Their screen-by-screen boundaries are recorded in the
+[updated effect map](EFFECT_MAP.md#new-native-productions-reviewed-on-2026-09-30).
+DCK 1.0.1 through 1.0.13 add their reusable material, contour, font, cell,
+harmonic, point, mesh, control and sprite-population engines. All three native
+productions use the published 1.0.13 module without local replacements.
+
+The last two identified transport boundaries are integrated: Mental Hangover's
+BOB insertion and finale recycling. Production adapters retain decoded artwork,
+tables, source command meanings, camera/palette recipes, working/display indices
+and scene order. Those source-specific recipes configure the shared engines.
+New compositions can substitute fonts, images, points, materials, callbacks and
+clocks without copying the production renderers. Runnable standalone examples
+and the bilingual portfolio page illustrate the components in combination.
+
+DCK and all four touched native modules pass tests and vet. Mental Hangover
+retains 699 complete-frame fingerprints across 24,001 drawn updates; Spaceballs
+retains 1,218 full-director fingerprints; OldSkool retains 750 filled/outlined
+fingerprints. Native controller and GPU ownership/crop/visibility checks pass.
+Four APKs passed 16 KiB alignment and were installed on Pixel 10a; the two
+modified Mental Hangover transports ran at roughly 50 TPS/60 FPS.
+See the [integration record](fidelity/insertion-recycle-20261001.json) and
+[release/device record](fidelity/pixel-insertion-recycle-20261001.json). These
+checks retain the fidelity and measurement limits above. The 2.0.0 graphical
+editor remains a separate planned application.
