@@ -1,8 +1,8 @@
 # democonstructionkit
 
-**1.0.13 — Developer Edition**
+**1.0.14 — Developer Edition**
 
-Demo Construction Kit 1.0.13 is the Go/Ebitengine library for developers creating
+Demo Construction Kit 1.0.14 is the Go/Ebitengine library for developers creating
 demos and intros through code. Programming knowledge is required: this edition
 provides configurable effects, Go APIs, runnable examples, command-line tools
 and saved JSON compositions.
@@ -10,10 +10,10 @@ and saved JSON compositions.
 Install the versioned module in a Go project:
 
 ```sh
-go get github.com/olivierh59500/democonstructionkit@v1.0.13
+go get github.com/olivierh59500/democonstructionkit@v1.0.14
 ```
 
-[Release 1.0.13](https://github.com/olivierh59500/democonstructionkit/releases/tag/v1.0.13)
+[Release 1.0.14](https://github.com/olivierh59500/democonstructionkit/releases/tag/v1.0.14)
  · [Changelog](CHANGELOG.md) · [Effect templates](EFFECT_TEMPLATES.md)
  · [Version 2.0.0 roadmap](ROADMAP.md)
 
@@ -106,6 +106,10 @@ its BOB message and bouncing finale, preserving all 699 sampled complete frames.
 `go run ./examples/insertionqueue` combines two differently ordered fonts with
 independent sprite motion. The word-cube example now has six face colors and
 correct near-face winding; optional vectorball presets draw far balls first.
+Version 1.0.14 adds compact sampled signal tracks driven by an external clock.
+Knucklebuster uses the original Atari music routine's four independent animation
+channels, including its longer head hold, sampled at audible soundtrack progress.
+Display-rate changes, paused playback and seeks do not change the authored rhythm.
 [Complete components](#build-a-demo-from-complete-components) include the animated
 DMA cube controller and renderer, font construction, perspective text crawl and
 independent background bands; their consumers provide assets and configuration.
@@ -1895,11 +1899,32 @@ if err := hits.Update(frame); err != nil { return err }
 hits.Draw(stage)
 ```
 
-For music-driven hits, use `presets.CuddlyKnucklebusterSignalHits` and pass a
-callback that returns one boolean per channel/tick. The random and signal modes
-are distinct; the original screen retains its seeded cadence. A pure test
-compares every channel over 5,000 ticks and checks the signal mode, with no
-allocation per update.
+For music-driven hits, `presets.CuddlyKnucklebusterSignalHits` accepts one boolean
+per channel/tick. The legacy random recipe remains available. The current Cuddly
+screen uses `presets.CuddlyKnucklebusterDrummer`, with four independent left-arm,
+right-arm, bass-drum and head channels. Its native drum gestures last six ticks;
+the head has a separate twenty-tick hold. Both sampled and live signals can drive
+the same borrowed artwork.
+
+`motion.SampledSignals` owns a compact bank of channel masks and samples an
+external `time.Duration` clock without advancing it. It supports up to 64 channels,
+an introduction before an optional loop region, arbitrary seeks and paused clocks.
+With four channels, each source tick takes one byte. Sampling does not allocate,
+and a stalled display cannot lose or accelerate the authored gesture sequence.
+Knucklebuster's complete 1,095-second bank uses 54,750 bytes. The audio player's
+audible position keeps the graphics aligned with the soundtrack despite decoder
+buffering; silent captures can supply an elapsed scene clock instead.
+
+```go
+signals, err := motion.NewSampledSignals(motion.SampledSignalsConfig{
+    Channels: 4, Rate: 50, Masks: visibilityMasks, Loop: true,
+})
+if err != nil { return err }
+config := presets.CuddlyKnucklebusterDrummer(head, bass, left, right,
+    func(channel, _ int) bool { return signals.At(player.Position(), channel) })
+hits, err := sprites.NewLatchedOverlay(config)
+if err != nil { return err }
+```
 
 `FieldStyle.Sample` can change size, tint, rotation or visibility from depth,
 index or modulation. `Frames` are atlas rectangles selected by each point's

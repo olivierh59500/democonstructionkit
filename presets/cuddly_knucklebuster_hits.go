@@ -36,3 +36,17 @@ func CuddlyKnucklebusterSignalHits(head, bass, left, right *ebiten.Image,
 	c.Motion.Threshold = 1
 	return c
 }
+
+// CuddlyKnucklebusterDrummer samples independently authored left, right, bass
+// and head visibility. The callback can follow an audible music clock or live
+// events; held durations belong to that signal rather than the display rate.
+func CuddlyKnucklebusterDrummer(head, bass, left, right *ebiten.Image,
+	signal func(index int, tick int) bool) sprites.LatchedOverlayConfig {
+	c := CuddlyKnucklebusterSignalHits(head, bass, left, right, signal)
+	c.Motion.Count, c.Motion.Period, c.Motion.ReleaseAt = 4, 1, 0
+	c.Sprites[0].Channel = 3 // Head has its own longer hold.
+	c.Sprites[1].Channel = 2
+	c.Sprites[2].Channel = 0
+	c.Sprites[3].Channel = 1
+	return c
+}

@@ -1,5 +1,19 @@
 # Changelog
 
+## 1.0.14 — Developer Edition — 2026-10-01
+
+- Added `motion.SampledSignals`: owned compact masks, one to 64 independent
+  channels, an external source clock, optional introduction/loop region and
+  allocation-free random-access sampling. Pauses, backwards seeks and display
+  rate changes preserve the authored signal timing.
+- Added `presets.CuddlyKnucklebusterDrummer`, separating the head, bass drum and
+  both arms into four independently sampled overlays. Legacy random and
+  three-channel recipes retain their existing behavior.
+- Cuddly Knucklebuster now uses the original Atari routine's complete animation
+  bank at audible music progress: six-tick drum gestures and a twenty-tick head
+  hold. Its 54,750-frame bank uses one byte per source tick. All 219,000 original
+  animation flags are covered by an independent native execution fixture.
+
 ## 1.0.13 — Developer Edition — 2026-10-01
 
 - Added `scrolltext.InsertionProgram`: copied glyph/control tokens, independent
